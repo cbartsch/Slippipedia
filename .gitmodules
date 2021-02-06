@@ -1,0 +1,3 @@
+[submodule "slippc/slippc"]
+	path = slippc/slippc
+	url = https://github.com/pcrain/slippc.git
