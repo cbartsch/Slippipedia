@@ -1,6 +1,6 @@
 {
-  "title": "SlippiTest",
-  "identifier": "com.yourcompany.wizardEVAP.SlippiTest",
+  "title": "SlippiStatsApp",
+  "identifier": "at.cb.SlippiStatsApp",
   "orientation": "auto",
   "versioncode": 1,
   "versionname": "1.0.0",
