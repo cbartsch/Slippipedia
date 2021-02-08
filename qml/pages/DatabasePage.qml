@@ -1,0 +1,104 @@
+import Felgo 3.0
+
+import QtQuick 2.0
+import QtQuick.Controls 2.12
+import QtQuick.Dialogs 1.2
+
+BasePage {
+  title: qsTr("Replay database")
+
+  flickable.contentHeight: content.height
+
+  Column {
+    id: content
+    width: parent.width
+
+    SimpleSection {
+      title: "Replay database"
+    }
+
+    AppListItem {
+      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+      enabled: false
+    }
+
+    AppListItem {
+      text: "Clear database"
+      enabled: dataModel.totalReplays > 0
+      onSelected: InputDialog.confirm(app, "Really clear the whole database?", function(accepted) {
+        if(accepted) {
+          dataModel.clearDatabase()
+        }
+      })
+    }
+
+    SimpleSection {
+      title: "Replay folder"
+    }
+
+    AppListItem {
+      text: dataModel.replayFolder || "Select replay folder..."
+      onSelected: {
+        console.log("open to", fileDialog.folder)
+        fileDialog.open()
+      }
+      detailText: dataModel.allFiles.length +  " replays found."
+    }
+
+    SimpleSection {
+      title: "Analyze"
+      visible: !dataModel.isProcessing
+    }
+
+    AppListItem {
+      text: "Analyze " + dataModel.allFiles.length + " replays"
+      visible: !dataModel.isProcessing
+
+      onSelected: dataModel.parseReplays(dataModel.allFiles)
+    }
+
+    SimpleSection {
+      title: "Progress"
+      visible: dataModel.numFilesProcessing > 0
+    }
+
+    SimpleRow {
+      text: qsTr("Analyzed %1/%2 replays%3%4")
+        .arg(dataModel.numFilesSucceeded)
+        .arg(dataModel.numFilesProcessing)
+        .arg(dataModel.numFilesFailed > 0 ? " (" + dataModel.numFilesFailed + " failed)" : "")
+        .arg(dataModel.isProcessing? "..." : ".")
+
+      textItem.color: Theme.textColor
+
+      enabled: false
+      visible: dataModel.numFilesProcessing > 0
+    }
+
+    AppListItem {
+      text: "Cancel"
+      visible: dataModel.isProcessing
+      onSelected: {
+        dataModel.cancelAll()
+        dataModel.progressCancelled = true
+      }
+    }
+
+    ProgressBar {
+      value: dataModel.processProgress
+      width: parent.width
+      visible: dataModel.isProcessing
+    }
+  }
+
+  FileDialog {
+    id: fileDialog
+    title: "Please choose a file"
+    selectMultiple: false
+    selectFolder: true
+    folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
+
+    onAccepted: dataModel.settings.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+    onRejected: console.log("Folder dialog canceled")
+  }
+}
