@@ -6,6 +6,8 @@
 #include "slippiparser.h"
 #include "slippireplay.h"
 
+#include "utils.h"
+
 #include <QtDebug>
 
 // uncomment this line to add the Live Client Module and use live reloading with your custom C++ code
@@ -38,8 +40,11 @@ int main(int argc, char *argv[])
   // also see the .pro file for more details
   //felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
 
+  Utils::registerQml();
+
   qmlRegisterType<SlippiParser>("Slippi", 1, 0, "SlippiParser");
   qmlRegisterUncreatableType<SlippiReplay>("Slippi", 1, 0, "SlippiReplay", "Returned by SlippiParser");
+  qmlRegisterUncreatableType<PlayerData>("Slippi", 1, 0, "PlayerData", "Returned by SlippiParser");
 
   engine.load(QUrl(felgo.mainQmlFileName()));
 

@@ -7,7 +7,7 @@ CONFIG += felgo
 
 # Project identifier and version
 # More information: https://felgo.com/doc/felgo-publishing/#project-configuration
-PRODUCT_IDENTIFIER = com.yourcompany.wizardEVAP.SlippiTest
+PRODUCT_IDENTIFIER = at.cb.SlippiStatsApp
 PRODUCT_VERSION_NAME = 1.0.0
 PRODUCT_VERSION_CODE = 1
 
@@ -38,8 +38,11 @@ DEPLOYMENTFOLDERS += assetsFolder
 
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+  utils.cpp
 
+HEADERS += \
+  utils.h
 
 android {
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
