@@ -32,6 +32,8 @@ Item {
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
 
   property alias slippiCode: settings.slippiCode
+  property alias slippiName: settings.slippiName
+  readonly property bool hasSlippiCode: slippiCode != "" || slippiName != ""
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -51,6 +53,7 @@ Item {
     id: settings
     property string replayFolder
     property string slippiCode
+    property string slippiName
   }
 
   SlippiParser {
@@ -153,6 +156,36 @@ foreign key(replayId) references replays(id)
     return res
   }
 
+  function getFilterCondition() {
+    if(slippiCode && slippiName) {
+      return "(p.slippiCode = ? or p.slippiName = ?)"
+    }
+    else if(slippiCode) {
+      return "(p.slippiCode = ?)"
+    }
+    else if(slippiName) {
+      return "(p.slippiName = ?)"
+    }
+    else {
+      return "true"
+    }
+  }
+
+  function getFilterParams() {
+    if(slippiCode && slippiName) {
+      return [slippiCode, slippiName]
+    }
+    else if(slippiCode) {
+      return [slippiCode]
+    }
+    else if(slippiName) {
+      return [slippiName]
+    }
+    else {
+      return []
+    }
+  }
+
   function getNumReplays() {
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(*) c from Replays")
@@ -162,36 +195,42 @@ foreign key(replayId) references replays(id)
   }
 
   function getNumReplaysByPlayer() {
-    if(slippiCode == "") {
+    if(!hasSlippiCode) {
       return 0
     }
 
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where p.slippiCode = ?", [slippiCode])
+      var results = tx.executeSql("select count(*) c from replays r
+join players p on p.replayId = r.id
+where " + getFilterCondition(), getFilterParams())
 
       return results.rows.item(0).c
     }, 0)
   }
 
   function getNumReplaysByPlayerWithResult() {
-    if(slippiCode == "") {
+    if(!hasSlippiCode) {
       return 0
     }
 
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where r.winnerPort >= 0 and p.slippiCode = ?", [slippiCode])
+      var results = tx.executeSql("select count(*) c from replays r
+join players p on p.replayId = r.id
+ where r.winnerPort >= 0 and " + getFilterCondition(), getFilterParams())
 
       return results.rows.item(0).c
     }, 0)
   }
 
   function getNumReplaysWonByPlayer() {
-    if(slippiCode == "") {
+    if(!hasSlippiCode) {
       return 0
     }
 
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where p.isWinner and p.slippiCode = ?", [slippiCode])
+      var results = tx.executeSql("select count(*) c from replays r
+ join players p on p.replayId = r.id
+where p.isWinner and " + getFilterCondition(), getFilterParams())
 
       return results.rows.item(0).c
     }, 0)
@@ -254,6 +293,6 @@ foreign key(replayId) references replays(id)
   }
 
   function formatPercentage(amount) {
-    return qsTr("%1 %").arg((amount * 100).toFixed(2))
+    return amount ? qsTr("%1 %").arg((amount * 100).toFixed(2)) : "0 %"
   }
 }

@@ -35,6 +35,7 @@ App {
   }
 
   Navigation {
+    id: navigation
     navigationMode: navigationModeTabs
 
     NavigationItem {
@@ -42,17 +43,16 @@ App {
       icon: IconType.database
 
       NavigationStack {
-
         DatabasePage { }
       }
     }
 
     NavigationItem {
+      id: filteringItem
       title: "Filtering"
       icon: IconType.filter
 
       NavigationStack {
-
         FilterPage { }
       }
     }
@@ -62,9 +62,12 @@ App {
       icon: IconType.barchart
 
       NavigationStack {
-
         StatisticsPage { }
       }
     }
+  }
+
+  function showFilteringPage() {
+    navigation.currentIndex = 1
   }
 }

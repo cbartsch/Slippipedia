@@ -19,6 +19,8 @@ BasePage {
 
     AppListItem {
       text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+
+      backgroundColor: Theme.backgroundColor
       enabled: false
     }
 
@@ -70,6 +72,7 @@ BasePage {
         .arg(dataModel.isProcessing? "..." : ".")
 
       textItem.color: Theme.textColor
+
 
       enabled: false
       visible: dataModel.numFilesProcessing > 0

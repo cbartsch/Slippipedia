@@ -8,12 +8,12 @@ BasePage {
   flickable.contentHeight: content.height
 
   readonly property var stageData: [
-    { id: 32, name: "Final Destination" },
-    { id: 31, name: "Battlefield" },
-    { id: 3, name: "Pokémon Stadium" },
-    { id: 28, name: "Dreamland" },
-    { id: 2, name: "Fountain of Dreams" },
-    { id: 8, name: "Yoshi's Story" },
+    { id: 32, name: "Final Destination", shortName: "FD" },
+    { id: 31, name: "Battlefield", shortName: "BF" },
+    { id: 3, name: "Pokémon Stadium", shortName: "PS" },
+    { id: 28, name: "Dreamland", shortName: "DL" },
+    { id: 2, name: "Fountain of Dreams", shortName: "FoD" },
+    { id: 8, name: "Yoshi's Story", shortName: "YS" },
   ]
 
   readonly property real averageGameDuration: dataModel.getAverageGameDuration(dataModel.dbUpdater)
@@ -46,10 +46,17 @@ BasePage {
     }
 
     AppListItem {
+      text: "Enter your Slippi code to see player stats"
+      onSelected: showFilteringPage()
+      visible: !dataModel.hasSlippiCodea
+    }
+
+    AppListItem {
       text: qsTr("Win rate: %1 (%2/%3)")
       .arg(dataModel.formatPercentage(dataModel.totalReplaysWonByPlayer/dataModel.totalReplaysByPlayerWithResult))
       .arg(dataModel.totalReplaysWonByPlayer).arg(dataModel.totalReplaysByPlayerWithResult)
       enabled: false
+      visible: dataModel.hasSlippiCode
     }
 
     AppListItem {
@@ -57,31 +64,53 @@ BasePage {
       .arg(dataModel.formatPercentage(dataModel.totalReplaysByPlayerWithTie/dataModel.totalReplaysByPlayer))
       .arg(dataModel.totalReplaysByPlayerWithTie).arg(dataModel.totalReplaysByPlayer)
       enabled: false
+      visible: dataModel.hasSlippiCode
     }
 
     SimpleSection {
       title: "Stage stats"
     }
 
-    Repeater {
-      model: stageData
+    Grid {
+      columns: 3
+      width: parent.width
 
-      AppListItem {
-        enabled: false
-        text: qsTr("%1 (%2)")
-        .arg(modelData.name)
-        .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
-        ? dataModel.getStageAmount(modelData.id) / dataModel.totalReplays
-        : 0))
+      Repeater {
+        model: stageData
+
+        Rectangle {
+          width: parent.width / 3
+          height: dp(60)
+          color: Theme.controlBackgroundColor
+
+          AppText {
+            enabled: false
+            anchors.fill: parent
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("%1\n(%2)")
+            .arg(modelData.shortName)
+            .arg(dataModel.formatPercentage(dataModel.getStageAmount(modelData.id) / dataModel.totalReplays))
+          }
+        }
       }
     }
 
-    AppListItem {
-      enabled: false
-      text: qsTr("Other (%2)")
-      .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
-      ? dataModel.getOtherStageAmount(stageData.map(obj => obj.id)) / dataModel.totalReplays
-      : 0))
+    Rectangle {
+      width: parent.width
+      height: dp(32)
+      color: Theme.controlBackgroundColor
+
+      AppText {
+        enabled: false
+        anchors.fill: parent
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        text: qsTr("Other (%2)")
+        .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
+        ? dataModel.getOtherStageAmount(stageData.map(obj => obj.id)) / dataModel.totalReplays
+        : 0))
+      }
     }
 
     SimpleSection {
