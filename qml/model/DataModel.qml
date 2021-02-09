@@ -8,21 +8,51 @@ import Slippi 1.0
 Item {
   id: dataModel
 
-  property alias settings: settings
-
-  readonly property string replayFolder: settings.replayFolder
-
+  // replay settings
+  property alias replayFolder: settings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
 
+  // filtering settings
+  property alias slippiCode: settings.slippiCode
+  property alias slippiName: settings.slippiName
+  readonly property bool hasSlippiCode: slippiCode != "" || slippiName != ""
+  property int stageId: 0 // -1 = "other" stages
+
+  readonly property string filterDisplayText: {
+    var pText
+    if(slippiCode && slippiName) {
+      pText = qsTr("%1/%2").arg(slippiCode).arg(slippiName)
+    }
+    else {
+      pText = slippiCode || slippiName || ""
+    }
+
+    var sText
+    if(stageId < 0) {
+      sText = "Other stage"
+    }
+    else if(stageId > 0) {
+      sText = "Stage: " + stageMap[stageId].name
+    }
+
+    return sText && pText ? (pText + ", " + sText) : sText || pText || "(nothing)"
+  }
+
+  // db
   property var db: null
-
   property int dbUpdater: 0
-  readonly property int totalReplays: getNumReplays(dbUpdater)
-  readonly property int totalReplaysByPlayer: getNumReplaysByPlayer(dbUpdater, slippiCode)
-  readonly property int totalReplaysByPlayerWithResult: getNumReplaysByPlayerWithResult(dbUpdater, slippiCode)
-  readonly property int totalReplaysWonByPlayer: getNumReplaysWonByPlayer(dbUpdater, slippiCode)
-  readonly property int totalReplaysByPlayerWithTie: totalReplaysByPlayer - totalReplaysByPlayerWithResult
 
+  // stats
+  readonly property int totalReplays: getNumReplays(dbUpdater)
+  readonly property int totalReplaysFiltered: getNumReplaysFiltered(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWithResult: getNumReplaysFilteredWithResult(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWon: getNumReplaysFilteredWon(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
+
+  readonly property real tieRate: dataModel.totalReplaysFilteredWithTie / dataModel.totalReplaysFiltered
+  readonly property real winRate: dataModel.totalReplaysFilteredWon / dataModel.totalReplaysFilteredWithResult
+
+  // analyze progress
   property bool progressCancelled: false
   property int numFilesSucceeded: 0
   property int numFilesFailed: 0
@@ -31,9 +61,19 @@ Item {
   readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
 
-  property alias slippiCode: settings.slippiCode
-  property alias slippiName: settings.slippiName
-  readonly property bool hasSlippiCode: slippiCode != "" || slippiName != ""
+  // data structs
+  readonly property var stageMap: {
+    32: { id: 32, name: "Final Destination", shortName: "FD" },
+    31: { id: 31, name: "Battlefield", shortName: "BF" },
+    3: { id: 3, name: "Pokémon Stadium", shortName: "PS" },
+    28: { id: 28, name: "Dreamland", shortName: "DL" },
+    2: { id: 2, name: "Fountain of Dreams", shortName: "FoD" },
+    8: { id: 8, name: "Yoshi's Story", shortName: "YS" },
+  }
+
+  readonly property var stageData: Object.values(stageMap)
+
+  readonly property var stageIds: stageData.map(obj => obj.id)
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -156,7 +196,7 @@ foreign key(replayId) references replays(id)
     return res
   }
 
-  function getFilterCondition() {
+  function getPlayerFilterCondition(slippiCode, slippiName) {
     if(slippiCode && slippiName) {
       return "(p.slippiCode = ? or p.slippiName = ?)"
     }
@@ -171,7 +211,26 @@ foreign key(replayId) references replays(id)
     }
   }
 
-  function getFilterParams() {
+  function getStageFilterCondition(stageId) {
+    if(stageId < 0) {
+      return "(r.stageId not in (%1))".arg(stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
+    }
+    else if(stageId > 0) {
+      return "(r.stageId = ?)"
+    }
+    else {
+      return "true"
+    }
+  }
+
+  function getFilterCondition() {
+    return "(" +
+        getPlayerFilterCondition(slippiCode, slippiName) +
+        " and " + getStageFilterCondition(stageId) +
+        ")"
+  }
+
+  function getPlayerFilterParams(slippiCode, slippiName) {
     if(slippiCode && slippiName) {
       return [slippiCode, slippiName]
     }
@@ -186,6 +245,22 @@ foreign key(replayId) references replays(id)
     }
   }
 
+  function getStageFilterParams(stageId) {
+    if(stageId < 0) {
+      return stageIds
+    }
+    else if(stageId > 0) {
+      return [stageId]
+    }
+    else {
+      return []
+    }
+  }
+
+  function getFilterParams() {
+    return getPlayerFilterParams(slippiCode, slippiName).concat(getStageFilterParams(stageId))
+  }
+
   function getNumReplays() {
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(*) c from Replays")
@@ -194,27 +269,21 @@ foreign key(replayId) references replays(id)
     }, 0)
   }
 
-  function getNumReplaysByPlayer() {
-    if(!hasSlippiCode) {
-      return 0
-    }
-
+  function getNumReplaysFiltered() {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r
+      var sql = "select count(distinct replayId) c from replays r
 join players p on p.replayId = r.id
-where " + getFilterCondition(), getFilterParams())
+where " + getFilterCondition()
+
+      var results = tx.executeSql(sql, getFilterParams())
 
       return results.rows.item(0).c
     }, 0)
   }
 
-  function getNumReplaysByPlayerWithResult() {
-    if(!hasSlippiCode) {
-      return 0
-    }
-
+  function getNumReplaysFilteredWithResult() {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r
+      var results = tx.executeSql("select count(distinct replayId) c from replays r
 join players p on p.replayId = r.id
  where r.winnerPort >= 0 and " + getFilterCondition(), getFilterParams())
 
@@ -222,13 +291,9 @@ join players p on p.replayId = r.id
     }, 0)
   }
 
-  function getNumReplaysWonByPlayer() {
-    if(!hasSlippiCode) {
-      return 0
-    }
-
+  function getNumReplaysFilteredWon() {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from replays r
+      var results = tx.executeSql("select count(distinct replayId) c from replays r
  join players p on p.replayId = r.id
 where p.isWinner and " + getFilterCondition(), getFilterParams())
 
@@ -252,7 +317,7 @@ where p.isWinner and " + getFilterCondition(), getFilterParams())
     }, 0)
   }
 
-  function getOtherStageAmount(stageIds) {
+  function getOtherStageAmount() {
     return readFromDb(function(tx) {
       var results = tx.executeSql(qsTr("select count(*) c from Replays where stageId not in (%1)")
                                   .arg(stageIds.map(_ => "?").join(",")), // add one question mark placeholder per argument
@@ -264,7 +329,19 @@ where p.isWinner and " + getFilterCondition(), getFilterParams())
 
   function getTopPlayerTags(max) {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select slippiName, count(*) c from Players where slippiName is not null and slippiName is not \"\" group by slippiName order by c desc limit ?", [max])
+      var sql = "select slippiName, count(distinct replayId) c from players p
+join replays r on p.replayId = r.id
+where slippiName is not null and
+slippiName is not \"\" and " + getFilterCondition() + "
+group by slippiName
+order by c desc
+limit ?"
+
+      var params = getFilterParams().concat([max])
+
+      console.log("get tags", sql, params)
+
+      var results = tx.executeSql(sql, params)
 
       console.log("results", results.rows.length)
 

@@ -17,14 +17,11 @@ BasePage {
 
     AppListItem {
       text: qsTr("Matched replays: %1/%2 (%3)")
-        .arg(dataModel.totalReplaysByPlayer)
+        .arg(dataModel.totalReplaysFiltered)
         .arg(dataModel.totalReplays)
-        .arg(dataModel.formatPercentage(dataModel.totalReplaysByPlayer / dataModel.totalReplays))
+        .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
 
-      detailText: qsTr("Matching %1")
-      .arg(dataModel.slippiCode && dataModel.slippiName
-      ? qsTr("%1/%2").arg(dataModel.slippiCode).arg(dataModel.slippiName)
-      : (dataModel.slippiCode || dataModel.slippiName || "(nothing)"))
+      detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
@@ -50,8 +47,8 @@ BasePage {
 
       AppTextInput {
         anchors.fill: parent
-        anchors.leftMargin: Theme.contentPadding
-        anchors.rightMargin: Theme.contentPadding
+        anchors.leftMargin: dp(Theme.contentPadding)
+        anchors.rightMargin: dp(Theme.contentPadding)
         color: Theme.textColor
 
         text: dataModel.slippiCode
@@ -77,8 +74,8 @@ BasePage {
 
       AppTextInput {
         anchors.fill: parent
-        anchors.leftMargin: Theme.contentPadding
-        anchors.rightMargin: Theme.contentPadding
+        anchors.leftMargin: dp(Theme.contentPadding)
+        anchors.rightMargin: dp(Theme.contentPadding)
         color: Theme.textColor
 
         text: dataModel.slippiName
@@ -92,6 +89,86 @@ BasePage {
         height: dp(1)
         anchors.bottom: parent.bottom
         color: Theme.dividerColor
+      }
+    }
+
+    SimpleSection {
+      title: "Stage matching"
+    }
+
+    AppListItem {
+      text: "Filter by specific stage"
+      detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
+
+      backgroundColor: Theme.backgroundColor
+      enabled: false
+    }
+
+    Grid {
+      columns: 3
+      width: parent.width
+
+      Repeater {
+        model: dataModel.stageData
+
+        Rectangle {
+          readonly property bool isSelected: dataModel.stageId === modelData.id
+
+          width: parent.width / 3
+          height: dp(72)
+          color: isSelected ? Theme.selectedBackgroundColor : Theme.controlBackgroundColor
+
+          RippleMouseArea {
+            anchors.fill: parent
+            onClicked: dataModel.stageId = isSelected ? 0 : modelData.id
+
+            Column {
+              width: parent.width
+              anchors.verticalCenter: parent.verticalCenter
+
+              AppText {
+                enabled: false
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: sp(20)
+                text: modelData.shortName
+              }
+
+              AppText {
+                enabled: false
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
+                text: qsTr("%2 games\n(%3)")
+                .arg(dataModel.getStageAmount(modelData.id))
+                .arg(dataModel.formatPercentage(dataModel.getStageAmount(modelData.id) / dataModel.totalReplays))
+              }
+            }
+          }
+        }
+      }
+    }
+
+    Rectangle {
+      readonly property bool isSelected: dataModel.stageId < 0
+
+      width: parent.width
+      height: dp(48)
+      color: isSelected ? Theme.selectedBackgroundColor : Theme.controlBackgroundColor
+
+      RippleMouseArea {
+        anchors.fill: parent
+
+        onClicked: dataModel.stageId = parent.isSelected ? 0 : -1
+
+        AppText {
+          anchors.fill: parent
+          verticalAlignment: Text.AlignVCenter
+          horizontalAlignment: Text.AlignHCenter
+          text: qsTr("Other (%2)")
+          .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
+          ? dataModel.getOtherStageAmount() / dataModel.totalReplays
+          : 0))
+        }
       }
     }
   }

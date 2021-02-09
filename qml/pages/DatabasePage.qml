@@ -101,7 +101,7 @@ BasePage {
     selectFolder: true
     folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
 
-    onAccepted: dataModel.settings.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+    onAccepted: dataModel.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
     onRejected: console.log("Folder dialog canceled")
   }
 }
