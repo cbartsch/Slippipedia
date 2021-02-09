@@ -38,7 +38,14 @@ void SlippiReplay::fromAnalysis(slip::Analysis *analysis) {
 
     PlayerData *player = new PlayerData(this);
 
-    player->m_tag = QString::fromStdString(p.tag_player);
+    player->m_slippiName = QString::fromStdString(p.tag_player);
+    player->m_slippiCode = QString::fromStdString(p.tag_code);
+    player->m_inGameTag = QString::fromStdString(p.tag_css);
+    player->m_port = p.port;
+    player->m_endStocks = p.end_stocks;
+    player->m_endPercent = p.end_pct;
+    player->m_startStocks = p.start_stocks;
+    player->m_isWinner = m_winningPlayerIndex == i;
 
     m_players << QVariant::fromValue(player);
   }

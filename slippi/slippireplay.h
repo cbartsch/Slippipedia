@@ -10,13 +10,22 @@
 struct PlayerData : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(QString tag MEMBER m_tag)
+  Q_PROPERTY(QString slippiName MEMBER m_slippiName)
+  Q_PROPERTY(QString slippiCode MEMBER m_slippiCode)
+  Q_PROPERTY(QString inGameTag MEMBER m_inGameTag)
+  Q_PROPERTY(int startStocks MEMBER m_startStocks)
+  Q_PROPERTY(int endStocks MEMBER m_endStocks)
+  Q_PROPERTY(int endPercent MEMBER m_endPercent)
+  Q_PROPERTY(int port MEMBER m_port)
+  Q_PROPERTY(bool isWinner MEMBER m_isWinner)
 
 public:
   PlayerData(QObject *parent);
 
 private:
-  QString m_tag;
+  QString m_slippiName, m_slippiCode, m_inGameTag;
+  int m_startStocks, m_endStocks, m_endPercent, m_port;
+  bool m_isWinner;
 
   friend class SlippiReplay;
 };
