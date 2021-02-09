@@ -54,6 +54,7 @@ BasePage {
         text: dataModel.slippiCode
         placeholderText: "Enter your Slippi code..."
 
+        onTextChanged: dataModel.slippiCode = text
         onAccepted: dataModel.slippiCode = text
       }
 
@@ -81,6 +82,7 @@ BasePage {
         text: dataModel.slippiName
         placeholderText: "Enter your Slippi name..."
 
+        onTextChanged: dataModel.slippiName = text
         onAccepted: dataModel.slippiName = text
       }
 
@@ -91,6 +93,24 @@ BasePage {
         color: Theme.dividerColor
       }
     }
+
+//    SimpleSection {
+//      title: "Date matching"
+//    }
+
+//    AppListItem {
+//      text: "Filter by replay date"
+//      detailText: "Select a date range to match replays in."
+
+//      backgroundColor: Theme.backgroundColor
+//      enabled: false
+//    }
+
+//    AppListItem {
+//      text: "Start date: "
+
+//      onSelected: nativeUtils.displayDatePicker()
+//    }
 
     SimpleSection {
       title: "Stage matching"

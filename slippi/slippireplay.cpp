@@ -19,7 +19,6 @@ void SlippiReplay::fromAnalysis(slip::Analysis *analysis) {
   m_date = QDateTime::fromString(QString::fromStdString(analysis->game_time), Qt::DateFormat::ISODate);
   m_stageId = analysis->stage_id;
   m_gameDuration = analysis->game_length;
-  m_stageName = QString::fromStdString(analysis->stage_name);
   m_winningPlayerIndex = analysis->winner_port;
 
   // compute pseudo-unique hash for game
@@ -41,6 +40,7 @@ void SlippiReplay::fromAnalysis(slip::Analysis *analysis) {
     player->m_slippiName = QString::fromStdString(p.tag_player);
     player->m_slippiCode = QString::fromStdString(p.tag_code);
     player->m_inGameTag = QString::fromStdString(p.tag_css);
+    player->m_charId = p.char_id;
     player->m_port = p.port;
     player->m_endStocks = p.end_stocks;
     player->m_endPercent = p.end_pct;

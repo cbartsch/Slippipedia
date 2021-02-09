@@ -20,11 +20,23 @@ BasePage {
     }
 
     AppListItem {
-      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+      text: qsTr("Filtered replays: %1/%2 (%3)")
+        .arg(dataModel.totalReplaysFiltered)
+        .arg(dataModel.totalReplays)
+        .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
+
+      detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
     }
+
+//    AppListItem {
+//      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+
+//      backgroundColor: Theme.backgroundColor
+//      enabled: false
+//    }
 
     AppListItem {
       text: qsTr("Average game time: %1:%2 (%3 frames)")
@@ -47,17 +59,75 @@ BasePage {
 
       backgroundColor: Theme.backgroundColor
       enabled: false
-      visible: dataModel.hasSlippiCode
     }
 
     AppListItem {
-      text: qsTr("Tie rate: %1 (%2/%3)")
+      text: qsTr("Games not finished: %1 (%2/%3)")
       .arg(dataModel.formatPercentage(dataModel.tieRate))
       .arg(dataModel.totalReplaysFilteredWithTie).arg(dataModel.totalReplaysFiltered)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
-      visible: dataModel.hasSlippiCode
+    }
+
+    SimpleSection {
+      title: "Top chars used"
+    }
+
+    Grid {
+      columns: Math.round(width / dp(200))
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(Theme.contentPadding) / 2
+
+      Repeater {
+        model: SortFilterProxyModel {
+
+          filters: [
+            ExpressionFilter {
+              expression: count > 0
+            }
+          ]
+
+          sorters: [
+            RoleSorter {
+              roleName: "count"
+              ascendingOrder: false
+            }
+          ]
+
+          sourceModel: JsonListModel {
+            source: dataModel.charData
+            keyField: "id"
+          }
+        }
+
+        Item {
+          visible: id < 26 // ids 0-25 are the useabls characters
+          width: parent.width / parent.columns
+          height: dp(48)
+
+          Column {
+            width: parent.width
+            anchors.verticalCenter: parent.verticalCenter
+
+            AppText {
+              width: parent.width
+              text: name
+              maximumLineCount: 1
+              elide: Text.ElideRight
+              font.pixelSize: sp(20)
+            }
+            AppText {
+              width: parent.width
+              text: qsTr("%1 (%2)").arg(count).arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
+              maximumLineCount: 1
+              elide: Text.ElideRight
+            }
+          }
+        }
+      }
     }
 
     SimpleSection {
@@ -65,21 +135,39 @@ BasePage {
     }
 
     Grid {
-      columns: 3
+      id: charGrid
+      columns: Math.round(width / dp(200))
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(Theme.contentPadding) / 2
+      rowSpacing: dp(1)
 
       Repeater {
-        model: dataModel.getTopPlayerTags(18)
+        model: dataModel.getTopPlayerTags(charGrid.columns * 5)
 
-        AppText {
-          enabled: false
-          width: parent.width / 3
+        Item {
+          width: parent.width / parent.columns
           height: dp(48)
-          text: qsTr("%1 (%2)").arg(modelData.tag).arg(modelData.count)
-          maximumLineCount: 2
-          elide: Text.ElideRight
+
+          Column {
+            width: parent.width
+            anchors.verticalCenter: parent.verticalCenter
+
+            AppText {
+              width: parent.width
+              text: modelData.tag
+              maximumLineCount: 1
+              elide: Text.ElideRight
+              font.pixelSize: sp(20)
+            }
+            AppText {
+              width: parent.width
+              text: qsTr("%1 (%2)").arg(modelData.count).arg(dataModel.formatPercentage(modelData.count / dataModel.totalReplaysFiltered))
+              maximumLineCount: 1
+              elide: Text.ElideRight
+            }
+          }
         }
       }
     }

@@ -73,7 +73,6 @@ BasePage {
 
       textItem.color: Theme.textColor
 
-
       enabled: false
       visible: dataModel.numFilesProcessing > 0
     }

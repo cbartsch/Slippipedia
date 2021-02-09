@@ -13,6 +13,7 @@ struct PlayerData : public QObject {
   Q_PROPERTY(QString slippiName MEMBER m_slippiName)
   Q_PROPERTY(QString slippiCode MEMBER m_slippiCode)
   Q_PROPERTY(QString inGameTag MEMBER m_inGameTag)
+  Q_PROPERTY(int charId MEMBER m_charId)
   Q_PROPERTY(int startStocks MEMBER m_startStocks)
   Q_PROPERTY(int endStocks MEMBER m_endStocks)
   Q_PROPERTY(int endPercent MEMBER m_endPercent)
@@ -24,7 +25,7 @@ public:
 
 private:
   QString m_slippiName, m_slippiCode, m_inGameTag;
-  int m_startStocks, m_endStocks, m_endPercent, m_port;
+  int m_charId, m_startStocks, m_endStocks, m_endPercent, m_port;
   bool m_isWinner;
 
   friend class SlippiReplay;
@@ -38,7 +39,6 @@ class SlippiReplay : public QObject
   Q_PROPERTY(QDateTime date MEMBER m_date NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int stageId MEMBER m_stageId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int gameDuration MEMBER m_gameDuration NOTIFY parsedFromAnalysis)
-  Q_PROPERTY(QString stageName MEMBER m_stageName NOTIFY parsedFromAnalysis)
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerIndex MEMBER m_winningPlayerIndex NOTIFY parsedFromAnalysis)

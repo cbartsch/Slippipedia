@@ -70,10 +70,22 @@ Item {
     2: { id: 2, name: "Fountain of Dreams", shortName: "FoD" },
     8: { id: 8, name: "Yoshi's Story", shortName: "YS" },
   }
-
   readonly property var stageData: Object.values(stageMap)
-
   readonly property var stageIds: stageData.map(obj => obj.id)
+
+  readonly property var charNames: [
+    "Captain Falcon", "Donkey Kong", "Fox", "Mr. Game & Watch", "Kirby", "Bowser", "Link",
+    "Luigi", "Mario", "Marth", "Mewtwo", "Ness", "Peach", "Pikachu", "Ice Climbers", "Jigglypuff",
+    "Samus", "Yoshi", "Zelda", "Sheik", "Falco", "Young Link", "Dr. Mario", "Roy", "Pichu",
+    "Ganondorf", "Master Hand", "Fighting Wire Frame ♂", "Fighting Wire Frame ♀",
+    "Giga Bowser", "Crazy Hand", "Sandbag", "SoPo", "NONE"
+  ]
+  readonly property var charData: charNames.map((name, id) => ({
+                                                                 name: name,
+                                                                 id: id,
+                                                                 count: getNumReplaysFilteredWithCharacter(id)
+                                                               }))
+  readonly property var charIds: charData.map(obj => obj.id)
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -110,7 +122,6 @@ Item {
     tx.executeSql("create table if not exists Replays (
 id integer not null primary key,
 date date,
-stageName text,
 stageId integer,
 winnerPort integer,
 duration integer
@@ -122,6 +133,7 @@ replayId integer,
 slippiName text,
 slippiCode text,
 cssTag text,
+charId integer,
 startStocks integer,
 endStocks integer,
 endPercent integer,
@@ -136,23 +148,23 @@ foreign key(replayId) references replays(id)
       var winnerIndex = replay.winningPlayerIndex
       var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
 
-      tx.executeSql("insert or replace into Replays (id, date, stageName, stageId, winnerPort, duration)
-                     values (?, ?, ?, ?, ?, ?)",
+      tx.executeSql("insert or replace into Replays (id, date, stageId, winnerPort, duration)
+                     values (?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId,
                       replay.date,
-                      replay.stageName,
                       replay.stageId,
                       winnerIndex,
                       replay.gameDuration
                     ])
 
       replay.players.forEach(function(player) {
-        tx.executeSql("insert or replace into Players (port, replayId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
-                       values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        tx.executeSql("insert or replace into Players (port, replayId, charId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
+                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                       [
                         player.port,
                         replay.uniqueId,
+                        player.charId,
                         player.slippiName,
                         player.slippiCode,
                         player.inGameTag,
@@ -198,13 +210,13 @@ foreign key(replayId) references replays(id)
 
   function getPlayerFilterCondition(slippiCode, slippiName) {
     if(slippiCode && slippiName) {
-      return "(p.slippiCode = ? or p.slippiName = ?)"
+      return "(p.slippiCode like ? collate nocase or p.slippiName like ? collate nocase)"
     }
     else if(slippiCode) {
-      return "(p.slippiCode = ?)"
+      return "(p.slippiCode like ? collate nocase)"
     }
     else if(slippiName) {
-      return "(p.slippiName = ?)"
+      return "(p.slippiName like ? collate nocase)"
     }
     else {
       return "true"
@@ -232,13 +244,13 @@ foreign key(replayId) references replays(id)
 
   function getPlayerFilterParams(slippiCode, slippiName) {
     if(slippiCode && slippiName) {
-      return [slippiCode, slippiName]
+      return [mw(slippiCode), mw(slippiName)]
     }
     else if(slippiCode) {
-      return [slippiCode]
+      return [mw(slippiCode)]
     }
     else if(slippiName) {
-      return [slippiName]
+      return [mw(slippiName)]
     }
     else {
       return []
@@ -296,6 +308,16 @@ join players p on p.replayId = r.id
       var results = tx.executeSql("select count(distinct replayId) c from replays r
  join players p on p.replayId = r.id
 where p.isWinner and " + getFilterCondition(), getFilterParams())
+
+      return results.rows.item(0).c
+    }, 0)
+  }
+
+  function getNumReplaysFilteredWithCharacter(charId) {
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select count(distinct replayId) c from replays r
+ join players p on p.replayId = r.id
+where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams()))
 
       return results.rows.item(0).c
     }, 0)
@@ -370,6 +392,15 @@ limit ?"
   }
 
   function formatPercentage(amount) {
-    return amount ? qsTr("%1 %").arg((amount * 100).toFixed(2)) : "0 %"
+    return amount > 1
+        ? "100%"
+        : amount <= 0
+          ? "0%"
+          : qsTr("%1%").arg((amount * 100).toFixed(2))
+  }
+
+  // make SQL wildcard
+  function mw(text) {
+    return "%" + text + "%"
   }
 }
