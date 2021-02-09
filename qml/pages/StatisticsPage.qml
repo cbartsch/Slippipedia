@@ -42,7 +42,25 @@ BasePage {
     }
 
     SimpleSection {
-      title: "Stages"
+      title: "Player stats"
+    }
+
+    AppListItem {
+      text: qsTr("Win rate: %1 (%2/%3)")
+      .arg(dataModel.formatPercentage(dataModel.totalReplaysWonByPlayer/dataModel.totalReplaysByPlayerWithResult))
+      .arg(dataModel.totalReplaysWonByPlayer).arg(dataModel.totalReplaysByPlayerWithResult)
+      enabled: false
+    }
+
+    AppListItem {
+      text: qsTr("Tie rate: %1 (%2/%3)")
+      .arg(dataModel.formatPercentage(dataModel.totalReplaysByPlayerWithTie/dataModel.totalReplaysByPlayer))
+      .arg(dataModel.totalReplaysByPlayerWithTie).arg(dataModel.totalReplaysByPlayer)
+      enabled: false
+    }
+
+    SimpleSection {
+      title: "Stage stats"
     }
 
     Repeater {
@@ -71,7 +89,7 @@ BasePage {
     }
 
     Repeater {
-      model: dataModel.getTopWinnerTags(10)
+      model: dataModel.getTopPlayerTags(10)
 
       AppListItem {
         enabled: false

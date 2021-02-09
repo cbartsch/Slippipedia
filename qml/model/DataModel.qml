@@ -18,6 +18,10 @@ Item {
 
   property int dbUpdater: 0
   readonly property int totalReplays: getNumReplays(dbUpdater)
+  readonly property int totalReplaysByPlayer: getNumReplaysByPlayer(dbUpdater, slippiCode)
+  readonly property int totalReplaysByPlayerWithResult: getNumReplaysByPlayerWithResult(dbUpdater, slippiCode)
+  readonly property int totalReplaysWonByPlayer: getNumReplaysWonByPlayer(dbUpdater, slippiCode)
+  readonly property int totalReplaysByPlayerWithTie: totalReplaysByPlayer - totalReplaysByPlayerWithResult
 
   property bool progressCancelled: false
   property int numFilesSucceeded: 0
@@ -26,6 +30,8 @@ Item {
   readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
   readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
+
+  property alias slippiCode: settings.slippiCode
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -44,6 +50,7 @@ Item {
   Settings {
     id: settings
     property string replayFolder
+    property string slippiCode
   }
 
   SlippiParser {
@@ -62,33 +69,56 @@ id integer not null primary key,
 date date,
 stageName text,
 stageId integer,
-tagA text,
-tagB text,
-winnerTag text,
 winnerPort integer,
 duration integer
+    )")
+
+    tx.executeSql("create table if not exists Players (
+port integer,
+replayId integer,
+slippiName text,
+slippiCode text,
+cssTag text,
+startStocks integer,
+endStocks integer,
+endPercent integer,
+isWinner bool,
+primary key(replayId, port),
+foreign key(replayId) references replays(id)
     )")
   }
 
   function analyzeReplay(fileName, replay) {
     db.transaction(function(tx) {
       var winnerIndex = replay.winningPlayerIndex
-      var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].tag : null
+      var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
 
-      tx.executeSql("insert or replace into Replays (id, date, stageName, stageId, tagA, tagB, winnerTag, winnerPort, duration)
-                     values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      tx.executeSql("insert or replace into Replays (id, date, stageName, stageId, winnerPort, duration)
+                     values (?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId,
                       replay.date,
                       replay.stageName,
                       replay.stageId,
-                      replay.players[0].tag,
-                      replay.players[1].tag,
-                      winnerTag,
                       winnerIndex,
                       replay.gameDuration
                     ])
 
+      replay.players.forEach(function(player) {
+        tx.executeSql("insert or replace into Players (port, replayId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
+                       values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                      [
+                        player.port,
+                        replay.uniqueId,
+                        player.slippiName,
+                        player.slippiCode,
+                        player.inGameTag,
+                        player.startStocks,
+                        player.endStocks,
+                        player.endPercent,
+                        player.isWinner
+                      ])
+      })
     })
 
     numFilesSucceeded++
@@ -131,6 +161,42 @@ duration integer
     }, 0)
   }
 
+  function getNumReplaysByPlayer() {
+    if(slippiCode == "") {
+      return 0
+    }
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where p.slippiCode = ?", [slippiCode])
+
+      return results.rows.item(0).c
+    }, 0)
+  }
+
+  function getNumReplaysByPlayerWithResult() {
+    if(slippiCode == "") {
+      return 0
+    }
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where r.winnerPort >= 0 and p.slippiCode = ?", [slippiCode])
+
+      return results.rows.item(0).c
+    }, 0)
+  }
+
+  function getNumReplaysWonByPlayer() {
+    if(slippiCode == "") {
+      return 0
+    }
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select count(*) c from replays r join players p on p.replayId = r.id where p.isWinner and p.slippiCode = ?", [slippiCode])
+
+      return results.rows.item(0).c
+    }, 0)
+  }
+
   function getAverageGameDuration() {
     return readFromDb(function(tx) {
       var results = tx.executeSql("select avg(duration) d from Replays")
@@ -157,16 +223,16 @@ duration integer
     }, 0)
   }
 
-  function getTopWinnerTags(max) {
+  function getTopPlayerTags(max) {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select winnerTag, count(*) c from Replays where winnerTag is not null and winnerTag is not \"\" group by winnerTag order by c desc limit ?", [max])
+      var results = tx.executeSql("select slippiName, count(*) c from Players where slippiName is not null and slippiName is not \"\" group by slippiName order by c desc limit ?", [max])
 
       console.log("results", results.rows.length)
 
       var result = []
       for (var i = 0; i < results.rows.length; i++) {
         result.push({
-                      tag: results.rows.item(i).winnerTag,
+                      tag: results.rows.item(i).slippiName,
                       count: results.rows.item(i).c
                     })
       }

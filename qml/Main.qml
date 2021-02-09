@@ -15,13 +15,17 @@ App {
 
     // dark theme
     Theme.colors.textColor = "white"
+    Theme.colors.secondaryTextColor = "#888"
     Theme.colors.secondaryBackgroundColor = "#111"
     Theme.colors.controlBackgroundColor = "#111"
     Theme.colors.dividerColor = "#222"
     Theme.colors.selectedBackgroundColor = "#888"
     Theme.colors.backgroundColor = "black"
 
+    Theme.colors.inputCursorColor = "white"
+
     Theme.listItem.backgroundColor = Theme.controlBackgroundColor
+
     Theme.navigationTabBar.titleOffColor= "white"
     Theme.navigationTabBar.backgroundColor = Theme.controlBackgroundColor
   }
@@ -40,6 +44,16 @@ App {
       NavigationStack {
 
         DatabasePage { }
+      }
+    }
+
+    NavigationItem {
+      title: "Filtering"
+      icon: IconType.filter
+
+      NavigationStack {
+
+        FilterPage { }
       }
     }
 
