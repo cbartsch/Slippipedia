@@ -102,15 +102,25 @@ foreign key(replayId) references replays(id)
   }
 
   function getPlayerFilterCondition(slippiCode, slippiName) {
-    if(slippiCode && slippiName) {
-      return qsTr("(p.slippiCode like ? collate nocase %1 p.slippiName like ? collate nocase)")
+    var codeFilter = qsTr("p.slippiCode %1 ? %2")
+      .arg(slippiCode.matchPartial ? "like" : "=")
+      .arg(slippiCode.matchCase ? "" : "collate nocase")
+
+    var nameFilter = qsTr("p.slippiName %1 ? %2")
+      .arg(slippiName.matchPartial ? "like" : "=")
+      .arg(slippiName.matchCase ? "" : "collate nocase")
+
+    if(slippiCode.filterText && slippiName.filterText) {
+      return qsTr("(%1 %2 %3)")
+        .arg(codeFilter)
         .arg(filterCodeAndName ? "and" : "or")
+        .arg(nameFilter)
     }
-    else if(slippiCode) {
-      return "(p.slippiCode like ? collate nocase)"
+    else if(slippiCode.filterText) {
+      return qsTr("(%1)").arg(codeFilter)
     }
-    else if(slippiName) {
-      return "(p.slippiName like ? collate nocase)"
+    else if(slippiName.filterText) {
+      return qsTr("(%1)").arg(nameFilter)
     }
     else {
       return "true"
@@ -137,14 +147,17 @@ foreign key(replayId) references replays(id)
   }
 
   function getPlayerFilterParams(slippiCode, slippiName) {
-    if(slippiCode && slippiName) {
-      return [mw(slippiCode), mw(slippiName)]
+    var codeValue = mw(slippiCode)
+    var nameValue = mw(slippiName)
+
+    if(slippiCode.filterText && slippiName.filterText) {
+      return [codeValue, nameValue]
     }
-    else if(slippiCode) {
-      return [mw(slippiCode)]
+    else if(slippiCode.filterText) {
+      return [codeValue]
     }
-    else if(slippiName) {
-      return [mw(slippiName)]
+    else if(slippiName.filterText) {
+      return [nameValue]
     }
     else {
       return []
@@ -181,6 +194,8 @@ foreign key(replayId) references replays(id)
       var sql = "select count(distinct replayId) c from replays r
 join players p on p.replayId = r.id
 where " + getFilterCondition()
+
+      console.log("get filtered replays with sql", sql, getFilterParams())
 
       var results = tx.executeSql(sql, getFilterParams())
 
@@ -305,8 +320,8 @@ order by c desc"
 
   // utils
 
-  // make SQL wildcard
-  function mw(text) {
-    return "%" + text + "%"
+  // make SQL wildcard if filter.matchPartial is true
+  function mw(filter) {
+    return filter.matchPartial ? "%" + filter.filterText + "%" : filter.filterText
   }
 }

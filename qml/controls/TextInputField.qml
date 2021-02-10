@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
+import QtQuick.Controls 2.0
 
 import Felgo 3.0
 
@@ -19,6 +20,9 @@ Rectangle {
   property alias text: input.text
   property alias placeholderText: input.placeholderText
 
+  property alias matchCaseSensitive: toolBtnCase.checked
+  property alias matchPartialText: toolBtnPartial.checked
+
   signal accepted
 
   RippleMouseArea {
@@ -31,6 +35,7 @@ Rectangle {
     anchors.fill: parent
     anchors.leftMargin: dp(Theme.contentPadding)
     anchors.rightMargin: dp(Theme.contentPadding)
+    spacing: 0
 
     AppText {
       id: label
@@ -48,6 +53,20 @@ Rectangle {
       color: Theme.textColor
 
       onAccepted: textInputField.accepted()
+    }
+
+    AppToolButton {
+      id: toolBtnCase
+      text: "Aa"
+      toolTipText: "Match case sensitive"
+      Layout.alignment: Qt.AlignVCenter
+    }
+
+    AppToolButton {
+      id: toolBtnPartial
+      text: "*"
+      toolTipText: "Match partial text"
+      Layout.alignment: Qt.AlignVCenter
     }
   }
 

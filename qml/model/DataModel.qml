@@ -39,10 +39,10 @@ Item {
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
 
   // filtering settings
-  property alias filterSlippiCode: settings.slippiCode
-  property alias filterSlippiName: settings.slippiName
+  property TextFilter filterSlippiCode: TextFilter { id: filterSlippiCode }
+  property TextFilter filterSlippiName: TextFilter { id: filterSlippiName }
   property alias filterCodeAndName: settings.filterCodeAndName
-  readonly property bool hasPlayerFilter: filterSlippiCode != "" || filterSlippiName != ""
+  readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
   property alias filterStageId: settings.stageId
 
   onFilterSlippiCodeChanged: dbUpdaterChanged()
@@ -52,11 +52,14 @@ Item {
 
   readonly property string filterDisplayText: {
     var pText
-    if(filterSlippiCode && filterSlippiName) {
-      pText = qsTr("%1/%2").arg(filterSlippiCode).arg(filterSlippiName)
+    var codeText = filterSlippiCode.filterText
+    var nameText = filterSlippiName.filterText
+
+    if(codeText && nameText) {
+      pText = qsTr("%1/%2").arg(codeText).arg(nameText)
     }
     else {
-      pText = filterSlippiCode || filterSlippiName || ""
+      pText = codeText || nameText || ""
     }
 
     var sText
@@ -80,8 +83,12 @@ Item {
     id: settings
 
     property string replayFolder: ""
-    property string slippiCode: ""
-    property string slippiName: ""
+    property alias slippiCodeText: filterSlippiCode.filterText
+    property alias slippiCodeCase: filterSlippiCode.matchCase
+    property alias slippiCodePartial: filterSlippiCode.matchPartial
+    property alias slippiNameText: filterSlippiName.filterText
+    property alias slippiNameCase: filterSlippiName.matchCase
+    property alias slippiNamePartial: filterSlippiName.matchPartial
     property bool filterCodeAndName: false // true: and, false: or
     property int stageId: 0 // 0 = no filter, -1 = "other" stages
   }

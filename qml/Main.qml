@@ -16,7 +16,7 @@ App {
     // dark theme
     Theme.colors.textColor = "white"
     Theme.colors.secondaryTextColor = "#888"
-    Theme.colors.secondaryBackgroundColor = "#111"
+    Theme.colors.secondaryBackgroundColor = "#222"
     Theme.colors.controlBackgroundColor = "#111"
     Theme.colors.dividerColor = "#222"
     Theme.colors.selectedBackgroundColor = "#888"

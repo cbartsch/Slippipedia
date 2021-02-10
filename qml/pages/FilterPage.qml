@@ -44,19 +44,29 @@ BasePage {
     }
 
     TextInputField {
-      text: dataModel.filterSlippiCode
       labelText: "Slippi code:"
       placeholderText: "Enter Slippi code..."
 
-      onTextChanged: dataModel.filterSlippiCode = text
+      text: dataModel.filterSlippiCode.filterText
+      matchCaseSensitive: dataModel.filterSlippiCode.matchCase
+      matchPartialText: dataModel.filterSlippiCode.matchPartial
+
+      onTextChanged: dataModel.filterSlippiCode.filterText = text
+      onMatchCaseSensitiveChanged: dataModel.filterSlippiCode.matchCase = matchCaseSensitive
+      onMatchPartialTextChanged: dataModel.filterSlippiCode.matchPartial = matchPartialText
     }
 
     TextInputField {
-      text: dataModel.filterSlippiName
       labelText: "Slippi name:"
       placeholderText: "Enter Slippi name..."
 
-      onTextChanged: dataModel.filterSlippiName = text
+      text: dataModel.filterSlippiName.filterText
+      matchCaseSensitive: dataModel.filterSlippiName.matchCase
+      matchPartialText: dataModel.filterSlippiName.matchPartial
+
+      onTextChanged: dataModel.filterSlippiName.filterText = text
+      onMatchCaseSensitiveChanged: dataModel.filterSlippiName.matchCase = matchCaseSensitive
+      onMatchPartialTextChanged: dataModel.filterSlippiName.matchPartial = matchPartialText
     }
 
     Rectangle {
