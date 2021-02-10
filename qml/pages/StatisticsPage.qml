@@ -7,7 +7,7 @@ BasePage {
 
   flickable.contentHeight: content.height
 
-  readonly property real averageGameDuration: dataModel.getAverageGameDuration(dataModel.dbUpdater)
+  readonly property real averageGameDuration: dataModel.averageGameDuration
   readonly property int averageGameDurationMinutes: averageGameDuration / 60 / 60
   readonly property int averageGameDurationSeconds: averageGameDuration / 60 % 60
 

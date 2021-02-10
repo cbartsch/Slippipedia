@@ -1,22 +1,54 @@
 import QtQuick 2.0
 
 import Qt.labs.settings 1.1
-import QtQuick.LocalStorage 2.12
 
 import Slippi 1.0
 
 Item {
   id: dataModel
 
+  property int dbUpdater: 0
+
   // replay settings
   property alias replayFolder: settings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
+
+  // analyze progress
+  property bool progressCancelled: false
+  property int numFilesSucceeded: 0
+  property int numFilesFailed: 0
+  property int numFilesProcessing: 0
+  readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
+  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
+  readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
+
+  // stats
+  readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
+  readonly property int totalReplaysFiltered: dataBase.getNumReplaysFiltered(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWithResult: dataBase.getNumReplaysFilteredWithResult(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWon: dataBase.getNumReplaysFilteredWon(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
+
+  readonly property real tieRate: dataModel.totalReplaysFilteredWithTie / dataModel.totalReplaysFiltered
+  readonly property real winRate: dataModel.totalReplaysFilteredWon / dataModel.totalReplaysFilteredWithResult
+
+  readonly property real otherStageAmount: dataBase.getOtherStageAmount(dbUpdater)
+
+  readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
+
+  // TODO: refactor to use only one DB access with group by
+  readonly property var charData: {
+    var time = new Date().getTime()
+    var data = dataBase.getCharacterStats(dbUpdater)
+    console.log("cd took", (new Date().getTime() - time), "ms")
+    return data
+  }
 
   // filtering settings
   property alias slippiCode: settings.slippiCode
   property alias slippiName: settings.slippiName
   readonly property bool hasSlippiCode: slippiCode != "" || slippiName != ""
-  property int stageId: 0 // -1 = "other" stages
+  property alias stageId: settings.stageId // -1 = "other" stages
 
   readonly property string filterDisplayText: {
     var pText
@@ -32,60 +64,11 @@ Item {
       sText = "Other stage"
     }
     else if(stageId > 0) {
-      sText = "Stage: " + stageMap[stageId].name
+      sText = "Stage: " + MeleeData.stageMap[stageId].name
     }
 
     return sText && pText ? (pText + ", " + sText) : sText || pText || "(nothing)"
   }
-
-  // db
-  property var db: null
-  property int dbUpdater: 0
-
-  // stats
-  readonly property int totalReplays: getNumReplays(dbUpdater)
-  readonly property int totalReplaysFiltered: getNumReplaysFiltered(dbUpdater, slippiCode, slippiName, stageId)
-  readonly property int totalReplaysFilteredWithResult: getNumReplaysFilteredWithResult(dbUpdater, slippiCode, slippiName, stageId)
-  readonly property int totalReplaysFilteredWon: getNumReplaysFilteredWon(dbUpdater, slippiCode, slippiName, stageId)
-  readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
-
-  readonly property real tieRate: dataModel.totalReplaysFilteredWithTie / dataModel.totalReplaysFiltered
-  readonly property real winRate: dataModel.totalReplaysFilteredWon / dataModel.totalReplaysFilteredWithResult
-
-  // analyze progress
-  property bool progressCancelled: false
-  property int numFilesSucceeded: 0
-  property int numFilesFailed: 0
-  property int numFilesProcessing: 0
-  readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
-  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
-  readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
-
-  // data structs
-  readonly property var stageMap: {
-    32: { id: 32, name: "Final Destination", shortName: "FD" },
-    31: { id: 31, name: "Battlefield", shortName: "BF" },
-    3: { id: 3, name: "Pokémon Stadium", shortName: "PS" },
-    28: { id: 28, name: "Dreamland", shortName: "DL" },
-    2: { id: 2, name: "Fountain of Dreams", shortName: "FoD" },
-    8: { id: 8, name: "Yoshi's Story", shortName: "YS" },
-  }
-  readonly property var stageData: Object.values(stageMap)
-  readonly property var stageIds: stageData.map(obj => obj.id)
-
-  readonly property var charNames: [
-    "Captain Falcon", "Donkey Kong", "Fox", "Mr. Game & Watch", "Kirby", "Bowser", "Link",
-    "Luigi", "Mario", "Marth", "Mewtwo", "Ness", "Peach", "Pikachu", "Ice Climbers", "Jigglypuff",
-    "Samus", "Yoshi", "Zelda", "Sheik", "Falco", "Young Link", "Dr. Mario", "Roy", "Pichu",
-    "Ganondorf", "Master Hand", "Fighting Wire Frame ♂", "Fighting Wire Frame ♀",
-    "Giga Bowser", "Crazy Hand", "Sandbag", "SoPo", "NONE"
-  ]
-  readonly property var charData: charNames.map((name, id) => ({
-                                                                 name: name,
-                                                                 id: id,
-                                                                 count: getNumReplaysFilteredWithCharacter(id)
-                                                               }))
-  readonly property var charIds: charData.map(obj => obj.id)
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -93,91 +76,31 @@ Item {
     }
   }
 
-  Component.onCompleted: {
-    db = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
-
-    db.transaction(createTablesTx)
-
-    console.log("DB open", db, db.version)
-  }
-
   Settings {
     id: settings
+
     property string replayFolder
     property string slippiCode
     property string slippiName
+    property int stageId
   }
 
   SlippiParser {
     id: parser
 
-    onReplayParsed: analyzeReplay(filePath, replay)
+    onReplayParsed: dataBase.analyzeReplay(filePath, replay)
+
     onReplayFailedToParse: {
       console.warn("Could not parse replay", filePath, ":", errorMessage)
       numFilesFailed++
     }
   }
 
-  function createTablesTx(tx) {
-    tx.executeSql("create table if not exists Replays (
-id integer not null primary key,
-date date,
-stageId integer,
-winnerPort integer,
-duration integer
-    )")
-
-    tx.executeSql("create table if not exists Players (
-port integer,
-replayId integer,
-slippiName text,
-slippiCode text,
-cssTag text,
-charId integer,
-startStocks integer,
-endStocks integer,
-endPercent integer,
-isWinner bool,
-primary key(replayId, port),
-foreign key(replayId) references replays(id)
-    )")
+  DataBase {
+    id: dataBase
   }
 
-  function analyzeReplay(fileName, replay) {
-    db.transaction(function(tx) {
-      var winnerIndex = replay.winningPlayerIndex
-      var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
-
-      tx.executeSql("insert or replace into Replays (id, date, stageId, winnerPort, duration)
-                     values (?, ?, ?, ?, ?)",
-                    [
-                      replay.uniqueId,
-                      replay.date,
-                      replay.stageId,
-                      winnerIndex,
-                      replay.gameDuration
-                    ])
-
-      replay.players.forEach(function(player) {
-        tx.executeSql("insert or replace into Players (port, replayId, charId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
-                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                      [
-                        player.port,
-                        replay.uniqueId,
-                        player.charId,
-                        player.slippiName,
-                        player.slippiCode,
-                        player.inGameTag,
-                        player.startStocks,
-                        player.endStocks,
-                        player.endPercent,
-                        player.isWinner
-                      ])
-      })
-    })
-
-    numFilesSucceeded++
-  }
+  // replay / db management
 
   function parseReplays(replayFiles) {
     numFilesSucceeded = 0
@@ -191,205 +114,27 @@ foreign key(replayId) references replays(id)
     parser.parseReplay(fileName)
   }
 
-  function readFromDb(callback, defaultValue) {
-    var res = defaultValue
-
-    db.readTransaction(function(tx) {
-      try {
-         res = callback(tx)
-      }
-      catch(ex) {
-        // table doesn't yet exist, ignore
-
-        console.warn("DB error", ex)
-      }
-    })
-
-    return res
-  }
-
-  function getPlayerFilterCondition(slippiCode, slippiName) {
-    if(slippiCode && slippiName) {
-      return "(p.slippiCode like ? collate nocase or p.slippiName like ? collate nocase)"
-    }
-    else if(slippiCode) {
-      return "(p.slippiCode like ? collate nocase)"
-    }
-    else if(slippiName) {
-      return "(p.slippiName like ? collate nocase)"
-    }
-    else {
-      return "true"
-    }
-  }
-
-  function getStageFilterCondition(stageId) {
-    if(stageId < 0) {
-      return "(r.stageId not in (%1))".arg(stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
-    }
-    else if(stageId > 0) {
-      return "(r.stageId = ?)"
-    }
-    else {
-      return "true"
-    }
-  }
-
-  function getFilterCondition() {
-    return "(" +
-        getPlayerFilterCondition(slippiCode, slippiName) +
-        " and " + getStageFilterCondition(stageId) +
-        ")"
-  }
-
-  function getPlayerFilterParams(slippiCode, slippiName) {
-    if(slippiCode && slippiName) {
-      return [mw(slippiCode), mw(slippiName)]
-    }
-    else if(slippiCode) {
-      return [mw(slippiCode)]
-    }
-    else if(slippiName) {
-      return [mw(slippiName)]
-    }
-    else {
-      return []
-    }
-  }
-
-  function getStageFilterParams(stageId) {
-    if(stageId < 0) {
-      return stageIds
-    }
-    else if(stageId > 0) {
-      return [stageId]
-    }
-    else {
-      return []
-    }
-  }
-
-  function getFilterParams() {
-    return getPlayerFilterParams(slippiCode, slippiName).concat(getStageFilterParams(stageId))
-  }
-
-  function getNumReplays() {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from Replays")
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFiltered() {
-    return readFromDb(function(tx) {
-      var sql = "select count(distinct replayId) c from replays r
-join players p on p.replayId = r.id
-where " + getFilterCondition()
-
-      var results = tx.executeSql(sql, getFilterParams())
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWithResult() {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
-join players p on p.replayId = r.id
- where r.winnerPort >= 0 and " + getFilterCondition(), getFilterParams())
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWon() {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
- join players p on p.replayId = r.id
-where p.isWinner and " + getFilterCondition(), getFilterParams())
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWithCharacter(charId) {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
- join players p on p.replayId = r.id
-where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams()))
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getAverageGameDuration() {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select avg(duration) d from Replays")
-
-      return results.rows.item(0).d || 0
-    }, 0)
-  }
-
-  function getStageAmount(stageId) {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from Replays where stageId = ?", [stageId])
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getOtherStageAmount() {
-    return readFromDb(function(tx) {
-      var results = tx.executeSql(qsTr("select count(*) c from Replays where stageId not in (%1)")
-                                  .arg(stageIds.map(_ => "?").join(",")), // add one question mark placeholder per argument
-                                  stageIds)
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getTopPlayerTags(max) {
-    return readFromDb(function(tx) {
-      var sql = "select slippiName, count(distinct replayId) c from players p
-join replays r on p.replayId = r.id
-where slippiName is not null and
-slippiName is not \"\" and " + getFilterCondition() + "
-group by slippiName
-order by c desc
-limit ?"
-
-      var params = getFilterParams().concat([max])
-
-      console.log("get tags", sql, params)
-
-      var results = tx.executeSql(sql, params)
-
-      console.log("results", results.rows.length)
-
-      var result = []
-      for (var i = 0; i < results.rows.length; i++) {
-        result.push({
-                      tag: results.rows.item(i).slippiName,
-                      count: results.rows.item(i).c
-                    })
-      }
-
-      return result
-    }, [])
-  }
-
   function cancelAll() {
     parser.cancelAll()
   }
 
   function clearDatabase() {
-    db.transaction(function(tx) {
-      tx.executeSql("delete from Replays")
-    })
+    dataBase.clearAllData()
 
     dbUpdaterChanged() // refresh bindings
   }
+
+  // stats
+
+  function getStageAmount(stageId) {
+    return dataBase.getStageAmount(stageId)
+  }
+
+  function getTopPlayerTags(max) {
+    return dataBase.getTopPlayerTags(max)
+  }
+
+  // utils
 
   function formatPercentage(amount) {
     return amount > 1
@@ -397,10 +142,5 @@ limit ?"
         : amount <= 0
           ? "0%"
           : qsTr("%1%").arg((amount * 100).toFixed(2))
-  }
-
-  // make SQL wildcard
-  function mw(text) {
-    return "%" + text + "%"
   }
 }

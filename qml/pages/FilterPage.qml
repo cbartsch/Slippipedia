@@ -2,6 +2,8 @@ import Felgo 3.0
 
 import QtQuick 2.0
 
+import "../model"
+
 BasePage {
   title: qsTr("Filtering")
 
@@ -32,8 +34,8 @@ BasePage {
     }
 
     AppListItem {
-      text: "Enter your Slippi code and/or tag"
-      detailText: "Replays are matched based on either your connect code, your in-game tag or both."
+      text: "Enter Slippi code and/or tag"
+      detailText: "Replays are matched based on either connect code, in-game tag or both."
 
       backgroundColor: Theme.backgroundColor
       enabled: false
@@ -52,7 +54,7 @@ BasePage {
         color: Theme.textColor
 
         text: dataModel.slippiCode
-        placeholderText: "Enter your Slippi code..."
+        placeholderText: "Enter Slippi code..."
 
         onTextChanged: dataModel.slippiCode = text
         onAccepted: dataModel.slippiCode = text
@@ -80,7 +82,7 @@ BasePage {
         color: Theme.textColor
 
         text: dataModel.slippiName
-        placeholderText: "Enter your Slippi name..."
+        placeholderText: "Enter Slippi name..."
 
         onTextChanged: dataModel.slippiName = text
         onAccepted: dataModel.slippiName = text
@@ -129,7 +131,7 @@ BasePage {
       width: parent.width
 
       Repeater {
-        model: dataModel.stageData
+        model: MeleeData.stageData
 
         Rectangle {
           readonly property bool isSelected: dataModel.stageId === modelData.id
@@ -186,7 +188,7 @@ BasePage {
           horizontalAlignment: Text.AlignHCenter
           text: qsTr("Other (%2)")
           .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
-          ? dataModel.getOtherStageAmount() / dataModel.totalReplays
+          ? dataModel.otherStageAmount / dataModel.totalReplays
           : 0))
         }
       }
