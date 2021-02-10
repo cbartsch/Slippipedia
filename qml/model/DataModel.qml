@@ -142,6 +142,12 @@ Item {
     return dataBase.getTopPlayerTags(max)
   }
 
+  // replay list
+
+  function getReplayList(max, start) {
+    return dataBase.getReplayList(max, start)
+  }
+
   // utils
 
   function formatPercentage(amount) {
@@ -150,5 +156,16 @@ Item {
         : amount <= 0
           ? "0%"
           : qsTr("%1%").arg((amount * 100).toFixed(2))
+  }
+
+  function formatTime(numFrames) {
+    var minutes = Math.floor(numFrames / 60 / 60)
+    var seconds = Math.floor(numFrames / 60 % 60)
+
+    return qsTr("%1:%2").arg(minutes).arg(seconds)
+  }
+
+  function formatDate(date) {
+    return date.toLocaleString("dd/MM/yyyy HH:mm")
   }
 }

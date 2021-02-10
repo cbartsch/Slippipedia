@@ -22,7 +22,8 @@ id integer not null primary key,
 date date,
 stageId integer,
 winnerPort integer,
-duration integer
+duration integer,
+filePath text
     )")
 
     tx.executeSql("create table if not exists Players (
@@ -56,14 +57,15 @@ foreign key(replayId) references replays(id)
       var winnerIndex = replay.winningPlayerIndex
       var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
 
-      tx.executeSql("insert or replace into Replays (id, date, stageId, winnerPort, duration)
-                     values (?, ?, ?, ?, ?)",
+      tx.executeSql("insert or replace into Replays (id, date, stageId, winnerPort, duration, filePath)
+                     values (?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId,
                       replay.date,
                       replay.stageId,
                       winnerIndex,
-                      replay.gameDuration
+                      replay.gameDuration,
+                      replay.filePath
                     ])
 
       replay.players.forEach(function(player) {
@@ -193,7 +195,7 @@ foreign key(replayId) references replays(id)
 join players p on p.replayId = r.id
 where " + getFilterCondition()
 
-      console.log("get filtered replays with sql", sql, getFilterParams())
+      // console.log("get filtered replays with sql", sql, getFilterParams())
 
       var results = tx.executeSql(sql, getFilterParams())
 
@@ -316,6 +318,38 @@ order by c desc"
     }, [])
   }
 
+  function getReplayList(max, start) {
+    return readFromDb(function(tx) {
+      var sql = "select
+r.date date, r.filePath filePath, r.duration duration,
+p1.slippiName name1, p1.slippiCode code1, p1.charId char1, p1.endStocks endStocks1,
+p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.endStocks endStocks2
+from replays r
+join players p1 on p1.replayId = r.id
+join players p2 on p2.replayId = r.id
+where p1.port != p2.port
+group by r.id
+order by r.date desc
+limit ? offset ?"
+
+      //var params = getFilterParams().concat([max])
+      var params = [max, start]
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+
+        item.date = new Date(item.date)
+
+        result.push(item)
+      }
+
+      return result
+    }, [])
+  }
+
   // utils
 
   function makeFilterCondition(colName, filter) {
@@ -324,7 +358,7 @@ order by c desc"
       return colName + " like ?"
     }
     else if(filter.matchPartial) {
-      // case insensitive wildcard
+      // case insensitive wildcard -> compare upper
       return qsTr("upper(%1) like upper(?)").arg(colName)
     }
     else if(filter.matchCase) {

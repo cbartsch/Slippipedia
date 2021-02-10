@@ -39,6 +39,7 @@ class SlippiReplay : public QObject
   Q_PROPERTY(QDateTime date MEMBER m_date NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int stageId MEMBER m_stageId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int gameDuration MEMBER m_gameDuration NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(QString filePath MEMBER m_filePath NOTIFY parsedFromAnalysis)
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerIndex MEMBER m_winningPlayerIndex NOTIFY parsedFromAnalysis)
@@ -47,7 +48,7 @@ public:
   explicit SlippiReplay(QObject *parent = nullptr);
   ~SlippiReplay();
 
-  void fromAnalysis(slip::Analysis *analysis);
+  void fromAnalysis(const QString &filePath, slip::Analysis *analysis);
 
 signals:
   void parsedFromAnalysis();
@@ -55,11 +56,11 @@ signals:
   void parsedFromAna(qint64 uniqueId);
 
 private:
-  QString m_stageName;
   int m_stageId;
   int m_gameDuration;
   QDateTime m_date;
   qint64 m_uniqueId;
+  QString m_filePath;
 
   QVariantList m_players;
   int m_winningPlayerIndex;

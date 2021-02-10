@@ -65,6 +65,15 @@ App {
         StatisticsPage { }
       }
     }
+
+    NavigationItem {
+      title: "Browser"
+      icon: IconType.list
+
+      NavigationStack {
+        ReplayListPage { }
+      }
+    }
   }
 
   function showFilteringPage() {

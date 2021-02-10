@@ -11,7 +11,7 @@ SlippiReplay::~SlippiReplay() {
  // qDebug() << "Replay destruction";
 }
 
-void SlippiReplay::fromAnalysis(slip::Analysis *analysis) {
+void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysis) {
   if(analysis == nullptr) {
     return;
   }
@@ -20,6 +20,7 @@ void SlippiReplay::fromAnalysis(slip::Analysis *analysis) {
   m_stageId = analysis->stage_id;
   m_gameDuration = analysis->game_length;
   m_winningPlayerIndex = analysis->winner_port;
+  m_filePath = filePath;
 
   // compute pseudo-unique hash for game
   qint64 uniqueId = 0;

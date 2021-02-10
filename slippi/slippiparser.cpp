@@ -74,7 +74,7 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
     parser.load(filePath.toLocal8Bit().data());
     QScopedPointer<slip::Analysis> analysis(parser.analyze());
 
-    replay->fromAnalysis(analysis.data());
+    replay->fromAnalysis(filePath, analysis.data());
 
     emit m_item->replayParsed(filePath, replay);
   }

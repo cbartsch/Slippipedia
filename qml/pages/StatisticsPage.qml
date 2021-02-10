@@ -9,10 +9,6 @@ BasePage {
 
   flickable.contentHeight: content.height
 
-  readonly property real averageGameDuration: dataModel.averageGameDuration
-  readonly property int averageGameDurationMinutes: averageGameDuration / 60 / 60
-  readonly property int averageGameDurationSeconds: averageGameDuration / 60 % 60
-
   Column {
     id: content
     width: parent.width
@@ -42,9 +38,8 @@ BasePage {
 
     AppListItem {
       text: qsTr("Average game time: %1:%2 (%3 frames)")
-        .arg(averageGameDurationMinutes)
-        .arg(averageGameDurationSeconds)
-        .arg(averageGameDuration.toFixed(0))
+        .arg(dataModel.formatTime(dataModel.averageGameDuration))
+        .arg(dataModel.averageGameDuration.toFixed(0))
 
       backgroundColor: Theme.backgroundColor
       enabled: false
