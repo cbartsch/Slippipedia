@@ -5,6 +5,8 @@ import Felgo 3.0
 Item {
   id: dataBase
 
+  property var debugLog: false
+
   // db
   property var db: null
 
@@ -40,6 +42,10 @@ isWinner bool,
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
     )")
+
+    tx.executeSql("create index if not exists char_index on players(charId)")
+    tx.executeSql("create index if not exists stage_index on replays(stageId)")
+    tx.executeSql("create index if not exists player_replay_index on players(replayId)")
 
     // can only configure this globally, set like to be case sensitive:
     tx.executeSql("pragma case_sensitive_like = true")
@@ -90,6 +96,8 @@ foreign key(replayId) references replays(id)
   }
 
   function readFromDb(callback, defaultValue) {
+    var time = new Date().getTime()
+
     var res = defaultValue
 
     db.readTransaction(function(tx) {
@@ -102,6 +110,12 @@ foreign key(replayId) references replays(id)
         console.warn("DB error", ex)
       }
     })
+
+    var tDiff = new Date().getTime() - time
+
+    if(tDiff > 20) {
+      log("Read from DB took", tDiff, "ms")
+    }
 
     return res
   }
@@ -138,7 +152,6 @@ foreign key(replayId) references replays(id)
       return "true"
     }
   }
-
 
   function getCharFilterCondition(charId) {
     if(charId >= 0) {
@@ -211,6 +224,8 @@ foreign key(replayId) references replays(id)
   }
 
   function getNumReplaysFiltered() {
+    log("get num replays")
+
     return readFromDb(function(tx) {
       var sql = "select count(distinct replayId) c from replays r
 join players p on p.replayId = r.id
@@ -227,6 +242,8 @@ where " + getFilterCondition()
   }
 
   function getNumReplaysFilteredWithResult() {
+    log("get num filtered")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(distinct replayId) c from replays r
 join players p on p.replayId = r.id
@@ -237,6 +254,8 @@ join players p on p.replayId = r.id
   }
 
   function getNumReplaysFilteredWon() {
+    log("get num replays won")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(distinct replayId) c from replays r
  join players p on p.replayId = r.id
@@ -247,6 +266,8 @@ where p.isWinner and " + getFilterCondition(), getFilterParams())
   }
 
   function getNumReplaysFilteredWithCharacter(charId) {
+    log("get num with char")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(distinct replayId) c from replays r
  join players p on p.replayId = r.id
@@ -257,6 +278,8 @@ where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams
   }
 
   function getAverageGameDuration() {
+    log("get avg duration")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql("select avg(duration) d from Replays")
 
@@ -265,6 +288,8 @@ where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams
   }
 
   function getStageAmount(stageId) {
+    log("get stage amount")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql("select count(distinct replayId) c from Replays r
 join Players p on p.replayId = r.id
@@ -276,6 +301,8 @@ where stageId = ? and " + getFilterCondition(),
   }
 
   function getOtherStageAmount() {
+    log("get other stage amount")
+
     return readFromDb(function(tx) {
       var results = tx.executeSql(qsTr("select count(distinct replayId) c from Replays r
 join Players p on p.replayId = r.id
@@ -288,6 +315,8 @@ where stageId not in (%1) and " + getFilterCondition())
   }
 
   function getTopPlayerTags(max) {
+    log("get top tags")
+
     return readFromDb(function(tx) {
       var sql = "select slippiName, count(distinct replayId) c from players p
 join replays r on p.replayId = r.id
@@ -314,6 +343,8 @@ limit ?"
   }
 
   function getCharacterStats() {
+    log("get char stats")
+
     return readFromDb(function(tx) {
       var sql = "select charId, count(distinct replayId) c from players p
 join replays r on p.replayId = r.id
@@ -341,7 +372,47 @@ order by c desc"
     }, [])
   }
 
+  function getStageStats() {
+    log("get stage stats")
+
+    return readFromDb(function(tx) {
+      var sql = "select stageId, count(distinct replayId) c from players p
+join replays r on p.replayId = r.id
+where " + getFilterCondition() + "
+group by stageId
+order by c desc"
+
+      var params = getFilterParams()
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i)
+
+        var data = MeleeData.stageMap[row.stageId]
+
+        if(!data) {
+          // do not include unknown stages
+          continue
+        }
+
+        result.push({
+                      id: row.stageId,
+                      count: row.c,
+                      name: data.name || "Unknown",
+                      shortName: data.shortName || "Unknown"
+                    })
+      }
+
+      return result
+    }, [])
+  }
+
   function getReplayList(max, start) {
+    log("get list")
+
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration,
@@ -397,5 +468,11 @@ limit ? offset ?"
   // make SQL wildcard if filter.matchPartial is true
   function mw(filter) {
     return filter.matchPartial ? "%" + filter.filterText + "%" : filter.filterText
+  }
+
+  function log() {
+    if(debugLog) {
+      console.log(...arguments)
+    }
   }
 }

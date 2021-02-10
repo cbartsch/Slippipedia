@@ -30,6 +30,7 @@ Grid {
       sourceModel: JsonListModel {
         source: dataModel.charData
         keyField: "id"
+        fields: ["id", "count", "name"]
       }
     }
 

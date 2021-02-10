@@ -4,24 +4,42 @@ import Felgo 3.0
 import "../model"
 
 Column {
+  id: stageGrid
   signal stageSelected(int stageId, bool isSelected)
 
   property int stageId
   property bool highlightFilteredStage: true
 
   Grid {
-    id: stageGrid
+    id: stageGridLayout
     columns: width <= dp(320) ? 2 : width <= dp(640) ? 3 : 6
     width: parent.width
 
     Repeater {
-      model: MeleeData.stageData
+      model: SortFilterProxyModel {
+        filters: ExpressionFilter {
+          expression: count > 0
+        }
+
+        sorters: [
+          RoleSorter {
+            roleName: "count"
+            ascendingOrder: false
+          }
+        ]
+
+        sourceModel: JsonListModel {
+          source: dataModel.stageData
+          keyField: "id"
+          fields: ["id", "count", "name", "shortName"]
+        }
+      }
 
       Rectangle {
         id: stageItem
-        readonly property bool isSelected: highlightFilteredStage && stageId === modelData.id
+        readonly property bool isSelected: highlightFilteredStage && stageId === id
 
-        width: parent.width / stageGrid.columns
+        width: parent.width / stageGridLayout.columns
         height: dp(72)
         color: !enabled
                ? Theme.backgroundColor
@@ -31,7 +49,7 @@ Column {
 
         RippleMouseArea {
           anchors.fill: parent
-          onClicked: stageSelected(modelData.id, stageItem.isSelected)
+          onClicked: stageSelected(id, stageItem.isSelected)
 
           Column {
             width: parent.width
@@ -42,7 +60,7 @@ Column {
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
               font.pixelSize: sp(20)
-              text: modelData.shortName
+              text: shortName
             }
 
             AppText {
@@ -50,8 +68,8 @@ Column {
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
               text: qsTr("%2 games\n(%3)")
-              .arg(dataModel.getStageAmount(modelData.id, dataModel.dbUpdater))
-              .arg(dataModel.formatPercentage(dataModel.getStageAmount(modelData.id) / dataModel.totalReplaysFiltered))
+              .arg(count)
+              .arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
             }
           }
         }

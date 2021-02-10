@@ -37,6 +37,7 @@ Item {
   readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
 
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
+  readonly property var stageData: dataBase.getStageStats(dbUpdater)
 
   // filtering settings
   property TextFilter filterSlippiCode: TextFilter {
@@ -53,7 +54,6 @@ Item {
   property alias filterCharId: settings.charId
 
   onFilterCodeAndNameChanged: filterChanged()
-  onFilterStageIdChanged: filterChanged()
   onFilterCharIdChanged: filterChanged()
 
   signal filterChanged
