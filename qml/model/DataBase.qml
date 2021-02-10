@@ -39,6 +39,9 @@ isWinner bool,
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
     )")
+
+    // can only configure this globally, set like to be case sensitive:
+    tx.executeSql("pragma case_sensitive_like = true")
   }
 
   function clearAllData() {
@@ -101,26 +104,21 @@ foreign key(replayId) references replays(id)
     return res
   }
 
-  function getPlayerFilterCondition(slippiCode, slippiName) {
-    var codeFilter = qsTr("p.slippiCode %1 ? %2")
-      .arg(slippiCode.matchPartial ? "like" : "=")
-      .arg(slippiCode.matchCase ? "" : "collate nocase")
+  function getPlayerFilterCondition(codeFilter, nameFilter) {
+    var cf = makeFilterCondition("p.slippiCode", codeFilter)
+    var nf = makeFilterCondition("p.slippiName", nameFilter)
 
-    var nameFilter = qsTr("p.slippiName %1 ? %2")
-      .arg(slippiName.matchPartial ? "like" : "=")
-      .arg(slippiName.matchCase ? "" : "collate nocase")
-
-    if(slippiCode.filterText && slippiName.filterText) {
+    if(codeFilter.filterText && nameFilter.filterText) {
       return qsTr("(%1 %2 %3)")
-        .arg(codeFilter)
+        .arg(cf)
         .arg(filterCodeAndName ? "and" : "or")
-        .arg(nameFilter)
+        .arg(nf)
     }
-    else if(slippiCode.filterText) {
-      return qsTr("(%1)").arg(codeFilter)
+    else if(codeFilter.filterText) {
+      return qsTr("(%1)").arg(cf)
     }
-    else if(slippiName.filterText) {
-      return qsTr("(%1)").arg(nameFilter)
+    else if(nameFilter.filterText) {
+      return qsTr("(%1)").arg(nf)
     }
     else {
       return "true"
@@ -319,6 +317,25 @@ order by c desc"
   }
 
   // utils
+
+  function makeFilterCondition(colName, filter) {
+    if(filter.matchPartial && filter.matchCase) {
+      // case sensitive wildcard (case sensitive like must be ON)
+      return colName + " like ?"
+    }
+    else if(filter.matchPartial) {
+      // case insensitive wildcard
+      return qsTr("upper(%1) like upper(?)").arg(colName)
+    }
+    else if(filter.matchCase) {
+      // case sensitive comparison
+      return colName + " = ?"
+    }
+    else {
+      // case insensitive comparison
+      return colName + " = ? collate nocase"
+    }
+  }
 
   // make SQL wildcard if filter.matchPartial is true
   function mw(filter) {
