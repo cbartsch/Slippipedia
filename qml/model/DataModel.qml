@@ -24,9 +24,9 @@ Item {
 
   // stats
   readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
-  readonly property int totalReplaysFiltered: dataBase.getNumReplaysFiltered(dbUpdater, slippiCode, slippiName, stageId)
-  readonly property int totalReplaysFilteredWithResult: dataBase.getNumReplaysFilteredWithResult(dbUpdater, slippiCode, slippiName, stageId)
-  readonly property int totalReplaysFilteredWon: dataBase.getNumReplaysFilteredWon(dbUpdater, slippiCode, slippiName, stageId)
+  readonly property int totalReplaysFiltered: dataBase.getNumReplaysFiltered(dbUpdater)
+  readonly property int totalReplaysFilteredWithResult: dataBase.getNumReplaysFilteredWithResult(dbUpdater)
+  readonly property int totalReplaysFilteredWon: dataBase.getNumReplaysFilteredWon(dbUpdater)
   readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
 
   readonly property real tieRate: dataModel.totalReplaysFilteredWithTie / dataModel.totalReplaysFiltered
@@ -36,35 +36,35 @@ Item {
 
   readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
 
-  // TODO: refactor to use only one DB access with group by
-  readonly property var charData: {
-    var time = new Date().getTime()
-    var data = dataBase.getCharacterStats(dbUpdater)
-    console.log("cd took", (new Date().getTime() - time), "ms")
-    return data
-  }
+  readonly property var charData: dataBase.getCharacterStats(dbUpdater)
 
   // filtering settings
-  property alias slippiCode: settings.slippiCode
-  property alias slippiName: settings.slippiName
-  readonly property bool hasSlippiCode: slippiCode != "" || slippiName != ""
-  property alias stageId: settings.stageId // -1 = "other" stages
+  property alias filterSlippiCode: settings.slippiCode
+  property alias filterSlippiName: settings.slippiName
+  property alias filterCodeAndName: settings.filterCodeAndName
+  readonly property bool hasPlayerFilter: filterSlippiCode != "" || filterSlippiName != ""
+  property alias filterStageId: settings.stageId
+
+  onFilterSlippiCodeChanged: dbUpdaterChanged()
+  onFilterSlippiNameChanged: dbUpdaterChanged()
+  onFilterCodeAndNameChanged: dbUpdaterChanged()
+  onFilterStageIdChanged: dbUpdaterChanged()
 
   readonly property string filterDisplayText: {
     var pText
-    if(slippiCode && slippiName) {
-      pText = qsTr("%1/%2").arg(slippiCode).arg(slippiName)
+    if(filterSlippiCode && filterSlippiName) {
+      pText = qsTr("%1/%2").arg(filterSlippiCode).arg(filterSlippiName)
     }
     else {
-      pText = slippiCode || slippiName || ""
+      pText = filterSlippiCode || filterSlippiName || ""
     }
 
     var sText
-    if(stageId < 0) {
+    if(filterStageId < 0) {
       sText = "Other stage"
     }
-    else if(stageId > 0) {
-      sText = "Stage: " + MeleeData.stageMap[stageId].name
+    else if(filterStageId > 0) {
+      sText = "Stage: " + MeleeData.stageMap[filterStageId].name
     }
 
     return sText && pText ? (pText + ", " + sText) : sText || pText || "(nothing)"
@@ -79,10 +79,11 @@ Item {
   Settings {
     id: settings
 
-    property string replayFolder
-    property string slippiCode
-    property string slippiName
-    property int stageId
+    property string replayFolder: ""
+    property string slippiCode: ""
+    property string slippiName: ""
+    property bool filterCodeAndName: false // true: and, false: or
+    property int stageId: 0 // 0 = no filter, -1 = "other" stages
   }
 
   SlippiParser {

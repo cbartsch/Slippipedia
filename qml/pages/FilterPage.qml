@@ -1,7 +1,9 @@
 import Felgo 3.0
 
 import QtQuick 2.0
+import QtQuick.Controls 2.12 as QC2
 
+import "../controls"
 import "../model"
 
 BasePage {
@@ -41,59 +43,69 @@ BasePage {
       enabled: false
     }
 
-    Rectangle {
-      anchors.left: parent.left
-      anchors.right: parent.right
-      height: dp(48)
-      color: Theme.controlBackgroundColor
+    TextInputField {
+      text: dataModel.filterSlippiCode
+      labelText: "Slippi code:"
+      placeholderText: "Enter Slippi code..."
 
-      AppTextInput {
-        anchors.fill: parent
-        anchors.leftMargin: dp(Theme.contentPadding)
-        anchors.rightMargin: dp(Theme.contentPadding)
-        color: Theme.textColor
-
-        text: dataModel.slippiCode
-        placeholderText: "Enter Slippi code..."
-
-        onTextChanged: dataModel.slippiCode = text
-        onAccepted: dataModel.slippiCode = text
-      }
-
-      Rectangle {
-        width: parent.width
-        height: dp(1)
-        anchors.bottom: parent.bottom
-        color: Theme.dividerColor
-      }
+      onTextChanged: dataModel.filterSlippiCode = text
     }
 
+    TextInputField {
+      text: dataModel.filterSlippiName
+      labelText: "Slippi name:"
+      placeholderText: "Enter Slippi name..."
+
+      onTextChanged: dataModel.filterSlippiName = text
+    }
 
     Rectangle {
-      anchors.left: parent.left
-      anchors.right: parent.right
-      height: dp(48)
+      width: parent.width
+      height: radioRow.height
       color: Theme.controlBackgroundColor
 
-      AppTextInput {
-        anchors.fill: parent
-        anchors.leftMargin: dp(Theme.contentPadding)
-        anchors.rightMargin: dp(Theme.contentPadding)
-        color: Theme.textColor
+      Flow {
+        id: radioRow
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: dp(Theme.contentPadding)
 
-        text: dataModel.slippiName
-        placeholderText: "Enter Slippi name..."
+        AppText {
+          width: dp(120)
+          height: dp(48)
+          verticalAlignment: Text.AlignVCenter
+          text: "Match mode:"
+        }
 
-        onTextChanged: dataModel.slippiName = text
-        onAccepted: dataModel.slippiName = text
+        QC2.ButtonGroup {
+          id: rbgMatchType
+          buttons: [radioMatchAnd, radioMatchOr]
+
+          onCheckedButtonChanged: dataModel.filterCodeAndName = radioMatchAnd.checked
+        }
+
+        AppRadio {
+          id: radioMatchOr
+          text: "Match either code or tag"
+          checked: !dataModel.filterCodeAndName
+          height: dp(48)
+        }
+
+        Item {
+          // space
+          width: dp(Theme.contentPadding)
+          height: 1
+        }
+
+        AppRadio {
+          id: radioMatchAnd
+          checked: dataModel.filterCodeAndName
+          text: "Match both code and tag"
+          height: dp(48)
+        }
       }
 
-      Rectangle {
-        width: parent.width
-        height: dp(1)
-        anchors.bottom: parent.bottom
-        color: Theme.dividerColor
-      }
+      Divider { }
     }
 
 //    SimpleSection {
@@ -126,72 +138,10 @@ BasePage {
       enabled: false
     }
 
-    Grid {
-      columns: 3
+    StageGrid {
       width: parent.width
 
-      Repeater {
-        model: MeleeData.stageData
-
-        Rectangle {
-          readonly property bool isSelected: dataModel.stageId === modelData.id
-
-          width: parent.width / 3
-          height: dp(72)
-          color: isSelected ? Theme.selectedBackgroundColor : Theme.controlBackgroundColor
-
-          RippleMouseArea {
-            anchors.fill: parent
-            onClicked: dataModel.stageId = isSelected ? 0 : modelData.id
-
-            Column {
-              width: parent.width
-              anchors.verticalCenter: parent.verticalCenter
-
-              AppText {
-                enabled: false
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                font.pixelSize: sp(20)
-                text: modelData.shortName
-              }
-
-              AppText {
-                enabled: false
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                text: qsTr("%2 games\n(%3)")
-                .arg(dataModel.getStageAmount(modelData.id))
-                .arg(dataModel.formatPercentage(dataModel.getStageAmount(modelData.id) / dataModel.totalReplays))
-              }
-            }
-          }
-        }
-      }
-    }
-
-    Rectangle {
-      readonly property bool isSelected: dataModel.stageId < 0
-
-      width: parent.width
-      height: dp(48)
-      color: isSelected ? Theme.selectedBackgroundColor : Theme.controlBackgroundColor
-
-      RippleMouseArea {
-        anchors.fill: parent
-
-        onClicked: dataModel.stageId = parent.isSelected ? 0 : -1
-
-        AppText {
-          anchors.fill: parent
-          verticalAlignment: Text.AlignVCenter
-          horizontalAlignment: Text.AlignHCenter
-          text: qsTr("Other (%2)")
-          .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
-          ? dataModel.otherStageAmount / dataModel.totalReplays
-          : 0))
-        }
-      }
+      onStageSelected: dataModel.filterStageId = isSelected ? 0 : stageId
     }
   }
 }

@@ -103,7 +103,8 @@ foreign key(replayId) references replays(id)
 
   function getPlayerFilterCondition(slippiCode, slippiName) {
     if(slippiCode && slippiName) {
-      return "(p.slippiCode like ? collate nocase or p.slippiName like ? collate nocase)"
+      return qsTr("(p.slippiCode like ? collate nocase %1 p.slippiName like ? collate nocase)")
+        .arg(filterCodeAndName ? "and" : "or")
     }
     else if(slippiCode) {
       return "(p.slippiCode like ? collate nocase)"
@@ -118,7 +119,7 @@ foreign key(replayId) references replays(id)
 
   function getStageFilterCondition(stageId) {
     if(stageId < 0) {
-      return "(r.stageId not in (%1))".arg(stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
+      return "(r.stageId not in (%1))".arg(MeleeData.stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
     }
     else if(stageId > 0) {
       return "(r.stageId = ?)"
@@ -130,8 +131,8 @@ foreign key(replayId) references replays(id)
 
   function getFilterCondition() {
     return "(" +
-        getPlayerFilterCondition(slippiCode, slippiName) +
-        " and " + getStageFilterCondition(stageId) +
+        getPlayerFilterCondition(filterSlippiCode, filterSlippiName) +
+        " and " + getStageFilterCondition(filterStageId) +
         ")"
   }
 
@@ -152,7 +153,7 @@ foreign key(replayId) references replays(id)
 
   function getStageFilterParams(stageId) {
     if(stageId < 0) {
-      return stageIds
+      return MeleeData.stageIds
     }
     else if(stageId > 0) {
       return [stageId]
@@ -163,7 +164,8 @@ foreign key(replayId) references replays(id)
   }
 
   function getFilterParams() {
-    return getPlayerFilterParams(slippiCode, slippiName).concat(getStageFilterParams(stageId))
+    return getPlayerFilterParams(filterSlippiCode, filterSlippiName)
+      .concat(getStageFilterParams(filterStageId))
   }
 
   function getNumReplays() {
@@ -226,7 +228,10 @@ where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams
 
   function getStageAmount(stageId) {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from Replays where stageId = ?", [stageId])
+      var results = tx.executeSql("select count(distinct replayId) c from Replays r
+join Players p on p.replayId = r.id
+where stageId = ? and " + getFilterCondition(),
+                                  [stageId].concat(getFilterParams()))
 
       return results.rows.item(0).c
     }, 0)
@@ -234,9 +239,11 @@ where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams
 
   function getOtherStageAmount() {
     return readFromDb(function(tx) {
-      var results = tx.executeSql(qsTr("select count(*) c from Replays where stageId not in (%1)")
+      var results = tx.executeSql(qsTr("select count(distinct replayId) c from Replays r
+join Players p on p.replayId = r.id
+where stageId not in (%1) and " + getFilterCondition())
                                   .arg(MeleeData.stageIds.map(_ => "?").join(",")), // add one question mark placeholder per argument
-                                  stageIds)
+                                  MeleeData.stageIds.concat(getFilterParams()))
 
       return results.rows.item(0).c
     }, 0)

@@ -2,6 +2,8 @@ import Felgo 3.0
 
 import QtQuick 2.0
 
+import "../controls"
+
 BasePage {
   title: qsTr("Replay statistics")
 
@@ -170,6 +172,17 @@ BasePage {
           }
         }
       }
+    }
+
+    SimpleSection {
+      title: "Top stages"
+    }
+
+    StageGrid {
+      width: parent.width
+
+      enabled: false
+      highlightFilteredStage: false
     }
   }
 }
