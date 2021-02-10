@@ -39,16 +39,23 @@ Item {
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
 
   // filtering settings
-  property TextFilter filterSlippiCode: TextFilter { id: filterSlippiCode }
-  property TextFilter filterSlippiName: TextFilter { id: filterSlippiName }
+  property TextFilter filterSlippiCode: TextFilter {
+    id: filterSlippiCode
+    onPropertyChanged: filterChanged()
+  }
+  property TextFilter filterSlippiName: TextFilter {
+    id: filterSlippiName
+    onPropertyChanged: filterChanged()
+  }
   property alias filterCodeAndName: settings.filterCodeAndName
   readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
   property alias filterStageId: settings.stageId
 
-  onFilterSlippiCodeChanged: dbUpdaterChanged()
-  onFilterSlippiNameChanged: dbUpdaterChanged()
-  onFilterCodeAndNameChanged: dbUpdaterChanged()
-  onFilterStageIdChanged: dbUpdaterChanged()
+  onFilterCodeAndNameChanged: filterChanged()
+  onFilterStageIdChanged: filterChanged()
+
+  signal filterChanged
+  onFilterChanged: dbUpdaterChanged()
 
   readonly property string filterDisplayText: {
     var pText

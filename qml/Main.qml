@@ -70,6 +70,9 @@ App {
       title: "Browser"
       icon: IconType.list
 
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
       NavigationStack {
         ReplayListPage { }
       }

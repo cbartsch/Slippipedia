@@ -3,6 +3,10 @@ import Felgo 3.0
 import QtQuick 2.0
 
 FlickablePage {
+  id: basePage
+
+  signal selected
+
   rightBarItem: IconButtonBarItem {
     icon: IconType.refresh
     visible: dataModel.isProcessing

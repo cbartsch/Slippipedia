@@ -321,23 +321,23 @@ order by c desc"
   function getReplayList(max, start) {
     return readFromDb(function(tx) {
       var sql = "select
-r.date date, r.filePath filePath, r.duration duration,
-p1.slippiName name1, p1.slippiCode code1, p1.charId char1, p1.endStocks endStocks1,
+r.id id, r.date date, r.filePath filePath, r.duration duration,
+p.slippiName name1, p.slippiCode code1, p.charId char1, p.endStocks endStocks1,
 p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.endStocks endStocks2
 from replays r
-join players p1 on p1.replayId = r.id
+join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
-where p1.port != p2.port
+where p.port != p2.port and " + getFilterCondition() + "
 group by r.id
 order by r.date desc
 limit ? offset ?"
 
-      //var params = getFilterParams().concat([max])
-      var params = [max, start]
+      var params = getFilterParams().concat([max, start])
 
       var results = tx.executeSql(sql, params)
 
       var result = []
+
       for (var i = 0; i < results.rows.length; i++) {
         var item = results.rows.item(i)
 

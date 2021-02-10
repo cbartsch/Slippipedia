@@ -11,7 +11,17 @@ BasePage {
 
   property int numReplays: 25
 
-  property var replayList: dataModel.getReplayList(numReplays, 0)
+  property var replayList: []
+
+  Connections {
+    target: dataModel
+
+    // reset list when filter changes
+    onFilterChanged: replayList = []
+  }
+
+  // load first page when showing this page
+  onSelected: loadMore()
 
   AppListView {
     id: listView
@@ -19,6 +29,7 @@ BasePage {
     model: JsonListModel {
       id: listModel
       source: replayList
+      keyField: "id"
     }
 
     delegate: ReplayListItem { }
