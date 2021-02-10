@@ -50,9 +50,11 @@ Item {
   property alias filterCodeAndName: settings.filterCodeAndName
   readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
   property alias filterStageId: settings.stageId
+  property alias filterCharId: settings.charId
 
   onFilterCodeAndNameChanged: filterChanged()
   onFilterStageIdChanged: filterChanged()
+  onFilterCharIdChanged: filterChanged()
 
   signal filterChanged
   onFilterChanged: dbUpdaterChanged()
@@ -90,14 +92,19 @@ Item {
     id: settings
 
     property string replayFolder: ""
+
     property alias slippiCodeText: filterSlippiCode.filterText
     property alias slippiCodeCase: filterSlippiCode.matchCase
     property alias slippiCodePartial: filterSlippiCode.matchPartial
+
     property alias slippiNameText: filterSlippiName.filterText
     property alias slippiNameCase: filterSlippiName.matchCase
     property alias slippiNamePartial: filterSlippiName.matchPartial
+
     property bool filterCodeAndName: false // true: and, false: or
-    property int stageId: 0 // 0 = no filter, -1 = "other" stages
+
+    property int stageId: 0 // -1 = no filter, 0 = "other" stages
+    property int charId: -1 // -1 = no filter (0 is already a char ID)
   }
 
   SlippiParser {
@@ -155,12 +162,19 @@ Item {
     return dataBase.getReplayList(max, start)
   }
 
+  function resetFilters() {
+    filterStageId = -1
+    filterCharId = -1
+    filterSlippiCode.reset()
+    filterSlippiName.reset()
+  }
+
   // utils
 
   function formatPercentage(amount) {
     return amount > 1
         ? "100%"
-        : amount <= 0
+        : amount <= 0 || amount !== amount
           ? "0%"
           : qsTr("%1%").arg((amount * 100).toFixed(2))
   }

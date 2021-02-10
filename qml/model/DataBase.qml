@@ -128,7 +128,7 @@ foreign key(replayId) references replays(id)
   }
 
   function getStageFilterCondition(stageId) {
-    if(stageId < 0) {
+    if(stageId === 0) {
       return "(r.stageId not in (%1))".arg(MeleeData.stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
     }
     else if(stageId > 0) {
@@ -139,10 +139,21 @@ foreign key(replayId) references replays(id)
     }
   }
 
+
+  function getCharFilterCondition(charId) {
+    if(charId >= 0) {
+      return "(p.charId = ?)"
+    }
+    else {
+      return "true"
+    }
+  }
+
   function getFilterCondition() {
     return "(" +
         getPlayerFilterCondition(filterSlippiCode, filterSlippiName) +
         " and " + getStageFilterCondition(filterStageId) +
+        " and " + getCharFilterCondition(filterCharId) +
         ")"
   }
 
@@ -165,7 +176,7 @@ foreign key(replayId) references replays(id)
   }
 
   function getStageFilterParams(stageId) {
-    if(stageId < 0) {
+    if(stageId === 0) {
       return MeleeData.stageIds
     }
     else if(stageId > 0) {
@@ -176,9 +187,19 @@ foreign key(replayId) references replays(id)
     }
   }
 
+  function getCharFilterParams(charId) {
+    if(charId >= 0) {
+      return [charId]
+    }
+    else {
+      return []
+    }
+  }
+
   function getFilterParams() {
     return getPlayerFilterParams(filterSlippiCode, filterSlippiName)
       .concat(getStageFilterParams(filterStageId))
+      .concat(getCharFilterParams(filterCharId))
   }
 
   function getNumReplays() {
@@ -195,9 +216,11 @@ foreign key(replayId) references replays(id)
 join players p on p.replayId = r.id
 where " + getFilterCondition()
 
-      // console.log("get filtered replays with sql", sql, getFilterParams())
+      //console.log("get filtered replays with sql", sql, getFilterParams())
 
       var results = tx.executeSql(sql, getFilterParams())
+
+      //console.log("count", results.rows.item(0).c)
 
       return results.rows.item(0).c
     }, 0)

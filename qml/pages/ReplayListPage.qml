@@ -21,10 +21,18 @@ BasePage {
   }
 
   // load first page when showing this page
-  onSelected: loadMore()
+  onSelected: if(replayList.length == 0) loadMore()
 
   AppListView {
     id: listView
+
+    add: Transition {
+      PropertyAnimation {
+        property: "opacity"
+        from: 0
+        to: 1
+      }
+    }
 
     model: JsonListModel {
       id: listModel

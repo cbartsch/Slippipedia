@@ -6,6 +6,7 @@ import "../model"
 Column {
   signal stageSelected(int stageId, bool isSelected)
 
+  property int stageId
   property bool highlightFilteredStage: true
 
   Grid {
@@ -18,7 +19,7 @@ Column {
 
       Rectangle {
         id: stageItem
-        readonly property bool isSelected: highlightFilteredStage && dataModel.filterStageId === modelData.id
+        readonly property bool isSelected: highlightFilteredStage && stageId === modelData.id
 
         width: parent.width / stageGrid.columns
         height: dp(72)
@@ -62,7 +63,7 @@ Column {
 
   Rectangle {
     id: otherItem
-    readonly property bool isSelected: highlightFilteredStage && dataModel.filterStageId < 0
+    readonly property bool isSelected: highlightFilteredStage && stageId === 0
 
     width: parent.width
     height: dp(48)
@@ -75,7 +76,7 @@ Column {
     RippleMouseArea {
       anchors.fill: parent
 
-      onClicked: stageSelected(-1, otherItem.isSelected)
+      onClicked: stageSelected(0, otherItem.isSelected)
 
       AppText {
         anchors.fill: parent

@@ -71,60 +71,10 @@ BasePage {
       title: "Top chars used"
     }
 
-    Grid {
-      columns: Math.round(width / dp(200))
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.margins: dp(Theme.contentPadding)
-      spacing: dp(Theme.contentPadding) / 2
-
-      Repeater {
-        model: SortFilterProxyModel {
-
-          filters: [
-            ExpressionFilter {
-              expression: count > 0
-            }
-          ]
-
-          sorters: [
-            RoleSorter {
-              roleName: "count"
-              ascendingOrder: false
-            }
-          ]
-
-          sourceModel: JsonListModel {
-            source: dataModel.charData
-            keyField: "id"
-          }
-        }
-
-        Item {
-          visible: id < 26 // ids 0-25 are the useabls characters
-          width: parent.width / parent.columns
-          height: dp(48)
-
-          Column {
-            width: parent.width
-            anchors.verticalCenter: parent.verticalCenter
-
-            AppText {
-              width: parent.width
-              text: name
-              maximumLineCount: 1
-              elide: Text.ElideRight
-              font.pixelSize: sp(20)
-            }
-            AppText {
-              width: parent.width
-              text: qsTr("%1 (%2)").arg(count).arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
-              maximumLineCount: 1
-              elide: Text.ElideRight
-            }
-          }
-        }
-      }
+    CharacterGrid {
+      charId: dataModel.filterCharId
+      enabled: false
+      highlightFilteredChar: false
     }
 
     SimpleSection {
@@ -132,7 +82,7 @@ BasePage {
     }
 
     Grid {
-      id: charGrid
+      id: nameGrid
       columns: Math.round(width / dp(200))
       anchors.left: parent.left
       anchors.right: parent.right
@@ -141,7 +91,7 @@ BasePage {
       rowSpacing: dp(1)
 
       Repeater {
-        model: dataModel.getTopPlayerTags(charGrid.columns * 5)
+        model: dataModel.getTopPlayerTags(nameGrid.columns * 5)
 
         Item {
           width: parent.width / parent.columns
@@ -176,6 +126,7 @@ BasePage {
     StageGrid {
       width: parent.width
 
+      stageId: dataModel.filterStageId
       enabled: false
       highlightFilteredStage: false
     }

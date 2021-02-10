@@ -1,7 +1,7 @@
 import Felgo 3.0
 
 import QtQuick 2.0
-import QtQuick.Controls 2.12 as QC2
+import QtQuick.Controls 2.12
 
 import "../controls"
 import "../model"
@@ -28,7 +28,13 @@ BasePage {
       detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
 
       backgroundColor: Theme.backgroundColor
-      enabled: false
+      mouseArea.enabled: false
+
+      rightItem: AppToolButton {
+        iconType: IconType.trash
+        onClicked: dataModel.resetFilters()
+        toolTipText: "Reset all filters"
+      }
     }
 
     SimpleSection {
@@ -87,7 +93,7 @@ BasePage {
           text: "Match mode:"
         }
 
-        QC2.ButtonGroup {
+        ButtonGroup {
           id: rbgMatchType
           buttons: [radioMatchAnd, radioMatchOr]
 
@@ -151,7 +157,27 @@ BasePage {
     StageGrid {
       width: parent.width
 
-      onStageSelected: dataModel.filterStageId = isSelected ? 0 : stageId
+      stageId: dataModel.filterStageId
+      onStageSelected: dataModel.filterStageId = isSelected ? -1 : stageId
+    }
+
+    SimpleSection {
+      title: "Character matching"
+    }
+
+    AppListItem {
+      text: "Filter by specific character"
+      detailText: "Select a character to find replays using that character. Click again to unselect."
+
+      backgroundColor: Theme.backgroundColor
+      enabled: false
+    }
+
+    CharacterGrid {
+      width: parent.width
+
+      charId: dataModel.filterCharId
+      onCharSelected: dataModel.filterCharId = isSelected ? -1 : charId
     }
   }
 }
