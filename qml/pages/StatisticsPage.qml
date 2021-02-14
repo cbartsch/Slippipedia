@@ -80,9 +80,25 @@ BasePage {
       enabled: false
       highlightFilteredChar: false
       showData: true
-      showIcon: false
-      sortByCssPosition: false
-      hideCharsWithNoReplays: true
+      showIcon: true
+      sortByCssPosition: true
+      hideCharsWithNoReplays: false
+    }
+
+    SimpleSection {
+      title: "Top stages"
+    }
+
+    StageGrid {
+      width: parent.width
+
+      hideStagesWithNoReplays: true
+      sortByCount: true
+      showIcon: true
+
+      stageIds: dataModel.filterStageIds
+      enabled: false
+      highlightFilteredStage: false
     }
 
     SimpleSection {
@@ -125,21 +141,6 @@ BasePage {
           }
         }
       }
-    }
-
-    SimpleSection {
-      title: "Top stages"
-    }
-
-    StageGrid {
-      width: parent.width
-
-      hideStagesWithNoReplays: true
-      sortByCount: true
-
-      stageIds: dataModel.filterStageIds
-      enabled: false
-      highlightFilteredStage: false
     }
   }
 }

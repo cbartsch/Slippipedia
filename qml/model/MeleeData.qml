@@ -6,15 +6,15 @@ Item {
 
   // data structs
 
-  // stages
+  // stages. sssIndex = index on a 9x3 grid on stage select screen
   readonly property var stageMap: {
-    0: { id: 0, name: "Other stages", shortName: "Other"},
-    32: { id: 32, name: "Final Destination", shortName: "FD" },
-    31: { id: 31, name: "Battlefield", shortName: "BF" },
-    3: { id: 3, name: "Pokémon Stadium", shortName: "PS" },
-    28: { id: 28, name: "Dreamland", shortName: "DL" },
-    2: { id: 2, name: "Fountain of Dreams", shortName: "FoD" },
-    8: { id: 8, name: "Yoshi's Story", shortName: "YS" },
+    0: { id: 0,   name: "Other stages",       shortName: "Other", sssIndex: -1 },
+    32: { id: 32, name: "Final Destination",  shortName: "FD",    sssIndex: 23 },
+    31: { id: 31, name: "Battlefield",        shortName: "BF",    sssIndex: 22  },
+    3: { id: 3,   name: "Pokémon Stadium",    shortName: "PS",    sssIndex: 19  },
+    28: { id: 28, name: "Dreamland",          shortName: "DL",    sssIndex: 1  },
+    2: { id: 2,   name: "Fountain of Dreams", shortName: "FoD",   sssIndex: 9  },
+    8: { id: 8,   name: "Yoshi's Story",      shortName: "YS",    sssIndex: 7  },
   }
   readonly property var stageData: Object.values(stageMap)
   readonly property var stageIds: stageData.map(obj => obj.id)

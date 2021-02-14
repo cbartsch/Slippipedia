@@ -142,10 +142,6 @@ foreign key(replayId) references replays(id)
   }
 
   function getStageFilterCondition(stageIds) {
-//    if(stageId === 0) {
-//      return "(r.stageId not in (%1))".arg(makeWildcards(MeleeData.stageIds)) // add one question mark placeholder per argument
-//    }
-//    else
     if(stageIds && stageIds.length > 0) {
       return "(r.stageId in " + makeInWildcards(stageIds) + ")"
     }
@@ -190,10 +186,6 @@ foreign key(replayId) references replays(id)
   }
 
   function getStageFilterParams(stageIds) {
-//    if(stageId === 0) {
-//      return MeleeData.stageIds
-//    }
-//    else
     if(stageIds && stageIds.length > 0) {
       return stageIds
     }

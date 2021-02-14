@@ -92,21 +92,25 @@ Grid {
 
         charId: id
         visible: showIcon && hasChar
+
+        opacity: showData || (!isSelected && charIds.length > 0) ? 0.5 : 1
       }
 
       Column {
         width: parent.width
         anchors.verticalCenter: parent.verticalCenter
-        visible: showData
+        visible: showData && hasChar
 
-          AppText {
-            width: parent.width
-            text: name
-            maximumLineCount: 1
-            elide: Text.ElideRight
-            font.pixelSize: sp(20)
-            horizontalAlignment: Text.AlignHCenter
-          }
+//          AppText {
+//            width: parent.width
+//            text: name
+//            maximumLineCount: 1
+//            elide: Text.ElideRight
+//            font.pixelSize: sp(20)
+//            horizontalAlignment: Text.AlignHCenter
+//            style: Text.Outline
+//            styleColor: Theme.backgroundColor
+//          }
 
           AppText {
             width: parent.width
@@ -114,6 +118,8 @@ Grid {
             maximumLineCount: 2
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
+            style: Text.Outline
+            styleColor: Theme.backgroundColor
           }
       }
     }

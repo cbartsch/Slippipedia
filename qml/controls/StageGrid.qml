@@ -27,7 +27,16 @@ Column {
 
   Grid {
     id: stageGridLayout
-    columns: width <= dp(320) ? 2 : width <= dp(640) ? 3 : 6
+
+    columns: {
+      if(!showData) {
+        return width <= dp(270) ? 2 : width <= dp(540) ? 3 : 6
+      }
+      else {
+        return width <= dp(320) ? 2 : width <= dp(640) ? 3 : 6
+      }
+    }
+
     width: parent.width
 
     Repeater {
@@ -59,7 +68,18 @@ Column {
           anchors.fill: parent
           onClicked: stageSelected(id, stageItem.isSelected)
 
+          StageIcon {
+            anchors.centerIn: parent
+            scale: parent.height / height
+
+            stageId: id
+            visible: showIcon
+
+            opacity: showData || (!isSelected && stageIds.length > 0) ? 0.5 : 1
+          }
+
           Column {
+            visible: showData
             width: parent.width
             anchors.verticalCenter: parent.verticalCenter
 
@@ -69,16 +89,19 @@ Column {
               horizontalAlignment: Text.AlignHCenter
               font.pixelSize: sp(20)
               text: shortName
+              style: Text.Outline
+              styleColor: Theme.backgroundColor
             }
 
             AppText {
-              visible: showData
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
               text: qsTr("%2 games\n(%3)")
               .arg(count)
               .arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
+              style: Text.Outline
+              styleColor: Theme.backgroundColor
             }
           }
         }
@@ -114,6 +137,8 @@ Column {
         .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
         ? dataModel.otherStageAmount / dataModel.totalReplays
         : 0))
+        style: Text.Outline
+        styleColor: Theme.backgroundColor
       }
     }
 
