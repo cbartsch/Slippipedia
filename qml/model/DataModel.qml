@@ -151,6 +151,10 @@ Item {
     dbUpdaterChanged() // refresh bindings
   }
 
+  function getNewReplays() {
+    return dataBase.getNewReplays(allFiles)
+  }
+
   // stats
 
   function getStageAmount(stageId) {

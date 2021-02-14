@@ -223,6 +223,47 @@ foreign key(replayId) references replays(id)
     }, 0)
   }
 
+  function getNewReplays(fileList) {
+    // find all files in fileList that do not have a replay in the database
+
+    // -> sort fileList, and get sorted file list from DB
+    // then iterate both lists and return all files only contained in the first
+
+    // probably fails if files get renamed or moved
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select filePath from Replays order by filePath")
+
+      fileList.sort()
+
+      var fli = 0
+      var rli = 0
+
+      var newFiles = []
+      while(fli < fileList.length) {
+        var file = fileList[fli]
+        var dbFile = rli < results.rows.length ? results.rows.item(rli).filePath : ""
+
+        if(!dbFile || file < dbFile) {
+          // file is only in fileList
+          newFiles.push(file)
+          fli++
+        }
+        else if(file === dbFile) {
+          // file is in both lists
+          fli++
+          rli++
+        }
+        else {
+          // file is only in DB list
+          rli++
+        }
+      }
+
+      return newFiles
+    }, 0)
+  }
+
   function getNumReplaysFiltered() {
     log("get num replays")
 

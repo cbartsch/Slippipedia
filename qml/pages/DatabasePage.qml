@@ -53,10 +53,30 @@ BasePage {
     }
 
     AppListItem {
-      text: "Analyze " + dataModel.allFiles.length + " replays"
+      text: qsTr("Analyze %1 replays").arg(dataModel.allFiles.length)
+
       visible: !dataModel.isProcessing
 
       onSelected: dataModel.parseReplays(dataModel.allFiles)
+    }
+
+    AppListItem {
+      text: newFiles
+            ? qsTr("Analyze %1 new replays").arg(newFiles.length)
+            : "Scan for new replays"
+
+      visible: !dataModel.isProcessing
+
+      property var newFiles: null
+
+      onSelected: {
+        if(newFiles) {
+          dataModel.parseReplays(newFiles)
+        }
+        else {
+          newFiles = dataModel.getNewReplays()
+        }
+      }
     }
 
     SimpleSection {
