@@ -136,7 +136,7 @@ foreign key(replayId) references replays(id)
     if(codeFilter.filterText && nameFilter.filterText) {
       return qsTr("(%1 %2 %3)")
         .arg(cf)
-        .arg(filterCodeAndName ? "and" : "or")
+        .arg(filter.filterCodeAndName ? "and" : "or")
         .arg(nf)
     }
     else if(codeFilter.filterText) {
@@ -170,9 +170,9 @@ foreign key(replayId) references replays(id)
 
   function getFilterCondition() {
     return "(" +
-        getPlayerFilterCondition(filterSlippiCode, filterSlippiName) +
-        " and " + getStageFilterCondition(filterStageIds) +
-        " and " + getCharFilterCondition(filterCharIds) +
+        getPlayerFilterCondition(filter.slippiCode, filter.slippiName) +
+        " and " + getStageFilterCondition(filter.stageIds) +
+        " and " + getCharFilterCondition(filter.charIds) +
         ")"
   }
 
@@ -213,9 +213,9 @@ foreign key(replayId) references replays(id)
   }
 
   function getFilterParams() {
-    return getPlayerFilterParams(filterSlippiCode, filterSlippiName)
-      .concat(getStageFilterParams(filterStageIds))
-      .concat(getCharFilterParams(filterCharIds))
+    return getPlayerFilterParams(filter.slippiCode, filter.slippiName)
+      .concat(getStageFilterParams(filter.stageIds))
+      .concat(getCharFilterParams(filter.charIds))
   }
 
   function getNumReplays() {

@@ -10,7 +10,7 @@ Item {
   property int dbUpdater: 0
 
   // replay settings
-  property alias replayFolder: settings.replayFolder
+  property alias replayFolder: globalSettings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: dataBase.getNewReplays(allFiles)
 
@@ -22,6 +22,9 @@ Item {
   readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
   readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
+
+  // filter settings
+  property alias filter: filter
 
   // stats
   readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
@@ -59,76 +62,22 @@ Item {
     }
   })
 
-  // filtering settings
-  property TextFilter filterSlippiCode: TextFilter {
-    id: filterSlippiCode
-    onPropertyChanged: filterChanged()
-  }
-  property TextFilter filterSlippiName: TextFilter {
-    id: filterSlippiName
-    onPropertyChanged: filterChanged()
-  }
-  property alias filterCodeAndName: settings.filterCodeAndName
-  readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
-
-  readonly property var filterCharIds: settings.charIds.map(id => ~~id) // settings stores as list of string, convert to int
-  readonly property var filterStageIds: settings.stageIds.map(id => ~~id)
-
-  onFilterCodeAndNameChanged: filterChanged()
-  onFilterCharIdsChanged: filterChanged()
-  onFilterStageIdsChanged: filterChanged()
-
-  signal filterChanged
-  onFilterChanged: dbUpdaterChanged()
-
-  readonly property string filterDisplayText: {
-    var pText
-    var codeText = filterSlippiCode.filterText
-    var nameText = filterSlippiName.filterText
-
-    if(codeText && nameText) {
-      pText = qsTr("%1/%2").arg(codeText).arg(nameText)
-    }
-    else {
-      pText = codeText || nameText || ""
-    }
-
-    var sText = null
-    if(filterStageIds.length > 0) {
-      sText = "Stages: " + filterStageIds.map(id => MeleeData.stageMap[id].name).join(", ")
-    }
-
-    var cText = null
-    if(filterCharIds.length > 0) {
-      cText = "Characters: " + filterCharIds.map(id => MeleeData.charNames[id]).join(", ")
-    }
-
-    return [pText, sText, cText].filter(_ => _).join("\n") || "(nothing)"
-  }
-
   onIsProcessingChanged: {
     if(!isProcessing) {
       dbUpdaterChanged() // refresh bindings
     }
   }
 
+  FilterSettings {
+    id: filter
+
+    onFilterChanged: dbUpdaterChanged()
+  }
+
   Settings {
-    id: settings
+    id: globalSettings
 
     property string replayFolder: ""
-
-    property alias slippiCodeText: filterSlippiCode.filterText
-    property alias slippiCodeCase: filterSlippiCode.matchCase
-    property alias slippiCodePartial: filterSlippiCode.matchPartial
-
-    property alias slippiNameText: filterSlippiName.filterText
-    property alias slippiNameCase: filterSlippiName.matchCase
-    property alias slippiNamePartial: filterSlippiName.matchPartial
-
-    property bool filterCodeAndName: false // true: and, false: or
-
-    property var charIds: []
-    property var stageIds: []
   }
 
   SlippiParser {
@@ -197,28 +146,6 @@ Item {
                                     })
   }
 
-  // filtering
-
-  function addCharFilter(charId) {
-    settings.charIds = filterCharIds.concat(charId)
-  }
-
-  function removeCharFilter(charId) {
-    var list = filterCharIds
-    list.splice(list.indexOf(charId), 1)
-    settings.charIds = list
-  }
-
-  function addStageFilter(stageId) {
-    settings.stageIds = filterStageIds.concat(stageId)
-  }
-
-  function removeStageFilter(stageId) {
-    var list = filterStageIds
-    list.splice(list.indexOf(stageId), 1)
-    settings.stageIds = list
-  }
-
   // replay list
 
   function getReplayList(max, start) {
@@ -226,10 +153,7 @@ Item {
   }
 
   function resetFilters() {
-    settings.stageIds = []
-    settings.charIds = []
-    filterSlippiCode.reset()
-    filterSlippiName.reset()
+    filter.reset()
   }
 
   // utils

@@ -21,7 +21,7 @@ BasePage {
       .arg(dataModel.totalReplays)
       .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
 
-      detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
+      detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
@@ -68,14 +68,14 @@ BasePage {
 
         backgroundColor: Theme.backgroundColor
         enabled: false
-        visible: dataModel.hasPlayerFilter
+        visible: dataModel.filter.hasPlayerFilter
       }
 
       AppListItem {
         text: "No name filter configured."
         detailText: "Filter by Slippi code and/or name to see win rate."
 
-        visible: !dataModel.hasPlayerFilter
+        visible: !dataModel.filter.hasPlayerFilter
         onSelected: showFilteringPage()
       }
 
@@ -93,7 +93,7 @@ BasePage {
       }
 
       CharacterGrid {
-        charIds: dataModel.filterCharIds
+        charIds: dataModel.filter.charIds
         enabled: false
         highlightFilteredChar: false
         showData: true
@@ -106,8 +106,18 @@ BasePage {
         title: "Top chars used (opponent)"
       }
 
+      AppListItem {
+        text: "No name filter configured."
+        detailText: "Filter by Slippi code and/or name to see opposing characters."
+
+        visible: !dataModel.filter.hasPlayerFilter
+        onSelected: showFilteringPage()
+      }
+
       CharacterGrid {
-        charIds: dataModel.filterCharIds
+        visible: dataModel.filter.hasPlayerFilter
+
+        charIds: dataModel.filter.charIds
         sourceModel: dataModel.charDataOpponentCss
 
         enabled: false
@@ -129,7 +139,7 @@ BasePage {
         sortByCount: true
         showIcon: true
 
-        stageIds: dataModel.filterStageIds
+        stageIds: dataModel.filter.stageIds
         enabled: false
         highlightFilteredStage: false
       }

@@ -23,7 +23,7 @@ BasePage {
       .arg(dataModel.totalReplays)
       .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
 
-      detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
+      detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
 
       backgroundColor: Theme.backgroundColor
       mouseArea.enabled: false
@@ -61,26 +61,26 @@ BasePage {
         labelText: "Slippi code:"
         placeholderText: "Enter Slippi code..."
 
-        text: dataModel.filterSlippiCode.filterText
-        matchCaseSensitive: dataModel.filterSlippiCode.matchCase
-        matchPartialText: dataModel.filterSlippiCode.matchPartial
+        text: dataModel.filter.slippiCode.filterText
+        matchCaseSensitive: dataModel.filter.slippiCode.matchCase
+        matchPartialText: dataModel.filter.slippiCode.matchPartial
 
-        onTextChanged: dataModel.filterSlippiCode.filterText = text
-        onMatchCaseSensitiveChanged: dataModel.filterSlippiCode.matchCase = matchCaseSensitive
-        onMatchPartialTextChanged: dataModel.filterSlippiCode.matchPartial = matchPartialText
+        onTextChanged: dataModel.filter.slippiCode.filterText = text
+        onMatchCaseSensitiveChanged: dataModel.filter.slippiCode.matchCase = matchCaseSensitive
+        onMatchPartialTextChanged: dataModel.filter.slippiCode.matchPartial = matchPartialText
       }
 
       TextInputField {
         labelText: "Slippi name:"
         placeholderText: "Enter Slippi name..."
 
-        text: dataModel.filterSlippiName.filterText
-        matchCaseSensitive: dataModel.filterSlippiName.matchCase
-        matchPartialText: dataModel.filterSlippiName.matchPartial
+        text: dataModel.filter.slippiName.filterText
+        matchCaseSensitive: dataModel.filter.slippiName.matchCase
+        matchPartialText: dataModel.filter.slippiName.matchPartial
 
-        onTextChanged: dataModel.filterSlippiName.filterText = text
-        onMatchCaseSensitiveChanged: dataModel.filterSlippiName.matchCase = matchCaseSensitive
-        onMatchPartialTextChanged: dataModel.filterSlippiName.matchPartial = matchPartialText
+        onTextChanged: dataModel.filter.slippiName.filterText = text
+        onMatchCaseSensitiveChanged: dataModel.filter.slippiName.matchCase = matchCaseSensitive
+        onMatchPartialTextChanged: dataModel.filter.slippiName.matchPartial = matchPartialText
       }
 
       Rectangle {
@@ -105,13 +105,13 @@ BasePage {
             id: rbgMatchType
             buttons: [radioMatchAnd, radioMatchOr]
 
-            onCheckedButtonChanged: dataModel.filterCodeAndName = radioMatchAnd.checked
+            onCheckedButtonChanged: dataModel.filter.filterCodeAndName = radioMatchAnd.checked
           }
 
           AppRadio {
             id: radioMatchOr
             text: "Match either code or tag"
-            checked: !dataModel.filterCodeAndName
+            checked: !dataModel.filter.filterCodeAndName
             height: dp(48)
           }
 
@@ -123,7 +123,7 @@ BasePage {
 
           AppRadio {
             id: radioMatchAnd
-            checked: dataModel.filterCodeAndName
+            checked: dataModel.filter.filterCodeAndName
             text: "Match both code and tag"
             height: dp(48)
           }
@@ -165,14 +165,14 @@ BasePage {
       CharacterGrid {
         width: parent.width
 
-        charIds: dataModel.filterCharIds
+        charIds: dataModel.filter.charIds
         onCharSelected: {
           if(isSelected) {
             // char is selected -> unselect
-            dataModel.removeCharFilter(charId)
+            dataModel.filter.removeCharFilter(charId)
           }
           else {
-            dataModel.addCharFilter(charId)
+            dataModel.filter.addCharFilter(charId)
           }
         }
       }
@@ -198,14 +198,14 @@ BasePage {
         showData: false
         showOtherItem: false
 
-        stageIds: dataModel.filterStageIds
+        stageIds: dataModel.filter.stageIds
         onStageSelected:{
           if(isSelected) {
             // char is selected -> unselect
-            dataModel.removeStageFilter(stageId)
+            dataModel.filter.removeStageFilter(stageId)
           }
           else {
-            dataModel.addStageFilter(stageId)
+            dataModel.filter.addStageFilter(stageId)
           }
         }
       }
