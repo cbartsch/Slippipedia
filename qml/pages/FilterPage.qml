@@ -166,8 +166,8 @@ BasePage {
     }
 
     AppListItem {
-      text: "Filter by specific character"
-      detailText: "Select a character to find replays using that character. Click again to unselect."
+      text: "Filter by specific characters"
+      detailText: "Find replays using selected characters. Click again to unselect."
 
       backgroundColor: Theme.backgroundColor
       enabled: false
@@ -176,8 +176,16 @@ BasePage {
     CharacterGrid {
       width: parent.width
 
-      charId: dataModel.filterCharId
-      onCharSelected: dataModel.filterCharId = isSelected ? -1 : charId
+      charIds: dataModel.filterCharIds
+      onCharSelected: {
+        if(isSelected) {
+          // char is selected -> unselect
+          dataModel.removeCharFilter(charId)
+        }
+        else {
+          dataModel.addCharFilter(charId)
+        }
+      }
     }
   }
 }

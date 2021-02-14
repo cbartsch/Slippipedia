@@ -62,7 +62,8 @@ Item {
   property alias filterCodeAndName: settings.filterCodeAndName
   readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
   property alias filterStageId: settings.stageId
-  property alias filterCharId: settings.charId
+  property var filterCharId: filterCharIds[0] || -1
+  readonly property var filterCharIds: settings.charIds.map(id => ~~id) // settings stores as list of string, convert to int
 
   onFilterCodeAndNameChanged: filterChanged()
   onFilterCharIdChanged: filterChanged()
@@ -91,8 +92,8 @@ Item {
     }
 
     var cText
-    if(filterCharId >= 0) {
-      sText = "Character: " + MeleeData.charNames[filterCharId]
+    if(filterCharIds.length > 0) {
+      sText = "Characters: " + filterCharIds.map(id => MeleeData.charNames[id]).join(", ")
     }
 
     return [pText, sText, cText].filter(_ => _).join(", ") || "(nothing)"
@@ -120,7 +121,7 @@ Item {
     property bool filterCodeAndName: false // true: and, false: or
 
     property int stageId: 0 // -1 = no filter, 0 = "other" stages
-    property int charId: -1 // -1 = no filter (0 is already a char ID)
+    property var charIds: []
   }
 
   SlippiParser {
@@ -172,6 +173,18 @@ Item {
     return dataBase.getTopPlayerTags(max)
   }
 
+  // filtering
+
+  function addCharFilter(charId) {
+    settings.charIds = filterCharIds.concat(charId)
+  }
+
+  function removeCharFilter(charId) {
+    var list = filterCharIds
+    list.splice(list.indexOf(charId), 1)
+    settings.charIds = list
+  }
+
   // replay list
 
   function getReplayList(max, start) {
@@ -180,7 +193,7 @@ Item {
 
   function resetFilters() {
     filterStageId = -1
-    filterCharId = -1
+    filterCharIds = []
     filterSlippiCode.reset()
     filterSlippiName.reset()
   }

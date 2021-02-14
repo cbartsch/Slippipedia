@@ -72,7 +72,7 @@ BasePage {
     }
 
     CharacterGrid {
-      charId: dataModel.filterCharId
+      charIds: dataModel.filterCharIds
       enabled: false
       highlightFilteredChar: false
       showData: true

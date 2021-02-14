@@ -143,7 +143,7 @@ foreign key(replayId) references replays(id)
 
   function getStageFilterCondition(stageId) {
     if(stageId === 0) {
-      return "(r.stageId not in (%1))".arg(MeleeData.stageIds.map(_ => "?").join(",")) // add one question mark placeholder per argument
+      return "(r.stageId not in (%1))".arg(makeWildcards(MeleeData.stageIds)) // add one question mark placeholder per argument
     }
     else if(stageId > 0) {
       return "(r.stageId = ?)"
@@ -153,9 +153,9 @@ foreign key(replayId) references replays(id)
     }
   }
 
-  function getCharFilterCondition(charId) {
-    if(charId >= 0) {
-      return "(p.charId = ?)"
+  function getCharFilterCondition(charIds) {
+    if(charIds && charIds.length > 0) {
+      return "(p.charId in " + makeInWildcards(charIds) + ")"
     }
     else {
       return "true"
@@ -166,7 +166,7 @@ foreign key(replayId) references replays(id)
     return "(" +
         getPlayerFilterCondition(filterSlippiCode, filterSlippiName) +
         " and " + getStageFilterCondition(filterStageId) +
-        " and " + getCharFilterCondition(filterCharId) +
+        " and " + getCharFilterCondition(filterCharIds) +
         ")"
   }
 
@@ -200,9 +200,9 @@ foreign key(replayId) references replays(id)
     }
   }
 
-  function getCharFilterParams(charId) {
-    if(charId >= 0) {
-      return [charId]
+  function getCharFilterParams(charIds) {
+    if(charIds && charIds.length > 0) {
+      return charIds
     }
     else {
       return []
@@ -212,7 +212,7 @@ foreign key(replayId) references replays(id)
   function getFilterParams() {
     return getPlayerFilterParams(filterSlippiCode, filterSlippiName)
       .concat(getStageFilterParams(filterStageId))
-      .concat(getCharFilterParams(filterCharId))
+      .concat(getCharFilterParams(filterCharIds))
   }
 
   function getNumReplays() {
@@ -510,6 +510,11 @@ limit ? offset ?"
   // make SQL wildcard if filter.matchPartial is true
   function mw(filter) {
     return filter.matchPartial ? "%" + filter.filterText + "%" : filter.filterText
+  }
+
+  // make SQL wildcards for an in condition
+  function makeInWildcards(list) {
+    return "(" + list.map(_ => "?").join(",") + ")"
   }
 
   function log() {

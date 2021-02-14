@@ -8,7 +8,7 @@ Grid {
 
   signal charSelected(int charId, bool isSelected)
 
-  property int charId
+  property var charIds: []
   property bool highlightFilteredChar: true
   property bool hideCharsWithNoReplays: false
   property bool sortByCssPosition: true
@@ -65,7 +65,7 @@ Grid {
     RippleMouseArea {
       id: charItem
 
-      readonly property bool isSelected: highlightFilteredChar && charId === id
+      readonly property bool isSelected: highlightFilteredChar && charIds.indexOf(id) >= 0 // TODO probably use faster lookup
       readonly property bool hasChar: id >= 0 && id < 26 // ids 0-25 are the useable characters
 
       width: parent.width / parent.columns
