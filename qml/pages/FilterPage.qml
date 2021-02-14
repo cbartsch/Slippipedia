@@ -143,25 +143,6 @@ BasePage {
 //    }
 
     SimpleSection {
-      title: "Stage matching"
-    }
-
-    AppListItem {
-      text: "Filter by specific stage"
-      detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
-
-      backgroundColor: Theme.backgroundColor
-      enabled: false
-    }
-
-    StageGrid {
-      width: parent.width
-
-      stageId: dataModel.filterStageId
-      onStageSelected: dataModel.filterStageId = isSelected ? -1 : stageId
-    }
-
-    SimpleSection {
       title: "Character matching"
     }
 
@@ -186,6 +167,25 @@ BasePage {
           dataModel.addCharFilter(charId)
         }
       }
+    }
+
+    SimpleSection {
+      title: "Stage matching"
+    }
+
+    AppListItem {
+      text: "Filter by specific stage"
+      detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
+
+      backgroundColor: Theme.backgroundColor
+      enabled: false
+    }
+
+    StageGrid {
+      width: parent.width
+
+      stageId: dataModel.filterStageId
+      onStageSelected: dataModel.filterStageId = isSelected ? -1 : stageId
     }
   }
 }
