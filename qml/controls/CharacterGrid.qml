@@ -16,7 +16,14 @@ Grid {
   property bool showIcon: true
   property bool showData: false
 
-  columns: width > dp(750) ? 9 : width > dp(250) ? 3 : 1
+  columns: {
+    if(showIcon) {
+      return width > dp(750) ? 9 : width > dp(250) ? 3 : 1
+    }
+    else {
+      return width / dp(200)
+    }
+  }
   anchors.left: parent.left
   anchors.right: parent.right
 
