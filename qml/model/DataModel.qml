@@ -38,7 +38,6 @@ Item {
   readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
 
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
-  readonly property var stageData: dataBase.getStageStats(dbUpdater)
 
   readonly property var charDataCss: MeleeData.cssCharIds.map((id, index) => {
                                                                 var cd = charData[id]
@@ -49,6 +48,22 @@ Item {
                                                                   name: cd ? cd.name : ""
                                                                 }
                                                               })
+
+  readonly property var stageDataMap: dataBase.getStageStats(dbUpdater)
+  readonly property var stageData: Object.values(stageDataMap)
+
+  readonly property var stageDataSss: MeleeData.stageData
+  .filter(s => s.id > 0)
+  .map((s, index) => {
+    var sd = stageDataMap[s.id]
+
+    return {
+      id: s.id,
+      count: sd ? sd.count : 0,
+      name: s.name,
+      shortName: s.shortName
+    }
+  })
 
   // filtering settings
   property TextFilter filterSlippiCode: TextFilter {
@@ -61,12 +76,13 @@ Item {
   }
   property alias filterCodeAndName: settings.filterCodeAndName
   readonly property bool hasPlayerFilter: filterSlippiCode.filterText != "" || filterSlippiName.filterText != ""
-  property alias filterStageId: settings.stageId
-  property var filterCharId: filterCharIds[0] || -1
+
   readonly property var filterCharIds: settings.charIds.map(id => ~~id) // settings stores as list of string, convert to int
+  readonly property var filterStageIds: settings.stageIds.map(id => ~~id)
 
   onFilterCodeAndNameChanged: filterChanged()
-  onFilterCharIdChanged: filterChanged()
+  onFilterCharIdsChanged: filterChanged()
+  onFilterStageIdsChanged: filterChanged()
 
   signal filterChanged
   onFilterChanged: dbUpdaterChanged()
@@ -83,17 +99,14 @@ Item {
       pText = codeText || nameText || ""
     }
 
-    var sText
-    if(filterStageId == 0) {
-      sText = "Other stage"
-    }
-    else if(filterStageId > 0) {
-      sText = "Stage: " + MeleeData.stageMap[filterStageId].name
+    var sText = null
+    if(filterStageIds.length > 0) {
+      sText = "Stages: " + filterStageIds.map(id => MeleeData.stageMap[id].name).join(", ")
     }
 
-    var cText
+    var cText = null
     if(filterCharIds.length > 0) {
-      sText = "Characters: " + filterCharIds.map(id => MeleeData.charNames[id]).join(", ")
+      cText = "Characters: " + filterCharIds.map(id => MeleeData.charNames[id]).join(", ")
     }
 
     return [pText, sText, cText].filter(_ => _).join(", ") || "(nothing)"
@@ -120,8 +133,8 @@ Item {
 
     property bool filterCodeAndName: false // true: and, false: or
 
-    property int stageId: 0 // -1 = no filter, 0 = "other" stages
     property var charIds: []
+    property var stageIds: []
   }
 
   SlippiParser {
@@ -185,6 +198,16 @@ Item {
     settings.charIds = list
   }
 
+  function addStageFilter(stageId) {
+    settings.stageIds = filterStageIds.concat(stageId)
+  }
+
+  function removeStageFilter(stageId) {
+    var list = filterStageIds
+    list.splice(list.indexOf(stageId), 1)
+    settings.stageIds = list
+  }
+
   // replay list
 
   function getReplayList(max, start) {
@@ -192,8 +215,8 @@ Item {
   }
 
   function resetFilters() {
-    filterStageId = -1
-    filterCharIds = []
+    settings.stageIds = []
+    settings.charIds = []
     filterSlippiCode.reset()
     filterSlippiName.reset()
   }

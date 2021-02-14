@@ -184,8 +184,22 @@ BasePage {
     StageGrid {
       width: parent.width
 
-      stageId: dataModel.filterStageId
-      onStageSelected: dataModel.filterStageId = isSelected ? -1 : stageId
+      hideStagesWithNoReplays: false
+      sortByCount: false
+      showIcon: true
+      showData: false
+      showOtherItem: false
+
+      stageIds: dataModel.filterStageIds
+      onStageSelected:{
+        if(isSelected) {
+          // char is selected -> unselect
+          dataModel.removeStageFilter(stageId)
+        }
+        else {
+          dataModel.addStageFilter(stageId)
+        }
+      }
     }
   }
 }

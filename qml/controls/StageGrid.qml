@@ -7,8 +7,23 @@ Column {
   id: stageGrid
   signal stageSelected(int stageId, bool isSelected)
 
-  property int stageId
+  property var stageIds: []
   property bool highlightFilteredStage: true
+  property bool hideStagesWithNoReplays: false
+  property bool sortByCount: true
+
+  property bool showIcon: false
+  property bool showData: true
+  property bool showOtherItem: true
+
+  property Filter emptyFilter: ExpressionFilter {
+    expression: count > 0
+  }
+
+  property Sorter countSorter: RoleSorter {
+    roleName: "count"
+    ascendingOrder: false
+  }
 
   Grid {
     id: stageGridLayout
@@ -17,19 +32,12 @@ Column {
 
     Repeater {
       model: SortFilterProxyModel {
-        filters: ExpressionFilter {
-          expression: count > 0
-        }
+        filters: hideStagesWithNoReplays ? [emptyFilter] : []
 
-        sorters: [
-          RoleSorter {
-            roleName: "count"
-            ascendingOrder: false
-          }
-        ]
+        sorters: sortByCount ? [countSorter] : []
 
         sourceModel: JsonListModel {
-          source: dataModel.stageData
+          source: dataModel.stageDataSss
           keyField: "id"
           fields: ["id", "count", "name", "shortName"]
         }
@@ -37,7 +45,7 @@ Column {
 
       Rectangle {
         id: stageItem
-        readonly property bool isSelected: highlightFilteredStage && stageId === id
+        readonly property bool isSelected: highlightFilteredStage && stageIds.indexOf(id) >= 0 // TODO probably use faster lookup
 
         width: parent.width / stageGridLayout.columns
         height: dp(72)
@@ -64,6 +72,7 @@ Column {
             }
 
             AppText {
+              visible: showData
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
@@ -81,8 +90,9 @@ Column {
 
   Rectangle {
     id: otherItem
-    readonly property bool isSelected: highlightFilteredStage && stageId === 0
+    readonly property bool isSelected: highlightFilteredStage && stageIds.indexOf(0) >= 0 // TODO probably use faster lookup
 
+    visible: showOtherItem
     width: parent.width
     height: dp(48)
     color: !enabled

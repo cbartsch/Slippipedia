@@ -141,12 +141,13 @@ foreign key(replayId) references replays(id)
     }
   }
 
-  function getStageFilterCondition(stageId) {
-    if(stageId === 0) {
-      return "(r.stageId not in (%1))".arg(makeWildcards(MeleeData.stageIds)) // add one question mark placeholder per argument
-    }
-    else if(stageId > 0) {
-      return "(r.stageId = ?)"
+  function getStageFilterCondition(stageIds) {
+//    if(stageId === 0) {
+//      return "(r.stageId not in (%1))".arg(makeWildcards(MeleeData.stageIds)) // add one question mark placeholder per argument
+//    }
+//    else
+    if(stageIds && stageIds.length > 0) {
+      return "(r.stageId in " + makeInWildcards(stageIds) + ")"
     }
     else {
       return "true"
@@ -165,7 +166,7 @@ foreign key(replayId) references replays(id)
   function getFilterCondition() {
     return "(" +
         getPlayerFilterCondition(filterSlippiCode, filterSlippiName) +
-        " and " + getStageFilterCondition(filterStageId) +
+        " and " + getStageFilterCondition(filterStageIds) +
         " and " + getCharFilterCondition(filterCharIds) +
         ")"
   }
@@ -188,12 +189,13 @@ foreign key(replayId) references replays(id)
     }
   }
 
-  function getStageFilterParams(stageId) {
-    if(stageId === 0) {
-      return MeleeData.stageIds
-    }
-    else if(stageId > 0) {
-      return [stageId]
+  function getStageFilterParams(stageIds) {
+//    if(stageId === 0) {
+//      return MeleeData.stageIds
+//    }
+//    else
+    if(stageIds && stageIds.length > 0) {
+      return stageIds
     }
     else {
       return []
@@ -211,7 +213,7 @@ foreign key(replayId) references replays(id)
 
   function getFilterParams() {
     return getPlayerFilterParams(filterSlippiCode, filterSlippiName)
-      .concat(getStageFilterParams(filterStageId))
+      .concat(getStageFilterParams(filterStageIds))
       .concat(getCharFilterParams(filterCharIds))
   }
 
@@ -422,13 +424,13 @@ order by charId"
 join replays r on p.replayId = r.id
 where " + getFilterCondition() + "
 group by stageId
-order by c desc"
+order by stageId"
 
       var params = getFilterParams()
 
       var results = tx.executeSql(sql, params)
 
-      var result = []
+      var result = {}
 
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i)
@@ -440,12 +442,12 @@ order by c desc"
           continue
         }
 
-        result.push({
-                      id: row.stageId,
-                      count: row.c,
-                      name: data.name || "Unknown",
-                      shortName: data.shortName || "Unknown"
-                    })
+        result[row.stageId] = {
+          id: row.stageId,
+          count: row.c,
+          name: data.name || "Unknown",
+          shortName: data.shortName || "Unknown"
+        }
       }
 
       return result

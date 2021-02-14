@@ -8,6 +8,7 @@ Item {
 
   // stages
   readonly property var stageMap: {
+    0: { id: 0, name: "Other stages", shortName: "Other"},
     32: { id: 32, name: "Final Destination", shortName: "FD" },
     31: { id: 31, name: "Battlefield", shortName: "BF" },
     3: { id: 3, name: "Pokémon Stadium", shortName: "PS" },

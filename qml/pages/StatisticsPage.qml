@@ -36,6 +36,10 @@ BasePage {
 //      enabled: false
 //    }
 
+    SimpleSection {
+      title: "Game stats"
+    }
+
     AppListItem {
       text: qsTr("Average game time: %1 (%3 frames)")
         .arg(dataModel.formatTime(dataModel.averageGameDuration))
@@ -130,7 +134,10 @@ BasePage {
     StageGrid {
       width: parent.width
 
-      stageId: dataModel.filterStageId
+      hideStagesWithNoReplays: true
+      sortByCount: true
+
+      stageIds: dataModel.filterStageIds
       enabled: false
       highlightFilteredStage: false
     }
