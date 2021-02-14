@@ -3,9 +3,13 @@ import Felgo 3.0
 import QtQuick 2.0
 
 import "../controls"
+import "../model"
 
 BasePage {
+  id: statisticsPage
   title: qsTr("Replay statistics")
+
+  property ReplayStats stats: null
 
   Column {
     id: header
@@ -17,9 +21,9 @@ BasePage {
 
     AppListItem {
       text: qsTr("Filtered replays: %1/%2 (%3)")
-      .arg(dataModel.totalReplaysFiltered)
-      .arg(dataModel.totalReplays)
-      .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
+      .arg(stats.totalReplaysFiltered)
+      .arg(stats.totalReplays)
+      .arg(dataModel.formatPercentage(stats.totalReplaysFiltered / stats.totalReplays))
 
       detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
 
@@ -37,12 +41,6 @@ BasePage {
     Column {
       id: content
       width: parent.width
-      //    AppListItem {
-      //      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
-
-      //      backgroundColor: Theme.backgroundColor
-      //      enabled: false
-      //    }
 
       SimpleSection {
         title: "Game stats"
@@ -50,8 +48,8 @@ BasePage {
 
       AppListItem {
         text: qsTr("Average game time: %1 (%3 frames)")
-        .arg(dataModel.formatTime(dataModel.averageGameDuration))
-        .arg(dataModel.averageGameDuration.toFixed(0))
+        .arg(dataModel.formatTime(stats.averageGameDuration))
+        .arg(stats.averageGameDuration.toFixed(0))
 
         backgroundColor: Theme.backgroundColor
         enabled: false
@@ -63,8 +61,9 @@ BasePage {
 
       AppListItem {
         text: qsTr("Win rate: %1 (%2/%3)")
-        .arg(dataModel.formatPercentage(dataModel.winRate))
-        .arg(dataModel.totalReplaysFilteredWon).arg(dataModel.totalReplaysFilteredWithResult)
+        .arg(dataModel.formatPercentage(stats.winRate))
+        .arg(stats.totalReplaysFilteredWon)
+        .arg(stats.totalReplaysFilteredWithResult)
 
         backgroundColor: Theme.backgroundColor
         enabled: false
@@ -81,8 +80,9 @@ BasePage {
 
       AppListItem {
         text: qsTr("Games not finished: %1 (%2/%3)")
-        .arg(dataModel.formatPercentage(dataModel.tieRate))
-        .arg(dataModel.totalReplaysFilteredWithTie).arg(dataModel.totalReplaysFiltered)
+        .arg(dataModel.formatPercentage(stats.tieRate))
+        .arg(stats.totalReplaysFilteredWithTie)
+        .arg(stats.totalReplaysFiltered)
 
         backgroundColor: Theme.backgroundColor
         enabled: false
@@ -94,6 +94,9 @@ BasePage {
 
       CharacterGrid {
         charIds: dataModel.filter.charIds
+        stats: statisticsPage.stats
+        sourceModel: stats.charDataCss
+
         enabled: false
         highlightFilteredChar: false
         showData: true
@@ -118,7 +121,8 @@ BasePage {
         visible: dataModel.filter.hasPlayerFilter
 
         charIds: dataModel.filter.charIds
-        sourceModel: dataModel.charDataOpponentCss
+        stats: statisticsPage.stats
+        sourceModel: stats.charDataOpponentCss
 
         enabled: false
         highlightFilteredChar: false
@@ -134,6 +138,9 @@ BasePage {
 
       StageGrid {
         width: parent.width
+
+        sourceModel: stats.stageDataSss
+        stats: statisticsPage.stats
 
         hideStagesWithNoReplays: true
         sortByCount: true

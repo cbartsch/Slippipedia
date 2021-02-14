@@ -5,7 +5,12 @@ import "../model"
 
 Column {
   id: stageGrid
+
+  property ReplayStats stats: null
+
   signal stageSelected(int stageId, bool isSelected)
+
+  property alias sourceModel: jsonModel.source
 
   property var stageIds: []
   property bool highlightFilteredStage: true
@@ -46,7 +51,7 @@ Column {
         sorters: sortByCount ? [countSorter] : []
 
         sourceModel: JsonListModel {
-          source: dataModel.stageDataSss
+          id: jsonModel
           keyField: "id"
           fields: ["id", "count", "name", "shortName"]
         }
@@ -99,7 +104,7 @@ Column {
               horizontalAlignment: Text.AlignHCenter
               text: qsTr("%2 games\n(%3)")
               .arg(count)
-              .arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
+              .arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
               style: Text.Outline
               styleColor: Theme.backgroundColor
             }
@@ -134,8 +139,8 @@ Column {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text: qsTr("Other (%2)")
-        .arg(dataModel.formatPercentage(dataModel.totalReplays > 0
-        ? dataModel.otherStageAmount / dataModel.totalReplays
+        .arg(dataModel.formatPercentage(stats.totalReplays > 0
+        ? stats.otherStageAmount / stats.totalReplays
         : 0))
         style: Text.Outline
         styleColor: Theme.backgroundColor

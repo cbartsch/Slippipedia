@@ -53,7 +53,9 @@ App {
       icon: IconType.filter
 
       NavigationStack {
-        FilterPage { }
+        FilterPage {
+          stats: dataModel.stats
+        }
       }
     }
 
@@ -62,7 +64,9 @@ App {
       icon: IconType.barchart
 
       NavigationStack {
-        StatisticsPage { }
+        StatisticsPage {
+          stats: dataModel.stats
+        }
       }
     }
 

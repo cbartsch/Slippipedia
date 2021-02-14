@@ -6,6 +6,8 @@ import "../model"
 Grid {
   id: characterGrid
 
+  property ReplayStats stats: null
+
   signal charSelected(int charId, bool isSelected)
 
   property var charIds: []
@@ -59,7 +61,6 @@ Grid {
 
       sourceModel: JsonListModel {
         id: jsonModel
-        source: dataModel.charDataCss
         keyField: "id"
         fields: ["id", "count", "name"]
       }
@@ -117,7 +118,7 @@ Grid {
 
           AppText {
             width: parent.width
-            text: qsTr("%1 games\n%2").arg(count).arg(dataModel.formatPercentage(count / dataModel.totalReplaysFiltered))
+            text: qsTr("%1 games\n%2").arg(count).arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
             maximumLineCount: 2
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter

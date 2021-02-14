@@ -7,7 +7,10 @@ import "../controls"
 import "../model"
 
 BasePage {
+  id: filterPage
   title: qsTr("Filtering")
+
+  property ReplayStats stats: null
 
   Column {
     id: header
@@ -19,9 +22,9 @@ BasePage {
 
     AppListItem {
       text: qsTr("Matched replays: %1/%2 (%3)")
-      .arg(dataModel.totalReplaysFiltered)
-      .arg(dataModel.totalReplays)
-      .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
+      .arg(stats.totalReplaysFiltered)
+      .arg(stats.totalReplays)
+      .arg(dataModel.formatPercentage(stats.totalReplaysFiltered / stats.totalReplays))
 
       detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
 
@@ -165,6 +168,9 @@ BasePage {
       CharacterGrid {
         width: parent.width
 
+        sourceModel: stats.charDataCss
+        stats: filterPage.stats
+
         charIds: dataModel.filter.charIds
         onCharSelected: {
           if(isSelected) {
@@ -191,6 +197,9 @@ BasePage {
 
       StageGrid {
         width: parent.width
+
+        sourceModel: stats.stageDataSss
+        stats: filterPage.stats
 
         hideStagesWithNoReplays: false
         sortByCount: false
