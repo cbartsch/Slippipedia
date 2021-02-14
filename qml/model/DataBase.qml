@@ -378,7 +378,65 @@ limit ?"
       var result = []
       for (var i = 0; i < results.rows.length; i++) {
         result.push({
-                      tag: results.rows.item(i).slippiName,
+                      text: results.rows.item(i).slippiName,
+                      count: results.rows.item(i).c
+                    })
+      }
+
+      return result
+    }, [])
+  }
+
+  function getTopPlayerTagsOpponent(max) {
+    log("get top tags opponent")
+
+    return readFromDb(function(tx) {
+      var sql = "select p2.slippiName slippiName, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+where p2.slippiName is not null and
+p2.slippiName is not \"\" and " + getFilterCondition() + "
+group by p2.slippiName
+order by c desc
+limit ?"
+
+      var params = getFilterParams().concat([max])
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+      for (var i = 0; i < results.rows.length; i++) {
+        result.push({
+                      text: results.rows.item(i).slippiName,
+                      count: results.rows.item(i).c
+                    })
+      }
+
+      return result
+    }, [])
+  }
+
+  function getTopSlippiCodesOpponent(max) {
+    log("get top codes opponent")
+
+    return readFromDb(function(tx) {
+      var sql = "select p2.slippiCode slippiCode, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+where p2.slippiCode is not null and
+p2.slippiCode is not \"\" and " + getFilterCondition() + "
+group by p2.slippiCode
+order by c desc
+limit ?"
+
+      var params = getFilterParams().concat([max])
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+      for (var i = 0; i < results.rows.length; i++) {
+        result.push({
+                      text: results.rows.item(i).slippiCode,
                       count: results.rows.item(i).c
                     })
       }

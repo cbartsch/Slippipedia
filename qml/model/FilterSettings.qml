@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import Felgo 3.0
+import Qt.labs.settings 1.1
 
 Item {
   id: filterSettings

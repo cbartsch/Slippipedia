@@ -129,6 +129,14 @@ Item {
     return dataBase.getTopPlayerTags(max)
   }
 
+  function getTopSlippiCodesOpponent(max) {
+    return dataBase.getTopSlippiCodesOpponent(max)
+  }
+
+  function getTopPlayerTagsOpponent(max) {
+    return dataBase.getTopPlayerTagsOpponent(max)
+  }
+
   function toCssCharData(charData) {
     if(!charData) {
       return []

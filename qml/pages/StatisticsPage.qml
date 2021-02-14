@@ -148,42 +148,42 @@ BasePage {
         title: "Top player tags"
       }
 
-      Grid {
-        id: nameGrid
-        columns: Math.round(width / dp(200))
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: dp(Theme.contentPadding)
-        spacing: dp(Theme.contentPadding) / 2
-        rowSpacing: dp(1)
+      NameGrid {
+        model: dataModel.getTopPlayerTags(columns * 5)
+      }
 
-        Repeater {
-          model: dataModel.getTopPlayerTags(nameGrid.columns * 5)
+      SimpleSection {
+        title: "Top player tags (opponent)"
+      }
 
-          Item {
-            width: parent.width / parent.columns
-            height: dp(48)
+      AppListItem {
+        text: "No name filter configured."
+        detailText: "Filter by Slippi code and/or name to see opposing player tags."
 
-            Column {
-              width: parent.width
-              anchors.verticalCenter: parent.verticalCenter
+        visible: !dataModel.filter.hasPlayerFilter
+        onSelected: showFilteringPage()
+      }
 
-              AppText {
-                width: parent.width
-                text: modelData.tag
-                maximumLineCount: 1
-                elide: Text.ElideRight
-                font.pixelSize: sp(20)
-              }
-              AppText {
-                width: parent.width
-                text: qsTr("%1 (%2)").arg(modelData.count).arg(dataModel.formatPercentage(modelData.count / dataModel.totalReplaysFiltered))
-                maximumLineCount: 1
-                elide: Text.ElideRight
-              }
-            }
-          }
-        }
+      NameGrid {
+        visible: dataModel.filter.hasPlayerFilter
+        model: dataModel.getTopPlayerTagsOpponent(columns * 5)
+      }
+
+      SimpleSection {
+        title: "Top Slippi codes (opponent)"
+      }
+
+      AppListItem {
+        text: "No name filter configured."
+        detailText: "Filter by Slippi code and/or name to see opposing Slippi codes."
+
+        visible: !dataModel.filter.hasPlayerFilter
+        onSelected: showFilteringPage()
+      }
+
+      NameGrid {
+        visible: dataModel.filter.hasPlayerFilter
+        model: dataModel.getTopSlippiCodesOpponent(columns * 5)
       }
     }
   }
