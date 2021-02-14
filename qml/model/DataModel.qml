@@ -12,6 +12,7 @@ Item {
   // replay settings
   property alias replayFolder: settings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
+  property var newFiles: dataBase.getNewReplays(allFiles)
 
   // analyze progress
   property bool progressCancelled: false
@@ -38,6 +39,16 @@ Item {
 
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
   readonly property var stageData: dataBase.getStageStats(dbUpdater)
+
+  readonly property var charDataCss: MeleeData.cssCharIds.map((id, index) => {
+                                                                var cd = charData[id]
+
+                                                                return {
+                                                                  id: id,
+                                                                  count: cd ? cd.count : 0,
+                                                                  name: cd ? cd.name : ""
+                                                                }
+                                                              })
 
   // filtering settings
   property TextFilter filterSlippiCode: TextFilter {
@@ -149,10 +160,6 @@ Item {
     dataBase.clearAllData()
 
     dbUpdaterChanged() // refresh bindings
-  }
-
-  function getNewReplays() {
-    return dataBase.getNewReplays(allFiles)
   }
 
   // stats

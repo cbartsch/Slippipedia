@@ -28,4 +28,36 @@ Item {
   ]
   readonly property var charIds: charNames.map((obj, index) => index)
 
+  // char id -> css index (on a 9x3 grid)
+  readonly property var charCssIndices: [
+    7, // cf
+    6, // dk
+    10, // fox
+    23, // gnw
+    13, // kirby
+    3, // bowser
+    16, // link
+    2, // luigi
+    1, // mario
+    24, // marth
+    22, // mewtwo
+    11, // ness
+    4, // peach
+    20, // pikachu
+    12, // ics
+    21, // jigglypuff
+    14, // samus
+    5, // yoshi
+    15, // zelda
+    15, // sheik (also zelda)
+    9, // falco
+    17, // yl
+    0, // doc
+    25, // roy
+    19, // pichu
+    8 // ganon
+  ]
+
+  // css index (on a 9x3 grid) -> char id
+  readonly property var cssCharIds: [...Array(27).keys()].map(index => charCssIndices.indexOf(index))
 }

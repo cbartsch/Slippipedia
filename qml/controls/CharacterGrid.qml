@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import Felgo 3.0
 
+import "../model"
+
 Grid {
   id: characterGrid
 
@@ -8,54 +10,87 @@ Grid {
 
   property int charId
   property bool highlightFilteredChar: true
+  property bool hideCharsWithNoReplays: false
+  property bool sortByCssPosition: true
 
-  columns: Math.round(width / dp(200))
+  property bool showIcon: true
+  property bool showData: false
+
+  columns: width > dp(750) ? 9 : width > dp(250) ? 3 : 1
   anchors.left: parent.left
   anchors.right: parent.right
 
+  property var md: MeleeData
+
+  property Sorter countSorter: RoleSorter {
+    roleName: "count"
+    ascendingOrder: false
+  }
+
+  property Sorter cssSorter: ExpressionSorter {
+    expression: {
+      var cssIdLeft = md.charCssIndices[modelLeft.id]
+      var cssIdRight = md.charCssIndices[modelRight.id]
+
+      return cssIdRight < cssIdLeft
+    }
+
+    ascendingOrder: false
+  }
+
+  property Filter emptyFilter: ExpressionFilter {
+    expression: count > 0
+  }
 
   Repeater {
+    id: repeater
     model: SortFilterProxyModel {
-      filters: ExpressionFilter {
-        expression: count > 0
-      }
-
-      sorters: [
-        RoleSorter {
-          roleName: "count"
-          ascendingOrder: false
-        }
-      ]
+      filters: hideCharsWithNoReplays ? [emptyFilter] : []
+      sorters: [sortByCssPosition ? cssSorter : countSorter]
 
       sourceModel: JsonListModel {
-        source: dataModel.charData
+        source: dataModel.charDataCss
         keyField: "id"
         fields: ["id", "count", "name"]
       }
     }
 
-    Rectangle {
+    RippleMouseArea {
       id: charItem
 
-      visible: id < 26 // ids 0-25 are the useabls characters
+      readonly property bool isSelected: highlightFilteredChar && charId === id
+      readonly property bool hasChar: id >= 0 && id < 26 // ids 0-25 are the useable characters
+
       width: parent.width / parent.columns
       height: dp(72)
+      enabled: hasChar
+      visible: true
+      onClicked: charSelected(id, isSelected)
 
-      readonly property bool isSelected: highlightFilteredChar && charId === id
-
-      color: !enabled
-             ? Theme.backgroundColor
-             : isSelected
-               ? Theme.selectedBackgroundColor
-               : Theme.controlBackgroundColor
-
-      RippleMouseArea {
+      Rectangle {
         anchors.fill: parent
-        onClicked: charSelected(id, charItem.isSelected)
 
-        Column {
-          width: parent.width
-          anchors.verticalCenter: parent.verticalCenter
+        color: !enabled
+               ? Theme.backgroundColor
+               : isSelected
+                 ? Theme.selectedBackgroundColor
+                 : Theme.controlBackgroundColor
+
+        visible: hasChar
+      }
+
+      CharacterIcon {
+        anchors.centerIn: parent
+        scale: parent.height / height
+
+        charId: id
+        visible: showIcon && hasChar
+      }
+
+      Column {
+        width: parent.width
+        anchors.verticalCenter: parent.verticalCenter
+        visible: showData
 
           AppText {
             width: parent.width
@@ -73,7 +108,6 @@ Grid {
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
           }
-        }
       }
     }
   }

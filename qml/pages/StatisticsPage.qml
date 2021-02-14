@@ -75,6 +75,10 @@ BasePage {
       charId: dataModel.filterCharId
       enabled: false
       highlightFilteredChar: false
+      showData: true
+      showIcon: false
+      sortByCssPosition: false
+      hideCharsWithNoReplays: true
     }
 
     SimpleSection {

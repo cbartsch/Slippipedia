@@ -226,6 +226,7 @@ foreign key(replayId) references replays(id)
   function getNewReplays(fileList) {
     // find all files in fileList that do not have a replay in the database
 
+    // do in 1 iteration instead of n*m:
     // -> sort fileList, and get sorted file list from DB
     // then iterate both lists and return all files only contained in the first
 
@@ -391,7 +392,7 @@ limit ?"
 join replays r on p.replayId = r.id
 where " + getFilterCondition() + "
 group by charId
-order by c desc"
+order by charId"
 
       var params = getFilterParams()
 
