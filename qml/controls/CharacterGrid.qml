@@ -16,6 +16,8 @@ Grid {
   property bool showIcon: true
   property bool showData: false
 
+  property alias sourceModel: jsonModel.source
+
   columns: {
     if(showIcon) {
       return width > dp(750) ? 9 : width > dp(250) ? 3 : 1
@@ -56,6 +58,7 @@ Grid {
       sorters: [sortByCssPosition ? cssSorter : countSorter]
 
       sourceModel: JsonListModel {
+        id: jsonModel
         source: dataModel.charDataCss
         keyField: "id"
         fields: ["id", "count", "name"]

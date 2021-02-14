@@ -38,16 +38,10 @@ Item {
   readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
 
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
+  readonly property var charDataCss: toCssCharData(charData)
 
-  readonly property var charDataCss: MeleeData.cssCharIds.map((id, index) => {
-                                                                var cd = charData[id]
-
-                                                                return {
-                                                                  id: id,
-                                                                  count: cd ? cd.count : 0,
-                                                                  name: cd ? cd.name : ""
-                                                                }
-                                                              })
+  readonly property var charDataOpponent: dataBase.getCharacterStatsOpponent(dbUpdater)
+  readonly property var charDataOpponentCss: toCssCharData(charDataOpponent)
 
   readonly property var stageDataMap: dataBase.getStageStats(dbUpdater)
   readonly property var stageData: Object.values(stageDataMap)
@@ -184,6 +178,23 @@ Item {
 
   function getTopPlayerTags(max) {
     return dataBase.getTopPlayerTags(max)
+  }
+
+  function toCssCharData(charData) {
+    if(!charData) {
+      return []
+    }
+
+    // map DB results to css-viewable data
+    return MeleeData.cssCharIds.map((id, index) => {
+                                      var cd = charData[id]
+
+                                      return {
+                                        id: id,
+                                        count: cd ? cd.count : 0,
+                                        name: cd ? cd.name : ""
+                                      }
+                                    })
   }
 
   // filtering

@@ -103,6 +103,22 @@ BasePage {
       }
 
       SimpleSection {
+        title: "Top chars used (opponent)"
+      }
+
+      CharacterGrid {
+        charIds: dataModel.filterCharIds
+        sourceModel: dataModel.charDataOpponentCss
+
+        enabled: false
+        highlightFilteredChar: false
+        showData: true
+        showIcon: true
+        sortByCssPosition: true
+        hideCharsWithNoReplays: false
+      }
+
+      SimpleSection {
         title: "Top stages"
       }
 

@@ -102,7 +102,16 @@ foreign key(replayId) references replays(id)
 
     db.readTransaction(function(tx) {
       try {
-         res = callback(tx)
+        var modifiedTx = debugLog
+            ? {
+                executeSql: function() {
+                  log("Execute SQL:", arguments[0], arguments[1])
+                  return tx.executeSql(...arguments)
+                }
+              }
+        : tx
+
+         res = callback(modifiedTx)
       }
       catch(ex) {
         // table doesn't yet exist, ignore
@@ -382,11 +391,42 @@ limit ?"
     log("get char stats")
 
     return readFromDb(function(tx) {
-      var sql = "select charId, count(distinct replayId) c from players p
-join replays r on p.replayId = r.id
+      var sql = "select charId, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
 where " + getFilterCondition() + "
 group by charId
 order by charId"
+
+      var params = getFilterParams()
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i)
+
+        result.push({
+                      id: row.charId,
+                      count: row.c,
+                      name: MeleeData.charNames[row.charId]
+                    })
+      }
+
+      return result
+    }, [])
+  }
+
+  function getCharacterStatsOpponent() {
+    log("get oppo char stats")
+
+    return readFromDb(function(tx) {
+      var sql = "select p2.charId charId, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p2.port != p.port
+where " + getFilterCondition() + "
+group by p2.charId
+order by p2.charId"
 
       var params = getFilterParams()
 
