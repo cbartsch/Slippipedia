@@ -72,14 +72,19 @@ Item {
     }
 
     var sText
-    if(filterStageId < 0) {
+    if(filterStageId == 0) {
       sText = "Other stage"
     }
     else if(filterStageId > 0) {
       sText = "Stage: " + MeleeData.stageMap[filterStageId].name
     }
 
-    return sText && pText ? (pText + ", " + sText) : sText || pText || "(nothing)"
+    var cText
+    if(filterCharId >= 0) {
+      sText = "Character: " + MeleeData.charNames[filterCharId]
+    }
+
+    return [pText, sText, cText].filter(_ => _).join(", ") || "(nothing)"
   }
 
   onIsProcessingChanged: {

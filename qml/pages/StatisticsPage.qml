@@ -37,7 +37,7 @@ BasePage {
 //    }
 
     AppListItem {
-      text: qsTr("Average game time: %1:%2 (%3 frames)")
+      text: qsTr("Average game time: %1 (%3 frames)")
         .arg(dataModel.formatTime(dataModel.averageGameDuration))
         .arg(dataModel.averageGameDuration.toFixed(0))
 
