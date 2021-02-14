@@ -109,7 +109,7 @@ Item {
       cText = "Characters: " + filterCharIds.map(id => MeleeData.charNames[id]).join(", ")
     }
 
-    return [pText, sText, cText].filter(_ => _).join(", ") || "(nothing)"
+    return [pText, sText, cText].filter(_ => _).join("\n") || "(nothing)"
   }
 
   onIsProcessingChanged: {

@@ -7,10 +7,8 @@ import "../controls"
 BasePage {
   title: qsTr("Replay statistics")
 
-  flickable.contentHeight: content.height
-
   Column {
-    id: content
+    id: header
     width: parent.width
 
     SimpleSection {
@@ -19,124 +17,144 @@ BasePage {
 
     AppListItem {
       text: qsTr("Filtered replays: %1/%2 (%3)")
-        .arg(dataModel.totalReplaysFiltered)
-        .arg(dataModel.totalReplays)
-        .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
+      .arg(dataModel.totalReplaysFiltered)
+      .arg(dataModel.totalReplays)
+      .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
 
       detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
     }
+  }
 
-//    AppListItem {
-//      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+  Flickable {
+    anchors.fill: parent
+    anchors.topMargin: header.height
+    contentHeight: content.height
+    clip: true
 
-//      backgroundColor: Theme.backgroundColor
-//      enabled: false
-//    }
+    Column {
+      id: content
+      width: parent.width
+      //    AppListItem {
+      //      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
 
-    SimpleSection {
-      title: "Game stats"
-    }
+      //      backgroundColor: Theme.backgroundColor
+      //      enabled: false
+      //    }
 
-    AppListItem {
-      text: qsTr("Average game time: %1 (%3 frames)")
+      SimpleSection {
+        title: "Game stats"
+      }
+
+      AppListItem {
+        text: qsTr("Average game time: %1 (%3 frames)")
         .arg(dataModel.formatTime(dataModel.averageGameDuration))
         .arg(dataModel.averageGameDuration.toFixed(0))
 
-      backgroundColor: Theme.backgroundColor
-      enabled: false
-    }
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
 
-    SimpleSection {
-      title: "Player stats"
-    }
+      SimpleSection {
+        title: "Player stats"
+      }
 
-    AppListItem {
-      text: qsTr("Win rate: %1 (%2/%3)")
-      .arg(dataModel.formatPercentage(dataModel.winRate))
-      .arg(dataModel.totalReplaysFilteredWon).arg(dataModel.totalReplaysFilteredWithResult)
+      AppListItem {
+        text: qsTr("Win rate: %1 (%2/%3)")
+        .arg(dataModel.formatPercentage(dataModel.winRate))
+        .arg(dataModel.totalReplaysFilteredWon).arg(dataModel.totalReplaysFilteredWithResult)
 
-      backgroundColor: Theme.backgroundColor
-      enabled: false
-    }
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+        visible: dataModel.hasPlayerFilter
+      }
 
-    AppListItem {
-      text: qsTr("Games not finished: %1 (%2/%3)")
-      .arg(dataModel.formatPercentage(dataModel.tieRate))
-      .arg(dataModel.totalReplaysFilteredWithTie).arg(dataModel.totalReplaysFiltered)
+      AppListItem {
+        text: "No name filter configured."
+        detailText: "Filter by Slippi code and/or name to see win rate."
 
-      backgroundColor: Theme.backgroundColor
-      enabled: false
-    }
+        visible: !dataModel.hasPlayerFilter
+        onSelected: showFilteringPage()
+      }
 
-    SimpleSection {
-      title: "Top chars used"
-    }
+      AppListItem {
+        text: qsTr("Games not finished: %1 (%2/%3)")
+        .arg(dataModel.formatPercentage(dataModel.tieRate))
+        .arg(dataModel.totalReplaysFilteredWithTie).arg(dataModel.totalReplaysFiltered)
 
-    CharacterGrid {
-      charIds: dataModel.filterCharIds
-      enabled: false
-      highlightFilteredChar: false
-      showData: true
-      showIcon: true
-      sortByCssPosition: true
-      hideCharsWithNoReplays: false
-    }
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
 
-    SimpleSection {
-      title: "Top stages"
-    }
+      SimpleSection {
+        title: "Top chars used"
+      }
 
-    StageGrid {
-      width: parent.width
+      CharacterGrid {
+        charIds: dataModel.filterCharIds
+        enabled: false
+        highlightFilteredChar: false
+        showData: true
+        showIcon: true
+        sortByCssPosition: true
+        hideCharsWithNoReplays: false
+      }
 
-      hideStagesWithNoReplays: true
-      sortByCount: true
-      showIcon: true
+      SimpleSection {
+        title: "Top stages"
+      }
 
-      stageIds: dataModel.filterStageIds
-      enabled: false
-      highlightFilteredStage: false
-    }
+      StageGrid {
+        width: parent.width
 
-    SimpleSection {
-      title: "Top player tags"
-    }
+        hideStagesWithNoReplays: true
+        sortByCount: true
+        showIcon: true
 
-    Grid {
-      id: nameGrid
-      columns: Math.round(width / dp(200))
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.margins: dp(Theme.contentPadding)
-      spacing: dp(Theme.contentPadding) / 2
-      rowSpacing: dp(1)
+        stageIds: dataModel.filterStageIds
+        enabled: false
+        highlightFilteredStage: false
+      }
 
-      Repeater {
-        model: dataModel.getTopPlayerTags(nameGrid.columns * 5)
+      SimpleSection {
+        title: "Top player tags"
+      }
 
-        Item {
-          width: parent.width / parent.columns
-          height: dp(48)
+      Grid {
+        id: nameGrid
+        columns: Math.round(width / dp(200))
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: dp(Theme.contentPadding)
+        spacing: dp(Theme.contentPadding) / 2
+        rowSpacing: dp(1)
 
-          Column {
-            width: parent.width
-            anchors.verticalCenter: parent.verticalCenter
+        Repeater {
+          model: dataModel.getTopPlayerTags(nameGrid.columns * 5)
 
-            AppText {
+          Item {
+            width: parent.width / parent.columns
+            height: dp(48)
+
+            Column {
               width: parent.width
-              text: modelData.tag
-              maximumLineCount: 1
-              elide: Text.ElideRight
-              font.pixelSize: sp(20)
-            }
-            AppText {
-              width: parent.width
-              text: qsTr("%1 (%2)").arg(modelData.count).arg(dataModel.formatPercentage(modelData.count / dataModel.totalReplaysFiltered))
-              maximumLineCount: 1
-              elide: Text.ElideRight
+              anchors.verticalCenter: parent.verticalCenter
+
+              AppText {
+                width: parent.width
+                text: modelData.tag
+                maximumLineCount: 1
+                elide: Text.ElideRight
+                font.pixelSize: sp(20)
+              }
+              AppText {
+                width: parent.width
+                text: qsTr("%1 (%2)").arg(modelData.count).arg(dataModel.formatPercentage(modelData.count / dataModel.totalReplaysFiltered))
+                maximumLineCount: 1
+                elide: Text.ElideRight
+              }
             }
           }
         }

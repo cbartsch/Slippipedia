@@ -9,36 +9,36 @@ import "../model"
 BasePage {
   title: qsTr("Filtering")
 
-  SimpleSection {
-    id: titleSection
-    title: "Filtering"
-  }
+  Column {
+    id: header
+    width: parent.width
 
-  AppListItem {
-    id: matchListItem
-    anchors.top: titleSection.bottom
+    SimpleSection {
+      title: "Filtering"
+    }
 
-    text: qsTr("Matched replays: %1/%2 (%3)")
-    .arg(dataModel.totalReplaysFiltered)
-    .arg(dataModel.totalReplays)
-    .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
+    AppListItem {
+      text: qsTr("Matched replays: %1/%2 (%3)")
+      .arg(dataModel.totalReplaysFiltered)
+      .arg(dataModel.totalReplays)
+      .arg(dataModel.formatPercentage(dataModel.totalReplaysFiltered / dataModel.totalReplays))
 
-    detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
+      detailText: qsTr("Matching: %1").arg(dataModel.filterDisplayText)
 
-    backgroundColor: Theme.backgroundColor
-    mouseArea.enabled: false
+      backgroundColor: Theme.backgroundColor
+      mouseArea.enabled: false
 
-    rightItem: AppToolButton {
-      iconType: IconType.trash
-      onClicked: dataModel.resetFilters()
-      toolTipText: "Reset all filters"
+      rightItem: AppToolButton {
+        iconType: IconType.trash
+        onClicked: dataModel.resetFilters()
+        toolTipText: "Reset all filters"
+      }
     }
   }
 
   AppFlickable {
-    width: parent.width
-    anchors.top: matchListItem.bottom
-    anchors.bottom: parent.bottom
+    anchors.fill: parent
+    anchors.topMargin: header.height
     contentHeight: content.height
 
     Column {
