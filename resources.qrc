@@ -1,8 +1,37 @@
 <RCC>
     <qresource prefix="/">
-        <file>assets</file>
-        <file>assets/img</file>
-        <file>assets/snd</file>
-        <file>qml</file>
+        <file>qml/config.json</file>
+        <file>qml/Main.qml</file>
+        <file>qml/controls/AppToolButton.qml</file>
+        <file>qml/controls/CharacterGrid.qml</file>
+        <file>qml/controls/CharacterIcon.qml</file>
+        <file>qml/controls/Divider.qml</file>
+        <file>qml/controls/FilterInfoItem.qml</file>
+        <file>qml/controls/LoadingIcon.qml</file>
+        <file>qml/controls/NameGrid.qml</file>
+        <file>qml/controls/ReplayIcons.qml</file>
+        <file>qml/controls/ReplayListItem.qml</file>
+        <file>qml/controls/ReplaySectionHeader.qml</file>
+        <file>qml/controls/StageGrid.qml</file>
+        <file>qml/controls/StageIcon.qml</file>
+        <file>qml/controls/StockIcon.qml</file>
+        <file>qml/controls/TextInputField.qml</file>
+        <file>qml/model/DataBase.qml</file>
+        <file>qml/model/DataModel.qml</file>
+        <file>qml/model/FilterSettings.qml</file>
+        <file>qml/model/MeleeData.qml</file>
+        <file>qml/model/qmldir</file>
+        <file>qml/model/ReplayStats.qml</file>
+        <file>qml/model/TextFilter.qml</file>
+        <file>qml/pages/BasePage.qml</file>
+        <file>qml/pages/DatabasePage.qml</file>
+        <file>qml/pages/FilterModal.qml</file>
+        <file>qml/pages/FilterPage.qml</file>
+        <file>qml/pages/ReplayListPage.qml</file>
+        <file>qml/pages/StatisticsPage.qml</file>
+        <file>assets/img/css_icon_sheet.png</file>
+        <file>assets/img/css_portrait_sheet.png</file>
+        <file>assets/img/sss_icon_sheet.png</file>
+        <file>assets/img/stock_icon_sheet.png</file>
     </qresource>
 </RCC>

@@ -4,7 +4,6 @@
 
 #include <QtDebug>
 #include <QQmlEngine>
-#include <QtConcurrent/QtConcurrent>
 
 struct SlippiParserPrivate : public QObject {
   Q_OBJECT
@@ -83,6 +82,4 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
 
     emit m_item->replayFailedToParse(filePath, ex.what());
   }
-
-
 }

@@ -1,9 +1,35 @@
 # allows to add DEPLOYMENTFOLDERS and links to the Felgo library and QtCreator auto-completion
 CONFIG += felgo
+CONFIG += c++11
 
-# uncomment this line to add the Live Client Module and use live reloading with your custom C++ code
-# for the remaining steps to build a custom Live Code Reload app see here: https://felgo.com/custom-code-reload-app/
-# CONFIG += felgo-live
+QT += core gui widgets qml
+
+#CONFIG += live_client
+CONFIG += use_resources
+
+wasm {
+  QMAKE_CXXFLAGS += --emrun
+}
+else {
+
+}
+
+live_client {
+  CONFIG += felgo-live
+  DEFINES += FELGO_LIVE
+}
+
+use_resources {
+  RESOURCES += resources.qrc # uncomment for publishing
+}
+else {
+  qmlFolder.source = qml
+  DEPLOYMENTFOLDERS += qmlFolder # comment for publishing
+
+  assetsFolder.source = assets
+  DEPLOYMENTFOLDERS += assetsFolder
+}
+
 
 # Project identifier and version
 # More information: https://felgo.com/doc/felgo-publishing/#project-configuration
@@ -17,15 +43,9 @@ PRODUCT_VERSION_CODE = 1
 # Not used if using Felgo Live
 PRODUCT_LICENSE_KEY = ""
 
-qmlFolder.source = qml
-DEPLOYMENTFOLDERS += qmlFolder # comment for publishing
-
-assetsFolder.source = assets
-DEPLOYMENTFOLDERS += assetsFolder
 
 # Add more folders to ship with the application here
 
-# RESOURCES += resources.qrc # uncomment for publishing
 
 # NOTE: for PUBLISHING, perform the following steps:
 # 1. comment the DEPLOYMENTFOLDERS += qmlFolder line above, to avoid shipping your qml files with the application (instead they get compiled to the app binary)

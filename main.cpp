@@ -1,3 +1,4 @@
+#include <QtQml/QtQml>
 #include <QApplication>
 #include <FelgoApplication>
 
@@ -10,8 +11,9 @@
 
 #include <QtDebug>
 
-// uncomment this line to add the Live Client Module and use live reloading with your custom C++ code
-//#include <FelgoLiveClient>
+#ifdef FELGO_LIVE
+#include <FelgoLiveClient>
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -32,13 +34,11 @@ int main(int argc, char *argv[])
 
   // use this during development
   // for PUBLISHING, use the entry point below
+#ifdef USE_RESOURCES
+  felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
+#else
   felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
-
-  // use this instead of the above call to avoid deployment of the qml files and compile them into the binary with qt's resource system qrc
-  // this is the preferred deployment option for publishing games to the app stores, because then your qml files and js files are protected
-  // to avoid deployment of your qml files and images, also comment the DEPLOYMENTFOLDERS command in the .pro file
-  // also see the .pro file for more details
-  //felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
+#endif
 
   Utils::registerQml();
 
@@ -46,11 +46,11 @@ int main(int argc, char *argv[])
   qmlRegisterUncreatableType<SlippiReplay>("Slippi", 1, 0, "SlippiReplay", "Returned by SlippiParser");
   qmlRegisterUncreatableType<PlayerData>("Slippi", 1, 0, "PlayerData", "Returned by SlippiParser");
 
+#ifdef FELGO_LIVE
+  FelgoLiveClient client (&engine);
+#else
   engine.load(QUrl(felgo.mainQmlFileName()));
-
-  // to start your project as Live Client, comment (remove) the lines "felgo.setMainQmlFileName ..." & "engine.load ...",
-  // and uncomment the line below
-  //FelgoLiveClient client (&engine);
+#endif
 
   return app.exec();
 }
