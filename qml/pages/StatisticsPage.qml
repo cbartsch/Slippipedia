@@ -9,27 +9,20 @@ BasePage {
   id: statisticsPage
   title: qsTr("Replay statistics")
 
-  property ReplayStats stats: null
+  rightBarItem: NavigationBarRow {
+    LoadingIcon {
+    }
 
-  Column {
+    IconButtonBarItem {
+      icon: IconType.filter
+      onClicked: showFilteringPage()
+    }
+  }
+
+  FilterInfoItem {
     id: header
-    width: parent.width
-
-    SimpleSection {
-      title: "Replay statistics"
-    }
-
-    AppListItem {
-      text: qsTr("Filtered replays: %1/%2 (%3)")
-      .arg(stats.totalReplaysFiltered)
-      .arg(stats.totalReplays)
-      .arg(dataModel.formatPercentage(stats.totalReplaysFiltered / stats.totalReplays))
-
-      detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
-
-      backgroundColor: Theme.backgroundColor
-      enabled: false
-    }
+    stats: statisticsPage.stats
+    clickable: true
   }
 
   Flickable {

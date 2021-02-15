@@ -1,48 +1,29 @@
-import Felgo 3.0
-
 import QtQuick 2.0
 import QtQuick.Controls 2.12
+
+import Felgo 3.0
 
 import "../controls"
 import "../model"
 
-BasePage {
+Page {
   id: filterPage
   title: qsTr("Filtering")
 
   property ReplayStats stats: null
 
-  Column {
+  FilterInfoItem {
     id: header
-    width: parent.width
-
-    SimpleSection {
-      title: "Filtering"
-    }
-
-    AppListItem {
-      text: qsTr("Matched replays: %1/%2 (%3)")
-      .arg(stats.totalReplaysFiltered)
-      .arg(stats.totalReplays)
-      .arg(dataModel.formatPercentage(stats.totalReplaysFiltered / stats.totalReplays))
-
-      detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
-
-      backgroundColor: Theme.backgroundColor
-      mouseArea.enabled: false
-
-      rightItem: AppToolButton {
-        iconType: IconType.trash
-        onClicked: dataModel.resetFilters()
-        toolTipText: "Reset all filters"
-      }
-    }
+    stats: filterPage.stats
+    showResetButton: true
   }
 
   AppFlickable {
     anchors.fill: parent
     anchors.topMargin: header.height
-    contentHeight: content.height
+
+    // somehow the list doesn't scroll all the way to the bottom so add extra spacing
+    contentHeight: content.height + dp(18)
 
     Column {
       id: content

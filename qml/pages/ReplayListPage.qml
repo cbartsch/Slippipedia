@@ -7,6 +7,7 @@ import "../controls"
 import "../model"
 
 BasePage {
+  id: replayListPage
   title: qsTr("Replay browser")
 
   property int numReplays: 25
@@ -22,12 +23,20 @@ BasePage {
     target: dataModel.filter
 
     // clear list when filter changes
-    onFilterChanged: clear()
+    onFilterChanged: refresh()
   }
 
-  rightBarItem: IconButtonBarItem {
-    icon: IconType.refresh
-    onClicked: refresh()
+  rightBarItem: NavigationBarRow {
+    LoadingIcon {
+    }
+    IconButtonBarItem {
+      icon: IconType.filter
+      onClicked: showFilteringPage()
+    }
+    IconButtonBarItem {
+      icon: IconType.refresh
+      onClicked: refresh()
+    }
   }
 
   AppListView {
@@ -47,6 +56,12 @@ BasePage {
     }
 
     delegate: ReplayListItem {
+    }
+
+
+    header: FilterInfoItem {
+      stats: replayListPage.stats
+      clickable: true
     }
 
     footer: AppListItem {

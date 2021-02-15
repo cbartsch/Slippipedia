@@ -17,6 +17,9 @@ Item {
 
   visible: cssId >= 0
 
+  implicitWidth: sprite.width
+  implicitHeight: sprite.height
+
   SingleSpriteFromSpriteSheet {
     id: sprite
 

@@ -22,7 +22,8 @@ Grid {
 
   columns: {
     if(showIcon) {
-      return width > dp(750) ? 9 : width > dp(250) ? 3 : 1
+      return 9
+      //return width > dp(750) ? 9 : width > dp(250) ? 3 : 1
     }
     else {
       return width / dp(200)
@@ -73,7 +74,7 @@ Grid {
       readonly property bool hasChar: id >= 0 && id < 26 // ids 0-25 are the useable characters
 
       width: parent.width / parent.columns
-      height: dp(72)
+      height: showIcon ? charIcon.height : dp(72)
       enabled: hasChar
       visible: true
       onClicked: charSelected(id, isSelected)
@@ -91,6 +92,7 @@ Grid {
       }
 
       CharacterIcon {
+        id: charIcon
         anchors.centerIn: parent
         scale: parent.height / height
 
@@ -98,6 +100,9 @@ Grid {
         visible: showIcon && hasChar
 
         opacity: showData || (!isSelected && charIds.length > 0) ? 0.5 : 1
+
+        width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
+        height: implicitHeight * width / implicitWidth
       }
 
       Column {

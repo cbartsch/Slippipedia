@@ -9,7 +9,8 @@ AppListItem {
   backgroundColor: Theme.backgroundColor
   mouseArea.enabled: false
 
-  text: qsTr("%1 - %2").arg(dataModel.formatTime(duration)).arg(MeleeData.stageMap[stageId].name)
+  text: qsTr("%1 - %2").arg(dataModel.formatTime(duration))
+  .arg(MeleeData.stageMap[stageId][replayListItem.width > dp(510) ? "name" : "shortName"])
 
   Binding {
     target: textItem
@@ -21,9 +22,9 @@ AppListItem {
     replayModel: model
     anchors.verticalCenter: parent.verticalCenter
 
-    width: replayListItem.width > dp(540)
+    width: replayListItem.width > dp(455)
            ? implicitWidth
-           : (replayListItem.width - dp(540) + implicitWidth)
+           : (replayListItem.width - dp(455) + implicitWidth)
   }
 
   rightItem: IconButtonBarItem {

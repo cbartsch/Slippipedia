@@ -63,6 +63,7 @@ Column {
 
         width: parent.width / stageGridLayout.columns
         height: dp(72)
+
         color: !enabled
                ? Theme.backgroundColor
                : isSelected
@@ -84,7 +85,6 @@ Column {
           }
 
           Column {
-            visible: showData
             width: parent.width
             anchors.verticalCenter: parent.verticalCenter
 
@@ -92,13 +92,14 @@ Column {
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
-              font.pixelSize: sp(20)
+              font.pixelSize: showData ? sp(20) : dp(30)
               text: shortName
               style: Text.Outline
               styleColor: Theme.backgroundColor
             }
 
             AppText {
+              visible: showData
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter

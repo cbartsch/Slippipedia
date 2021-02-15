@@ -47,17 +47,18 @@ App {
       }
     }
 
-    NavigationItem {
-      id: filteringItem
-      title: "Filtering"
-      icon: IconType.filter
+    // filtering is currently not a main navigation item but a modal in the pages where it's relevant
+//    NavigationItem {
+//      id: filteringItem
+//      title: "Filtering"
+//      icon: IconType.filter
 
-      NavigationStack {
-        FilterPage {
-          stats: dataModel.stats
-        }
-      }
-    }
+//      NavigationStack {
+//        FilterPage {
+//          stats: dataModel.stats
+//        }
+//      }
+//    }
 
     NavigationItem {
       title: "Statistics"
@@ -78,12 +79,12 @@ App {
       onPageChanged: if(page) page.selected()
 
       NavigationStack {
-        ReplayListPage { }
+        id: stack
+
+        ReplayListPage {
+          stats: dataModel.stats
+        }
       }
     }
-  }
-
-  function showFilteringPage() {
-    navigation.currentIndex = 1
   }
 }
