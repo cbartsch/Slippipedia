@@ -134,10 +134,31 @@ Item {
     var minutes = Math.floor(numFrames / 60 / 60)
     var seconds = Math.floor(numFrames / 60 % 60)
 
-    return qsTr("%1:%2").arg(minutes).arg(seconds)
+    return qsTr("%1:%2")
+    .arg(leadingZeros(minutes, 2))
+    .arg(leadingZeros(seconds, 2))
+  }
+
+  function leadingZeros(number, numDigits) {
+    var str = ""
+
+    var max = Math.pow(10, numDigits - 1)
+
+    while(number < max) {
+      str += "0"
+      max = Math.floor(max / 10)
+    }
+
+    return str + (number ? number : "")
   }
 
   function formatDate(date) {
     return date.toLocaleString("dd/MM/yyyy HH:mm")
+  }
+
+  function playersText(replay) {
+    return qsTr("%1 (%2) vs %3 (%4)")
+        .arg(replay.name1).arg(replay.code1)
+        .arg(replay.name2).arg(replay.code2)
   }
 }

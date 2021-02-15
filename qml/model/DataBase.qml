@@ -35,6 +35,7 @@ slippiName text,
 slippiCode text,
 cssTag text,
 charId integer,
+skinId integer,
 startStocks integer,
 endStocks integer,
 endPercent integer,
@@ -53,8 +54,10 @@ foreign key(replayId) references replays(id)
 
   function clearAllData() {
     db.transaction(function(tx) {
-      tx.executeSql("delete from Replays")
-      tx.executeSql("delete from Players")
+      tx.executeSql("drop table Replays")
+      tx.executeSql("drop table Players")
+
+      createTablesTx(tx)
     })
   }
 
@@ -75,12 +78,13 @@ foreign key(replayId) references replays(id)
                     ])
 
       replay.players.forEach(function(player) {
-        tx.executeSql("insert or replace into Players (port, replayId, charId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
-                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        tx.executeSql("insert or replace into Players (port, replayId, charId, skinId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
+                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                       [
                         player.port,
                         replay.uniqueId,
                         player.charId,
+                        player.charSkinId,
                         player.slippiName,
                         player.slippiCode,
                         player.inGameTag,
@@ -549,9 +553,9 @@ order by stageId"
 
     return readFromDb(function(tx) {
       var sql = "select
-r.id id, r.date date, r.filePath filePath, r.duration duration,
-p.slippiName name1, p.slippiCode code1, p.charId char1, p.endStocks endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.endStocks endStocks2
+r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
+p.slippiName name1, p.slippiCode code1, p.charId char1, p.skinId skin1, p.endStocks endStocks1,
+p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.skinId skin2, p2.endStocks endStocks2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id

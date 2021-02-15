@@ -42,6 +42,7 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
     player->m_slippiCode = QString::fromStdString(p.tag_code);
     player->m_inGameTag = QString::fromStdString(p.tag_css);
     player->m_charId = p.char_id;
+    player->m_charSkinId = p.color;
     player->m_port = p.port;
     player->m_endStocks = p.end_stocks;
     player->m_endPercent = p.end_pct;

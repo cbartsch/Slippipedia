@@ -18,7 +18,7 @@ BasePage {
     }
 
     AppListItem {
-      text: qsTr("%1 total replays stored.").arg(dataModel.totalReplays)
+      text: qsTr("%1 total replays stored.").arg(dataModel.stats.totalReplays)
 
       backgroundColor: Theme.backgroundColor
       enabled: false
@@ -26,7 +26,7 @@ BasePage {
 
     AppListItem {
       text: "Clear database"
-      enabled: dataModel.totalReplays > 0
+      enabled: dataModel.stats.totalReplays > 0
       onSelected: InputDialog.confirm(app, "Really clear the whole database?", function(accepted) {
         if(accepted) {
           dataModel.clearDatabase()

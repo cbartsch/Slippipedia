@@ -61,4 +61,64 @@ Item {
 
   // css index (on a 9x3 grid) -> char id
   readonly property var cssCharIds: [...Array(27).keys()].map(index => charCssIndices.indexOf(index))
+
+  // X/Y positions of each character id stock icon in the sprite sheet
+  readonly property var stockIconPositions: [
+    Qt.point(1, 74), // cf
+    Qt.point(407, 38), // dk
+    Qt.point(490, 74), // fox
+    Qt.point(140, 217), // gnw
+    Qt.point(270, 109), // kirby
+    Qt.point(454, 1), // bowser
+    Qt.point(386, 146), // link
+    Qt.point(328, 1), // luigi
+    Qt.point(176, 1), // mario
+    Qt.point(273, 217), // marth
+    Qt.point(23, 217), // mewtwo
+    Qt.point(14, 109), // ness
+    Qt.point(56, 38), // peach
+    Qt.point(310, 182), // pikachu
+    Qt.point(142, 109), // ics
+    Qt.point(440, 182), // jigglypuff
+    Qt.point(445, 109), // samus
+    Qt.point(218, 38), // yoshi
+    Qt.point(62, 146), // zelda
+    Qt.point(224, 146), // sheik
+    Qt.point(354, 74), // falco
+    Qt.point(22, 182), // yl
+    Qt.point(35, 1), // doc
+    Qt.point(434, 217), // roy
+    Qt.point(182, 182), // pichu
+    Qt.point(188, 74) // ganon
+  ]
+
+  // distance between skins in the sprite sheet
+  readonly property var stockIconDistance: [
+    Qt.point(28, 0), // cf
+    Qt.point(29, 0), // dk
+    Qt.point(29, 0), // fox
+    Qt.point(29, 0), // gnw
+    Qt.point(27, 0), // kirby
+    Qt.point(29, 0), // bowser
+    Qt.point(29, 0), // link
+    Qt.point(27, 0), // luigi
+    Qt.point(28, 0), // mario
+    Qt.point(28, 0), // marth
+    Qt.point(26, 0), // mewtwo
+    Qt.point(28, 0), // ness
+    Qt.point(29, 0), // peach
+    Qt.point(29, 0), // pikachu
+    Qt.point(29, 0), // ics
+    Qt.point(28, 0), // jigglypuff
+    Qt.point(29, 0), // samus
+    Qt.point(29, 0), // yoshi
+    Qt.point(29, 0), // zelda
+    Qt.point(29, 0), // sheik
+    Qt.point(29, 0), // falco
+    Qt.point(29, 0), // yl
+    Qt.point(26, 0), // doc
+    Qt.point(29, 0), // roy
+    Qt.point(29, 0), // pichu
+    Qt.point(29, 0) // ganon
+  ]
 }
