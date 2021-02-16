@@ -107,7 +107,7 @@ BasePage {
         AppText {
           text: "Stat"
           color: Theme.secondaryTextColor
-          Layout.preferredWidth: dp(160)
+          Layout.preferredWidth: dp(145)
         }
 
         AppText {
@@ -124,7 +124,7 @@ BasePage {
         }
 
         AppText {
-          Layout.preferredWidth: dp(160)
+          Layout.preferredWidth: dp(145)
           text: "L-cancels"
         }
 
@@ -144,7 +144,7 @@ BasePage {
 
         AppText {
           text: "Intangible ledgedashes / game"
-          Layout.preferredWidth: dp(160)
+          Layout.preferredWidth: dp(145)
         }
 
         AppText {
@@ -158,7 +158,7 @@ BasePage {
 
         AppText {
           text: "Average GALINT"
-          Layout.preferredWidth: dp(160)
+          Layout.preferredWidth: dp(145)
         }
 
         AppText {

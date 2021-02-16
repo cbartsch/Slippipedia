@@ -21,9 +21,11 @@ Item {
 
   // characters
   readonly property var charNames: [
-    "Captain Falcon", "Donkey Kong", "Fox", "Mr. Game & Watch", "Kirby", "Bowser", "Link",
-    "Luigi", "Mario", "Marth", "Mewtwo", "Ness", "Peach", "Pikachu", "Ice Climbers", "Jigglypuff",
-    "Samus", "Yoshi", "Zelda", "Sheik", "Falco", "Young Link", "Dr. Mario", "Roy", "Pichu",
+    "Captain Falcon", "Donkey Kong", "Fox", "Mr. Game & Watch", "Kirby",
+    "Bowser", "Link", "Luigi", "Mario", "Marth", "Mewtwo", "Ness", "Peach",
+    "Pikachu", "Ice Climbers", "Jigglypuff", "Samus", "Yoshi",
+    "Zelda/Sheik", // zelda and sheik are considered the same in stats
+    "Sheik", "Falco", "Young Link", "Dr. Mario", "Roy", "Pichu",
     "Ganondorf", "Master Hand", "Fighting Wire Frame ♂", "Fighting Wire Frame ♀",
     "Giga Bowser", "Crazy Hand", "Sandbag", "SoPo", "NONE"
   ]

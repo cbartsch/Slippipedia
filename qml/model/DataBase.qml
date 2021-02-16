@@ -43,6 +43,7 @@ slippiCode text,
 cssTag text,
 
 charId integer,
+charIdOriginal integer,
 skinId integer,
 
 startStocks integer,
@@ -93,9 +94,15 @@ foreign key(replayId) references replays(id)
                     ])
 
       replay.players.forEach(function(player) {
+
+        var charIdOriginal = player.charId
+
+        // store sheik as zelda so matching is easier. keep original id for reference.
+        var charId = charIdOriginal === 19 ? 18 : charIdOriginal
+
         var params = [
               replay.uniqueId, player.port, player.isWinner,
-              player.charId, player.charSkinId,
+              charId, charIdOriginal, player.charSkinId,
               player.slippiName, player.slippiCode, player.inGameTag,
               player.startStocks, player.endStocks, player.endPercent,
               player.lCancels, player.lCancelsMissed, player.numLedgedashes, player.avgGalint
@@ -103,7 +110,7 @@ foreign key(replayId) references replays(id)
 
         tx.executeSql("insert or replace into Players (
 replayId, port, isWinner,
-charId, skinId,
+charId, charIdOriginal, skinId,
 slippiName, slippiCode, cssTag,
 startStocks, endStocks, endPercent,
 lCancels, lCancelsMissed, numLedgedashes, avgGalint
@@ -325,8 +332,6 @@ from (" + subSql + ")"
 
       var results = tx.executeSql(sql, getFilterParams())
 
-      console.log("item is", JSON.stringify(results.rows.item(0)))
-
       return results.rows.item(0)
     }, 0)
   }
@@ -540,8 +545,8 @@ order by stageId"
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charId char1, p.skinId skin1, p.endStocks endStocks1, p.port port1,
-p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.skinId skin2, p2.endStocks endStocks2, p2.port port2
+p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.endStocks endStocks1, p.port port1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.endStocks endStocks2, p2.port port2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
