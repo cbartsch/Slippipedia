@@ -132,8 +132,8 @@ Item {
       color: Theme.secondaryTextColor
 
       width: parent.width
-      text: !sData ? "" : !dataModel.filter.hasPlayerFilter ? "Configure name filter to see win rate"
-                                                            : qsTr("Games won: %1 / %2 (%3). Games not finished: %4")
+      text: !sData ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
+                                                                  : qsTr("Games won: %1 / %2 (%3). Games not finished: %4")
       .arg(sData.gamesWon).arg(sData.gamesFinished)
       .arg(dataModel.formatPercentage(sData.gamesWon / sData.gamesFinished))
       .arg(sData.numGames - sData.gamesFinished)

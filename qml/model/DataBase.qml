@@ -10,6 +10,10 @@ Item {
   // db
   property var db: null
 
+  property PlayerFilterSettings playerFilter: null
+  property PlayerFilterSettings opponentFilter: null
+  property StageFilterSettings stageFilter: null
+
   Component.onCompleted: {
     db = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
 
@@ -143,14 +147,14 @@ values " + makeSqlWildcards(params), params)
     return res
   }
 
-  function getPlayerFilterCondition(codeFilter, nameFilter) {
-    var cf = makeFilterCondition("p.slippiCode", codeFilter)
-    var nf = makeFilterCondition("p.slippiName", nameFilter)
+  function getPlayerFilterCondition(codeFilter, nameFilter, tableName) {
+    var cf = makeFilterCondition(tableName + ".slippiCode", codeFilter)
+    var nf = makeFilterCondition(tableName + ".slippiName", nameFilter)
 
     if(codeFilter.filterText && nameFilter.filterText) {
       return qsTr("(%1 %2 %3)")
         .arg(cf)
-        .arg(filter.filterCodeAndName ? "and" : "or")
+        .arg(playerFilter.filterCodeAndName ? "and" : "or")
         .arg(nf)
     }
     else if(codeFilter.filterText) {
@@ -173,9 +177,9 @@ values " + makeSqlWildcards(params), params)
     }
   }
 
-  function getCharFilterCondition(charIds) {
+  function getCharFilterCondition(charIds, colName) {
     if(charIds && charIds.length > 0) {
-      return "(p.charId in " + makeSqlWildcards(charIds) + ")"
+      return "(" + colName + " in " + makeSqlWildcards(charIds) + ")"
     }
     else {
       return "true"
@@ -184,9 +188,14 @@ values " + makeSqlWildcards(params), params)
 
   function getFilterCondition() {
     return "(" +
-        getPlayerFilterCondition(filter.slippiCode, filter.slippiName) +
-        " and " + getStageFilterCondition(filter.stageIds) +
-        " and " + getCharFilterCondition(filter.charIds) +
+        // stage
+        getStageFilterCondition(stageFilter.stageIds) +
+        // me
+        " and " + getPlayerFilterCondition(playerFilter.slippiCode, playerFilter.slippiName, "p") +
+        " and " + getCharFilterCondition(playerFilter.charIds, "p.charId") +
+        // opponent
+        " and " + getPlayerFilterCondition(opponentFilter.slippiCode, opponentFilter.slippiName, "p2") +
+        " and " + getCharFilterCondition(opponentFilter.charIds, "p2.charId") +
         ")"
   }
 
@@ -227,9 +236,12 @@ values " + makeSqlWildcards(params), params)
   }
 
   function getFilterParams() {
-    return getPlayerFilterParams(filter.slippiCode, filter.slippiName)
-      .concat(getStageFilterParams(filter.stageIds))
-      .concat(getCharFilterParams(filter.charIds))
+    // stage, then me, then opponent
+    return getStageFilterParams(stageFilter.stageIds)
+    .concat(getPlayerFilterParams(playerFilter.slippiCode, playerFilter.slippiName))
+    .concat(getCharFilterParams(playerFilter.charIds))
+    .concat(getPlayerFilterParams(opponentFilter.slippiCode, opponentFilter.slippiName))
+    .concat(getCharFilterParams(opponentFilter.charIds))
   }
 
   function getNumReplays() {
@@ -315,8 +327,9 @@ from (" + subSql + ")"
     log("get other stage amount")
 
     return readFromDb(function(tx) {
-      var results = tx.executeSql(qsTr("select count(distinct replayId) c from Replays r
-join Players p on p.replayId = r.id
+      var results = tx.executeSql(qsTr("select count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
 where stageId not in (%1) and " + getFilterCondition())
                                   .arg(MeleeData.stageIds.map(_ => "?").join(",")), // add one question mark placeholder per argument
                                   MeleeData.stageIds.concat(getFilterParams()))
@@ -329,11 +342,12 @@ where stageId not in (%1) and " + getFilterCondition())
     log("get top tags")
 
     return readFromDb(function(tx) {
-      var sql = "select slippiName, count(distinct replayId) c from players p
-join replays r on p.replayId = r.id
-where slippiName is not null and
-slippiName is not \"\" and " + getFilterCondition() + "
-group by slippiName
+      var sql = "select p.slippiName slippiName, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+where p.slippiName is not null and
+p.slippiName is not \"\" and " + getFilterCondition() + "
+group by p.slippiName
 order by c desc
 limit ?"
 
@@ -415,11 +429,12 @@ limit ?"
     log("get char stats")
 
     return readFromDb(function(tx) {
-      var sql = "select charId, count(distinct r.id) c from replays r
+      var sql = "select p.charId charId, count(distinct r.id) c from replays r
 join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
 where " + getFilterCondition() + "
-group by charId
-order by charId"
+group by p.charId
+order by p.charId"
 
       var params = getFilterParams()
 
@@ -476,8 +491,9 @@ order by p2.charId"
     log("get stage stats")
 
     return readFromDb(function(tx) {
-      var sql = "select stageId, count(distinct replayId) c from players p
-join replays r on p.replayId = r.id
+      var sql = "select stageId, count(distinct r.id) c from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
 where " + getFilterCondition() + "
 group by stageId
 order by stageId"

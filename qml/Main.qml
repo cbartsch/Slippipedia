@@ -24,6 +24,8 @@ App {
 
     Theme.colors.inputCursorColor = "white"
 
+    Theme.tabBar.backgroundColor = Theme.backgroundColor
+
     Theme.listItem.backgroundColor = Theme.controlBackgroundColor
 
     Theme.navigationTabBar.titleOffColor= "white"

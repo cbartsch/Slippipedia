@@ -24,10 +24,27 @@ Item {
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
 
   // filter settings
-  property alias filter: filter
+  property alias playerFilter: playerFilter
+  property alias opponentFilter: opponentFilter
+  property alias stageFilter: stageFilter
 
   // stats
   property alias stats: stats
+
+  readonly property string filterDisplayText: {
+    var pText = playerFilter.displayText
+    pText = pText ? "Me: " + pText : ""
+
+    var oText = opponentFilter.displayText
+    oText = oText ? "Opponent: " + oText : ""
+
+    var sText = null
+    if(stageFilter.stageIds.length > 0) {
+      sText = "Stages: " + stageFilter.stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
+    }
+
+    return [pText, oText, sText].filter(_ => _).join("\n") || "(nothing)"
+  }
 
   onIsProcessingChanged: {
     if(!isProcessing) {
@@ -35,8 +52,24 @@ Item {
     }
   }
 
-  FilterSettings {
-    id: filter
+  PlayerFilterSettings {
+    id: playerFilter
+
+    settingsCategory: "player-filter"
+
+    onFilterChanged: dbUpdaterChanged()
+  }
+
+  PlayerFilterSettings {
+    id: opponentFilter
+
+    settingsCategory: "player-filter-opponent"
+
+    onFilterChanged: dbUpdaterChanged()
+  }
+
+  StageFilterSettings {
+    id: stageFilter
 
     onFilterChanged: dbUpdaterChanged()
   }
@@ -66,6 +99,10 @@ Item {
 
   DataBase {
     id: dataBase
+
+    playerFilter: dataModel.playerFilter
+    opponentFilter: dataModel.opponentFilter
+    stageFilter: dataModel.stageFilter
   }
 
   // replay / db management
@@ -113,7 +150,9 @@ Item {
   }
 
   function resetFilters() {
-    filter.reset()
+    playerFilter.reset()
+    opponentFilter.reset()
+    stageFilter.reset()
   }
 
   // utils

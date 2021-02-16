@@ -60,14 +60,14 @@ BasePage {
 
         backgroundColor: Theme.backgroundColor
         enabled: false
-        visible: dataModel.filter.hasPlayerFilter
+        visible: dataModel.playerFilter.hasPlayerFilter
       }
 
       AppListItem {
         text: "No name filter configured."
         detailText: "Filter by Slippi code and/or name to see win rate."
 
-        visible: !dataModel.filter.hasPlayerFilter
+        visible: !dataModel.playerFilter.hasPlayerFilter
         onSelected: showFilteringPage()
       }
 
@@ -111,7 +111,6 @@ BasePage {
       }
 
       CharacterGrid {
-        charIds: dataModel.filter.charIds
         stats: statisticsPage.stats
         sourceModel: stats.charDataCss
 
@@ -131,14 +130,13 @@ BasePage {
         text: "No name filter configured."
         detailText: "Filter by Slippi code and/or name to see opposing characters."
 
-        visible: !dataModel.filter.hasPlayerFilter
+        visible: !dataModel.playerFilter.hasPlayerFilter
         onSelected: showFilteringPage()
       }
 
       CharacterGrid {
-        visible: dataModel.filter.hasPlayerFilter
+        visible: dataModel.playerFilter.hasPlayerFilter
 
-        charIds: dataModel.filter.charIds
         stats: statisticsPage.stats
         sourceModel: stats.charDataOpponentCss
 
@@ -164,7 +162,6 @@ BasePage {
         sortByCount: true
         showIcon: true
 
-        stageIds: dataModel.filter.stageIds
         enabled: false
         highlightFilteredStage: false
       }
@@ -185,12 +182,12 @@ BasePage {
         text: "No name filter configured."
         detailText: "Filter by Slippi code and/or name to see opposing player tags."
 
-        visible: !dataModel.filter.hasPlayerFilter
+        visible: !dataModel.playerFilter.hasPlayerFilter
         onSelected: showFilteringPage()
       }
 
       NameGrid {
-        visible: dataModel.filter.hasPlayerFilter
+        visible: dataModel.playerFilter.hasPlayerFilter
         model: dataModel.getTopPlayerTagsOpponent(columns * 5)
       }
 
@@ -202,12 +199,12 @@ BasePage {
         text: "No name filter configured."
         detailText: "Filter by Slippi code and/or name to see opposing Slippi codes."
 
-        visible: !dataModel.filter.hasPlayerFilter
+        visible: !dataModel.playerFilter.hasPlayerFilter
         onSelected: showFilteringPage()
       }
 
       NameGrid {
-        visible: dataModel.filter.hasPlayerFilter
+        visible: dataModel.playerFilter.hasPlayerFilter
         model: dataModel.getTopSlippiCodesOpponent(columns * 5)
       }
     }
