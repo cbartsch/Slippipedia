@@ -8,17 +8,28 @@ Item {
 
   // stats
   readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
-  readonly property int totalReplaysFiltered: dataBase.getNumReplaysFiltered(dbUpdater)
-  readonly property int totalReplaysFilteredWithResult: dataBase.getNumReplaysFilteredWithResult(dbUpdater)
-  readonly property int totalReplaysFilteredWon: dataBase.getNumReplaysFilteredWon(dbUpdater)
+
+  readonly property var statsData: dataBase.getReplayStats(dbUpdater)
+
+  readonly property int totalReplaysFiltered: statsData ? statsData.count : 0
+  readonly property int totalReplaysFilteredWithResult: statsData ? statsData.gameEndedCount : 0
+  readonly property int totalReplaysFilteredWon: statsData ? statsData.winCount : 0
   readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
+
+  readonly property real averageGameDuration: statsData ? statsData.avgDuration : 0
 
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
   readonly property real winRate: totalReplaysFilteredWon / totalReplaysFilteredWithResult
 
-  readonly property real otherStageAmount: dataBase.getOtherStageAmount(dbUpdater)
+  readonly property real lCancels: statsData ? statsData.lCancels : 0
+  readonly property real lCancelsMissed: statsData ? statsData.lCancelsMissed : 0
+  readonly property real lCancelRate: statsData ? statsData.lCancelRate : 0
 
-  readonly property real averageGameDuration: dataBase.getAverageGameDuration(dbUpdater)
+  readonly property real lCancelsOpponent: statsData ? statsData.lCancelsOpponent : 0
+  readonly property real lCancelsMissedOpponent: statsData ? statsData.lCancelsMissedOpponent : 0
+  readonly property real lCancelRateOpponent: statsData ? statsData.lCancelRateOpponent : 0
+
+  readonly property real otherStageAmount: dataBase.getOtherStageAmount(dbUpdater)
 
   readonly property var charData: dataBase.getCharacterStats(dbUpdater)
   readonly property var charDataCss: toCssCharData(charData)

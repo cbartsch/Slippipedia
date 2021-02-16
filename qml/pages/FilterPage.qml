@@ -149,7 +149,7 @@ Page {
       CharacterGrid {
         width: parent.width
 
-        sourceModel: stats.charDataCss
+        sourceModel: stats ? stats.charDataCss : []
         stats: filterPage.stats
 
         charIds: dataModel.filter.charIds
@@ -179,7 +179,7 @@ Page {
       StageGrid {
         width: parent.width
 
-        sourceModel: stats.stageDataSss
+        sourceModel: stats ? stats.stageDataSss : []
         stats: filterPage.stats
 
         hideStagesWithNoReplays: false

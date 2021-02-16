@@ -34,25 +34,29 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   // parser currently only supports singles matches
   int numPlayers = 2;
   for(int i = 0; i < numPlayers; i++) {
-    auto &p = analysis->ap[i];
-
-    PlayerData *player = new PlayerData(this);
-
-    player->m_slippiName = QString::fromStdString(p.tag_player);
-    player->m_slippiCode = QString::fromStdString(p.tag_code);
-    player->m_inGameTag = QString::fromStdString(p.tag_css);
-    player->m_charId = p.char_id;
-    player->m_charSkinId = p.color;
-    player->m_port = p.port;
-    player->m_endStocks = p.end_stocks;
-    player->m_endPercent = p.end_pct;
-    player->m_startStocks = p.start_stocks;
-    player->m_isWinner = m_winningPlayerIndex == i;
+    PlayerData *player = new PlayerData(this, *analysis, analysis->ap[i]);
 
     m_players << QVariant::fromValue(player);
   }
 }
 
-PlayerData::PlayerData(QObject *parent) : QObject(parent) {
+PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis, const slip::AnalysisPlayer &p)
+  : QObject(parent) {
 
+  m_port = p.port;
+  m_isWinner = analysis.winner_port == m_port;
+
+  m_slippiName = QString::fromStdString(p.tag_player);
+  m_slippiCode = QString::fromStdString(p.tag_code);
+  m_inGameTag = QString::fromStdString(p.tag_css);
+
+  m_charId = p.char_id;
+  m_charSkinId = p.color;
+
+  m_endStocks = p.end_stocks;
+  m_endPercent = p.end_pct;
+  m_startStocks = p.start_stocks;
+
+  m_lCancels = p.l_cancels_hit;
+  m_lCancelsMissed = p.l_cancels_missed;
 }

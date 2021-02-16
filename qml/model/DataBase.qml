@@ -29,17 +29,25 @@ filePath text
     )")
 
     tx.executeSql("create table if not exists Players (
-port integer,
 replayId integer,
+
+port integer,
+isWinner bool,
+
 slippiName text,
 slippiCode text,
 cssTag text,
+
 charId integer,
 skinId integer,
+
 startStocks integer,
 endStocks integer,
 endPercent integer,
-isWinner bool,
+
+lCancels integer,
+lCancelsMissed integer,
+
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
     )")
@@ -47,6 +55,7 @@ foreign key(replayId) references replays(id)
     tx.executeSql("create index if not exists char_index on players(charId)")
     tx.executeSql("create index if not exists stage_index on replays(stageId)")
     tx.executeSql("create index if not exists player_replay_index on players(replayId)")
+    tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
 
     // can only configure this globally, set like to be case sensitive:
     tx.executeSql("pragma case_sensitive_like = true")
@@ -78,21 +87,22 @@ foreign key(replayId) references replays(id)
                     ])
 
       replay.players.forEach(function(player) {
-        tx.executeSql("insert or replace into Players (port, replayId, charId, skinId, slippiName, slippiCode, cssTag, startStocks, endStocks, endPercent, isWinner)
-                       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                      [
-                        player.port,
-                        replay.uniqueId,
-                        player.charId,
-                        player.charSkinId,
-                        player.slippiName,
-                        player.slippiCode,
-                        player.inGameTag,
-                        player.startStocks,
-                        player.endStocks,
-                        player.endPercent,
-                        player.isWinner
-                      ])
+        var params = [
+              replay.uniqueId, player.port, player.isWinner,
+              player.charId, player.charSkinId,
+              player.slippiName, player.slippiCode, player.inGameTag,
+              player.startStocks, player.endStocks, player.endPercent,
+              player.lCancels, player.lCancelsMissed
+            ]
+
+        tx.executeSql("insert or replace into Players (
+replayId, port, isWinner,
+charId, skinId,
+slippiName, slippiCode, cssTag,
+startStocks, endStocks, endPercent,
+lCancels, lCancelsMissed
+)
+values " + makeSqlWildcards(params), params)
       })
     })
 
@@ -156,7 +166,7 @@ foreign key(replayId) references replays(id)
 
   function getStageFilterCondition(stageIds) {
     if(stageIds && stageIds.length > 0) {
-      return "(r.stageId in " + makeInWildcards(stageIds) + ")"
+      return "(r.stageId in " + makeSqlWildcards(stageIds) + ")"
     }
     else {
       return "true"
@@ -165,7 +175,7 @@ foreign key(replayId) references replays(id)
 
   function getCharFilterCondition(charIds) {
     if(charIds && charIds.length > 0) {
-      return "(p.charId in " + makeInWildcards(charIds) + ")"
+      return "(p.charId in " + makeSqlWildcards(charIds) + ")"
     }
     else {
       return "true"
@@ -272,80 +282,32 @@ foreign key(replayId) references replays(id)
     }, 0)
   }
 
-  function getNumReplaysFiltered() {
-    log("get num replays")
+  function getReplayStats() {
+    log("get replay stats")
 
     return readFromDb(function(tx) {
-      var sql = "select count(distinct replayId) c from replays r
+      var subSql = "select
+count(r.id) count, avg(r.duration) avgDuration,
+count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
+count(case winnerPort when p.port then 1 else null end) winCount,
+sum(p.lCancels) lc, sum(p.lCancelsMissed) lcm,
+sum(p2.lCancels) lco, sum(p2.lCancelsMissed) lcmo
+from replays r
 join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
 where " + getFilterCondition()
 
-      //console.log("get filtered replays with sql", sql, getFilterParams())
+      // compute extra stats directly in SQL based on expressions - needs a sub query
+      var sql = "select *,
+lc lCancels, lcm lCancelsMissed,
+(lc * 1.0 / (lc + lcm)) lCancelRate,
+lco lCancelsOpponent, lcmo lCancelsMissedOpponent,
+(lco * 1.0 / (lco + lcmo)) lCancelRateOpponent
+from (" + subSql + ")"
 
       var results = tx.executeSql(sql, getFilterParams())
 
-      //console.log("count", results.rows.item(0).c)
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWithResult() {
-    log("get num filtered")
-
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
-join players p on p.replayId = r.id
- where r.winnerPort >= 0 and " + getFilterCondition(), getFilterParams())
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWon() {
-    log("get num replays won")
-
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
- join players p on p.replayId = r.id
-where p.isWinner and " + getFilterCondition(), getFilterParams())
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getNumReplaysFilteredWithCharacter(charId) {
-    log("get num with char")
-
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from replays r
- join players p on p.replayId = r.id
-where p.charId = ? and " + getFilterCondition(), [charId].concat(getFilterParams()))
-
-      return results.rows.item(0).c
-    }, 0)
-  }
-
-  function getAverageGameDuration() {
-    log("get avg duration")
-
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select avg(duration) d from Replays")
-
-      return results.rows.item(0).d || 0
-    }, 0)
-  }
-
-  function getStageAmount(stageId) {
-    log("get stage amount")
-
-    return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(distinct replayId) c from Replays r
-join Players p on p.replayId = r.id
-where stageId = ? and " + getFilterCondition(),
-                                  [stageId].concat(getFilterParams()))
-
-      return results.rows.item(0).c
+      return results.rows.item(0)
     }, 0)
   }
 
@@ -463,20 +425,20 @@ order by charId"
 
       var results = tx.executeSql(sql, params)
 
-      var result = []
+      var result = {}
 
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i)
 
-        result.push({
-                      id: row.charId,
-                      count: row.c,
-                      name: MeleeData.charNames[row.charId]
-                    })
+        result[row.charId] = {
+          id: row.charId,
+          count: row.c,
+          name: MeleeData.charNames[row.charId]
+        }
       }
 
       return result
-    }, [])
+    }, {})
   }
 
   function getCharacterStatsOpponent() {
@@ -494,20 +456,20 @@ order by p2.charId"
 
       var results = tx.executeSql(sql, params)
 
-      var result = []
+      var result = {}
 
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i)
 
-        result.push({
-                      id: row.charId,
-                      count: row.c,
-                      name: MeleeData.charNames[row.charId]
-                    })
+        result[row.charId] = {
+          id: row.charId,
+          count: row.c,
+          name: MeleeData.charNames[row.charId]
+        }
       }
 
       return result
-    }, [])
+    }, {})
   }
 
   function getStageStats() {
@@ -608,8 +570,8 @@ limit ? offset ?"
     return filter.matchPartial ? "%" + filter.filterText + "%" : filter.filterText
   }
 
-  // make SQL wildcards for an in condition
-  function makeInWildcards(list) {
+  // make SQL wildcards "(?, ? , ... ?)" with one ? for each item in the input list
+  function makeSqlWildcards(list) {
     return "(" + list.map(_ => "?").join(",") + ")"
   }
 

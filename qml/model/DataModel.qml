@@ -94,10 +94,6 @@ Item {
 
   // stats
 
-  function getStageAmount(stageId) {
-    return dataBase.getStageAmount(stageId)
-  }
-
   function getTopPlayerTags(max) {
     return dataBase.getTopPlayerTags(max)
   }

@@ -14,7 +14,7 @@ SingleSpriteFromSpriteSheet {
                                ? MeleeData.stockIconDistance[charId]
                                : Qt.point(0, 0)
 
-  visible: cssId >= 0
+  visible: charId >= 0
   source: "../../assets/img/stock_icon_sheet.png"
 
   frameX: sheetPos.x + skinId * sheetDist.x

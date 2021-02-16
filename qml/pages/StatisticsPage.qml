@@ -82,6 +82,31 @@ BasePage {
       }
 
       SimpleSection {
+        title: "Tech skill stats"
+      }
+
+      AppListItem {
+        text: qsTr("L-cancels: %1 (%2 / %3)")
+        .arg(dataModel.formatPercentage(stats.lCancelRate))
+        .arg(stats.lCancels).arg(stats.lCancelsMissed + stats.lCancels)
+
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
+
+      SimpleSection {
+        title: "Tech skill stats (opponent)"
+      }
+
+      AppListItem {
+        text: qsTr("L-cancels: %1 (%2 / %3)").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
+        .arg(stats.lCancelsOpponent).arg(stats.lCancelsMissedOpponent + stats.lCancelsOpponent)
+
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
+
+      SimpleSection {
         title: "Top chars used"
       }
 

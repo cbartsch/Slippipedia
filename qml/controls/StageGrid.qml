@@ -34,8 +34,8 @@ Column {
     id: stageGridLayout
 
     columns: {
-      if(!showData) {
-        return width <= dp(270) ? 2 : width <= dp(540) ? 3 : 6
+      if(showIcon) {
+        return width <= dp(180) ? 1 : width <= dp(270) ? 2 : width <= dp(540) ? 3 : 6
       }
       else {
         return width <= dp(320) ? 2 : width <= dp(640) ? 3 : 6
@@ -140,7 +140,7 @@ Column {
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         text: qsTr("Other (%2)")
-        .arg(dataModel.formatPercentage(stats.totalReplays > 0
+        .arg(dataModel.formatPercentage(stats && stats.totalReplays > 0
         ? stats.otherStageAmount / stats.totalReplays
         : 0))
         style: Text.Outline

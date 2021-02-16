@@ -10,25 +10,39 @@
 struct PlayerData : public QObject {
   Q_OBJECT
 
-  Q_PROPERTY(QString slippiName MEMBER m_slippiName)
-  Q_PROPERTY(QString slippiCode MEMBER m_slippiCode)
-  Q_PROPERTY(QString inGameTag MEMBER m_inGameTag)
-  Q_PROPERTY(int charId MEMBER m_charId)
-  Q_PROPERTY(int charSkinId MEMBER m_charSkinId)
-  Q_PROPERTY(int startStocks MEMBER m_startStocks)
-  Q_PROPERTY(int endStocks MEMBER m_endStocks)
-  Q_PROPERTY(int endPercent MEMBER m_endPercent)
+  // basic info
   Q_PROPERTY(int port MEMBER m_port)
   Q_PROPERTY(bool isWinner MEMBER m_isWinner)
 
+  // names
+  Q_PROPERTY(QString slippiName MEMBER m_slippiName)
+  Q_PROPERTY(QString slippiCode MEMBER m_slippiCode)
+  Q_PROPERTY(QString inGameTag MEMBER m_inGameTag)
+
+  // character info
+  Q_PROPERTY(int charId MEMBER m_charId)
+  Q_PROPERTY(int charSkinId MEMBER m_charSkinId)
+
+  // stocks & damage info
+  Q_PROPERTY(int startStocks MEMBER m_startStocks)
+  Q_PROPERTY(int endStocks MEMBER m_endStocks)
+  Q_PROPERTY(int endPercent MEMBER m_endPercent)
+
+  // tech info
+  Q_PROPERTY(int lCancels MEMBER m_lCancels)
+  Q_PROPERTY(int lCancelsMissed MEMBER m_lCancelsMissed)
+
 public:
-  PlayerData(QObject *parent);
+  PlayerData(QObject *parent, const slip::Analysis &analysis, const slip::AnalysisPlayer &player);
 
 private:
   QString m_slippiName, m_slippiCode, m_inGameTag;
+
   int m_charId, m_charSkinId,
     m_startStocks, m_endStocks,
-    m_endPercent, m_port;
+    m_endPercent, m_port,
+    m_lCancels, m_lCancelsMissed;
+
   bool m_isWinner;
 
   friend class SlippiReplay;

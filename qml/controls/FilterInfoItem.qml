@@ -18,9 +18,9 @@ Column {
 
   AppListItem {
     text: qsTr("Matched replays: %1/%2 (%3)")
-    .arg(stats.totalReplaysFiltered)
-    .arg(stats.totalReplays)
-    .arg(dataModel.formatPercentage(stats.totalReplaysFiltered / stats.totalReplays))
+    .arg(stats ? stats.totalReplaysFiltered : 0)
+    .arg(stats ? stats.totalReplays : 0)
+    .arg(dataModel.formatPercentage(stats ? stats.totalReplaysFiltered / stats.totalReplays : 0))
 
     detailText: qsTr("Matching: %1").arg(dataModel.filter.displayText)
 
