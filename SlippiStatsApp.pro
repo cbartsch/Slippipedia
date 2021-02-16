@@ -4,8 +4,8 @@ CONFIG += c++11
 
 QT += core gui widgets qml
 
-#CONFIG += live_client
-CONFIG += use_resources
+CONFIG += live_client
+#CONFIG += use_resources
 
 wasm {
   QMAKE_CXXFLAGS += --emrun

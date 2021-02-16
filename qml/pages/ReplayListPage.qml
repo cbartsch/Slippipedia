@@ -19,6 +19,8 @@ BasePage {
   // load first page when showing this page
   onSelected: if(replayList.length == 0) loadMore()
 
+  filterModal.onClosed: if(stats) refresh()
+
   Connections {
     target: dataModel.filter
 

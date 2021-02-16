@@ -12,6 +12,8 @@ FlickablePage {
 
   property ReplayStats stats: null
 
+  property alias filterModal: filterModal
+
   rightBarItem: LoadingIcon { }
 
   FilterModal {

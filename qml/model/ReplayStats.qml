@@ -9,7 +9,7 @@ Item {
   // stats
   readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
 
-  readonly property var statsData: dataBase.getReplayStats(dbUpdater)
+  property var statsData: dataBase.getReplayStats(dbUpdater)
 
   readonly property int totalReplaysFiltered: statsData ? statsData.count : 0
   readonly property int totalReplaysFilteredWithResult: statsData ? statsData.gameEndedCount : 0
@@ -29,16 +29,20 @@ Item {
   readonly property real lCancelsMissedOpponent: statsData ? statsData.lCancelsMissedOpponent : 0
   readonly property real lCancelRateOpponent: statsData ? statsData.lCancelRateOpponent : 0
 
-  readonly property real otherStageAmount: dataBase.getOtherStageAmount(dbUpdater)
+  property real otherStageAmount: 0
 
-  readonly property var charData: dataBase.getCharacterStats(dbUpdater)
+  property var charData: ({})
   readonly property var charDataCss: toCssCharData(charData)
 
-  readonly property var charDataOpponent: dataBase.getCharacterStatsOpponent(dbUpdater)
+  property var charDataOpponent: ({})
   readonly property var charDataOpponentCss: toCssCharData(charDataOpponent)
 
-  readonly property var stageDataMap: dataBase.getStageStats(dbUpdater)
+  property var stageDataMap: ({})
   readonly property var stageData: Object.values(stageDataMap)
+
+  property var topPlayerTags: []
+  property var topPlayerTagsOpponent: []
+  property var topSlippiCodesOpponent: []
 
   readonly property var stageDataSss: MeleeData.stageData
   .filter(s => s.id > 0)
@@ -52,6 +56,10 @@ Item {
       shortName: s.shortName
     }
   })
+
+  Component.onCompleted: {
+    refresh()
+  }
 
   function toCssCharData(charData) {
     if(!charData) {
@@ -68,5 +76,17 @@ Item {
                                         name: cd ? cd.name : ""
                                       }
                                     })
+  }
+
+  function refresh(numPlayerTags) {
+    var limit = numPlayerTags || 1
+
+    otherStageAmount = dataBase.getOtherStageAmount()
+    charData = dataBase.getCharacterStats()
+    charDataOpponent = dataBase.getCharacterStatsOpponent()
+    stageDataMap = dataBase.getStageStats()
+    topPlayerTags = dataModel.getTopPlayerTags(limit)
+    topPlayerTagsOpponent = dataModel.getTopPlayerTagsOpponent(limit)
+    topSlippiCodesOpponent = dataModel.getTopSlippiCodesOpponent(limit)
   }
 }

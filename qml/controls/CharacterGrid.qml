@@ -99,7 +99,9 @@ Grid {
         charId: id
         visible: showIcon && hasChar
 
-        opacity: showData || (!isSelected && charIds.length > 0) ? 0.5 : 1
+        opacity: showData
+                 ? (count > 0 ? 0.5 : 0.25)
+                 : (!isSelected && charIds.length > 0 ? 0.5 : 1)
 
         width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
         height: implicitHeight * width / implicitWidth
@@ -108,7 +110,7 @@ Grid {
       Column {
         width: parent.width
         anchors.verticalCenter: parent.verticalCenter
-        visible: showData && hasChar
+        visible: showData && hasChar && count > 0
 
 //          AppText {
 //            width: parent.width

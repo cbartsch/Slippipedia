@@ -1,6 +1,7 @@
 import Felgo 3.0
 
 import QtQuick 2.0
+import QtQuick.Layouts 1.12
 
 import "../controls"
 import "../model"
@@ -8,6 +9,11 @@ import "../model"
 BasePage {
   id: statisticsPage
   title: qsTr("Replay statistics")
+
+  readonly property int nameColumns: Math.round(width / dp(200))
+
+  onSelected: stats.refresh(nameColumns * 5)
+  filterModal.onClosed: if(stats) stats.refresh(nameColumns)
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
@@ -85,26 +91,52 @@ BasePage {
         title: "Tech skill stats"
       }
 
-      AppListItem {
-        text: qsTr("L-cancels: %1 (%2 / %3)")
-        .arg(dataModel.formatPercentage(stats.lCancelRate))
-        .arg(stats.lCancels).arg(stats.lCancelsMissed + stats.lCancels)
-
-        backgroundColor: Theme.backgroundColor
-        enabled: false
+      Item {
+        width: 1
+        height: dp(Theme.contentPadding)
       }
 
-      SimpleSection {
-        title: "Tech skill stats (opponent)"
+      GridLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: columnSpacing
+        columnSpacing: dp(Theme.contentPadding)
+        rowSpacing: columnSpacing / 2
+        columns: 3
+
+        AppText {
+          text: "Stat"
+          color: Theme.secondaryTextColor
+        }
+
+        AppText {
+          Layout.fillWidth: true
+          text: "Me"
+          color: Theme.secondaryTextColor
+        }
+
+        AppText {
+          Layout.fillWidth: true
+          text: "Opponent"
+          color: Theme.secondaryTextColor
+        }
+
+        AppText {
+          text: "L-cancels"
+        }
+
+        AppText {
+          text: qsTr("%1 (%2 / %3)")
+          .arg(dataModel.formatPercentage(stats.lCancelRate))
+          .arg(stats.lCancels).arg(stats.lCancelsMissed + stats.lCancels)
+        }
+
+        AppText {
+          text: qsTr("%1 (%2 / %3)").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
+          .arg(stats.lCancelsOpponent).arg(stats.lCancelsMissedOpponent + stats.lCancelsOpponent)
+        }
       }
 
-      AppListItem {
-        text: qsTr("L-cancels: %1 (%2 / %3)").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
-        .arg(stats.lCancelsOpponent).arg(stats.lCancelsMissedOpponent + stats.lCancelsOpponent)
-
-        backgroundColor: Theme.backgroundColor
-        enabled: false
-      }
 
       SimpleSection {
         title: "Top chars used"
@@ -171,7 +203,8 @@ BasePage {
       }
 
       NameGrid {
-        model: dataModel.getTopPlayerTags(columns * 5)
+        model: stats.topPlayerTags
+        columns: nameColumns
       }
 
       SimpleSection {
@@ -188,7 +221,8 @@ BasePage {
 
       NameGrid {
         visible: dataModel.playerFilter.hasPlayerFilter
-        model: dataModel.getTopPlayerTagsOpponent(columns * 5)
+        model: stats.topPlayerTagsOpponent
+        columns: nameColumns
       }
 
       SimpleSection {
@@ -205,7 +239,13 @@ BasePage {
 
       NameGrid {
         visible: dataModel.playerFilter.hasPlayerFilter
-        model: dataModel.getTopSlippiCodesOpponent(columns * 5)
+        model: stats.topSlippiCodesOpponent
+        columns: nameColumns
+      }
+
+      Item {
+        width: 1
+        height: dp(Theme.contentPadding) / 2
       }
     }
   }

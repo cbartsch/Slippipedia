@@ -66,6 +66,9 @@ App {
       title: "Statistics"
       icon: IconType.barchart
 
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
       NavigationStack {
         StatisticsPage {
           stats: dataModel.stats

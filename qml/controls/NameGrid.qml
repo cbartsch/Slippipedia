@@ -6,7 +6,6 @@ Grid {
 
   property alias model: repeater.model
 
-  columns: Math.round(width / dp(200))
   anchors.left: parent.left
   anchors.right: parent.right
   anchors.margins: dp(Theme.contentPadding)
@@ -33,7 +32,9 @@ Grid {
         }
         AppText {
           width: parent.width
-          text: qsTr("%1 (%2)").arg(modelData.count).arg(dataModel.formatPercentage(modelData.count / dataModel.totalReplaysFiltered))
+          text: qsTr("%1 (%2)")
+          .arg(modelData.count)
+          .arg(dataModel.formatPercentage(modelData.count / stats.totalReplaysFiltered))
           maximumLineCount: 1
           elide: Text.ElideRight
         }
