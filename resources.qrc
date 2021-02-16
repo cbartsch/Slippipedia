@@ -18,7 +18,6 @@
         <file>qml/controls/TextInputField.qml</file>
         <file>qml/model/DataBase.qml</file>
         <file>qml/model/DataModel.qml</file>
-        <file>qml/model/FilterSettings.qml</file>
         <file>qml/model/MeleeData.qml</file>
         <file>qml/model/qmldir</file>
         <file>qml/model/ReplayStats.qml</file>
@@ -33,5 +32,8 @@
         <file>assets/img/css_portrait_sheet.png</file>
         <file>assets/img/sss_icon_sheet.png</file>
         <file>assets/img/stock_icon_sheet.png</file>
+        <file>qml/model/PlayerFilterSettings.qml</file>
+        <file>qml/model/StageFilterSettings.qml</file>
+        <file>qml/controls/PlayerFilterOptions.qml</file>
     </qresource>
 </RCC>

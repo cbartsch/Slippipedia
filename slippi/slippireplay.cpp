@@ -59,4 +59,6 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis, const sl
 
   m_lCancels = p.l_cancels_hit;
   m_lCancelsMissed = p.l_cancels_missed;
+  m_numLedgedashes = p.galint_ledgedashes;
+  m_avgGalint = p.mean_galint;
 }

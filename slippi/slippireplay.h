@@ -29,6 +29,8 @@ struct PlayerData : public QObject {
   Q_PROPERTY(int endPercent MEMBER m_endPercent)
 
   // tech info
+  Q_PROPERTY(int numLedgedashes MEMBER m_numLedgedashes)
+  Q_PROPERTY(qreal avgGalint MEMBER m_avgGalint)
   Q_PROPERTY(int lCancels MEMBER m_lCancels)
   Q_PROPERTY(int lCancelsMissed MEMBER m_lCancelsMissed)
 
@@ -41,7 +43,9 @@ private:
   int m_charId, m_charSkinId,
     m_startStocks, m_endStocks,
     m_endPercent, m_port,
-    m_lCancels, m_lCancelsMissed;
+    m_lCancels, m_lCancelsMissed, m_numLedgedashes;
+
+  qreal m_avgGalint;
 
   bool m_isWinner;
 

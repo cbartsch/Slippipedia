@@ -10,7 +10,12 @@ Item {
   width: parent.width
   height: dp(120)
 
-  property var sData: ({})
+  readonly property var emptySection: ({
+                                         chars1: [],
+                                         chars2: []
+                                       })
+
+  property var sData: emptySection
 
   readonly property var chars1: Object.keys(sData.chars1)
   readonly property var chars2: Object.keys(sData.chars2)

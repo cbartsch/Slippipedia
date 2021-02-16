@@ -16,17 +16,12 @@ BasePage {
 
   property var sectionData: ({})
 
+  property bool hasMore: true
+
   // load first page when showing this page
   onSelected: if(replayList.length == 0) loadMore()
 
   filterModal.onClosed: if(stats) refresh()
-
-  Connections {
-    target: dataModel.filter
-
-    // clear list when filter changes
-    onFilterChanged: refresh()
-  }
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
@@ -54,7 +49,7 @@ BasePage {
     section.property: "section"
     section.criteria: ViewSection.FullString
     section.delegate: ReplaySectionHeader {
-      sData: sectionData[section] || {}
+      sData: sectionData[section] || emptySection
     }
 
     delegate: ReplayListItem {
@@ -67,8 +62,11 @@ BasePage {
     }
 
     footer: AppListItem {
-      text: "Load more replays..."
+      text: hasMore ? "Load more replays..." : "No more replays."
       onSelected: loadMore()
+
+      enabled: hasMore
+      backgroundColor: hasMore ? Theme.controlBackgroundColor : Theme.backgroundColor
     }
 
     add: Transition {
@@ -84,10 +82,16 @@ BasePage {
     listView.positionViewAtBeginning()
     replayList = []
     sectionData = {}
+    hasMore = true
   }
 
   function loadMore() {
     var loaded = dataModel.getReplayList(numReplays, replayList.length)
+
+    if(!loaded || loaded.length === 0) {
+      hasMore = false
+      return
+    }
 
     // adapt model with extra data for list view (sections, ...)
     var adapted = loaded.map(item => {
@@ -117,8 +121,7 @@ BasePage {
                                  sectionData[section].gamesFinished++
                                }
 
-                               // TODO are we always port 0?
-                               if(item.winnerPort === 0) {
+                               if(item.winnerPort === item.port1) {
                                  sectionData[section].gamesWon++
                                }
 

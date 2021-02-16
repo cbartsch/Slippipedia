@@ -25,9 +25,19 @@ Item {
   readonly property real lCancelsMissed: statsData ? statsData.lCancelsMissed : 0
   readonly property real lCancelRate: statsData ? statsData.lCancelRate : 0
 
+  readonly property real numLedgedashes: statsData ? statsData.numLedgedashes : 0
+  readonly property real avgLedgedashes: numLedgedashes / totalReplaysFiltered
+  readonly property real totalGalint: statsData ? statsData.totalGalint : 0
+  readonly property real avgGalint: totalGalint / numLedgedashes
+
   readonly property real lCancelsOpponent: statsData ? statsData.lCancelsOpponent : 0
   readonly property real lCancelsMissedOpponent: statsData ? statsData.lCancelsMissedOpponent : 0
   readonly property real lCancelRateOpponent: statsData ? statsData.lCancelRateOpponent : 0
+
+  readonly property real numLedgedashesOpponent: statsData ? statsData.numLedgedashesOpponent : 0
+  readonly property real avgLedgedashesOpponent: numLedgedashesOpponent / totalReplaysFiltered
+  readonly property real totalGalintOpponent: statsData ? statsData.totalGalintOpponent : 0
+  readonly property real avgGalintOpponent: numLedgedashesOpponent == 0 ? 0 : (totalGalintOpponent / numLedgedashesOpponent)
 
   property real otherStageAmount: 0
 
@@ -88,5 +98,7 @@ Item {
     topPlayerTags = dataModel.getTopPlayerTags(limit)
     topPlayerTagsOpponent = dataModel.getTopPlayerTagsOpponent(limit)
     topSlippiCodesOpponent = dataModel.getTopSlippiCodesOpponent(limit)
+
+    dbUpdaterChanged()
   }
 }

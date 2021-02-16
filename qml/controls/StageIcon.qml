@@ -11,17 +11,18 @@ Item {
   // dreamland has a smaller icon with different coordinates
   readonly property bool isSmallIcon: stageId === 28
 
-  readonly property int cssId: stageId > 0
-                               ? MeleeData.stageMap[stageId].sssIndex
-                               : -1
+  readonly property int cssId: stageId && stageId > 0
+                               && (MeleeData.stageMap[stageId] || {}).sssIndex
+                               || -1
 
-  visible: cssId >= 0
 
   implicitWidth: sprite.width
   implicitHeight: sprite.height
 
   SingleSpriteFromSpriteSheet {
     id: sprite
+
+    visible: cssId >= 0
 
  //   anchors.centerIn: parent
 

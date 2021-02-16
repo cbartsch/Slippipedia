@@ -188,7 +188,7 @@ Item {
   }
 
   function formatDate(date) {
-    return date.toLocaleString("dd/MM/yyyy HH:mm")
+    return date && date.toLocaleString("dd/MM/yyyy HH:mm") || ""
   }
 
   function playersText(replay) {

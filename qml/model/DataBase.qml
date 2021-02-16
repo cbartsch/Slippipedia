@@ -51,6 +51,8 @@ endPercent integer,
 
 lCancels integer,
 lCancelsMissed integer,
+numLedgedashes integer,
+avgGalint real,
 
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
@@ -96,7 +98,7 @@ foreign key(replayId) references replays(id)
               player.charId, player.charSkinId,
               player.slippiName, player.slippiCode, player.inGameTag,
               player.startStocks, player.endStocks, player.endPercent,
-              player.lCancels, player.lCancelsMissed
+              player.lCancels, player.lCancelsMissed, player.numLedgedashes, player.avgGalint
             ]
 
         tx.executeSql("insert or replace into Players (
@@ -104,7 +106,7 @@ replayId, port, isWinner,
 charId, skinId,
 slippiName, slippiCode, cssTag,
 startStocks, endStocks, endPercent,
-lCancels, lCancelsMissed
+lCancels, lCancelsMissed, numLedgedashes, avgGalint
 )
 values " + makeSqlWildcards(params), params)
       })
@@ -303,7 +305,11 @@ count(r.id) count, avg(r.duration) avgDuration,
 count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
 count(case winnerPort when p.port then 1 else null end) winCount,
 sum(p.lCancels) lc, sum(p.lCancelsMissed) lcm,
-sum(p2.lCancels) lco, sum(p2.lCancelsMissed) lcmo
+sum(p.numLedgedashes) numLedgedashes,
+sum(p.numLedgedashes * p.avgGalint) totalGalint,
+sum(p2.lCancels) lco, sum(p2.lCancelsMissed) lcmo,
+sum(p2.numLedgedashes) numLedgedashesOpponent,
+sum(p2.numLedgedashes * p2.avgGalint) totalGalintOpponent
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
@@ -318,6 +324,8 @@ lco lCancelsOpponent, lcmo lCancelsMissedOpponent,
 from (" + subSql + ")"
 
       var results = tx.executeSql(sql, getFilterParams())
+
+      console.log("item is", JSON.stringify(results.rows.item(0)))
 
       return results.rows.item(0)
     }, 0)
@@ -532,8 +540,8 @@ order by stageId"
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charId char1, p.skinId skin1, p.endStocks endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.skinId skin2, p2.endStocks endStocks2
+p.slippiName name1, p.slippiCode code1, p.charId char1, p.skinId skin1, p.endStocks endStocks1, p.port port1,
+p2.slippiName name2, p2.slippiCode code2, p2.charId char2, p2.skinId skin2, p2.endStocks endStocks2, p2.port port2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id

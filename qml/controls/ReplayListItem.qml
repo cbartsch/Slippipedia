@@ -9,8 +9,12 @@ AppListItem {
   backgroundColor: Theme.backgroundColor
   mouseArea.enabled: false
 
-  text: qsTr("%1 - %2").arg(dataModel.formatTime(duration))
-  .arg(MeleeData.stageMap[stageId][replayListItem.width > dp(510) ? "name" : "shortName"])
+  text: stageId && stageId >= 0
+        ? qsTr("%1 - %2").arg(dataModel.formatTime(duration))
+          .arg((MeleeData.stageMap[stageId] || {
+                  name: "Unknown stage", shortName: "?"
+                })[replayListItem.width > dp(510) ? "name" : "shortName"])
+        : ""
 
   Binding {
     target: textItem

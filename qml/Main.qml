@@ -32,6 +32,15 @@ App {
     Theme.navigationTabBar.backgroundColor = Theme.controlBackgroundColor
   }
 
+  GoogleAnalytics {
+    propertyId: "UA-163972040-2"
+
+    onPluginLoaded: {
+      console.log("GA log main screen")
+      logScreen("Main")
+    }
+  }
+
   DataModel {
     id: dataModel
   }

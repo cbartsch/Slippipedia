@@ -13,7 +13,7 @@ BasePage {
   readonly property int nameColumns: Math.round(width / dp(200))
 
   onSelected: stats.refresh(nameColumns * 5)
-  filterModal.onClosed: if(stats) stats.refresh(nameColumns)
+  filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5)
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
@@ -102,16 +102,17 @@ BasePage {
         anchors.margins: columnSpacing
         columnSpacing: dp(Theme.contentPadding)
         rowSpacing: columnSpacing / 2
-        columns: 3
+        columns: dataModel.playerFilter.hasPlayerFilter ? 3 : 2
 
         AppText {
           text: "Stat"
           color: Theme.secondaryTextColor
+          Layout.preferredWidth: dp(160)
         }
 
         AppText {
           Layout.fillWidth: true
-          text: "Me"
+          text: dataModel.playerFilter.hasPlayerFilter ? "Me" : "Player"
           color: Theme.secondaryTextColor
         }
 
@@ -119,21 +120,54 @@ BasePage {
           Layout.fillWidth: true
           text: "Opponent"
           color: Theme.secondaryTextColor
+          visible: dataModel.playerFilter.hasPlayerFilter
         }
 
         AppText {
+          Layout.preferredWidth: dp(160)
           text: "L-cancels"
         }
 
         AppText {
+          Layout.maximumWidth: statisticsPage.width * 0.3
           text: qsTr("%1 (%2 / %3)")
           .arg(dataModel.formatPercentage(stats.lCancelRate))
           .arg(stats.lCancels).arg(stats.lCancelsMissed + stats.lCancels)
         }
 
         AppText {
+          Layout.maximumWidth: statisticsPage.width * 0.3
           text: qsTr("%1 (%2 / %3)").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
           .arg(stats.lCancelsOpponent).arg(stats.lCancelsMissedOpponent + stats.lCancelsOpponent)
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          text: "Intangible ledgedashes / game"
+          Layout.preferredWidth: dp(160)
+        }
+
+        AppText {
+          text: qsTr("%1").arg(stats.avgLedgedashes.toFixed(2))
+        }
+
+        AppText {
+          text: qsTr("%1").arg(stats.avgLedgedashesOpponent.toFixed(2))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          text: "Average GALINT"
+          Layout.preferredWidth: dp(160)
+        }
+
+        AppText {
+          text: qsTr("%1").arg(stats.avgGalint.toFixed(2))
+        }
+
+        AppText {
+          text: qsTr("%1").arg(stats.avgGalintOpponent.toFixed(2))
+          visible: dataModel.playerFilter.hasPlayerFilter
         }
       }
 
