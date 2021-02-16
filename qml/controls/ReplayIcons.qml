@@ -23,6 +23,9 @@ Item {
         charId: replayModel.char1
         skinId: replayModel.skin1
         opacity: replayModel.endStocks1 > index ? 1 : 0.25
+
+        width: dp(20)
+        height: dp(20)
       }
     }
 
@@ -52,6 +55,9 @@ Item {
         charId: replayModel.char2
         skinId: replayModel.skin2
         opacity: replayModel.endStocks2 > index ? 1 : 0.25
+
+        width: dp(20)
+        height: dp(20)
       }
     }
 
