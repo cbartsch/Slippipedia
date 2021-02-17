@@ -27,12 +27,20 @@ struct PlayerData : public QObject {
   Q_PROPERTY(int startStocks MEMBER m_startStocks)
   Q_PROPERTY(int endStocks MEMBER m_endStocks)
   Q_PROPERTY(int endPercent MEMBER m_endPercent)
+  Q_PROPERTY(qreal damageDealt MEMBER m_damageDealt)
+
+  // moves
+  Q_PROPERTY(int numTaunts MEMBER m_numTaunts)
 
   // tech info
   Q_PROPERTY(int numLedgedashes MEMBER m_numLedgedashes)
   Q_PROPERTY(qreal avgGalint MEMBER m_avgGalint)
   Q_PROPERTY(int lCancels MEMBER m_lCancels)
   Q_PROPERTY(int lCancelsMissed MEMBER m_lCancelsMissed)
+  Q_PROPERTY(int edgeCancelAerials MEMBER m_edgeCancelAerials)
+  Q_PROPERTY(int edgeCancelSpecials MEMBER m_edgeCancelSpecials)
+  Q_PROPERTY(int teeterCancelAerials MEMBER m_teeterCancelAerials)
+  Q_PROPERTY(int teeterCancelSpecials MEMBER m_teeterCancelSpecials)
 
 public:
   PlayerData(QObject *parent, const slip::Analysis &analysis, const slip::AnalysisPlayer &player);
@@ -40,12 +48,15 @@ public:
 private:
   QString m_slippiName, m_slippiCode, m_inGameTag;
 
-  int m_charId, m_charSkinId,
-    m_startStocks, m_endStocks,
-    m_endPercent, m_port,
-    m_lCancels, m_lCancelsMissed, m_numLedgedashes;
+  int m_charId, m_charSkinId, m_port,
+    m_startStocks, m_endStocks, m_endPercent,
+    m_numTaunts,
+    m_lCancels, m_lCancelsMissed, m_numLedgedashes,
+    m_edgeCancelAerials, m_edgeCancelSpecials,
+    m_teeterCancelAerials, m_teeterCancelSpecials
+  ;
 
-  qreal m_avgGalint;
+  qreal m_avgGalint, m_damageDealt;
 
   bool m_isWinner;
 

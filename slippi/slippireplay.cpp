@@ -56,9 +56,17 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis, const sl
   m_endStocks = p.end_stocks;
   m_endPercent = p.end_pct;
   m_startStocks = p.start_stocks;
+  m_damageDealt = p.damage_dealt;
+
+  m_numTaunts = p.taunts;
 
   m_lCancels = p.l_cancels_hit;
   m_lCancelsMissed = p.l_cancels_missed;
   m_numLedgedashes = p.galint_ledgedashes;
   m_avgGalint = p.mean_galint;
+
+  m_edgeCancelAerials = p.edge_cancel_aerials;
+  m_edgeCancelSpecials = p.edge_cancel_specials;
+  m_teeterCancelAerials = p.teeter_cancel_aerials;
+  m_teeterCancelSpecials = p.teeter_cancel_specials;
 }

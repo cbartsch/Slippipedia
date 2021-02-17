@@ -166,12 +166,41 @@ Item {
   }
 
   function formatTime(numFrames) {
-    var minutes = Math.floor(numFrames / 60 / 60)
+    var days = Math.floor(numFrames / 60 / 60 / 60 / 24)
+    var hours = Math.floor(numFrames / 60 / 60 / 60 % 24)
+    var minutes = Math.floor(numFrames / 60 / 60 % 60)
     var seconds = Math.floor(numFrames / 60 % 60)
 
-    return qsTr("%1:%2")
-    .arg(leadingZeros(minutes, 2))
-    .arg(leadingZeros(seconds, 2))
+    if(days > 0) {
+      return qsTr("%1 days %2:%3:%4")
+        .arg(days)
+        .arg(leadingZeros(hours, 2))
+        .arg(leadingZeros(minutes, 2))
+        .arg(leadingZeros(seconds, 2))
+    }
+    else if(hours > 0) {
+      return qsTr("%1:%2:%3")
+        .arg(leadingZeros(hours, 2))
+        .arg(leadingZeros(minutes, 2))
+        .arg(leadingZeros(seconds, 2))
+    }
+    else {
+      return qsTr("%1:%2")
+        .arg(leadingZeros(minutes, 2))
+        .arg(leadingZeros(seconds, 2))
+    }
+  }
+
+  function formatNumber(number) {
+    if(number > 1000 * 1000) {
+      return (number / 1000 / 1000).toFixed(2) + "M"
+    }
+    else if(number > 1000) {
+      return (number / 1000).toFixed(2) + "K"
+    }
+    else {
+      return number.toFixed(2)
+    }
   }
 
   function leadingZeros(number, numDigits) {

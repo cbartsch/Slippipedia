@@ -11,6 +11,7 @@ class Utils : public QObject
 public:
   static void registerQml();
 
+  Q_INVOKABLE bool exploreToFile(const QString &filePath);
 
   Q_INVOKABLE QStringList listFiles(const QString &folder, const QStringList &nameFilters, bool recursive);
 };

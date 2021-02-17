@@ -46,9 +46,18 @@ BasePage {
       }
 
       AppListItem {
-        text: qsTr("Average game time: %1 (%3 frames)")
+        text: qsTr("Average game time: %1 (%2 frames)")
         .arg(dataModel.formatTime(stats.averageGameDuration))
         .arg(stats.averageGameDuration.toFixed(0))
+
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
+
+      AppListItem {
+        text: qsTr("Total game time: %1 (%2 frames)")
+        .arg(dataModel.formatTime(stats.totalGameDuration))
+        .arg(dataModel.formatNumber(stats.totalGameDuration))
 
         backgroundColor: Theme.backgroundColor
         enabled: false
@@ -107,66 +116,240 @@ BasePage {
         AppText {
           text: "Stat"
           color: Theme.secondaryTextColor
-          Layout.preferredWidth: dp(145)
+          Layout.preferredWidth: statisticsPage.width * 0.3
         }
 
         AppText {
-          Layout.fillWidth: true
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: dataModel.playerFilter.hasPlayerFilter ? "Me" : "Player"
           color: Theme.secondaryTextColor
         }
 
         AppText {
-          Layout.fillWidth: true
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: "Opponent"
           color: Theme.secondaryTextColor
           visible: dataModel.playerFilter.hasPlayerFilter
         }
 
         AppText {
-          Layout.preferredWidth: dp(145)
-          text: "L-cancels"
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Aerials L-cancelled"
         }
 
         AppText {
-          Layout.maximumWidth: statisticsPage.width * 0.3
-          text: qsTr("%1 (%2 / %3)")
-          .arg(dataModel.formatPercentage(stats.lCancelRate))
-          .arg(stats.lCancels).arg(stats.lCancelsMissed + stats.lCancels)
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.lCancelRate))
         }
 
         AppText {
-          Layout.maximumWidth: statisticsPage.width * 0.3
-          text: qsTr("%1 (%2 / %3)").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
-          .arg(stats.lCancelsOpponent).arg(stats.lCancelsMissedOpponent + stats.lCancelsOpponent)
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
           visible: dataModel.playerFilter.hasPlayerFilter
         }
 
         AppText {
-          text: "Intangible ledgedashes / game"
-          Layout.preferredWidth: dp(145)
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Edge/teeter-cancelled"
         }
 
         AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.edgeCancelRate))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.edgeCancelRateOpponent))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Laggy aerials"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.nonCancelledAerialRate))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatPercentage(stats.nonCancelledAerialRateOpponent))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Intangible ledgedashes / game"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: qsTr("%1").arg(stats.avgLedgedashes.toFixed(2))
         }
 
         AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: qsTr("%1").arg(stats.avgLedgedashesOpponent.toFixed(2))
           visible: dataModel.playerFilter.hasPlayerFilter
         }
 
         AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
           text: "Average GALINT"
-          Layout.preferredWidth: dp(145)
         }
 
         AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: qsTr("%1").arg(stats.avgGalint.toFixed(2))
         }
 
         AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
           text: qsTr("%1").arg(stats.avgGalintOpponent.toFixed(2))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+      }
+
+      SimpleSection {
+        title: "Offensive stats"
+      }
+
+      Item {
+        width: 1
+        height: dp(Theme.contentPadding)
+      }
+
+      GridLayout {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: columnSpacing
+        columnSpacing: dp(Theme.contentPadding)
+        rowSpacing: columnSpacing / 2
+        columns: dataModel.playerFilter.hasPlayerFilter ? 3 : 2
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Stat"
+          color: Theme.secondaryTextColor
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: dataModel.playerFilter.hasPlayerFilter ? "Me" : "Player"
+          color: Theme.secondaryTextColor
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: "Opponent"
+          color: Theme.secondaryTextColor
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Total stocks taken"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalStocksLostOpponent))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalStocksLost))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Stocks taken / game"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.averageStocksLostOpponent.toFixed(2))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.averageStocksLost.toFixed(2))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Total damage dealt"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalDamageDealt))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalDamageDealtOpponent))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Damage / minute"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.damagePerMinute.toFixed(2))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.damagePerMinuteOpponent.toFixed(2))
+          visible: dataModel.playerFilter.hasPlayerFilter
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.3
+          text: "Avg. Kill %"
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.damagePerStock.toFixed(2))
+        }
+
+        AppText {
+          Layout.preferredWidth: statisticsPage.width * 0.25
+          horizontalAlignment: Text.AlignRight
+          text: qsTr("%1").arg(stats.damagePerStockOpponent.toFixed(2))
           visible: dataModel.playerFilter.hasPlayerFilter
         }
       }

@@ -49,11 +49,19 @@ skinId integer,
 startStocks integer,
 endStocks integer,
 endPercent integer,
+damageDealt real,
+
+numTaunts integer,
 
 lCancels integer,
 lCancelsMissed integer,
 numLedgedashes integer,
 avgGalint real,
+
+edgeCancelAerials integer,
+edgeCancelSpecials integer,
+teeterCancelAerials integer,
+teeterCancelSpecials integer,
 
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
@@ -104,16 +112,22 @@ foreign key(replayId) references replays(id)
               replay.uniqueId, player.port, player.isWinner,
               charId, charIdOriginal, player.charSkinId,
               player.slippiName, player.slippiCode, player.inGameTag,
-              player.startStocks, player.endStocks, player.endPercent,
-              player.lCancels, player.lCancelsMissed, player.numLedgedashes, player.avgGalint
+              player.startStocks, player.endStocks, player.endPercent, player.damageDealt,
+              player.numTaunts,
+              player.lCancels, player.lCancelsMissed, player.numLedgedashes, player.avgGalint,
+              player.edgeCancelAerials, player.edgeCancelSpecials,
+              player.teeterCancelAerials, player.teeterCancelSpecials,
             ]
 
         tx.executeSql("insert or replace into Players (
 replayId, port, isWinner,
 charId, charIdOriginal, skinId,
 slippiName, slippiCode, cssTag,
-startStocks, endStocks, endPercent,
-lCancels, lCancelsMissed, numLedgedashes, avgGalint
+startStocks, endStocks, endPercent, damageDealt,
+numTaunts,
+lCancels, lCancelsMissed, numLedgedashes, avgGalint,
+edgeCancelAerials, edgeCancelSpecials,
+teeterCancelAerials, teeterCancelSpecials
 )
 values " + makeSqlWildcards(params), params)
       })
@@ -312,11 +326,25 @@ count(r.id) count, avg(r.duration) avgDuration,
 count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
 count(case winnerPort when p.port then 1 else null end) winCount,
 sum(p.lCancels) lc, sum(p.lCancelsMissed) lcm,
+sum(p.numTaunts) numTaunts,
+sum(p.damageDealt) damageDealt,
+sum(p.startStocks - p.endStocks) totalStocksLost,
+sum(p.edgeCancelAerials) edgeCancelAerials,
+sum(p.edgeCancelSpecials) edgeCancelSpecials,
+sum(p.teeterCancelAerials) teeterCancelAerials,
+sum(p.teeterCancelSpecials) teeterCancelSpecials,
 sum(p.numLedgedashes) numLedgedashes,
 sum(p.numLedgedashes * p.avgGalint) totalGalint,
 sum(p2.lCancels) lco, sum(p2.lCancelsMissed) lcmo,
+sum(p2.numTaunts) numTauntsOpponent,
+sum(p2.damageDealt) damageDealtOpponent,
+sum(p2.startStocks - p2.endStocks) totalStocksLostOpponent,
 sum(p2.numLedgedashes) numLedgedashesOpponent,
-sum(p2.numLedgedashes * p2.avgGalint) totalGalintOpponent
+sum(p2.numLedgedashes * p2.avgGalint) totalGalintOpponent,
+sum(p2.edgeCancelAerials) edgeCancelAerialsOpponent,
+sum(p2.edgeCancelSpecials) edgeCancelSpecialsOpponent,
+sum(p2.teeterCancelAerials) teeterCancelAerialsOpponent,
+sum(p2.teeterCancelSpecials) teeterCancelSpecialsOpponent
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
