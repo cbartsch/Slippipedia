@@ -30,60 +30,6 @@ Page {
       width: parent.width
 
       SimpleSection {
-        title: "Stage matching"
-      }
-
-      AppListItem {
-        text: "Filter by specific stage"
-        detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
-
-        backgroundColor: Theme.backgroundColor
-        enabled: false
-      }
-
-      StageGrid {
-        width: parent.width
-
-        sourceModel: stats ? stats.stageDataSss : []
-        stats: filterPage.stats
-
-        hideStagesWithNoReplays: false
-        sortByCount: false
-        showIcon: true
-        showData: false
-        showOtherItem: false
-
-        stageIds: dataModel.stageFilter.stageIds
-        onStageSelected:{
-          if(isSelected) {
-            // char is selected -> unselect
-            dataModel.stageFilter.removeStage(stageId)
-          }
-          else {
-            dataModel.stageFilter.addStage(stageId)
-          }
-        }
-      }
-
-      //    SimpleSection {
-      //      title: "Date matching"
-      //    }
-
-      //    AppListItem {
-      //      text: "Filter by replay date"
-      //      detailText: "Select a date range to match replays in."
-
-      //      backgroundColor: Theme.backgroundColor
-      //      enabled: false
-      //    }
-
-      //    AppListItem {
-      //      text: "Start date: "
-
-      //      onSelected: nativeUtils.displayDatePicker()
-      //    }
-
-      SimpleSection {
         title: "Player matching"
       }
 
@@ -121,6 +67,114 @@ Page {
           filter: dataModel.opponentFilter
         }
       }
+
+      SimpleSection {
+        title: "Winner matching"
+      }
+
+      Item {
+        width: 1
+        height: dp(Theme.contentPadding)
+      }
+
+      Flow {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: spacing
+        spacing: dp(Theme.contentPadding)
+
+        ButtonGroup {
+          id: rbgWinner
+          buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
+
+          onCheckedButtonChanged: dataModel.gameFilter.winnerPlayerIndex = checkedButton.value
+        }
+
+        AppRadio {
+          id: winnerRadioAny
+          text: "Any"
+          value: -3
+          checked: dataModel.gameFilter.winnerPlayerIndex === value
+        }
+        AppRadio {
+          id: winnerRadioTie
+          text: "No result"
+          value: -2
+          checked: dataModel.gameFilter.winnerPlayerIndex === value
+        }
+        AppRadio {
+          id: winnerRadioEither
+          text: "Either (no tie)"
+          value: -1
+          checked: dataModel.gameFilter.winnerPlayerIndex === value
+        }
+        AppRadio {
+          id: winnerRadioMe
+          text: "Me"
+          value: 0
+          checked: dataModel.gameFilter.winnerPlayerIndex === value
+        }
+        AppRadio {
+          id: winnerRadioOpponent
+          text: "Opponent"
+          value: 1
+          checked: dataModel.gameFilter.winnerPlayerIndex === value
+        }
+      }
+
+      SimpleSection {
+        title: "Stage matching"
+      }
+
+      AppListItem {
+        text: "Filter by specific stage"
+        detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
+
+        backgroundColor: Theme.backgroundColor
+        enabled: false
+      }
+
+      StageGrid {
+        width: parent.width
+
+        sourceModel: stats ? stats.stageDataSss : []
+        stats: filterPage.stats
+
+        hideStagesWithNoReplays: false
+        sortByCount: false
+        showIcon: true
+        showData: false
+        showOtherItem: false
+
+        stageIds: dataModel.gameFilter.stageIds
+        onStageSelected: {
+          if(isSelected) {
+            // char is selected -> unselect
+            dataModel.gameFilter.removeStage(stageId)
+          }
+          else {
+            dataModel.gameFilter.addStage(stageId)
+          }
+        }
+      }
+
+      //    SimpleSection {
+      //      title: "Date matching"
+      //    }
+
+      //    AppListItem {
+      //      text: "Filter by replay date"
+      //      detailText: "Select a date range to match replays in."
+
+      //      backgroundColor: Theme.backgroundColor
+      //      enabled: false
+      //    }
+
+      //    AppListItem {
+      //      text: "Start date: "
+
+      //      onSelected: nativeUtils.displayDatePicker()
+      //    }
     }
   }
 }

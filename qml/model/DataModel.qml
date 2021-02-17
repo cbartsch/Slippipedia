@@ -26,7 +26,7 @@ Item {
   // filter settings
   property alias playerFilter: playerFilter
   property alias opponentFilter: opponentFilter
-  property alias stageFilter: stageFilter
+  property alias gameFilter: gameFilter
 
   // stats
   property alias stats: stats
@@ -39,11 +39,14 @@ Item {
     oText = oText ? "Opponent: " + oText : ""
 
     var sText = null
-    if(stageFilter.stageIds.length > 0) {
-      sText = "Stages: " + stageFilter.stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
+    if(gameFilter.stageIds.length > 0) {
+      sText = "Stages: " + gameFilter.stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
     }
 
-    return [pText, oText, sText].filter(_ => _).join("\n") || "(nothing)"
+    var wText = gameFilter.winnerPlayerIndex == -3
+        ? "" : ("Winner: " + gameFilter.winnerTexts[gameFilter.winnerPlayerIndex])
+
+    return [pText, oText, sText, wText].filter(_ => _).join("\n") || "(nothing)"
   }
 
   onIsProcessingChanged: {
@@ -68,8 +71,8 @@ Item {
     onFilterChanged: dbUpdaterChanged()
   }
 
-  StageFilterSettings {
-    id: stageFilter
+  GameFilterSettings {
+    id: gameFilter
 
     onFilterChanged: dbUpdaterChanged()
   }
@@ -102,7 +105,7 @@ Item {
 
     playerFilter: dataModel.playerFilter
     opponentFilter: dataModel.opponentFilter
-    stageFilter: dataModel.stageFilter
+    gameFilter: dataModel.gameFilter
   }
 
   // replay / db management
@@ -152,7 +155,7 @@ Item {
   function resetFilters() {
     playerFilter.reset()
     opponentFilter.reset()
-    stageFilter.reset()
+    gameFilter.reset()
   }
 
   // utils

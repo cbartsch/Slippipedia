@@ -7,6 +7,16 @@ Item {
 
   signal filterChanged
 
+  property alias winnerPlayerIndex: settings.winnerPlayerIndex
+
+  readonly property var winnerTexts: ({
+                                        [-3]: "Any",
+                                        [-2]: "No result",
+                                        [-1]: "Either (no tie)",
+                                        [0]: "Me",
+                                        [1]: "Opponent",
+                                      })
+
   readonly property var stageIds: settings.stageIds.map(id => ~~id)
 
   onStageIdsChanged: filterChanged()
@@ -14,6 +24,8 @@ Item {
   Settings {
     id: settings
 
+    // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
+    property int winnerPlayerIndex: -1
     property var stageIds: []
   }
 

@@ -33,7 +33,7 @@
         <file>assets/img/sss_icon_sheet.png</file>
         <file>assets/img/stock_icon_sheet.png</file>
         <file>qml/model/PlayerFilterSettings.qml</file>
-        <file>qml/model/StageFilterSettings.qml</file>
+        <file>qml/model/GameFilterSettings.qml</file>
         <file>qml/controls/PlayerFilterOptions.qml</file>
     </qresource>
 </RCC>

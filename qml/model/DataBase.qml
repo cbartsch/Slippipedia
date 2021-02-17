@@ -12,7 +12,7 @@ Item {
 
   property PlayerFilterSettings playerFilter: null
   property PlayerFilterSettings opponentFilter: null
-  property StageFilterSettings stageFilter: null
+  property GameFilterSettings gameFilter: null
 
   Component.onCompleted: {
     db = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
@@ -191,13 +191,34 @@ values " + makeSqlWildcards(params), params)
     }
   }
 
-  function getStageFilterCondition(stageIds) {
+  function getGameFilterCondition(stageIds, winnerPlayerIndex) {
+    var winnerCondition = ""
+    if(winnerPlayerIndex === -2) {
+      // check for tie
+      winnerCondition = "r.winnerPort < 0"
+    }
+    else if(winnerPlayerIndex === -1) {
+      // check for either player wins (no tie)
+      winnerCondition = "r.winnerPort >= 0"
+    }
+    else if(winnerPlayerIndex === 0) {
+      // p = matched player
+      winnerCondition = "r.winnerPort = p.port"
+    }
+    else if(winnerPlayerIndex === 1) {
+      // p2 = matched opponent
+      winnerCondition = "r.winnerPort = p2.port"
+    }
+
+    var stageCondition = ""
     if(stageIds && stageIds.length > 0) {
-      return "(r.stageId in " + makeSqlWildcards(stageIds) + ")"
+      stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
     }
-    else {
-      return "true"
-    }
+
+    var condition =  winnerCondition && stageCondition
+        ? (winnerCondition + " and " + stageCondition)
+        : (winnerCondition || stageCondition || "true")
+    return "(" + condition + ")"
   }
 
   function getCharFilterCondition(charIds, colName) {
@@ -211,8 +232,8 @@ values " + makeSqlWildcards(params), params)
 
   function getFilterCondition() {
     return "(" +
-        // stage
-        getStageFilterCondition(stageFilter.stageIds) +
+        // game
+        getGameFilterCondition(gameFilter.stageIds, gameFilter.winnerPlayerIndex) +
         // me
         " and " + getPlayerFilterCondition(playerFilter.slippiCode, playerFilter.slippiName, "p") +
         " and " + getCharFilterCondition(playerFilter.charIds, "p.charId") +
@@ -240,7 +261,7 @@ values " + makeSqlWildcards(params), params)
     }
   }
 
-  function getStageFilterParams(stageIds) {
+  function getGameFilterParams(stageIds, winnerPlayerIndex) {
     if(stageIds && stageIds.length > 0) {
       return stageIds
     }
@@ -259,8 +280,8 @@ values " + makeSqlWildcards(params), params)
   }
 
   function getFilterParams() {
-    // stage, then me, then opponent
-    return getStageFilterParams(stageFilter.stageIds)
+    // game, then me, then opponent
+    return getGameFilterParams(gameFilter.stageIds, gameFilter.winnerPlayerIndex)
     .concat(getPlayerFilterParams(playerFilter.slippiCode, playerFilter.slippiName))
     .concat(getCharFilterParams(playerFilter.charIds))
     .concat(getPlayerFilterParams(opponentFilter.slippiCode, opponentFilter.slippiName))
