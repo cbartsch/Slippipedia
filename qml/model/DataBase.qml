@@ -342,6 +342,10 @@ values " + makeSqlWildcards(params), params)
     log("get replay stats")
 
     return readFromDb(function(tx) {
+      // if no player filter specified, match smaller port for P1
+      var portCondition = playerFilter.hasPlayerFilter
+          ? "p.port != p2.port" : "p.port < p2.port"
+
       var subSql = "select
 count(r.id) count, avg(r.duration) avgDuration,
 count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
@@ -368,7 +372,7 @@ sum(p2.teeterCancelAerials) teeterCancelAerialsOpponent,
 sum(p2.teeterCancelSpecials) teeterCancelSpecialsOpponent
 from replays r
 join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and p.port != p2.port
+join players p2 on p2.replayId = r.id and " + portCondition + "
 where " + getFilterCondition()
 
       // compute extra stats directly in SQL based on expressions - needs a sub query
