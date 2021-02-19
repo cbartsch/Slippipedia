@@ -341,7 +341,7 @@ values " + makeSqlWildcards(params), params)
     }, 0)
   }
 
-  function getReplayStats() {
+  function getReplayStats(isOpponent) {
     log("get replay stats")
 
     return readFromDb(function(tx) {
@@ -349,42 +349,29 @@ values " + makeSqlWildcards(params), params)
       var portCondition = playerFilter.hasPlayerFilter
           ? "p.port != p2.port" : "p.port < p2.port"
 
-      var subSql = "select
+      var playerCol = isOpponent ? "p2" : "p"
+      var opponentCol = isOpponent ? "p" : "p2"
+
+      var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,
 count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
 count(case winnerPort when p.port then 1 else null end) winCount,
-sum(p.lCancels) lc, sum(p.lCancelsMissed) lcm,
-sum(p.numTaunts) numTaunts,
-sum(p.damageDealt) damageDealt,
-sum(p.startStocks - p.endStocks) totalStocksLost,
-sum(p.edgeCancelAerials) edgeCancelAerials,
-sum(p.edgeCancelSpecials) edgeCancelSpecials,
-sum(p.teeterCancelAerials) teeterCancelAerials,
-sum(p.teeterCancelSpecials) teeterCancelSpecials,
-sum(p.numLedgedashes) numLedgedashes,
-sum(p.numLedgedashes * p.avgGalint) totalGalint,
-sum(p2.lCancels) lco, sum(p2.lCancelsMissed) lcmo,
-sum(p2.numTaunts) numTauntsOpponent,
-sum(p2.damageDealt) damageDealtOpponent,
-sum(p2.startStocks - p2.endStocks) totalStocksLostOpponent,
-sum(p2.numLedgedashes) numLedgedashesOpponent,
-sum(p2.numLedgedashes * p2.avgGalint) totalGalintOpponent,
-sum(p2.edgeCancelAerials) edgeCancelAerialsOpponent,
-sum(p2.edgeCancelSpecials) edgeCancelSpecialsOpponent,
-sum(p2.teeterCancelAerials) teeterCancelAerialsOpponent,
-sum(p2.teeterCancelSpecials) teeterCancelSpecialsOpponent
+sum(%1.lCancels) lCancels,
+sum(%1.lCancelsMissed) lCancelsMissed,
+sum(%1.numTaunts) numTaunts,
+sum(%1.damageDealt) damageDealt,
+sum(%1.startStocks - %1.endStocks) totalStocksLost,
+sum(%2.startStocks - %2.endStocks) totalStocksLostOpponent,
+sum(%1.edgeCancelAerials) edgeCancelAerials,
+sum(%1.edgeCancelSpecials) edgeCancelSpecials,
+sum(%1.teeterCancelAerials) teeterCancelAerials,
+sum(%1.teeterCancelSpecials) teeterCancelSpecials,
+sum(%1.numLedgedashes) numLedgedashes,
+sum(%1.numLedgedashes * %1.avgGalint) totalGalint
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and " + portCondition + "
-where " + getFilterCondition()
-
-      // compute extra stats directly in SQL based on expressions - needs a sub query
-      var sql = "select *,
-lc lCancels, lcm lCancelsMissed,
-(lc * 1.0 / (lc + lcm)) lCancelRate,
-lco lCancelsOpponent, lcmo lCancelsMissedOpponent,
-(lco * 1.0 / (lco + lcmo)) lCancelRateOpponent
-from (" + subSql + ")"
+where %3").arg(playerCol).arg(opponentCol).arg(getFilterCondition())
 
       var results = tx.executeSql(sql, getFilterParams())
 
@@ -407,18 +394,20 @@ where stageId not in (%1) and " + getFilterCondition())
     }, 0)
   }
 
-  function getTopPlayerTags(max) {
+  function getTopPlayerTags(isOpponent, max) {
     log("get top tags")
 
     return readFromDb(function(tx) {
-      var sql = "select p.slippiName slippiName, count(distinct r.id) c from replays r
+      var playerCol = isOpponent ? "p2" : "p"
+
+      var sql = qsTr("select %1.slippiName slippiName, count(distinct r.id) c from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where p.slippiName is not null and
-p.slippiName is not \"\" and " + getFilterCondition() + "
-group by p.slippiName
+where %1.slippiName is not null and
+%1.slippiName is not \"\" and %2
+group by %1.slippiName
 order by c desc
-limit ?"
+limit ?").arg(playerCol).arg(getFilterCondition())
 
       var params = getFilterParams().concat([max])
 
@@ -436,47 +425,20 @@ limit ?"
     }, [])
   }
 
-  function getTopPlayerTagsOpponent(max) {
-    log("get top tags opponent")
-
-    return readFromDb(function(tx) {
-      var sql = "select p2.slippiName slippiName, count(distinct r.id) c from replays r
-join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and p.port != p2.port
-where p2.slippiName is not null and
-p2.slippiName is not \"\" and " + getFilterCondition() + "
-group by p2.slippiName
-order by c desc
-limit ?"
-
-      var params = getFilterParams().concat([max])
-
-      var results = tx.executeSql(sql, params)
-
-      var result = []
-      for (var i = 0; i < results.rows.length; i++) {
-        result.push({
-                      text: results.rows.item(i).slippiName,
-                      count: results.rows.item(i).c
-                    })
-      }
-
-      return result
-    }, [])
-  }
-
-  function getTopSlippiCodesOpponent(max) {
+  function getTopSlippiCodes(isOpponent, max) {
     log("get top codes opponent")
 
     return readFromDb(function(tx) {
-      var sql = "select p2.slippiCode slippiCode, count(distinct r.id) c from replays r
+      var playerCol = isOpponent ? "p2" : "p"
+
+      var sql = qsTr("select %1.slippiCode slippiCode, count(distinct r.id) c from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where p2.slippiCode is not null and
-p2.slippiCode is not \"\" and " + getFilterCondition() + "
-group by p2.slippiCode
+where %1.slippiCode is not null and
+%1.slippiCode is not \"\" and %2
+group by %1.slippiCode
 order by c desc
-limit ?"
+limit ?").arg(playerCol).arg(getFilterCondition())
 
       var params = getFilterParams().concat([max])
 
@@ -494,47 +456,18 @@ limit ?"
     }, [])
   }
 
-  function getCharacterStats() {
+  function getCharacterStats(isOpponent) {
     log("get char stats")
 
     return readFromDb(function(tx) {
-      var sql = "select p.charId charId, count(distinct r.id) c from replays r
+      var playerCol = isOpponent ? "p2" : "p"
+
+      var sql = qsTr("select %1.charId charId, count(distinct r.id) c from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where " + getFilterCondition() + "
-group by p.charId
-order by p.charId"
-
-      var params = getFilterParams()
-
-      var results = tx.executeSql(sql, params)
-
-      var result = {}
-
-      for (var i = 0; i < results.rows.length; i++) {
-        var row = results.rows.item(i)
-
-        result[row.charId] = {
-          id: row.charId,
-          count: row.c,
-          name: MeleeData.charNames[row.charId]
-        }
-      }
-
-      return result
-    }, {})
-  }
-
-  function getCharacterStatsOpponent() {
-    log("get oppo char stats")
-
-    return readFromDb(function(tx) {
-      var sql = "select p2.charId charId, count(distinct r.id) c from replays r
-join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and p2.port != p.port
-where " + getFilterCondition() + "
-group by p2.charId
-order by p2.charId"
+where %2
+group by %1.charId
+order by %1.charId").arg(playerCol).arg(getFilterCondition())
 
       var params = getFilterParams()
 

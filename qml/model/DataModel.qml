@@ -137,20 +137,6 @@ Item {
     dbUpdaterChanged() // refresh bindings
   }
 
-  // stats
-
-  function getTopPlayerTags(max) {
-    return dataBase.getTopPlayerTags(max)
-  }
-
-  function getTopSlippiCodesOpponent(max) {
-    return dataBase.getTopSlippiCodesOpponent(max)
-  }
-
-  function getTopPlayerTagsOpponent(max) {
-    return dataBase.getTopPlayerTagsOpponent(max)
-  }
-
   // replay list
 
   function getReplayList(max, start) {
@@ -165,12 +151,12 @@ Item {
 
   // utils
 
-  function formatPercentage(amount) {
+  function formatPercentage(amount, numDecimals = 2) {
     return amount > 1
         ? "100%"
         : amount <= 0 || amount !== amount
           ? "0%"
-          : qsTr("%1%").arg((amount * 100).toFixed(2))
+          : qsTr("%1%").arg((amount * 100).toFixed(numDecimals))
   }
 
   function formatTime(numFrames) {

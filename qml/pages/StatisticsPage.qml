@@ -98,264 +98,37 @@ BasePage {
         enabled: false
       }
 
-      SimpleSection {
+      StatsGrid {
+        width: parent.width
+
         title: "Tech skill stats"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          { header: "Aerials L-cancelled", property: "lCancelRate", type: "percentage" },
+          { header: "Edge/teeter-cancelled", property: "edgeCancelRate", type: "percentage" },
+          { header: "Laggy aerials", property: "nonCancelledAerialRate", type: "percentage" },
+          { header: "Intangible ledgedashes / game", property: "avgLedgedashes", type: "decimal" },
+          { header: "Average GALINT", property: "avgGalint", type: "decimal" },
+        ]
       }
 
-      Item {
-        width: 1
-        height: dp(Theme.contentPadding)
-      }
+      StatsGrid {
+        width: parent.width
 
-      GridLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: columnSpacing
-        columnSpacing: dp(Theme.contentPadding)
-        rowSpacing: columnSpacing / 2
-        columns: dataModel.playerFilter.hasPlayerFilter ? 3 : 2
-
-        AppText {
-          text: "Stat"
-          color: Theme.secondaryTextColor
-          Layout.preferredWidth: statisticsPage.width * 0.3
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: dataModel.playerFilter.hasPlayerFilter ? "Me" : "Player"
-          color: Theme.secondaryTextColor
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: "Opponent"
-          color: Theme.secondaryTextColor
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Aerials L-cancelled"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.lCancelRate))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.lCancelRateOpponent))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Edge/teeter-cancelled"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.edgeCancelRate))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.edgeCancelRateOpponent))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Laggy aerials"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.nonCancelledAerialRate))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatPercentage(stats.nonCancelledAerialRateOpponent))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Intangible ledgedashes / game"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.avgLedgedashes.toFixed(2))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.avgLedgedashesOpponent.toFixed(2))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Average GALINT"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.avgGalint.toFixed(2))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.avgGalintOpponent.toFixed(2))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-      }
-
-      SimpleSection {
         title: "Offensive stats"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          { header: "Total stocks taken", property: "totalStocksTaken", type: "number" },
+          { header: "Stocks taken / game", property: "averageStocksTaken", type: "number" },
+          { header: "Total damage dealt", property: "totalDamageDealt", type: "number" },
+          { header: "Damage / minute", property: "damagePerMinute", type: "number" },
+          { header: "Avg. Kill %", property: "damagePerStock", type: "number" },
+        ]
       }
-
-      Item {
-        width: 1
-        height: dp(Theme.contentPadding)
-      }
-
-      GridLayout {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: columnSpacing
-        columnSpacing: dp(Theme.contentPadding)
-        rowSpacing: columnSpacing / 2
-        columns: dataModel.playerFilter.hasPlayerFilter ? 3 : 2
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Stat"
-          color: Theme.secondaryTextColor
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: dataModel.playerFilter.hasPlayerFilter ? "Me" : "Player"
-          color: Theme.secondaryTextColor
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: "Opponent"
-          color: Theme.secondaryTextColor
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Total stocks taken"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalStocksLostOpponent))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalStocksLost))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Stocks taken / game"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.averageStocksLostOpponent.toFixed(2))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.averageStocksLost.toFixed(2))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Total damage dealt"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalDamageDealt))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(dataModel.formatNumber(stats.totalDamageDealtOpponent))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Damage / minute"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.damagePerMinute.toFixed(2))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.damagePerMinuteOpponent.toFixed(2))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.3
-          text: "Avg. Kill %"
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.damagePerStock.toFixed(2))
-        }
-
-        AppText {
-          Layout.preferredWidth: statisticsPage.width * 0.25
-          horizontalAlignment: Text.AlignRight
-          text: qsTr("%1").arg(stats.damagePerStockOpponent.toFixed(2))
-          visible: dataModel.playerFilter.hasPlayerFilter
-        }
-      }
-
 
       SimpleSection {
         title: "Top chars used"
@@ -363,7 +136,7 @@ BasePage {
 
       CharacterGrid {
         stats: statisticsPage.stats
-        sourceModel: stats.charDataCss
+        sourceModel: stats.statsPlayer.charDataCss
 
         enabled: false
         highlightFilteredChar: false
@@ -389,7 +162,7 @@ BasePage {
         visible: dataModel.playerFilter.hasPlayerFilter
 
         stats: statisticsPage.stats
-        sourceModel: stats.charDataOpponentCss
+        sourceModel: stats.statsOpponent.charDataCss
 
         enabled: false
         highlightFilteredChar: false
@@ -422,7 +195,7 @@ BasePage {
       }
 
       NameGrid {
-        model: stats.topPlayerTags
+        model: stats.statsPlayer.topPlayerTags
         columns: nameColumns
       }
 
@@ -440,7 +213,7 @@ BasePage {
 
       NameGrid {
         visible: dataModel.playerFilter.hasPlayerFilter
-        model: stats.topPlayerTagsOpponent
+        model: stats.statsOpponent.topPlayerTags
         columns: nameColumns
       }
 
@@ -458,7 +231,7 @@ BasePage {
 
       NameGrid {
         visible: dataModel.playerFilter.hasPlayerFilter
-        model: stats.topSlippiCodesOpponent
+        model: stats.statsOpponent.topSlippiCodes
         columns: nameColumns
       }
 

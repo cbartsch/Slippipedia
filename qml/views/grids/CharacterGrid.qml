@@ -23,6 +23,11 @@ Grid {
 
   property alias sourceModel: jsonModel.source
 
+  readonly property int maxCount: sourceModel ? sourceModel
+                                                .map(item => item.count)
+                                                .reduce((a, v) => Math.max(a, v), 0)
+                                              : 1
+
   columns: {
     if(showIcon) {
       return 9
@@ -103,7 +108,7 @@ Grid {
         visible: showIcon && hasChar
 
         opacity: showData
-                 ? (count > 0 ? 0.5 : 0.25)
+                 ? count == 0 ? 0.2 : (Math.pow(count / maxCount, 0.5) * 0.8 + 0.2)
                  : (!isSelected && charIds.length > 0 ? 0.5 : 1)
 
         width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
@@ -113,6 +118,7 @@ Grid {
       Column {
         width: parent.width
         anchors.verticalCenter: parent.verticalCenter
+        anchors.verticalCenterOffset: -height * 0.18
         visible: showData && hasChar && count > 0
 
 //          AppText {
@@ -126,15 +132,28 @@ Grid {
 //            styleColor: Theme.backgroundColor
 //          }
 
-          AppText {
-            width: parent.width
-            text: qsTr("%1 games\n%2").arg(count).arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
-            maximumLineCount: 2
-            elide: Text.ElideRight
-            horizontalAlignment: Text.AlignHCenter
-            style: Text.Outline
-            styleColor: Theme.backgroundColor
-          }
+        AppText {
+          width: parent.width
+          text: dataModel.formatPercentage(count / stats.totalReplaysFiltered, 1)
+          maximumLineCount: 1
+          elide: Text.ElideRight
+          horizontalAlignment: Text.AlignHCenter
+          style: Text.Outline
+          styleColor: Theme.backgroundColor
+          font.pixelSize: width * 0.23
+          font.bold: true
+        }
+
+        AppText {
+          width: parent.width
+          text: qsTr("%1 games").arg(count)
+          maximumLineCount: 1
+          elide: Text.ElideRight
+          horizontalAlignment: Text.AlignHCenter
+          style: Text.Outline
+          styleColor: Theme.backgroundColor
+          font.pixelSize: width * 0.17
+        }
       }
     }
   }

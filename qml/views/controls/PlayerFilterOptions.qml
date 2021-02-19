@@ -110,7 +110,7 @@ Column {
   CharacterGrid {
     width: parent.width
 
-    sourceModel: stats ? stats.charDataCss : []
+    sourceModel: stats ? stats.statsPlayer.charDataCss : []
     stats: filterPage.stats
 
     charIds: filter.charIds
