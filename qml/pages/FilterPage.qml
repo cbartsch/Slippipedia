@@ -77,49 +77,68 @@ Page {
         height: dp(Theme.contentPadding)
       }
 
-      Flow {
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: spacing
-        spacing: dp(Theme.contentPadding)
+      Rectangle {
+        width: parent.width
+        height: winnerRadioRow.height
+        color: Theme.controlBackgroundColor
 
-        ButtonGroup {
-          id: rbgWinner
-          buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
+        Flow {
+          id: winnerRadioRow
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.margins: spacing
+          spacing: dp(Theme.contentPadding)
 
-          onCheckedButtonChanged: dataModel.gameFilter.winnerPlayerIndex = checkedButton.value
-        }
+          ButtonGroup {
+            id: rbgWinner
+            buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
 
-        AppRadio {
-          id: winnerRadioAny
-          text: "Any"
-          value: -3
-          checked: dataModel.gameFilter.winnerPlayerIndex === value
+            onCheckedButtonChanged: dataModel.gameFilter.winnerPlayerIndex = checkedButton.value
+          }
+
+          AppRadio {
+            id: winnerRadioAny
+            text: "Any"
+            value: -3
+            checked: dataModel.gameFilter.winnerPlayerIndex === value
+            height: dp(48)
+          }
+          AppRadio {
+            id: winnerRadioMe
+            text: "Me"
+            value: 0
+            checked: dataModel.gameFilter.winnerPlayerIndex === value
+            height: dp(48)
+          }
+          AppRadio {
+            id: winnerRadioOpponent
+            text: "Opponent"
+            value: 1
+            checked: dataModel.gameFilter.winnerPlayerIndex === value
+            height: dp(48)
+          }
+          AppRadio {
+            id: winnerRadioEither
+            text: "Either (no tie)"
+            value: -1
+            checked: dataModel.gameFilter.winnerPlayerIndex === value
+            height: dp(48)
+          }
+          AppRadio {
+            id: winnerRadioTie
+            text: "No result"
+            value: -2
+            checked: dataModel.gameFilter.winnerPlayerIndex === value
+            height: dp(48)
+          }
         }
-        AppRadio {
-          id: winnerRadioTie
-          text: "No result"
-          value: -2
-          checked: dataModel.gameFilter.winnerPlayerIndex === value
-        }
-        AppRadio {
-          id: winnerRadioEither
-          text: "Either (no tie)"
-          value: -1
-          checked: dataModel.gameFilter.winnerPlayerIndex === value
-        }
-        AppRadio {
-          id: winnerRadioMe
-          text: "Me"
-          value: 0
-          checked: dataModel.gameFilter.winnerPlayerIndex === value
-        }
-        AppRadio {
-          id: winnerRadioOpponent
-          text: "Opponent"
-          value: 1
-          checked: dataModel.gameFilter.winnerPlayerIndex === value
-        }
+      }
+
+      Item {
+        width: parent.width
+        height: 1
+
+        Divider { }
       }
 
       SimpleSection {

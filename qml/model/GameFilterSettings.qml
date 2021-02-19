@@ -25,7 +25,7 @@ Item {
     id: settings
 
     // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
-    property int winnerPlayerIndex: -1
+    property int winnerPlayerIndex: -3
     property var stageIds: []
   }
 
