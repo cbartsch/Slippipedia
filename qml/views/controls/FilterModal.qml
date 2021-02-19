@@ -1,7 +1,8 @@
 import QtQuick 2.0
 import Felgo 3.0
 
-import "../model"
+import "../../model/stats"
+import "../../pages"
 
 AppModal {
   id: filterModal

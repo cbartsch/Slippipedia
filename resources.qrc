@@ -1,39 +1,39 @@
 <RCC>
     <qresource prefix="/">
-        <file>qml/config.json</file>
-        <file>qml/Main.qml</file>
-        <file>qml/controls/AppToolButton.qml</file>
-        <file>qml/controls/CharacterGrid.qml</file>
-        <file>qml/controls/CharacterIcon.qml</file>
-        <file>qml/controls/Divider.qml</file>
-        <file>qml/controls/FilterInfoItem.qml</file>
-        <file>qml/controls/LoadingIcon.qml</file>
-        <file>qml/controls/NameGrid.qml</file>
-        <file>qml/controls/ReplayIcons.qml</file>
-        <file>qml/controls/ReplayListItem.qml</file>
-        <file>qml/controls/ReplaySectionHeader.qml</file>
-        <file>qml/controls/StageGrid.qml</file>
-        <file>qml/controls/StageIcon.qml</file>
-        <file>qml/controls/StockIcon.qml</file>
-        <file>qml/controls/TextInputField.qml</file>
-        <file>qml/model/DataBase.qml</file>
-        <file>qml/model/DataModel.qml</file>
-        <file>qml/model/MeleeData.qml</file>
-        <file>qml/model/qmldir</file>
-        <file>qml/model/ReplayStats.qml</file>
-        <file>qml/model/TextFilter.qml</file>
-        <file>qml/pages/BasePage.qml</file>
-        <file>qml/pages/DatabasePage.qml</file>
-        <file>qml/pages/FilterModal.qml</file>
-        <file>qml/pages/FilterPage.qml</file>
-        <file>qml/pages/ReplayListPage.qml</file>
-        <file>qml/pages/StatisticsPage.qml</file>
         <file>assets/img/css_icon_sheet.png</file>
         <file>assets/img/css_portrait_sheet.png</file>
         <file>assets/img/sss_icon_sheet.png</file>
         <file>assets/img/stock_icon_sheet.png</file>
-        <file>qml/model/PlayerFilterSettings.qml</file>
-        <file>qml/model/GameFilterSettings.qml</file>
-        <file>qml/controls/PlayerFilterOptions.qml</file>
+        <file>qml/config.json</file>
+        <file>qml/Main.qml</file>
+        <file>qml/model/DataModel.qml</file>
+        <file>qml/model/db/DataBase.qml</file>
+        <file>qml/model/data/qmldir</file>
+        <file>qml/model/data/MeleeData.qml</file>
+        <file>qml/model/stats/ReplayStats.qml</file>
+        <file>qml/model/filter/TextFilter.qml</file>
+        <file>qml/model/filter/PlayerFilterSettings.qml</file>
+        <file>qml/model/filter/GameFilterSettings.qml</file>
+        <file>qml/pages/BasePage.qml</file>
+        <file>qml/pages/DatabasePage.qml</file>
+        <file>qml/pages/FilterPage.qml</file>
+        <file>qml/pages/ReplayListPage.qml</file>
+        <file>qml/pages/StatisticsPage.qml</file>
+        <file>qml/views/visual/Divider.qml</file>
+        <file>qml/views/visual/LoadingIcon.qml</file>
+        <file>qml/views/visual/ReplayIcons.qml</file>
+        <file>qml/views/listitems/ReplayListItem.qml</file>
+        <file>qml/views/listitems/ReplaySectionHeader.qml</file>
+        <file>qml/views/icons/CharacterIcon.qml</file>
+        <file>qml/views/icons/StageIcon.qml</file>
+        <file>qml/views/icons/StockIcon.qml</file>
+        <file>qml/views/grids/CharacterGrid.qml</file>
+        <file>qml/views/grids/NameGrid.qml</file>
+        <file>qml/views/grids/StageGrid.qml</file>
+        <file>qml/views/controls/AppToolButton.qml</file>
+        <file>qml/views/controls/FilterInfoItem.qml</file>
+        <file>qml/views/controls/FilterModal.qml</file>
+        <file>qml/views/controls/PlayerFilterOptions.qml</file>
+        <file>qml/views/controls/TextInputField.qml</file>
     </qresource>
 </RCC>

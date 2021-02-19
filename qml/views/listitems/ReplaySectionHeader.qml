@@ -2,7 +2,8 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import Felgo 3.0
 
-import "../model"
+import "../icons"
+import "../../model"
 
 Item {
   id: sectionHeader

@@ -2,7 +2,7 @@ import QtQuick 2.13
 
 import Felgo 3.0
 
-import "../model"
+import "../../model/data"
 
 Item {
   property int charId: 0
@@ -21,7 +21,7 @@ Item {
     scale: parent.width / width
     transformOrigin: Item.TopLeft
 
-    source: "../../assets/img/css_icon_sheet.png"
+    source: "../../../assets/img/css_icon_sheet.png"
 
     frameX: 0 + 69 * (cssId % 9)
     frameY: 1 + 61 * Math.floor(cssId / 9)

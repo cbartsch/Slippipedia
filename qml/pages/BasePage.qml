@@ -2,8 +2,9 @@ import Felgo 3.0
 
 import QtQuick 2.0
 
-import "../controls"
-import "../model"
+import "../views/controls"
+import "../views/visual"
+import "../model/stats"
 
 FlickablePage {
   id: basePage

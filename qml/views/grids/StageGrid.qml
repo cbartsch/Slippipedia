@@ -1,7 +1,9 @@
 import QtQuick 2.0
 import Felgo 3.0
 
-import "../model"
+import "../icons"
+import "../visual"
+import "../../model/stats"
 
 Column {
   id: stageGrid

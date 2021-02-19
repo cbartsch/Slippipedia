@@ -3,7 +3,9 @@ import Felgo 3.0
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
 
-import "../controls"
+import "../views/controls"
+import "../views/grids"
+import "../views/visual"
 import "../model"
 
 BasePage {

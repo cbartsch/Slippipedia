@@ -1,7 +1,10 @@
 import QtQuick 2.0
 import Felgo 3.0
 
-import "../model"
+import "../grids"
+import "../icons"
+import "../../model/data"
+import "../../model/stats"
 
 Grid {
   id: characterGrid

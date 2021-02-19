@@ -4,6 +4,11 @@ import Qt.labs.settings 1.1
 
 import Slippi 1.0
 
+import "data"
+import "db"
+import "filter"
+import "stats"
+
 Item {
   id: dataModel
 

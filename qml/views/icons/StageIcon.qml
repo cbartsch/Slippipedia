@@ -2,7 +2,7 @@ import QtQuick 2.13
 
 import Felgo 3.0
 
-import "../model"
+import "../../model/data"
 
 Item {
   id: stageIcon
@@ -26,7 +26,7 @@ Item {
 
  //   anchors.centerIn: parent
 
-    source: "../../assets/img/sss_icon_sheet.png"
+    source: "../../../assets/img/sss_icon_sheet.png"
 
     frameX:      isSmallIcon ? 1   : 2 + 65 * (cssId % 9)
     frameY:      isSmallIcon ? 172 : 2 + 57 * Math.floor(cssId / 9)

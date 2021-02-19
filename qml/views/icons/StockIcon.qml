@@ -2,7 +2,7 @@ import QtQuick 2.13
 
 import Felgo 3.0
 
-import "../model"
+import "../../model/data"
 
 Item {
   id: stockIcon
@@ -24,7 +24,7 @@ Item {
   SingleSpriteFromSpriteSheet {
     id: sprite
 
-    source: "../../assets/img/stock_icon_sheet.png"
+    source: "../../../assets/img/stock_icon_sheet.png"
 
     frameX: sheetPos.x + skinId * sheetDist.x
     frameY: sheetPos.y + skinId * sheetDist.y

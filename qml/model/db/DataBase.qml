@@ -2,6 +2,9 @@ import QtQuick 2.0
 import QtQuick.LocalStorage 2.12
 import Felgo 3.0
 
+import "../data"
+import "../filter"
+
 Item {
   id: dataBase
 

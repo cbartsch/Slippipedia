@@ -3,8 +3,11 @@ import QtQuick.Controls 2.12
 
 import Felgo 3.0
 
-import "../controls"
-import "../model"
+import "../model/stats"
+import "../views/controls"
+import "../views/grids"
+import "../views/icons"
+import "../views/visual"
 
 Page {
   id: filterPage

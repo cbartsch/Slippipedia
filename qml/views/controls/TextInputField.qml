@@ -4,6 +4,8 @@ import QtQuick.Controls 2.0
 
 import Felgo 3.0
 
+import "../visual"
+
 Rectangle {
   id: textInputField
 

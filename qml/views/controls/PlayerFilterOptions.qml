@@ -2,7 +2,9 @@ import QtQuick 2.0
 import QtQuick.Controls 2.12
 import Felgo 3.0
 
-import "../model"
+import "../../model/filter"
+import "../grids"
+import "../visual"
 
 Column {
   property bool me: true

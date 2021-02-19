@@ -3,8 +3,10 @@ import Felgo 3.0
 import QtQuick 2.0
 import QtQuick.Controls 2.12 as QC2
 
-import "../controls"
 import "../model"
+import "../views/controls"
+import "../views/listitems"
+import "../views/visual"
 
 BasePage {
   id: replayListPage

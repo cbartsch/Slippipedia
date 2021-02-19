@@ -2,7 +2,9 @@ import QtQuick 2.0
 import Felgo 3.0
 import Slippi 1.0
 
-import "../model"
+import "../controls"
+import "../visual"
+import "../../model/data"
 
 AppListItem {
   id: replayListItem
