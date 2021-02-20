@@ -218,8 +218,8 @@ values " + makeSqlWildcards(params), params)
       stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
     }
 
-    var startDateCondition = startDateMs < 0 ? "" : "r.date > ?"
-    var endDateCondition = endDateMs < 0 ? "" : "r.date < ?"
+    var startDateCondition = startDateMs < 0 ? "" : "r.date >= ?"
+    var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
 
     var condition = [
           winnerCondition, stageCondition, startDateCondition, endDateCondition
@@ -272,8 +272,10 @@ values " + makeSqlWildcards(params), params)
   }
 
   function getGameFilterParams(stageIds, winnerPlayerIndex, startDateMs, endDateMs) {
-    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toISOString()]
-    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toISOString()]
+    var isoFormat = "yyyy-MM-ddTHH:mm:ss.zzz"
+
+    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toLocaleString(Qt.locale(), isoFormat)]
+    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toLocaleString(Qt.locale(), isoFormat)]
     var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
 
     return stageIdParams.concat(startDateParams).concat(endDateParams)

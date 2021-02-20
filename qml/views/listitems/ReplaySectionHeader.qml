@@ -2,8 +2,10 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import Felgo 3.0
 
+import "../controls"
 import "../icons"
 import "../../model"
+import "../../pages"
 
 Item {
   id: sectionHeader
@@ -40,29 +42,6 @@ Item {
         anchors.fill: parent
         flickableDirection: Flickable.HorizontalFlick
         contentWidth: Math.max(titleContent.width, width)
-
-//        interactive: false
-
-//        SequentialAnimation {
-//          running: true
-//          loops: Animation.Infinite
-
-//          PropertyAnimation {
-//            target: titleFlick
-//            property: "contentX"
-//            from: 0
-//            to: titleFlick.contentWidth - titleFlick.width
-//            duration: 4000
-//          }
-
-//          PropertyAnimation {
-//            target: titleFlick
-//            property: "contentX"
-//            to: 0
-//            from: titleFlick.contentWidth - titleFlick.width
-//            duration: 4000
-//          }
-//        }
 
         Row {
           id: titleContent
@@ -123,31 +102,62 @@ Item {
       height: dp(Theme.contentPadding / 2)
     }
 
-    AppText {
+    RowLayout {
       Layout.preferredWidth: parent.width
-      font.pixelSize: dp(16)
-      color: Theme.secondaryTextColor
 
-      width: parent.width
-      text: !sData ? "" : dataModel.formatDate(sData.dateFirst) + " - " + dataModel.formatDate(sData.dateLast)
-    }
+      Column {
+        Layout.fillWidth: true
 
-    AppText {
-      Layout.preferredWidth: parent.width
-      font.pixelSize: dp(16)
-      color: Theme.secondaryTextColor
+        AppText {
+          font.pixelSize: dp(16)
+          color: Theme.secondaryTextColor
 
-      width: parent.width
-      text: !sData ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
-                                                                  : qsTr("Games won: %1 / %2 (%3). Games not finished: %4")
-      .arg(sData.gamesWon).arg(sData.gamesFinished)
-      .arg(dataModel.formatPercentage(sData.gamesWon / sData.gamesFinished))
-      .arg(sData.numGames - sData.gamesFinished)
+          width: parent.width
+          text: !sData ? "" : dataModel.formatDate(sData.dateFirst) + " - " + dataModel.formatDate(sData.dateLast)
+        }
 
-      RippleMouseArea {
-        anchors.fill: parent
-        onClicked: showFilteringPage()
+        AppText {
+          Layout.preferredWidth: parent.width
+          font.pixelSize: dp(16)
+          color: Theme.secondaryTextColor
+
+          width: parent.width
+          text: !sData ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
+                                                                      : qsTr("Games won: %1 / %2 (%3). Games not finished: %4")
+          .arg(sData.gamesWon).arg(sData.gamesFinished)
+          .arg(dataModel.formatPercentage(sData.gamesWon / sData.gamesFinished))
+          .arg(sData.numGames - sData.gamesFinished)
+
+          RippleMouseArea {
+            anchors.fill: parent
+            onClicked: showFilteringPage()
+          }
+        }
       }
+
+      AppToolButton {
+        Layout.preferredWidth: implicitWidth
+
+        iconType: IconType.barchart
+        toolTipText: "Show statistics for session"
+
+        onClicked: {
+          // TODO find out why it can be off by a minute (or the seconds are truncated)
+          dataModel.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
+          dataModel.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
+
+          navigationStack.push(statisticsPageC)
+        }
+      }
+    }
+  }
+
+  Component {
+    id: statisticsPageC
+
+    StatisticsPage {
+      stats: dataModel.stats
+      filterChangeable: false
     }
   }
 }

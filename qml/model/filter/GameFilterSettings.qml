@@ -65,6 +65,9 @@ Item {
 
   function reset() {
     settings.stageIds = []
+    settings.winnerPlayerIndex = -3
+    settings.startDateMs = -1
+    settings.endDateMs = -1
   }
 
   function addStage(stageId) {

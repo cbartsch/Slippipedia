@@ -12,6 +12,7 @@ BasePage {
   id: statisticsPage
   title: qsTr("Replay statistics")
 
+  property bool filterChangeable: true
   readonly property int nameColumns: Math.round(width / dp(200))
 
   onSelected: stats.refresh(nameColumns * 5)
@@ -30,7 +31,7 @@ BasePage {
   FilterInfoItem {
     id: header
     stats: statisticsPage.stats
-    clickable: true
+    clickable: filterChangeable
   }
 
   Flickable {
