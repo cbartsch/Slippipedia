@@ -160,7 +160,7 @@ values " + makeSqlWildcards(params), params)
       catch(ex) {
         // table doesn't yet exist, ignore
 
-        console.warn("DB error", ex)
+        console.warn("DB error", ex, ex.fileName, ex.lineNumber)
       }
     })
 
@@ -194,7 +194,7 @@ values " + makeSqlWildcards(params), params)
     }
   }
 
-  function getGameFilterCondition(stageIds, winnerPlayerIndex) {
+  function getGameFilterCondition(stageIds, winnerPlayerIndex, startDateMs, endDateMs) {
     var winnerCondition = ""
     if(winnerPlayerIndex === -2) {
       // check for tie
@@ -218,9 +218,15 @@ values " + makeSqlWildcards(params), params)
       stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
     }
 
-    var condition =  winnerCondition && stageCondition
-        ? (winnerCondition + " and " + stageCondition)
-        : (winnerCondition || stageCondition || "true")
+    var startDateCondition = startDateMs < 0 ? "" : "r.date > ?"
+    var endDateCondition = endDateMs < 0 ? "" : "r.date < ?"
+
+    var condition = [
+          winnerCondition, stageCondition, startDateCondition, endDateCondition
+        ]
+    .map(c => (c || true))
+    .join(" and ")
+
     return "(" + condition + ")"
   }
 
@@ -236,7 +242,8 @@ values " + makeSqlWildcards(params), params)
   function getFilterCondition() {
     return "(" +
         // game
-        getGameFilterCondition(gameFilter.stageIds, gameFilter.winnerPlayerIndex) +
+        getGameFilterCondition(gameFilter.stageIds, gameFilter.winnerPlayerIndex,
+                               gameFilter.startDateMs, gameFilter.endDateMs) +
         // me
         " and " + getPlayerFilterCondition(playerFilter.slippiCode, playerFilter.slippiName, "p") +
         " and " + getCharFilterCondition(playerFilter.charIds, "p.charId") +
@@ -264,13 +271,12 @@ values " + makeSqlWildcards(params), params)
     }
   }
 
-  function getGameFilterParams(stageIds, winnerPlayerIndex) {
-    if(stageIds && stageIds.length > 0) {
-      return stageIds
-    }
-    else {
-      return []
-    }
+  function getGameFilterParams(stageIds, winnerPlayerIndex, startDateMs, endDateMs) {
+    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toISOString()]
+    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toISOString()]
+    var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
+
+    return stageIdParams.concat(startDateParams).concat(endDateParams)
   }
 
   function getCharFilterParams(charIds) {
@@ -284,7 +290,8 @@ values " + makeSqlWildcards(params), params)
 
   function getFilterParams() {
     // game, then me, then opponent
-    return getGameFilterParams(gameFilter.stageIds, gameFilter.winnerPlayerIndex)
+    return getGameFilterParams(gameFilter.stageIds, gameFilter.winnerPlayerIndex,
+                               gameFilter.startDateMs, gameFilter.endDateMs)
     .concat(getPlayerFilterParams(playerFilter.slippiCode, playerFilter.slippiName))
     .concat(getCharFilterParams(playerFilter.charIds))
     .concat(getPlayerFilterParams(opponentFilter.slippiCode, opponentFilter.slippiName))

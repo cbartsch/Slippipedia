@@ -43,15 +43,9 @@ Item {
     var oText = opponentFilter.displayText
     oText = oText ? "Opponent: " + oText : ""
 
-    var sText = null
-    if(gameFilter.stageIds.length > 0) {
-      sText = "Stages: " + gameFilter.stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
-    }
+    var gText = gameFilter.displayText
 
-    var wText = gameFilter.winnerPlayerIndex == -3
-        ? "" : ("Winner: " + gameFilter.winnerTexts[gameFilter.winnerPlayerIndex])
-
-    return [pText, oText, sText, wText].filter(_ => _).join("\n") || "(nothing)"
+    return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
   }
 
   onIsProcessingChanged: {

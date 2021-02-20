@@ -32,19 +32,13 @@ Page {
       id: content
       width: parent.width
 
-      SimpleSection {
-        title: "Player matching"
-      }
-
-      Item {
-        width: 1
-        height: dp(Theme.contentPadding)
-      }
-
       AppTabBar {
         id: filterTabs
         contentContainer: filterSwipe
 
+        AppTabButton {
+          text: "Game"
+        }
         AppTabButton {
           text: "Me"
         }
@@ -58,6 +52,11 @@ Page {
         width: parent.width
         height: currentItem ? currentItem.implicitHeight : dp(500)
 
+        GameFilterOptions {
+          filter: dataModel.gameFilter
+          stats: dataModel.stats
+        }
+
         PlayerFilterOptions {
           id: filterOptionsMe
           me: true
@@ -70,133 +69,6 @@ Page {
           filter: dataModel.opponentFilter
         }
       }
-
-      SimpleSection {
-        title: "Winner matching"
-      }
-
-      Item {
-        width: 1
-        height: dp(Theme.contentPadding)
-      }
-
-      Rectangle {
-        width: parent.width
-        height: winnerRadioRow.height
-        color: Theme.controlBackgroundColor
-
-        Flow {
-          id: winnerRadioRow
-          anchors.left: parent.left
-          anchors.right: parent.right
-          anchors.margins: spacing
-          spacing: dp(Theme.contentPadding)
-
-          ButtonGroup {
-            id: rbgWinner
-            buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
-
-            onCheckedButtonChanged: dataModel.gameFilter.winnerPlayerIndex = checkedButton.value
-          }
-
-          AppRadio {
-            id: winnerRadioAny
-            text: "Any"
-            value: -3
-            checked: dataModel.gameFilter.winnerPlayerIndex === value
-            height: dp(48)
-          }
-          AppRadio {
-            id: winnerRadioMe
-            text: "Me"
-            value: 0
-            checked: dataModel.gameFilter.winnerPlayerIndex === value
-            height: dp(48)
-          }
-          AppRadio {
-            id: winnerRadioOpponent
-            text: "Opponent"
-            value: 1
-            checked: dataModel.gameFilter.winnerPlayerIndex === value
-            height: dp(48)
-          }
-          AppRadio {
-            id: winnerRadioEither
-            text: "Either (no tie)"
-            value: -1
-            checked: dataModel.gameFilter.winnerPlayerIndex === value
-            height: dp(48)
-          }
-          AppRadio {
-            id: winnerRadioTie
-            text: "No result"
-            value: -2
-            checked: dataModel.gameFilter.winnerPlayerIndex === value
-            height: dp(48)
-          }
-        }
-      }
-
-      Item {
-        width: parent.width
-        height: 1
-
-        Divider { }
-      }
-
-      SimpleSection {
-        title: "Stage matching"
-      }
-
-      AppListItem {
-        text: "Filter by specific stage"
-        detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
-
-        backgroundColor: Theme.backgroundColor
-        enabled: false
-      }
-
-      StageGrid {
-        width: parent.width
-
-        sourceModel: stats ? stats.stageDataSss : []
-        stats: filterPage.stats
-
-        hideStagesWithNoReplays: false
-        sortByCount: false
-        showIcon: true
-        showData: false
-        showOtherItem: false
-
-        stageIds: dataModel.gameFilter.stageIds
-        onStageSelected: {
-          if(isSelected) {
-            // char is selected -> unselect
-            dataModel.gameFilter.removeStage(stageId)
-          }
-          else {
-            dataModel.gameFilter.addStage(stageId)
-          }
-        }
-      }
-
-      //    SimpleSection {
-      //      title: "Date matching"
-      //    }
-
-      //    AppListItem {
-      //      text: "Filter by replay date"
-      //      detailText: "Select a date range to match replays in."
-
-      //      backgroundColor: Theme.backgroundColor
-      //      enabled: false
-      //    }
-
-      //    AppListItem {
-      //      text: "Start date: "
-
-      //      onSelected: nativeUtils.displayDatePicker()
-      //    }
     }
   }
 }

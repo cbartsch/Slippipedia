@@ -54,7 +54,8 @@ App {
       icon: IconType.database
 
       NavigationStack {
-        DatabasePage { }
+        DatabasePage {
+        }
       }
     }
 
@@ -100,5 +101,13 @@ App {
         }
       }
     }
+  }
+
+  function isNan(number) {
+    return number !== number
+  }
+
+  function isDateValid(date) {
+    return date && !isNan(date.getTime())
   }
 }

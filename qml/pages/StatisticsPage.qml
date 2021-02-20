@@ -179,7 +179,7 @@ BasePage {
       StageGrid {
         width: parent.width
 
-        sourceModel: stats.stageDataSss
+        sourceModel: stats ? stats.stageDataSss : []
         stats: statisticsPage.stats
 
         hideStagesWithNoReplays: true

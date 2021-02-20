@@ -22,6 +22,7 @@ Rectangle {
   property alias text: input.text
   property alias placeholderText: input.placeholderText
 
+  property bool showOptions: true
   property alias matchCaseSensitive: toolBtnCase.checked
   property alias matchPartialText: toolBtnPartial.checked
 
@@ -62,6 +63,7 @@ Rectangle {
       text: "Aa"
       toolTipText: "Match case sensitive"
       Layout.alignment: Qt.AlignVCenter
+      visible: showOptions
     }
 
     AppToolButton {
@@ -69,6 +71,7 @@ Rectangle {
       text: "*"
       toolTipText: "Match partial text"
       Layout.alignment: Qt.AlignVCenter
+      visible: showOptions
     }
   }
 

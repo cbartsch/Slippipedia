@@ -12,6 +12,15 @@ Column {
 
   property PlayerFilterSettings filter: null
 
+  SimpleSection {
+    title: "Player"
+  }
+
+  Item {
+    width: 1
+    height: dp(Theme.contentPadding)
+  }
+
   AppListItem {
     text: qsTr("Enter %1 Slippi code and/or tag").arg(meText)
     detailText: "Replays are matched based on either connect code, in-game tag or both."
