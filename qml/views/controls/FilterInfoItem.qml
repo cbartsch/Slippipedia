@@ -22,7 +22,7 @@ Column {
     .arg(stats ? stats.totalReplays : 0)
     .arg(dataModel.formatPercentage(stats ? stats.totalReplaysFiltered / stats.totalReplays : 0))
 
-    detailText: qsTr("Matching:\n%1").arg(dataModel.filterDisplayText)
+    detailText: qsTr("Matching:\n%1").arg(stats.dataBase.filterSettings.displayText)
 
     onSelected: showFilteringPage()
 

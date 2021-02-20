@@ -1,5 +1,4 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.12
 import Felgo 3.0
 
 import "../data"
@@ -11,18 +10,16 @@ Item {
   property var debugLog: false
 
   // db
-  property var db: null
+  property var db: dataModel.dataBaseConnection
 
-  property PlayerFilterSettings playerFilter: null
-  property PlayerFilterSettings opponentFilter: null
-  property GameFilterSettings gameFilter: null
+  property FilterSettings filterSettings: null
+
+  readonly property PlayerFilterSettings playerFilter: filterSettings.playerFilter
+  readonly property PlayerFilterSettings opponentFilter: filterSettings.opponentFilter
+  readonly property GameFilterSettings gameFilter: filterSettings.gameFilter
 
   Component.onCompleted: {
-    db = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
-
     db.transaction(createTablesTx)
-
-    console.log("DB open", db, db.version)
   }
 
   function createTablesTx(tx) {

@@ -4,6 +4,9 @@ import QtQuick 2.0
 import QtQuick.Controls 2.12 as QC2
 
 import "../model"
+import "../model/db"
+import "../model/filter"
+import "../model/stats"
 import "../views/controls"
 import "../views/listitems"
 import "../views/visual"
@@ -52,6 +55,19 @@ BasePage {
     section.criteria: ViewSection.FullString
     section.delegate: ReplaySectionHeader {
       sData: sectionData[section] || emptySection
+
+      onShowStats: {
+        // TODO find out why it can be off by a minute (or the seconds are truncated)
+        sessionFilter.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
+        sessionFilter.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
+
+        sessionFilter.playerFilter.slippiCode.filterText = sData.code1
+        sessionFilter.playerFilter.slippiName.filterText = sData.name1
+        sessionFilter.opponentFilter.slippiCode.filterText = sData.code2
+        sessionFilter.opponentFilter.slippiName.filterText = sData.name2
+
+        navigationStack.push(statisticsPageC)
+      }
     }
 
     delegate: ReplayListItem {
@@ -77,6 +93,43 @@ BasePage {
         from: 0
         to: 1
       }
+    }
+  }
+
+  FilterSettings {
+    id: sessionFilter
+
+    playerFilter: PlayerFilterSettings {
+      settingsCategory: "session-player-filter"
+      filterCodeAndName: false
+    }
+
+    opponentFilter: PlayerFilterSettings {
+      settingsCategory: "session-opponent-filter"
+      filterCodeAndName: false
+    }
+
+    gameFilter: GameFilterSettings {
+      settingsCategory: "session-game-filter"
+
+      Component.onCompleted: console.log("custom session filter", startDateMs, endDateMs)
+    }
+  }
+
+  ReplayStats {
+    id: sessionStats
+
+    dataBase: DataBase {
+      filterSettings: sessionFilter
+    }
+  }
+
+  Component {
+    id: statisticsPageC
+
+    StatisticsPage {
+      filterChangeable: false
+      stats: sessionStats
     }
   }
 

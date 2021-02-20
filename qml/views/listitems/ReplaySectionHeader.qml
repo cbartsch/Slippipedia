@@ -23,6 +23,8 @@ Item {
   readonly property var chars1: Object.keys(sData.chars1)
   readonly property var chars2: Object.keys(sData.chars2)
 
+  signal showStats
+
   Rectangle {
     anchors.fill: parent
     color: Theme.backgroundColor
@@ -141,23 +143,8 @@ Item {
         iconType: IconType.barchart
         toolTipText: "Show statistics for session"
 
-        onClicked: {
-          // TODO find out why it can be off by a minute (or the seconds are truncated)
-          dataModel.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
-          dataModel.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
-
-          navigationStack.push(statisticsPageC)
-        }
+        onClicked: showStats()
       }
-    }
-  }
-
-  Component {
-    id: statisticsPageC
-
-    StatisticsPage {
-      stats: dataModel.stats
-      filterChangeable: false
     }
   }
 }

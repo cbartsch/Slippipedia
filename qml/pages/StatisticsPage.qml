@@ -1,6 +1,6 @@
 import Felgo 3.0
 
-import QtQuick 2.0
+import QtQuick 2.13
 import QtQuick.Layouts 1.12
 
 import "../views/controls"
@@ -17,6 +17,8 @@ BasePage {
 
   onSelected: stats.refresh(nameColumns * 5)
   filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5)
+
+  flickable.interactive: false
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {

@@ -9,10 +9,10 @@ Item {
 
   signal filterChanged
 
-  property alias winnerPlayerIndex: settings.winnerPlayerIndex
+  property int winnerPlayerIndex: -3
 
-  property alias startDateMs: settings.startDateMs
-  property alias endDateMs: settings.endDateMs
+  property double startDateMs: -1
+  property double endDateMs: -1
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
@@ -23,6 +23,8 @@ Item {
                                       })
 
   readonly property var stageIds: settings.stageIds.map(id => ~~id)
+
+  property alias settingsCategory: settings.category
 
   onStageIdsChanged: filterChanged()
 
@@ -51,16 +53,18 @@ Item {
     return [sText, wText, dText].filter(_ => _).join("\n") || ""
   }
 
+  onDisplayTextChanged: console.log("game filter display text is", filterSettings, displayText)
+
   Settings {
     id: settings
 
     // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
-    property int winnerPlayerIndex: -3
+    property alias winnerPlayerIndex: filterSettings.winnerPlayerIndex
     property var stageIds: []
 
     // start and end date as Date.getTime() ms values
-    property double startDateMs: -1
-    property double endDateMs: -1
+    property alias startDateMs: filterSettings.startDateMs
+    property alias endDateMs: filterSettings.endDateMs
   }
 
   function reset() {

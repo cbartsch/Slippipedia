@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.LocalStorage 2.12
 
 import Qt.labs.settings 1.1
 
@@ -17,7 +18,7 @@ Item {
   // replay settings
   property alias replayFolder: globalSettings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
-  property var newFiles: dataBase.getNewReplays(allFiles)
+  property var newFiles: globalDataBase.getNewReplays(allFiles)
 
   // analyze progress
   property bool progressCancelled: false
@@ -29,23 +30,21 @@ Item {
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
 
   // filter settings
-  property alias playerFilter: playerFilter
-  property alias opponentFilter: opponentFilter
-  property alias gameFilter: gameFilter
+  property alias filterSettings: filterSettings
+  property alias gameFilter: filterSettings.gameFilter
+  property alias playerFilter: filterSettings.playerFilter
+  property alias opponentFilter: filterSettings.opponentFilter
 
   // stats
   property alias stats: stats
 
-  readonly property string filterDisplayText: {
-    var pText = playerFilter.displayText
-    pText = pText ? "Me: " + pText : ""
+  // db
+  property var dataBaseConnection
 
-    var oText = opponentFilter.displayText
-    oText = oText ? "Opponent: " + oText : ""
+  Component.onCompleted: {
+    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
 
-    var gText = gameFilter.displayText
-
-    return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
+    console.log("DB open", db, db.version)
   }
 
   onIsProcessingChanged: {
@@ -54,24 +53,14 @@ Item {
     }
   }
 
-  PlayerFilterSettings {
-    id: playerFilter
+  DataBase {
+    id: globalDataBase
 
-    settingsCategory: "player-filter"
-
-    onFilterChanged: dbUpdaterChanged()
+    filterSettings: filterSettings
   }
 
-  PlayerFilterSettings {
-    id: opponentFilter
-
-    settingsCategory: "player-filter-opponent"
-
-    onFilterChanged: dbUpdaterChanged()
-  }
-
-  GameFilterSettings {
-    id: gameFilter
+  FilterSettings {
+    id: filterSettings
 
     onFilterChanged: dbUpdaterChanged()
   }
@@ -79,7 +68,7 @@ Item {
   ReplayStats {
     id: stats
 
-    dataBase: dataBase
+    dataBase: globalDataBase
   }
 
   Settings {
@@ -91,20 +80,12 @@ Item {
   SlippiParser {
     id: parser
 
-    onReplayParsed: dataBase.analyzeReplay(filePath, replay)
+    onReplayParsed: globalDataBase.analyzeReplay(filePath, replay)
 
     onReplayFailedToParse: {
       console.warn("Could not parse replay", filePath, ":", errorMessage)
       numFilesFailed++
     }
-  }
-
-  DataBase {
-    id: dataBase
-
-    playerFilter: dataModel.playerFilter
-    opponentFilter: dataModel.opponentFilter
-    gameFilter: dataModel.gameFilter
   }
 
   // replay / db management
@@ -126,7 +107,7 @@ Item {
   }
 
   function clearDatabase() {
-    dataBase.clearAllData()
+    globalDataBase.clearAllData()
 
     dbUpdaterChanged() // refresh bindings
   }
@@ -134,7 +115,7 @@ Item {
   // replay list
 
   function getReplayList(max, start) {
-    return dataBase.getReplayList(max, start)
+    return globalDataBase.getReplayList(max, start)
   }
 
   function resetFilters() {
