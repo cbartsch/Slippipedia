@@ -37,13 +37,13 @@ Page {
         contentContainer: filterSwipe
 
         AppTabButton {
-          text: "Game"
-        }
-        AppTabButton {
           text: "Me"
         }
         AppTabButton {
           text: "Opponent"
+        }
+        AppTabButton {
+          text: "Game"
         }
       }
 
@@ -51,11 +51,6 @@ Page {
         id: filterSwipe
         width: parent.width
         height: currentItem ? currentItem.implicitHeight : dp(500)
-
-        GameFilterOptions {
-          filter: dataModel.gameFilter
-          stats: dataModel.stats
-        }
 
         PlayerFilterOptions {
           id: filterOptionsMe
@@ -67,6 +62,11 @@ Page {
           id: filterOptionsOpponent
           me: false
           filter: dataModel.opponentFilter
+        }
+
+        GameFilterOptions {
+          filter: dataModel.gameFilter
+          stats: dataModel.stats
         }
       }
     }

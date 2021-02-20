@@ -95,7 +95,14 @@ Column {
     detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
 
     backgroundColor: Theme.backgroundColor
-    enabled: false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset stage filter"
+
+      onClicked: filter.removeAllStages()
+    }
   }
 
   StageGrid {
@@ -131,7 +138,14 @@ Column {
     detailText: "Select a date range to match replays in."
 
     backgroundColor: Theme.backgroundColor
-    enabled: false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset stage filter"
+
+      onClicked: setDateRange(null, null)
+    }
   }
 
   Rectangle {
@@ -145,16 +159,6 @@ Column {
       anchors.right: parent.right
       anchors.margins: spacing
       spacing: dp(Theme.contentPadding)
-
-      AppButton {
-        text: "Reset"
-        flat: true
-        iconLeft: IconType.trash
-
-        onClicked: {
-          setDateRange(null, null)
-        }
-      }
 
       AppButton {
         text: "Today"
@@ -227,7 +231,7 @@ Column {
 
   TextInputField {
     id: textFieldStart
-    labelText: "Start date:"
+    labelText: "After:"
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
 
@@ -261,7 +265,7 @@ Column {
 
   TextInputField {
     id: textFieldEnd
-    labelText: "End date:"
+    labelText: "Before:"
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
 
@@ -295,8 +299,6 @@ Column {
   }
 
   function setDateRange(start, end) {
-    console.log("date range", start, end)
-
     filter.startDateMs = start ? start.getTime() : -1
     textFieldStart.text = dataModel.formatDate(start)
 

@@ -108,7 +108,7 @@ Grid {
         visible: showIcon && hasChar
 
         opacity: showData
-                 ? count == 0 ? 0.2 : (Math.pow(count / maxCount, 0.5) * 0.8 + 0.2)
+                 ? count == 0 ? 0.1 : (Math.pow(count / maxCount, 0.5) * 0.7 + 0.3)
                  : (!isSelected && charIds.length > 0 ? 0.5 : 1)
 
         width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
@@ -140,7 +140,7 @@ Grid {
           horizontalAlignment: Text.AlignHCenter
           style: Text.Outline
           styleColor: Theme.backgroundColor
-          font.pixelSize: width * 0.23
+          font.pixelSize: Math.min(charItem.height * 0.3, width * 0.23)
           font.bold: true
         }
 
@@ -152,7 +152,7 @@ Grid {
           horizontalAlignment: Text.AlignHCenter
           style: Text.Outline
           styleColor: Theme.backgroundColor
-          font.pixelSize: width * 0.17
+          font.pixelSize: Math.min(charItem.height * 0.2, width * 0.17)
         }
       }
     }

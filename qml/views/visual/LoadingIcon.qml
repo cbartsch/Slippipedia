@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Felgo 3.0
 
 IconButtonBarItem {
-  icon: IconType.refresh
+  icon: IconType.spinner
   visible: dataModel.isProcessing
 
   RotationAnimation on rotation {

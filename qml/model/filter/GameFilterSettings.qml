@@ -5,7 +5,7 @@ import Qt.labs.settings 1.1
 import "../data"
 
 Item {
-  id: filterSettings
+  id: gameFilterSettings
 
   signal filterChanged
 
@@ -53,18 +53,16 @@ Item {
     return [sText, wText, dText].filter(_ => _).join("\n") || ""
   }
 
-  onDisplayTextChanged: console.log("game filter display text is", filterSettings, displayText)
-
   Settings {
     id: settings
 
     // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
-    property alias winnerPlayerIndex: filterSettings.winnerPlayerIndex
+    property alias winnerPlayerIndex: gameFilterSettings.winnerPlayerIndex
     property var stageIds: []
 
     // start and end date as Date.getTime() ms values
-    property alias startDateMs: filterSettings.startDateMs
-    property alias endDateMs: filterSettings.endDateMs
+    property alias startDateMs: gameFilterSettings.startDateMs
+    property alias endDateMs: gameFilterSettings.endDateMs
   }
 
   function reset() {
@@ -82,5 +80,9 @@ Item {
     var list = stageIds
     list.splice(list.indexOf(stageId), 1)
     settings.stageIds = list
+  }
+
+  function removeAllStages() {
+    settings.stageIds = []
   }
 }

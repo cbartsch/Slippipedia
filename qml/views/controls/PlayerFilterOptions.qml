@@ -13,7 +13,7 @@ Column {
   property PlayerFilterSettings filter: null
 
   SimpleSection {
-    title: "Player"
+    title: me ? "Player" : "Opponent"
   }
 
   Item {
@@ -26,7 +26,17 @@ Column {
     detailText: "Replays are matched based on either connect code, in-game tag or both."
 
     backgroundColor: Theme.backgroundColor
-    enabled: false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset player filter"
+
+      onClicked: {
+        filter.slippiCode.reset()
+        filter.slippiName.reset()
+      }
+    }
   }
 
   TextInputField {
@@ -105,7 +115,7 @@ Column {
   }
 
   SimpleSection {
-    title: "Character matching"
+    title: "Character"
   }
 
   AppListItem {
@@ -113,7 +123,14 @@ Column {
     detailText: "Find replays using selected characters. Click again to unselect."
 
     backgroundColor: Theme.backgroundColor
-    enabled: false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset character filter"
+
+      onClicked: filter.removeAllCharFilters()
+    }
   }
 
   CharacterGrid {

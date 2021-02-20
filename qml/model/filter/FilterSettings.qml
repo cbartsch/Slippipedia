@@ -7,8 +7,6 @@ Item {
   signal filterChanged
 
   readonly property string displayText: {
-    console.log("get display text", filterSettings, gameFilter.startDateMs)
-
     var pText = playerFilter.displayText
     pText = pText ? "Me: " + pText : ""
 
@@ -20,11 +18,7 @@ Item {
     return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
   }
 
-  onDisplayTextChanged: console.log("filter display text is", filterSettings, displayText)
-
-
   property GameFilterSettings gameFilter:  GameFilterSettings {
-
     settingsCategory: "stage-filter"
 
     onFilterChanged: filterSettings.filterChanged()

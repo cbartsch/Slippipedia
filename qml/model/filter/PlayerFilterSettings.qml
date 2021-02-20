@@ -5,7 +5,7 @@ import Qt.labs.settings 1.1
 import "../data"
 
 Item {
-  id: filterSettings
+  id: playerFilterSettings
 
   signal filterChanged
 
@@ -65,7 +65,7 @@ Item {
     property alias slippiNameCase: slippiName.matchCase
     property alias slippiNamePartial: slippiName.matchPartial
 
-    property alias filterCodeAndName: filterSettings.filterCodeAndName // true: and, false: or
+    property alias filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
 
     property var charIds: []
     property var stageIds: []
@@ -88,5 +88,9 @@ Item {
     var list = charIds
     list.splice(list.indexOf(charId), 1)
     settings.charIds = list
+  }
+
+  function removeAllCharFilters() {
+    settings.charIds = []
   }
 }
