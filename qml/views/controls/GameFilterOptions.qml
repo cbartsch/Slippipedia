@@ -134,7 +134,99 @@ Column {
     enabled: false
   }
 
+  Rectangle {
+    width: parent.width
+    height: dateOptionsRow.height
+    color: Theme.controlBackgroundColor
+
+    Flow {
+      id: dateOptionsRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: spacing
+      spacing: dp(Theme.contentPadding)
+
+      AppButton {
+        text: "Reset"
+        flat: true
+        iconLeft: IconType.trash
+
+        onClicked: {
+          setDateRange(null, null)
+        }
+      }
+
+      AppButton {
+        text: "Today"
+        flat: true
+
+        onClicked: {
+          var start = new Date()
+          start.setHours(0)
+          start.setMinutes(0)
+
+          var end = new Date()
+          end.setTime(start.getTime() + 1000 * 60 * 60 * 24)
+
+          setDateRange(start, end)
+        }
+      }
+
+      AppButton {
+        text: "Last week"
+        flat: true
+
+        onClicked: {
+          var end = new Date()
+
+          var start = new Date()
+          start.setTime(end.getTime() - 1000 * 60 * 60 * 24 * 7)
+
+          setDateRange(start, end)
+        }
+      }
+
+      AppButton {
+        text: "Last month"
+        flat: true
+
+        onClicked: {
+          var end = new Date()
+
+          var start = new Date()
+          start.setTime(end.getTime())
+
+          if(start.getMonth() === 0) {
+            start.setFullYear(start.getFullYear() - 1)
+            start.setMonth(11)
+          }
+          else {
+            start.setMonth(start.getMonth() - 1)
+          }
+
+          setDateRange(start, end)
+        }
+      }
+
+      AppButton {
+        text: "Last year"
+        flat: true
+
+        onClicked: {
+          var end = new Date()
+
+          var start = new Date()
+          start.setTime(end.getTime())
+          start.setFullYear(start.getFullYear() - 1)
+
+          setDateRange(start, end)
+        }
+      }
+    }
+  }
+
   TextInputField {
+    id: textFieldStart
     labelText: "Start date:"
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
@@ -168,6 +260,7 @@ Column {
   }
 
   TextInputField {
+    id: textFieldEnd
     labelText: "End date:"
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
@@ -199,5 +292,15 @@ Column {
 
       filter.endDateMs = date.getTime()
     }
+  }
+
+  function setDateRange(start, end) {
+    console.log("date range", start, end)
+
+    filter.startDateMs = start ? start.getTime() : -1
+    textFieldStart.text = dataModel.formatDate(start)
+
+    filter.endDateMs = end ? end.getTime() : -1
+    textFieldEnd.text = dataModel.formatDate(end)
   }
 }

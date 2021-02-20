@@ -30,6 +30,9 @@ App {
 
     Theme.navigationTabBar.titleOffColor= "white"
     Theme.navigationTabBar.backgroundColor = Theme.controlBackgroundColor
+
+    Theme.appButton.rippleEffect = true
+    Theme.appButton.horizontalMargin = 0
   }
 
   GoogleAnalytics {

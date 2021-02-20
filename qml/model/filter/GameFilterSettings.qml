@@ -35,8 +35,8 @@ Item {
     var wText = winnerPlayerIndex == -3
         ? "" : ("Winner: " + winnerTexts[winnerPlayerIndex])
 
-    var sdText = startDateMs > 0 ? new Date(startDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:MM") : ""
-    var edText = endDateMs > 0 ? new Date(endDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:MM") : ""
+    var sdText = startDateMs > 0 ? new Date(startDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var edText = endDateMs > 0 ? new Date(endDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
 
     var dText = sdText && edText
         ? sdText + " to " + edText
@@ -48,7 +48,7 @@ Item {
 
     dText = dText ? "Date: " + dText : ""
 
-    return [sText, wText, dText].filter(_ => _).join(", ") || ""
+    return [sText, wText, dText].filter(_ => _).join("\n") || ""
   }
 
   Settings {
