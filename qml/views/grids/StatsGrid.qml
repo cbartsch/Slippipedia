@@ -65,7 +65,7 @@ Column {
       }
 
       Repeater {
-        model: statsList
+        model: dataModel.playerFilter.hasPlayerFilter ? statsList : statsList.slice(0, 1)
 
         AppText {
           readonly property var stats: modelData

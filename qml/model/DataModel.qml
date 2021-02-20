@@ -187,7 +187,7 @@ Item {
       return (number / 1000).toFixed(2) + "K"
     }
     else {
-      return number.toFixed(2)
+      return number.toFixed(0)
     }
   }
 

@@ -124,10 +124,23 @@ BasePage {
 
         rowData: [
           { header: "Total stocks taken", property: "totalStocksTaken", type: "number" },
-          { header: "Stocks taken / game", property: "averageStocksTaken", type: "number" },
+          { header: "Stocks taken / game", property: "averageStocksTaken", type: "decimal" },
           { header: "Total damage dealt", property: "totalDamageDealt", type: "number" },
-          { header: "Damage / minute", property: "damagePerMinute", type: "number" },
-          { header: "Avg. Kill %", property: "damagePerStock", type: "number" },
+          { header: "Damage / minute", property: "damagePerMinute", type: "decimal" },
+          { header: "Avg. Kill %", property: "damagePerStock", type: "decimal" },
+        ]
+      }
+
+      StatsGrid {
+        width: parent.width
+
+        title: "Other stats"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          { header: "Total taunts", property: "numTaunts", type: "number" },
+          { header: "Taunts / game", property: "avgTaunts", type: "decimal" },
         ]
       }
 

@@ -22,6 +22,9 @@ Item {
   readonly property real totalAerials: lCancels + lCancelsMissed
   readonly property real lCancelRate: totalAerials == 0 ? 0 : (lCancels / totalAerials)
 
+  readonly property real numTaunts: statsData && statsData.numTaunts || 0
+  readonly property real avgTaunts: totalReplaysFiltered == 0 ? 0 : (numTaunts / totalReplaysFiltered)
+
   readonly property real edgeCancels: statsData && statsData.edgeCancelAerials + statsData.teeterCancelAerials || 0
   readonly property real edgeCancelRate: edgeCancels / totalAerials
 
