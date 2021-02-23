@@ -33,6 +33,7 @@ App {
 
     Theme.appButton.rippleEffect = true
     Theme.appButton.horizontalMargin = 0
+    Theme.appButton.horizontalPadding = dp(2)
   }
 
   GoogleAnalytics {

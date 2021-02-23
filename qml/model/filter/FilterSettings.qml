@@ -36,4 +36,10 @@ Item {
 
     onFilterChanged: filterSettings.filterChanged()
   }
+
+  function reset() {
+    playerFilter.reset()
+    opponentFilter.reset()
+    gameFilter.reset()
+  }
 }

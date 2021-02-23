@@ -22,8 +22,10 @@ Column {
   }
 
   AppListItem {
-    text: qsTr("Enter %1 Slippi code and/or tag").arg(meText)
-    detailText: "Replays are matched based on either connect code, in-game tag or both."
+    text: qsTr("Filter by %1 Slippi code and/or tag").arg(meText)
+    detailText: (me ? "Add player filter to show win rate and oppponent stats. " : "") +
+                "Replays are matched based on either connect code, in-game tag or both."
+
 
     backgroundColor: Theme.backgroundColor
     mouseArea.enabled: false

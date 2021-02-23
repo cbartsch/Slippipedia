@@ -85,4 +85,23 @@ Item {
   function removeAllStages() {
     settings.stageIds = []
   }
+
+  // set date range from now to numDays before now
+  function setPastRange(numDays) {
+    var ms = numDays * 24 * 60 * 60 * 1000
+
+    var date = new Date()
+    endDateMs = date.getTime()
+
+    date.setTime(date.getTime() - ms)
+    startDateMs = date.getTime()
+  }
+
+  // move date range by numDays forward
+  function addDateRange(numDays) {
+    var ms = numDays * 24 * 60 * 60 * 1000
+
+    startDateMs += ms
+    endDateMs += ms
+  }
 }

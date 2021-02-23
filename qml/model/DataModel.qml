@@ -44,7 +44,7 @@ Item {
   Component.onCompleted: {
     dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
 
-    console.log("DB open", db, db.version)
+    console.log("DB open", dataBaseConnection, dataBaseConnection.version)
   }
 
   onIsProcessingChanged: {
@@ -116,12 +116,6 @@ Item {
 
   function getReplayList(max, start) {
     return globalDataBase.getReplayList(max, start)
-  }
-
-  function resetFilters() {
-    playerFilter.reset()
-    opponentFilter.reset()
-    gameFilter.reset()
   }
 
   // utils

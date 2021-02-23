@@ -22,7 +22,7 @@ Column {
     .arg(stats ? stats.totalReplays : 0)
     .arg(dataModel.formatPercentage(stats ? stats.totalReplaysFiltered / stats.totalReplays : 0))
 
-    detailText: qsTr("Matching:\n%1").arg(stats.dataBase.filterSettings.displayText)
+    detailText: qsTr("Matching:\n%1").arg(stats ? stats.dataBase.filterSettings.displayText : "")
 
     onSelected: showFilteringPage()
 
@@ -31,10 +31,13 @@ Column {
 
     rightItem: AppToolButton {
       iconType: IconType.trash
-      onClicked: dataModel.resetFilters()
       toolTipText: "Reset all filters"
       visible: showResetButton
       anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: InputDialog.confirm(app, "Reset all filters?", accepted => {
+                                       if(accepted) stats.dataBase.filterSettings.reset()
+                                     })
     }
   }
 }
