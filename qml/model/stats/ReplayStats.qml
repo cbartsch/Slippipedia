@@ -18,12 +18,12 @@ Item {
   property alias statsOpponent: statsOpponent
 
   // public accessors for general stats
-  readonly property int totalReplays: dataBase.getNumReplays(dbUpdater)
+  property int totalReplays: dataBase.getNumReplays(dbUpdater)
 
-  readonly property int totalReplaysFiltered: statsData && statsData.count || 0
-  readonly property int totalReplaysFilteredWithResult: statsData && statsData.gameEndedCount || 0
-  readonly property int totalReplaysFilteredWon: statsData && statsData.winCount || 0
-  readonly property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
+  property int totalReplaysFiltered: statsData && statsData.count || 0
+  property int totalReplaysFilteredWithResult: statsData && statsData.gameEndedCount || 0
+  property int totalReplaysFilteredWon: statsData && statsData.winCount || 0
+  property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
 
   readonly property real averageGameDuration: statsData && statsData.avgDuration || 0
   readonly property real totalGameDuration: averageGameDuration * totalReplaysFiltered

@@ -41,10 +41,25 @@ Item {
   // db
   property var dataBaseConnection
 
+  readonly property string dbLatestVersion: "1.1"
+  readonly property string dbCurrentVersion: dataBaseConnection.version
+  readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
+
   Component.onCompleted: {
-    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "1.0", "Slippi Stats DB", 1000000)
+    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
+    if(dataBaseConnection.version === "") {
+      dataBaseConnection.changeVersion("", dbLatestVersion, function(tx) {
+        console.log("DB initialized at version", dbCurrentVersion, dbLatestVersion)
+      })
+    }
 
     console.log("DB open", dataBaseConnection, dataBaseConnection.version)
+  }
+
+  onNumFilesSucceededChanged: {
+    if(numFilesSucceeded % 100 === 0) {
+      dbUpdaterChanged() // refresh bindings after 100 items
+    }
   }
 
   onIsProcessingChanged: {
@@ -108,6 +123,10 @@ Item {
 
   function clearDatabase() {
     globalDataBase.clearAllData()
+    dataBaseConnection.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
+    })
+    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
+    console.log("DB version updated.", dataBaseConnection.version, dbCurrentVersion)
 
     dbUpdaterChanged() // refresh bindings
   }

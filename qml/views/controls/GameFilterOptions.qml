@@ -78,10 +78,9 @@ Column {
     showOptions: false
 
     text: filter ? dateText(filter.startDateMs) : ""
+    onEditingFinished: text = Qt.binding(() => dateText(filter.startDateMs))
 
     onTextChanged: {
-      text = text // break binding
-
       if(text == "") {
         filter.startDateMs = -1
         return
@@ -101,6 +100,8 @@ Column {
         return
       }
 
+      text = text // break binding to not re-format the date
+
       filter.startDateMs = date.getTime()
     }
   }
@@ -112,10 +113,9 @@ Column {
     showOptions: false
 
     text: filter ? dateText(filter.endDateMs) : ""
+    onEditingFinished: text = Qt.binding(() => dateText(filter.endDateMs))
 
     onTextChanged: {
-      text = text // break binding
-
       if(text == "") {
         filter.endDateMs = -1
         return
@@ -135,6 +135,8 @@ Column {
       if(!isDateValid(date)) {
         return
       }
+
+      text = text // break binding to not re-format the date
 
       filter.endDateMs = date.getTime()
     }
@@ -276,8 +278,8 @@ Column {
   }
 
   function updateTexts() {
-    textFieldStart.text = dateText(filter.startDateMs)
-    textFieldEnd.text = dateText(filter.endDateMs)
+    textFieldStart.text = Qt.binding(() => dateText(filter.startDateMs))
+    textFieldEnd.text = Qt.binding(() => dateText(filter.endDateMs))
   }
 
   function dateText(dateMs) {

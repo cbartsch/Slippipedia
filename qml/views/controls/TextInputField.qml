@@ -27,6 +27,7 @@ Rectangle {
   property alias matchPartialText: toolBtnPartial.checked
 
   signal accepted
+  signal editingFinished
 
   RippleMouseArea {
     anchors.fill: parent
@@ -56,6 +57,7 @@ Rectangle {
       color: Theme.textColor
 
       onAccepted: textInputField.accepted()
+      onEditingFinished: textInputField.editingFinished()
     }
 
     AppToolButton {

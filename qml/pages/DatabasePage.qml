@@ -18,6 +18,22 @@ BasePage {
     }
 
     AppListItem {
+      visible: dataModel.dbNeedsUpdate
+
+      text: "Database version outdated"
+      detailText: qsTr("Your app's database version is outdated (%1 < %2). \
+This happens when updating to a new app version. \
+Please clear and re-build the database. \
+Otherwise, some app features might not work properly. \
+Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLatestVersion)
+
+      onSelected: clearDb()
+
+      textColor: "red"
+      detailTextColor: "#bb0000"
+    }
+
+    AppListItem {
       text: qsTr("%1 total replays stored.").arg(dataModel.stats.totalReplays)
 
       backgroundColor: Theme.backgroundColor
@@ -26,12 +42,7 @@ BasePage {
 
     AppListItem {
       text: "Clear database"
-      enabled: dataModel.stats.totalReplays > 0
-      onSelected: InputDialog.confirm(app, "Really clear the whole database?", function(accepted) {
-        if(accepted) {
-          dataModel.clearDatabase()
-        }
-      })
+      onSelected: clearDb()
     }
 
     SimpleSection {
@@ -113,5 +124,13 @@ BasePage {
 
     onAccepted: dataModel.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
     onRejected: console.log("Folder dialog canceled")
+  }
+
+  function clearDb() {
+    InputDialog.confirm(app, "Really clear the whole database?", function(accepted) {
+      if(accepted) {
+        dataModel.clearDatabase()
+      }
+    })
   }
 }
