@@ -7,7 +7,7 @@ import "../filter"
 Item {
   id: dataBase
 
-  property var debugLog: false
+  property var debugLog: true
   property var debugLogSql: false
 
   // db
@@ -19,25 +19,23 @@ Item {
   readonly property PlayerFilterSettings opponentFilter: filterSettings.opponentFilter
   readonly property GameFilterSettings gameFilter: filterSettings.gameFilter
 
-  Component.onCompleted: {
-    console.log("db version is", db.version)
-
-    db.transaction(createTablesTx)
-
-    console.log("db version is 2", db.version)
-  }
-
-  function createTablesTx(tx) {
-    tx.executeSql("create table if not exists Replays (
+  function createTables(replay) {
+    db.transaction(function (tx) {
+      tx.executeSql("create table if not exists Replays (
 id integer not null primary key,
 date date,
 stageId integer,
 winnerPort integer,
 duration integer,
 filePath text
-    )")
+      )")
 
-    tx.executeSql("create table if not exists Players (
+      // create a column named s_<stat> for each stat in the replay
+      var statsCols = Object.keys(replay.players[0].stats)
+      .map(key => qsTr("s_%1 real").arg(key))
+      .join(",")
+
+      tx.executeSql(qsTr("create table if not exists Players (
 replayId integer,
 
 port integer,
@@ -50,32 +48,21 @@ cssTag text,
 charId integer,
 charIdOriginal integer,
 skinId integer,
+%1,
 
 primary key(replayId, port),
 foreign key(replayId) references replays(id)
-    )")
+      )").arg(statsCols))
 
-    tx.executeSql("create table if not exists Stats (
-replayId integer,
-port integer,
-name string,
-value real,
+      tx.executeSql("create index if not exists stage_index on replays(stageId)")
 
-primary key(replayId, port, name),
-foreign key(replayId) references replays(id)
-    )")
+      tx.executeSql("create index if not exists char_index on players(charId)")
+      tx.executeSql("create index if not exists player_replay_index on players(replayId)")
+      tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
 
-    tx.executeSql("create index if not exists stage_index on replays(stageId)")
-
-    tx.executeSql("create index if not exists char_index on players(charId)")
-    tx.executeSql("create index if not exists player_replay_index on players(replayId)")
-    tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
-
-    tx.executeSql("create index if not exists stat_id_index on stats(replayId, port, name)")
-    tx.executeSql("create index if not exists stat_name_index on stats(name)")
-
-    // can only configure this globally, set like to be case sensitive:
-    tx.executeSql("pragma case_sensitive_like = true")
+      // can only configure this globally, set like to be case sensitive:
+      tx.executeSql("pragma case_sensitive_like = true")
+    })
   }
 
   function clearAllData() {
@@ -117,26 +104,18 @@ foreign key(replayId) references replays(id)
               replay.uniqueId, player.port, player.isWinner,
               charId, charIdOriginal, player.charSkinId,
               player.slippiName, player.slippiCode, player.inGameTag
-            ]
+            ].concat(Object.values(player.stats))
 
-        tx.executeSql("insert or replace into Players (
+        tx.executeSql(qsTr("insert or replace into Players (
 replayId, port, isWinner,
 charId, charIdOriginal, skinId,
-slippiName, slippiCode, cssTag
+slippiName, slippiCode, cssTag, %1
 )
-values " + makeSqlWildcards(params), params)
-
-        for (var name in stats) {
-          var sParams =  [
-                replay.uniqueId, player.port, name, stats[name]
-              ]
-
-          tx.executeSql("insert or replace into Stats (replayId, port, name, value) values (?, ?, ?, ?)", sParams)
-        }
+values %2")
+                      .arg(Object.keys(player.stats).map(key => "s_" + key).join(","))
+                      .arg(makeSqlWildcards(params)), params)
       })
     })
-
-    numFilesSucceeded++
 
     var tDiff = new Date().getTime() - time
 
@@ -357,7 +336,22 @@ values " + makeSqlWildcards(params), params)
   function getReplayStats(isOpponent) {
     log("get replay stats")
 
+    var statCols = []
+    dataBaseConnection.transaction(function(tx) {
+      var tableInfo = tx.executeSql("pragma table_info(players)")
+
+      for (var i = 0; i < tableInfo.rows.length; i++) {
+        var colName = tableInfo.rows.item(i).name
+
+        if(colName.startsWith("s_")) {
+          statCols.push(colName.substring(2))
+        }
+      }
+    })
+
     return readFromDb(function(tx) {
+
+
       // if no player filter specified, match smaller port for P1
       var portCondition = playerFilter.hasPlayerFilter
           ? "p.port != p2.port" : "p.port < p2.port"
@@ -365,41 +359,25 @@ values " + makeSqlWildcards(params), params)
       var playerCol = isOpponent ? "p2" : "p"
       var opponentCol = isOpponent ? "p" : "p2"
 
+      var statColCondition = statCols
+      .map(c => qsTr("sum(%1.s_%2) %2").arg(playerCol).arg(c)
+           ).join(",")
+
+      console.log("stat col names", statColCondition)
+
       var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,
 count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
-count(case winnerPort when p.port then 1 else null end) winCount
+count(case winnerPort when p.port then 1 else null end) winCount,
+%2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and " + portCondition + "
-where %1").arg(getFilterCondition())
+where %1").arg(getFilterCondition()).arg(statColCondition)
 
       var results = tx.executeSql(sql, getFilterParams())
 
       var statsObj = results.rows.item(0)
-
-      var statsListRes = tx.executeSql("select distinct name from stats")
-
-      for (var i = 0; i < statsListRes.rows.length; i++) {
-        var statName = statsListRes.rows.item(i).name
-
-        var statSql = qsTr("select
-sum(value) sum
-from replays r
-join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and " + portCondition + "
-join stats s on s.replayId = r.id and s.port = %1.port
-where (s.name = ?) and %2")
-        .arg(playerCol) // use opponentCol to get opponent stats
-        .arg(getFilterCondition())
-
-        var statSumRes = tx.executeSql(statSql, [statName].concat(getFilterParams()))
-        var statSum = statSumRes.rows.item(0).sum
-
-        statsObj[statName] = statSum
-
-
-      }
 
       return statsObj
     }, 0)
@@ -560,13 +538,11 @@ order by stageId"
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, s.value endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, s2.value endStocks2
+p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.endStocks endStocks1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.endStocks endStocks2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
-join stats s on s.replayId = r.id and s.port = p.port and s.name = 'endStocks'
-join stats s2 on s.replayId = r.id and s2.port = p.port and s2.name = 'endStocks'
 where p.port != p2.port and " + getFilterCondition() + "
 group by r.id
 order by r.date desc

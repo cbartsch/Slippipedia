@@ -60,7 +60,8 @@ Item {
 
   onNumFilesSucceededChanged: {
     if(numFilesSucceeded % 100 === 0) {
-   //   dbUpdaterChanged() // refresh bindings after 100 items
+      dbUpdaterChanged() // refresh bindings after 100 items
+      stats.refresh()
       // TODO removed for now, makes the UI very slow (only reload parts of the data instead)
     }
   }
@@ -98,7 +99,15 @@ Item {
   SlippiParser {
     id: parser
 
-    onReplayParsed: globalDataBase.analyzeReplay(filePath, replay)
+    onReplayParsed: {
+      if(numFilesSucceeded === 0) {
+        globalDataBase.createTables(replay)
+      }
+
+      globalDataBase.analyzeReplay(filePath, replay)
+
+      numFilesSucceeded++
+    }
 
     onReplayFailedToParse: {
       console.warn("Could not parse replay", filePath, ":", errorMessage)
@@ -184,7 +193,6 @@ Item {
       return (number / 1000).toFixed(2) + "K"
     }
     else if((number > 1 || number === 0) && (number === (number % 1))) {
-      console.log("to fixed 0", number)
       return number.toFixed(0)
     }
     else if(number > 0.1) {
