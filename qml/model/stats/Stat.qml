@@ -12,8 +12,6 @@ Item {
   readonly property real avg: value / count
 
   function format() {
-    /* dataModel.formatNumber(value) +  " / " +*/
-
-    return dataModel.formatNumber(avg) // only show average for now
+    return /*dataModel.formatNumber(value) +  " / " + */dataModel.formatNumber(avg) // only show average for now
   }
 }

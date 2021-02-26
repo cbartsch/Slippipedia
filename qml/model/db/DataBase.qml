@@ -7,7 +7,7 @@ import "../filter"
 Item {
   id: dataBase
 
-  property var debugLog: true
+  property var debugLog: false
   property var debugLogSql: false
 
   // db

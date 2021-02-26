@@ -193,7 +193,7 @@ BasePage {
         statsList: [ stats.statsPlayer, stats.statsOpponent ]
 
         rowData: [
-          { header: "Taunts  (total/avg)", property: "taunts", type: "stat" },
+          { header: "Taunts", property: "taunts", type: "stat" },
         ]
       }
 
