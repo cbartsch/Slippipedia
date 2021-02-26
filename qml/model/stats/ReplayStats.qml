@@ -79,7 +79,5 @@ Item {
     statsOpponent.charData = dataBase.getCharacterStats(true)
     statsOpponent.topPlayerTags = dataBase.getTopPlayerTags(true, limit)
     statsOpponent.topSlippiCodes = dataBase.getTopSlippiCodes(true, limit)
-
-    dbUpdaterChanged()
   }
 }

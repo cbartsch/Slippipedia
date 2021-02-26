@@ -41,7 +41,7 @@ Item {
   // db
   property var dataBaseConnection
 
-  readonly property string dbLatestVersion: "1.1"
+  readonly property string dbLatestVersion: "1.2"
   readonly property string dbCurrentVersion: dataBaseConnection.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -51,6 +51,8 @@ Item {
       dataBaseConnection.changeVersion("", dbLatestVersion, function(tx) {
         console.log("DB initialized at version", dbCurrentVersion, dbLatestVersion)
       })
+      // reload object to update version property:
+      dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
     }
 
     console.log("DB open", dataBaseConnection, dataBaseConnection.version)
@@ -58,7 +60,8 @@ Item {
 
   onNumFilesSucceededChanged: {
     if(numFilesSucceeded % 100 === 0) {
-      dbUpdaterChanged() // refresh bindings after 100 items
+   //   dbUpdaterChanged() // refresh bindings after 100 items
+      // TODO removed for now, makes the UI very slow (only reload parts of the data instead)
     }
   }
 
@@ -180,8 +183,15 @@ Item {
     else if(number > 1000) {
       return (number / 1000).toFixed(2) + "K"
     }
-    else {
+    else if((number > 1 || number === 0) && (number === (number % 1))) {
+      console.log("to fixed 0", number)
       return number.toFixed(0)
+    }
+    else if(number > 0.1) {
+      return number.toFixed(2)
+    }
+    else {
+      return number ? number.toFixed(4) : "0"
     }
   }
 

@@ -99,7 +99,6 @@ App {
 
       NavigationStack {
         id: stack
-
         ReplayListPage {
           stats: dataModel.stats
         }

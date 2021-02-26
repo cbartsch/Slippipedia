@@ -105,7 +105,39 @@ BasePage {
       StatsGrid {
         width: parent.width
 
-        title: "Tech skill stats"
+        title: "Stocks"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          { header: "Stocks taken", property: "stocksTaken", type: "stat" },
+          { header: "Stocks lost", property: "stocksLost", type: "stat" },
+          { header: "SDs", property: "selfDestructs", type: "stat" },
+        ]
+      }
+
+      StatsGrid {
+        width: parent.width
+
+        title: "Offensive"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          // { header: "Total damage dealt", property: "totalDamageDealt", type: "number" },
+          { header: "Damage per opening", property: "damagePerOpening", type: "decimal" },
+          { header: "Openings per kill", property: "openingsPerKill", type: "decimal" },
+          { header: "Avg. Kill %", property: "damagePerStock", type: "decimal" },
+          { header: "Damage / minute", property: "damagePerMinute", type: "decimal" },
+          { header: "Connected grabs", property: "grabs", type: "stat" },
+          { header: "Grabs opponent escaped", property: "grabsEscapedRate", type: "percentage" },
+        ]
+      }
+
+      StatsGrid {
+        width: parent.width
+
+        title: "Tech skill"
 
         statsList: [ stats.statsPlayer, stats.statsOpponent ]
 
@@ -121,16 +153,35 @@ BasePage {
       StatsGrid {
         width: parent.width
 
-        title: "Offensive stats"
+        title: "Movement"
 
         statsList: [ stats.statsPlayer, stats.statsOpponent ]
 
         rowData: [
-          { header: "Total stocks taken", property: "totalStocksTaken", type: "number" },
-          { header: "Stocks taken / game", property: "averageStocksTaken", type: "decimal" },
-          { header: "Total damage dealt", property: "totalDamageDealt", type: "number" },
-          { header: "Damage / minute", property: "damagePerMinute", type: "decimal" },
-          { header: "Avg. Kill %", property: "damagePerStock", type: "decimal" },
+          { header: "Wavedashes", property: "wavedashes", type: "stat" },
+          { header: "Wavelands", property: "wavelands", type: "stat" },
+          { header: "Dashdances ", property: "dashdances", type: "stat" },
+          { header: "Pivots", property: "pivots", type: "stat" },
+        ]
+      }
+
+      StatsGrid {
+        width: parent.width
+
+        title: "Defensive"
+
+        statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+        rowData: [
+          { header: "Rolls", property: "rolls", type: "stat" },
+          { header: "Spotdodges", property: "spotdodges", type: "stat" },
+          { header: "Airdodges", property: "airdodges", type: "stat" },
+          { header: "Techs", property: "techs", type: "stat" },
+          { header: "Missed techs", property: "missedTechs", type: "stat" },
+          { header: "Tech rate", property: "techRate", type: "percentage" },
+          { header: "Walltechs", property: "walltechs", type: "stat" },
+          { header: "Walltechjumps", property: "walltechjumps", type: "stat" },
+          { header: "Walljumps", property: "walljumps", type: "stat" },
         ]
       }
 
@@ -142,8 +193,7 @@ BasePage {
         statsList: [ stats.statsPlayer, stats.statsOpponent ]
 
         rowData: [
-          { header: "Total taunts", property: "numTaunts", type: "number" },
-          { header: "Taunts / game", property: "avgTaunts", type: "decimal" },
+          { header: "Taunts  (total/avg)", property: "taunts", type: "stat" },
         ]
       }
 

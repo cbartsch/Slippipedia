@@ -8,22 +8,45 @@ Item {
 
   property var statsData: ({})
 
-  readonly property int totalStocksLost: statsData && statsData.totalStocksLost || 0
-  readonly property int totalStocksTaken: statsData && statsData.totalStocksLostOpponent || 0
-  readonly property real averageStocksLost: totalReplaysFiltered == 0 ? 0 : totalStocksLost / totalReplaysFiltered
-  readonly property real averageStocksTaken: totalReplaysFiltered == 0 ? 0 : totalStocksTaken / totalReplaysFiltered
+  readonly property Stat stocksLost: Stat { name: "stocksLost" }
+  readonly property Stat selfDestructs: Stat { name: "selfDestructs" }
+  readonly property Stat stocksTaken: Stat { name: "stocksTaken" }
 
   readonly property real totalDamageDealt: statsData && statsData.damageDealt || 0
   readonly property real damagePerMinute: totalDamageDealt / (totalGameDuration / 60 / 60)
-  readonly property real damagePerStock: totalDamageDealt / totalStocksTaken
+  readonly property real damagePerStock: totalDamageDealt / stocksTaken.value
 
   readonly property real lCancels: statsData && statsData.lCancels || 0
   readonly property real lCancelsMissed: statsData && statsData.lCancelsMissed || 0
   readonly property real totalAerials: lCancels + lCancelsMissed
   readonly property real lCancelRate: totalAerials == 0 ? 0 : (lCancels / totalAerials)
 
-  readonly property real numTaunts: statsData && statsData.numTaunts || 0
-  readonly property real avgTaunts: totalReplaysFiltered == 0 ? 0 : (numTaunts / totalReplaysFiltered)
+  readonly property Stat taunts: Stat { name: "taunts" }
+
+  readonly property Stat pivots: Stat { name: "pivots" }
+  readonly property Stat wavedashes: Stat { name: "wavedashes" }
+  readonly property Stat wavelands: Stat { name: "wavelands" }
+  readonly property Stat dashdances: Stat { name: "dashdances" }
+
+  readonly property Stat airdodges: Stat { name: "airdodges" }
+  readonly property Stat spotdodges: Stat { name: "spotdodges" }
+  readonly property Stat rolls: Stat { name: "rolls" }
+
+  readonly property Stat techs: Stat { name: "techs" }
+  readonly property Stat missedTechs: Stat { name: "missedTechs" }
+  readonly property Stat walltechs: Stat { name: "walltechs" }
+  readonly property Stat walltechjumps: Stat { name: "walltechjumps" }
+  readonly property Stat walljumps: Stat { name: "walljumps" }
+
+  readonly property Stat openings: Stat { name: "openings" }
+  readonly property real damagePerOpening: totalDamageDealt / openings.value
+  readonly property real openingsPerKill: openings.value / stocksTaken.value
+
+  readonly property real techRate: techs.value / (techs.value + missedTechs.value)
+
+  readonly property Stat grabs: Stat { name: "grabs" }
+  readonly property Stat grabsEscaped: Stat { name: "grabsEscaped" }
+  readonly property real grabsEscapedRate: grabsEscaped.value / grabs.value
 
   readonly property real edgeCancels: statsData && statsData.edgeCancelAerials + statsData.teeterCancelAerials || 0
   readonly property real edgeCancelRate: edgeCancels / totalAerials
@@ -31,7 +54,7 @@ Item {
   readonly property real nonCancelledAerials: totalAerials - lCancels - edgeCancels
   readonly property real nonCancelledAerialRate: nonCancelledAerials / totalAerials
 
-  readonly property real numLedgedashes: statsData && statsData.numLedgedashes || 0
+  readonly property real numLedgedashes: statsData && statsData.ledgedashes || 0
   readonly property real avgLedgedashes: totalReplaysFiltered == 0 ? 0 : (numLedgedashes / totalReplaysFiltered)
   readonly property real totalGalint: statsData && statsData.totalGalint || 0
   readonly property real avgGalint: numLedgedashes == 0 ? 0 : totalGalint / numLedgedashes

@@ -72,6 +72,7 @@ Column {
           readonly property var value: stats[rowModel.property]
           readonly property var displayText: {
             switch(rowModel.type) {
+            case "stat": return value.format()
             case "percentage": return dataModel.formatPercentage(value)
             case "decimal": return value.toFixed(2)
             default: return dataModel.formatNumber(value)
