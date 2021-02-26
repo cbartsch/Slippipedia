@@ -10,8 +10,8 @@ Item {
   property DataBase dataBase
 
   // DB data
-  property var statsData
-  property var statsDataOpponent
+  property var statsData: dataBase.getReplayStats(false)
+  property var statsDataOpponent: dataBase.getReplayStats(true)
 
   // public accessors for player stats
   property alias statsPlayer: statsPlayer
@@ -68,9 +68,6 @@ Item {
   // compute all data - no bindings as this can be slow
   function refresh(numPlayerTags) {
     var limit = numPlayerTags || 1
-
-    statsData = dataBase.getReplayStats(false)
-    statsDataOpponent = dataBase.getReplayStats(true)
 
     stageDataMap = dataBase.getStageStats()
     otherStageAmount = dataBase.getOtherStageAmount()

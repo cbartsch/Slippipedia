@@ -15,10 +15,29 @@ Page {
 
   property ReplayStats stats: null
 
-  FilterInfoItem {
+  Column {
     id: header
-    stats: filterPage.stats
-    showResetButton: true
+    width: parent.width
+
+    FilterInfoItem {
+      stats: filterPage.stats
+      showResetButton: true
+    }
+
+    AppTabBar {
+      id: filterTabs
+      contentContainer: filterSwipe
+
+      AppTabButton {
+        text: "Me"
+      }
+      AppTabButton {
+        text: "Opponent"
+      }
+      AppTabButton {
+        text: "Game"
+      }
+    }
   }
 
   AppFlickable {
@@ -31,21 +50,6 @@ Page {
     Column {
       id: content
       width: parent.width
-
-      AppTabBar {
-        id: filterTabs
-        contentContainer: filterSwipe
-
-        AppTabButton {
-          text: "Me"
-        }
-        AppTabButton {
-          text: "Opponent"
-        }
-        AppTabButton {
-          text: "Game"
-        }
-      }
 
       SwipeView {
         id: filterSwipe

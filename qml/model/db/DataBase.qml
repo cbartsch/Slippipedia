@@ -350,8 +350,6 @@ values %2")
     })
 
     return readFromDb(function(tx) {
-
-
       // if no player filter specified, match smaller port for P1
       var portCondition = playerFilter.hasPlayerFilter
           ? "p.port != p2.port" : "p.port < p2.port"
@@ -362,8 +360,6 @@ values %2")
       var statColCondition = statCols
       .map(c => qsTr("sum(%1.s_%2) %2").arg(playerCol).arg(c)
            ).join(",")
-
-      console.log("stat col names", statColCondition)
 
       var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,

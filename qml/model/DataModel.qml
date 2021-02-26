@@ -45,6 +45,8 @@ Item {
   readonly property string dbCurrentVersion: dataBaseConnection.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
+  signal initialized
+
   Component.onCompleted: {
     dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
     if(dataBaseConnection.version === "") {
@@ -56,6 +58,8 @@ Item {
     }
 
     console.log("DB open", dataBaseConnection, dataBaseConnection.version)
+
+    initialized()
   }
 
   onNumFilesSucceededChanged: {

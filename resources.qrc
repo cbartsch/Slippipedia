@@ -40,5 +40,9 @@
         <file>qml/views/controls/DateRangeRow.qml</file>
         <file>qml/views/controls/GameFilterOptions.qml</file>
         <file>qml/views/grids/StatsGrid.qml</file>
+        <file>qml/model/stats/Stat.qml</file>
+        <file>qml/views/stats/StatsOverview.qml</file>
+        <file>qml/views/stats/StatsGrids.qml</file>
+        <file>qml/views/stats/StatsTags.qml</file>
     </qresource>
 </RCC>
