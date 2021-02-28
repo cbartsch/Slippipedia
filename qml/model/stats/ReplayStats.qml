@@ -9,23 +9,26 @@ Item {
 
   property DataBase dataBase
 
-  // DB data
-  property var statsData: dataBase.getReplayStats(false)
-  property var statsDataOpponent: dataBase.getReplayStats(true)
+  // Replay summary data - always update:
+  readonly property var summaryData: dataBase.getReplaySummary(false, dbUpdater)
+
+  // Detailed stats data - update in refresh()
+  property var statsData
+  property var statsDataOpponent
 
   // public accessors for player stats
   property alias statsPlayer: statsPlayer
   property alias statsOpponent: statsOpponent
 
-  // public accessors for general stats
+  // public accessors for summary data
   property int totalReplays: dataBase.getNumReplays(dbUpdater)
 
-  property int totalReplaysFiltered: statsData && statsData.count || 0
-  property int totalReplaysFilteredWithResult: statsData && statsData.gameEndedCount || 0
-  property int totalReplaysFilteredWon: statsData && statsData.winCount || 0
+  property int totalReplaysFiltered: summaryData && summaryData.count || 0
+  property int totalReplaysFilteredWithResult: summaryData && summaryData.gameEndedCount || 0
+  property int totalReplaysFilteredWon: summaryData && summaryData.winCount || 0
   property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
 
-  readonly property real averageGameDuration: statsData && statsData.avgDuration || 0
+  readonly property real averageGameDuration: summaryData && summaryData.avgDuration || 0
   readonly property real totalGameDuration: averageGameDuration * totalReplaysFiltered
 
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
@@ -35,12 +38,16 @@ Item {
     id: statsPlayer
 
     statsData: replayStats.statsData
+    dataBase: replayStats.dataBase
+    isOpponent: false
   }
 
   PlayerStats {
     id: statsOpponent
 
     statsData: replayStats.statsDataOpponent
+    dataBase: replayStats.dataBase
+    isOpponent: true
   }
 
   property real otherStageAmount: 0
@@ -69,15 +76,13 @@ Item {
   function refresh(numPlayerTags) {
     var limit = numPlayerTags || 1
 
+    statsData = dataBase.getReplayStats(false)
+    statsDataOpponent = dataBase.getReplayStats(true)
+
     stageDataMap = dataBase.getStageStats()
     otherStageAmount = dataBase.getOtherStageAmount()
 
-    statsPlayer.charData = dataBase.getCharacterStats(false)
-    statsPlayer.topPlayerTags = dataBase.getTopPlayerTags(false, limit)
-    statsPlayer.topSlippiCodes = dataBase.getTopSlippiCodes(false, limit)
-
-    statsOpponent.charData = dataBase.getCharacterStats(true)
-    statsOpponent.topPlayerTags = dataBase.getTopPlayerTags(true, limit)
-    statsOpponent.topSlippiCodes = dataBase.getTopSlippiCodes(true, limit)
+    statsPlayer.refresh(limit)
+    statsOpponent.refresh(limit)
   }
 }

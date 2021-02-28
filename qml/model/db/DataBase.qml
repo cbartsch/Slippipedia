@@ -333,6 +333,34 @@ values %2")
     }, 0)
   }
 
+  function getReplaySummary(isOpponent) {
+    log("get replay summary")
+
+    return readFromDb(function(tx) {
+      // if no player filter specified, match smaller port for P1
+      var portCondition = playerFilter.hasPlayerFilter
+          ? "p.port != p2.port" : "p.port < p2.port"
+
+      var playerCol = isOpponent ? "p2" : "p"
+      var opponentCol = isOpponent ? "p" : "p2"
+
+      var sql = qsTr("select
+count(r.id) count, avg(r.duration) avgDuration,
+count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
+count(case winnerPort when p.port then 1 else null end) winCount
+from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and " + portCondition + "
+where %1").arg(getFilterCondition())
+
+      var results = tx.executeSql(sql, getFilterParams())
+
+      var statsObj = results.rows.item(0)
+
+      return statsObj
+    }, 0)
+  }
+
   function getReplayStats(isOpponent) {
     log("get replay stats")
 

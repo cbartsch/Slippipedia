@@ -2,11 +2,14 @@ import QtQuick 2.0
 import Felgo 3.0
 
 import "../data"
+import "../db"
 
 Item {
   id: playerStats
 
   property var statsData: ({})
+  property bool isOpponent: false
+  property DataBase dataBase: null
 
   readonly property Stat stocksLost: Stat { name: "stocksLost" }
   readonly property Stat selfDestructs: Stat { name: "selfDestructs" }
@@ -80,5 +83,11 @@ Item {
                                         name: cd ? cd.name : ""
                                       }
                                     })
+  }
+
+  function refresh(limit) {
+    charData = dataBase.getCharacterStats(isOpponent)
+    topPlayerTags = dataBase.getTopPlayerTags(isOpponent, limit)
+    topSlippiCodes = dataBase.getTopSlippiCodes(isOpponent, limit)
   }
 }
