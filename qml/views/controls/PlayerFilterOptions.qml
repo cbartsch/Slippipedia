@@ -4,6 +4,7 @@ import Felgo 3.0
 
 import "../../model/filter"
 import "../grids"
+import "../listitems"
 import "../visual"
 
 Column {
@@ -16,23 +17,21 @@ Column {
     title: me ? "Player" : "Opponent"
   }
 
-  Item {
-    width: 1
-    height: dp(Theme.contentPadding)
-  }
-
-  AppListItem {
+  CheckableListItem {
     text: qsTr("Filter by %1 Slippi code and/or tag").arg(meText)
     detailText: (me ? "Add player filter to show win rate and oppponent stats. " : "") +
                 "Replays are matched based on either connect code, in-game tag or both."
 
 
-    backgroundColor: Theme.backgroundColor
+    checked: filter.hasPlayerFilter
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset player filter"
+
+      visible: filter.hasPlayerFilter
+      anchors.verticalCenter: parent.verticalCenter
 
       onClicked: {
         filter.slippiCode.reset()
@@ -120,16 +119,19 @@ Column {
     title: "Character"
   }
 
-  AppListItem {
+  CheckableListItem {
     text: "Filter by specific characters"
     detailText: "Find replays using selected characters. Click again to unselect."
 
-    backgroundColor: Theme.backgroundColor
+    checked: filter.hasCharFilter
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset character filter"
+
+      visible: filter.hasCharFilter
+      anchors.verticalCenter: parent.verticalCenter
 
       onClicked: filter.removeAllCharFilters()
     }

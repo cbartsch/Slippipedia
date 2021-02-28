@@ -37,7 +37,7 @@ Item {
 
     Item {
       Layout.fillHeight: true
-      width: parent.width
+      Layout.fillWidth: true
 
       AppFlickable {
         id: titleFlick
@@ -122,6 +122,9 @@ Item {
           Layout.preferredWidth: parent.width
           font.pixelSize: dp(16)
           color: Theme.secondaryTextColor
+
+          maximumLineCount: 1
+          elide: Text.ElideRight
 
           width: parent.width
           text: !sData ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"

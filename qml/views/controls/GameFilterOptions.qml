@@ -5,6 +5,7 @@ import Felgo 3.0
 import "../../model/filter"
 import "../../model/stats"
 import "../grids"
+import "../listitems"
 import "../visual"
 
 Column {
@@ -18,16 +19,18 @@ Column {
     title: "Date range"
   }
 
-  AppListItem {
+  CheckableListItem {
     text: "Filter by replay date"
     detailText: "Select a date range to match replays in."
 
-    backgroundColor: Theme.backgroundColor
+    checked: filter.hasDateFilter
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset stage filter"
+      visible: filter.hasDateFilter
+      anchors.verticalCenter: parent.verticalCenter
 
       onClicked: clearDateRange()
     }
@@ -146,9 +149,21 @@ Column {
     title: "Winner"
   }
 
-  Item {
-    width: 1
-    height: dp(Theme.contentPadding)
+  CheckableListItem {
+    text: "Filter by game result"
+    detailText: "Filter by won, lost, tied games or games with any result."
+
+    backgroundColor: filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset result filter"
+      visible: filter.hasWinnerFilter
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: filter.winnerPlayerIndex = -3
+    }
   }
 
   Rectangle {
@@ -179,14 +194,14 @@ Column {
       }
       AppRadio {
         id: winnerRadioMe
-        text: "Me"
+        text: "Won"
         value: 0
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
       }
       AppRadio {
         id: winnerRadioOpponent
-        text: "Opponent"
+        text: "Lost"
         value: 1
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
@@ -219,16 +234,18 @@ Column {
     title: "Stage"
   }
 
-  AppListItem {
+  CheckableListItem {
     text: "Filter by specific stage"
     detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
 
-    backgroundColor: Theme.backgroundColor
+    checked: filter.hasStageFilter
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset stage filter"
+      visible: filter.hasStageFilter
+      anchors.verticalCenter: parent.verticalCenter
 
       onClicked: filter.removeAllStages()
     }

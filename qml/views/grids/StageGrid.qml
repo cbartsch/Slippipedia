@@ -84,6 +84,8 @@ Column {
             visible: showIcon
 
             opacity: showData || (!isSelected && stageIds.length > 0) ? 0.5 : 1
+
+            Behavior on opacity { UiAnimation { } }
           }
 
           Column {

@@ -9,7 +9,7 @@ Item {
 
   signal filterChanged
 
-  property int winnerPlayerIndex: -3
+  property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
   property double startDateMs: -1
   property double endDateMs: -1
@@ -25,6 +25,11 @@ Item {
   readonly property var stageIds: settings.stageIds.map(id => ~~id)
 
   property alias settingsCategory: settings.category
+
+  readonly property bool hasFilter: hasDateFilter || hasStageFilter || hasWinnerFilter
+  readonly property bool hasDateFilter: startDateMs >= 0 || endDateMs >= 0
+  readonly property bool hasStageFilter: stageIds && stageIds.length > 0
+  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3
 
   onStageIdsChanged: filterChanged()
 

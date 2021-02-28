@@ -20,7 +20,10 @@ Item {
     onPropertyChanged: filterChanged()
   }
   property bool filterCodeAndName: true
+
+  readonly property bool hasFilter: hasPlayerFilter || hasCharFilter
   readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != ""
+  readonly property bool hasCharFilter: charIds && charIds.length > 0
 
   readonly property var charIds: settings.charIds.map(id => ~~id) // settings stores as list of string, convert to int
 

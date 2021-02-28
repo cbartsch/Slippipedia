@@ -2,6 +2,7 @@ import QtQuick 2.0
 import Felgo 3.0
 
 import "../../model/stats"
+import "../visual"
 
 Column {
   id: filterItem
@@ -12,15 +13,21 @@ Column {
   property bool showResetButton: false
   property bool clickable: false
 
+  property int numReplays: stats ? stats.totalReplays : 0
+  property int numReplaysFiltered: stats ? stats.totalReplaysFiltered : 0
+  property real amountFiltered: stats ? stats.totalReplaysFiltered / stats.totalReplays : 0
+
+  Behavior on numReplaysFiltered { UiAnimation { } }
+  Behavior on amountFiltered { UiAnimation { } }
+
   SimpleSection {
     title: "Filtering"
   }
 
   AppListItem {
     text: qsTr("Matched replays: %1/%2 (%3)")
-    .arg(stats ? stats.totalReplaysFiltered : 0)
-    .arg(stats ? stats.totalReplays : 0)
-    .arg(dataModel.formatPercentage(stats ? stats.totalReplaysFiltered / stats.totalReplays : 0))
+    .arg(numReplaysFiltered).arg(numReplays)
+    .arg(dataModel.formatPercentage(amountFiltered))
 
     detailText: qsTr("Matching:\n%1").arg(stats ? stats.dataBase.filterSettings.displayText : "")
 

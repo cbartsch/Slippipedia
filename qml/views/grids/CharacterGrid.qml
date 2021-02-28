@@ -3,6 +3,7 @@ import Felgo 3.0
 
 import "../grids"
 import "../icons"
+import "../visual"
 import "../../model/data"
 import "../../model/stats"
 
@@ -113,6 +114,8 @@ Grid {
 
         width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
         height: implicitHeight * width / implicitWidth
+
+        Behavior on opacity { UiAnimation {} }
       }
 
       Column {

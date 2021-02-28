@@ -30,12 +30,18 @@ Page {
 
       AppTabButton {
         text: "Me"
+        showIcon: dataModel.playerFilter.hasFilter
+        tabIcon: IconType.check
       }
       AppTabButton {
         text: "Opponent"
+        showIcon: dataModel.opponentFilter.hasFilter
+        tabIcon: IconType.check
       }
       AppTabButton {
         text: "Game"
+        showIcon: dataModel.gameFilter.hasFilter
+        tabIcon: IconType.check
       }
     }
   }
