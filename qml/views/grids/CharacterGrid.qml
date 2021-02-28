@@ -121,6 +121,8 @@ Grid {
         anchors.verticalCenterOffset: -height * 0.18
         visible: showData && hasChar && count > 0
 
+        opacity: charIcon.opacity * 0.4 + 0.6
+
 //          AppText {
 //            width: parent.width
 //            text: name

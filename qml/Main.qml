@@ -80,20 +80,6 @@ App {
 //    }
 
     NavigationItem {
-      title: "Statistics"
-      icon: IconType.barchart
-
-      onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
-
-      NavigationStack {
-        StatisticsPage {
-          stats: dataModel.stats
-        }
-      }
-    }
-
-    NavigationItem {
       title: "Browser"
       icon: IconType.list
 
@@ -103,6 +89,20 @@ App {
       NavigationStack {
         id: stack
         ReplayListPage {
+          stats: dataModel.stats
+        }
+      }
+    }
+
+    NavigationItem {
+      title: "Statistics"
+      icon: IconType.barchart
+
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
+      NavigationStack {
+        StatisticsPage {
           stats: dataModel.stats
         }
       }
