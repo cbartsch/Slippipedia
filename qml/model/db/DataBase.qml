@@ -337,7 +337,7 @@ values %2")
     log("get replay stats")
 
     var statCols = []
-    dataBaseConnection.transaction(function(tx) {
+    db.transaction(function(tx) {
       var tableInfo = tx.executeSql("pragma table_info(players)")
 
       for (var i = 0; i < tableInfo.rows.length; i++) {
@@ -534,8 +534,8 @@ order by stageId"
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.endStocks endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.endStocks endStocks2
+p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
