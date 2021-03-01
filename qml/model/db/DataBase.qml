@@ -67,10 +67,8 @@ foreign key(replayId) references replays(id)
 
   function clearAllData() {
     db.transaction(function(tx) {
-      tx.executeSql("drop table Replays")
-      tx.executeSql("drop table Players")
-
-      createTablesTx(tx)
+      tx.executeSql("drop table if exists Replays")
+      tx.executeSql("drop table if exists Players")
     })
   }
 

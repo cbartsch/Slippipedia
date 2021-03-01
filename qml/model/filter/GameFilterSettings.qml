@@ -39,7 +39,7 @@ Item {
   readonly property bool hasDateFilter: startDateMs >= 0 || endDateMs >= 0
   readonly property bool hasDurationFilter: minFrames >= 0 || maxFrames >= 0
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
-  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3
+  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || endStocks >= 0
 
   onStageIdsChanged: filterChanged()
 
@@ -172,7 +172,7 @@ Item {
     var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
     var minFramesCondition = minFrames < 0 ? "" : "r.duration >= ?"
     var maxFramesCondition = maxFrames < 0 ? "" : "r.duration <= ?"
-    var endStocksCondition = endStocks < 0 ? "" : "p.s_endStocks >= ?"
+    var endStocksCondition = endStocks < 0 ? "" : "max(p.s_endStocks, p2.s_endStocks) >= ?"
 
     var condition = [
           winnerCondition, stageCondition,

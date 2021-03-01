@@ -33,16 +33,19 @@
         <file>qml/views/controls/AppToolButton.qml</file>
         <file>qml/views/controls/FilterInfoItem.qml</file>
         <file>qml/views/controls/FilterModal.qml</file>
-        <file>qml/views/controls/PlayerFilterOptions.qml</file>
         <file>qml/views/controls/TextInputField.qml</file>
         <file>qml/model/filter/FilterSettings.qml</file>
         <file>qml/model/stats/PlayerStats.qml</file>
         <file>qml/views/controls/DateRangeRow.qml</file>
-        <file>qml/views/controls/GameFilterOptions.qml</file>
         <file>qml/views/grids/StatsGrid.qml</file>
         <file>qml/model/stats/Stat.qml</file>
         <file>qml/views/stats/StatsOverview.qml</file>
         <file>qml/views/stats/StatsGrids.qml</file>
         <file>qml/views/stats/StatsTags.qml</file>
+        <file>qml/views/filter/GameFilterOptions.qml</file>
+        <file>qml/views/filter/PlayerFilterOptions.qml</file>
+        <file>qml/views/filter/ResultFilterOptions.qml</file>
+        <file>qml/views/listitems/CheckableListItem.qml</file>
+        <file>qml/views/visual/UiAnimation.qml</file>
     </qresource>
 </RCC>

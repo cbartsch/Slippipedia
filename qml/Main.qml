@@ -49,7 +49,7 @@ App {
     id: dataModel
 
     // if DB has no replays, show DB page, otherwise, go to stats directly
-    onInitialized: navigation.currentIndex = stats.totalReplays > 0 ? 1 : 0
+    onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate ? 1 : 0
   }
 
   Navigation {

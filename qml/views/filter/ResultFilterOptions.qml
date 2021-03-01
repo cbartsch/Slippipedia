@@ -69,13 +69,6 @@ Column {
     onTextChanged: filter.maxFrames = text ? text * 60 : -1
   }
 
-  Item {
-    width: parent.width
-    height: dp(1)
-
-    Divider { }
-  }
-
   SimpleSection {
     title: "Winner"
   }
@@ -93,7 +86,10 @@ Column {
       visible: filter.hasWinnerFilter
       anchors.verticalCenter: parent.verticalCenter
 
-      onClicked: filter.winnerPlayerIndex = -3
+      onClicked: {
+        filter.winnerPlayerIndex = -3
+        filter.endStocks = -1
+      }
     }
   }
 
@@ -154,11 +150,18 @@ Column {
     }
   }
 
+  Item {
+    width: parent.width
+    height: 1
+
+    Divider { }
+  }
+
   TextInputField {
     labelText: "Stocks left (winner):"
     placeholderText: "Enter number..."
 
-    labelWidth: sp(250)
+    labelWidth: sp(180)
     showOptions: false
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
@@ -166,12 +169,5 @@ Column {
     text: filter.endStocks >= 0 ? filter.endStocks : ""
 
     onTextChanged: filter.endStocks = text ? text : -1
-  }
-
-  Item {
-    width: parent.width
-    height: 1
-
-    Divider { }
   }
 }
