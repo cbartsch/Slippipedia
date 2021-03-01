@@ -19,6 +19,8 @@ Item {
   property int minFrames: -1
   property int maxFrames: -1
 
+  property int endStocks: -1
+
   readonly property var stageIds: settings.stageIds.map(id => ~~id)
 
   readonly property var winnerTexts: ({
@@ -72,7 +74,11 @@ Item {
                   : maxText ? "Shorter than " + maxText : ""
     durText = durText ? "Duration: " + durText : ""
 
-    return [sText, wText, dText, durText].filter(_ => _).join("\n") || ""
+    var stockText = endStocks < 0 ? "" : ("Stocks left: " + endStocks)
+
+    return [
+          sText, wText, dText, durText, stockText
+        ].filter(_ => _).join("\n") || ""
   }
 
   Settings {
@@ -89,6 +95,9 @@ Item {
     // min and max game duration in frames
     property alias minFrames: gameFilterSettings.minFrames
     property alias maxFrames: gameFilterSettings.maxFrames
+
+    // stocks left at end of game (by player with more stocks left)
+    property alias endStocks: gameFilterSettings.endStocks
   }
 
   function reset() {
@@ -98,6 +107,7 @@ Item {
     settings.endDateMs = -1
     settings.minFrames = -1
     settings.maxFrames = -1
+    settings.endStocks = -1
   }
 
   function addStage(stageId) {
@@ -162,11 +172,13 @@ Item {
     var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
     var minFramesCondition = minFrames < 0 ? "" : "r.duration >= ?"
     var maxFramesCondition = maxFrames < 0 ? "" : "r.duration <= ?"
+    var endStocksCondition = endStocks < 0 ? "" : "p.s_endStocks >= ?"
 
     var condition = [
           winnerCondition, stageCondition,
           startDateCondition, endDateCondition,
-          minFramesCondition, maxFramesCondition
+          minFramesCondition, maxFramesCondition,
+          endStocksCondition
         ]
     .map(c => (c || true))
     .join(" and ")
@@ -181,7 +193,12 @@ Item {
     var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toLocaleString(Qt.locale(), isoFormat)]
     var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toLocaleString(Qt.locale(), isoFormat)]
     var durationParams = [minFrames, maxFrames].filter(f => f > 0)
+    var endStocksParams = endStocks < 0 ? [] : [endStocks]
 
-    return stageIdParams.concat(startDateParams).concat(endDateParams).concat(durationParams)
+    return stageIdParams
+    .concat(startDateParams)
+    .concat(endDateParams)
+    .concat(durationParams)
+    .concat(endStocksParams)
   }
 }

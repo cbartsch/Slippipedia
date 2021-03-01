@@ -48,6 +48,8 @@ Column {
     labelWidth: sp(250)
     showOptions: false
 
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
+
     text: filter.minFrames >= 0 ? filter.minFrames / 60 : ""
 
     onTextChanged: filter.minFrames = text ? text * 60 : -1
@@ -59,6 +61,8 @@ Column {
 
     labelWidth: sp(250)
     showOptions: false
+
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
 
     text: filter.maxFrames >= 0 ? filter.maxFrames / 60 : ""
 
@@ -148,6 +152,20 @@ Column {
         height: dp(48)
       }
     }
+  }
+
+  TextInputField {
+    labelText: "Stocks left (winner):"
+    placeholderText: "Enter number..."
+
+    labelWidth: sp(250)
+    showOptions: false
+
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
+
+    text: filter.endStocks >= 0 ? filter.endStocks : ""
+
+    onTextChanged: filter.endStocks = text ? text : -1
   }
 
   Item {
