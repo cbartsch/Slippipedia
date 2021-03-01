@@ -156,131 +156,26 @@ values %2")
     return res
   }
 
-  function getPlayerFilterCondition(codeFilter, nameFilter, tableName) {
-    var cf = makeFilterCondition(tableName + ".slippiCode", codeFilter)
-    var nf = makeFilterCondition(tableName + ".slippiName", nameFilter)
-
-    if(codeFilter.filterText && nameFilter.filterText) {
-      return qsTr("(%1 %2 %3)")
-        .arg(cf)
-        .arg(playerFilter.filterCodeAndName ? "and" : "or")
-        .arg(nf)
-    }
-    else if(codeFilter.filterText) {
-      return qsTr("(%1)").arg(cf)
-    }
-    else if(nameFilter.filterText) {
-      return qsTr("(%1)").arg(nf)
-    }
-    else {
-      return "true"
-    }
-  }
-
-  function getGameFilterCondition(stageIds, winnerPlayerIndex, startDateMs, endDateMs) {
-    var winnerCondition = ""
-    if(winnerPlayerIndex === -2) {
-      // check for tie
-      winnerCondition = "r.winnerPort < 0"
-    }
-    else if(winnerPlayerIndex === -1) {
-      // check for either player wins (no tie)
-      winnerCondition = "r.winnerPort >= 0"
-    }
-    else if(winnerPlayerIndex === 0) {
-      // p = matched player
-      winnerCondition = "r.winnerPort = p.port"
-    }
-    else if(winnerPlayerIndex === 1) {
-      // p2 = matched opponent
-      winnerCondition = "r.winnerPort = p2.port"
-    }
-
-    var stageCondition = ""
-    if(stageIds && stageIds.length > 0) {
-      stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
-    }
-
-    var startDateCondition = startDateMs < 0 ? "" : "r.date >= ?"
-    var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
-
-    var condition = [
-          winnerCondition, stageCondition, startDateCondition, endDateCondition
-        ]
-    .map(c => (c || true))
-    .join(" and ")
-
-    return "(" + condition + ")"
-  }
-
-  function getCharFilterCondition(charIds, colName) {
-    if(charIds && charIds.length > 0) {
-      return "(" + colName + " in " + makeSqlWildcards(charIds) + ")"
-    }
-    else {
-      return "true"
-    }
-  }
-
   function getFilterCondition() {
     return "(" +
         // game
-        getGameFilterCondition(gameFilter.stageIds, gameFilter.winnerPlayerIndex,
-                               gameFilter.startDateMs, gameFilter.endDateMs) +
+        gameFilter.getGameFilterCondition() +
         // me
-        " and " + getPlayerFilterCondition(playerFilter.slippiCode, playerFilter.slippiName, "p") +
-        " and " + getCharFilterCondition(playerFilter.charIds, "p.charId") +
+        " and " + playerFilter.getPlayerFilterCondition("p") +
+        " and " + playerFilter.getCharFilterCondition("p.charId") +
         // opponent
-        " and " + getPlayerFilterCondition(opponentFilter.slippiCode, opponentFilter.slippiName, "p2") +
-        " and " + getCharFilterCondition(opponentFilter.charIds, "p2.charId") +
+        " and " + opponentFilter.getPlayerFilterCondition("p2") +
+        " and " + opponentFilter.getCharFilterCondition("p2.charId") +
         ")"
-  }
-
-  function getPlayerFilterParams(slippiCode, slippiName) {
-    var codeValue = mw(slippiCode)
-    var nameValue = mw(slippiName)
-
-    if(slippiCode.filterText && slippiName.filterText) {
-      return [codeValue, nameValue]
-    }
-    else if(slippiCode.filterText) {
-      return [codeValue]
-    }
-    else if(slippiName.filterText) {
-      return [nameValue]
-    }
-    else {
-      return []
-    }
-  }
-
-  function getGameFilterParams(stageIds, winnerPlayerIndex, startDateMs, endDateMs) {
-    var isoFormat = "yyyy-MM-ddTHH:mm:ss.zzz"
-
-    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toLocaleString(Qt.locale(), isoFormat)]
-    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toLocaleString(Qt.locale(), isoFormat)]
-    var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
-
-    return stageIdParams.concat(startDateParams).concat(endDateParams)
-  }
-
-  function getCharFilterParams(charIds) {
-    if(charIds && charIds.length > 0) {
-      return charIds
-    }
-    else {
-      return []
-    }
   }
 
   function getFilterParams() {
     // game, then me, then opponent
-    return getGameFilterParams(gameFilter.stageIds, gameFilter.winnerPlayerIndex,
-                               gameFilter.startDateMs, gameFilter.endDateMs)
-    .concat(getPlayerFilterParams(playerFilter.slippiCode, playerFilter.slippiName))
-    .concat(getCharFilterParams(playerFilter.charIds))
-    .concat(getPlayerFilterParams(opponentFilter.slippiCode, opponentFilter.slippiName))
-    .concat(getCharFilterParams(opponentFilter.charIds))
+    return gameFilter.getGameFilterParams()
+    .concat(playerFilter.getPlayerFilterParams())
+    .concat(playerFilter.getCharFilterParams())
+    .concat(opponentFilter.getPlayerFilterParams())
+    .concat(opponentFilter.getCharFilterParams())
   }
 
   function getNumReplays() {
@@ -591,30 +486,6 @@ limit ? offset ?"
   }
 
   // utils
-
-  function makeFilterCondition(colName, filter) {
-    if(filter.matchPartial && filter.matchCase) {
-      // case sensitive wildcard (case sensitive like must be ON)
-      return colName + " like ?"
-    }
-    else if(filter.matchPartial) {
-      // case insensitive wildcard -> compare upper
-      return qsTr("upper(%1) like upper(?)").arg(colName)
-    }
-    else if(filter.matchCase) {
-      // case sensitive comparison
-      return colName + " = ?"
-    }
-    else {
-      // case insensitive comparison
-      return colName + " = ? collate nocase"
-    }
-  }
-
-  // make SQL wildcard if filter.matchPartial is true
-  function mw(filter) {
-    return filter.matchPartial ? "%" + filter.filterText + "%" : filter.filterText
-  }
 
   // make SQL wildcards "(?, ? , ... ?)" with one ? for each item in the input list
   function makeSqlWildcards(list) {

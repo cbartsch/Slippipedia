@@ -3,6 +3,7 @@ import QtQuick.Controls 2.12
 import Felgo 3.0
 
 import "../../model/filter"
+import "../controls"
 import "../grids"
 import "../listitems"
 import "../visual"

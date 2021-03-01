@@ -6,6 +6,7 @@ import Felgo 3.0
 import "../model/stats"
 import "../views/controls"
 import "../views/grids"
+import "../views/filter"
 import "../views/icons"
 import "../views/visual"
 
@@ -39,8 +40,13 @@ Page {
         tabIcon: IconType.check
       }
       AppTabButton {
+        text: "Results"
+        showIcon: dataModel.gameFilter.hasResultFilter
+        tabIcon: IconType.check
+      }
+      AppTabButton {
         text: "Game"
-        showIcon: dataModel.gameFilter.hasFilter
+        showIcon: dataModel.gameFilter.hasGameFilter
         tabIcon: IconType.check
       }
     }
@@ -67,13 +73,15 @@ Page {
           me: true
           filter: dataModel.playerFilter
         }
-
         PlayerFilterOptions {
           id: filterOptionsOpponent
           me: false
           filter: dataModel.opponentFilter
         }
-
+        ResultFilterOptions {
+          filter: dataModel.gameFilter
+          stats: dataModel.stats
+        }
         GameFilterOptions {
           filter: dataModel.gameFilter
           stats: dataModel.stats

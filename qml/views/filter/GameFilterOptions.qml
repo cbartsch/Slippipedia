@@ -4,6 +4,8 @@ import Felgo 3.0
 
 import "../../model/filter"
 import "../../model/stats"
+
+import "../controls"
 import "../grids"
 import "../listitems"
 import "../visual"
@@ -13,7 +15,6 @@ Column {
 
   property GameFilterSettings filter: null
   property ReplayStats stats: null
-
 
   SimpleSection {
     title: "Date range"
@@ -143,91 +144,6 @@ Column {
 
       filter.endDateMs = date.getTime()
     }
-  }
-
-  SimpleSection {
-    title: "Winner"
-  }
-
-  CheckableListItem {
-    text: "Filter by game result"
-    detailText: "Filter by won, lost, tied games or games with any result."
-
-    backgroundColor: filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
-    mouseArea.enabled: false
-
-    rightItem: AppToolButton {
-      iconType: IconType.trash
-      toolTipText: "Reset result filter"
-      visible: filter.hasWinnerFilter
-      anchors.verticalCenter: parent.verticalCenter
-
-      onClicked: filter.winnerPlayerIndex = -3
-    }
-  }
-
-  Rectangle {
-    width: parent.width
-    height: winnerRadioRow.height
-    color: Theme.controlBackgroundColor
-
-    Flow {
-      id: winnerRadioRow
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.margins: spacing
-      spacing: dp(Theme.contentPadding)
-
-      QQ.ButtonGroup {
-        id: rbgWinner
-        buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
-
-        onCheckedButtonChanged: filter.winnerPlayerIndex = checkedButton.value
-      }
-
-      AppRadio {
-        id: winnerRadioAny
-        text: "Any"
-        value: -3
-        checked: filter ? filter.winnerPlayerIndex === value : false
-        height: dp(48)
-      }
-      AppRadio {
-        id: winnerRadioMe
-        text: "Won"
-        value: 0
-        checked: filter ? filter.winnerPlayerIndex === value : false
-        height: dp(48)
-      }
-      AppRadio {
-        id: winnerRadioOpponent
-        text: "Lost"
-        value: 1
-        checked: filter ? filter.winnerPlayerIndex === value : false
-        height: dp(48)
-      }
-      AppRadio {
-        id: winnerRadioEither
-        text: "Either (no tie)"
-        value: -1
-        checked: filter ? filter.winnerPlayerIndex === value : false
-        height: dp(48)
-      }
-      AppRadio {
-        id: winnerRadioTie
-        text: "No result"
-        value: -2
-        checked: filter ? filter.winnerPlayerIndex === value : false
-        height: dp(48)
-      }
-    }
-  }
-
-  Item {
-    width: parent.width
-    height: 1
-
-    Divider { }
   }
 
   SimpleSection {

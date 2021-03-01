@@ -96,4 +96,63 @@ Item {
   function removeAllCharFilters() {
     settings.charIds = []
   }
+
+  // DB filtering functions
+
+  function getPlayerFilterCondition(tableName) {
+    var cf = slippiCode.makeFilterCondition(tableName + ".slippiCode")
+    var nf = slippiName.makeFilterCondition(tableName + ".slippiName")
+
+    if(slippiCode.filterText && slippiName.filterText) {
+      return qsTr("(%1 %2 %3)")
+        .arg(cf)
+        .arg(filterCodeAndName ? "and" : "or")
+        .arg(nf)
+    }
+    else if(slippiCode.filterText) {
+      return qsTr("(%1)").arg(cf)
+    }
+    else if(slippiName.filterText) {
+      return qsTr("(%1)").arg(nf)
+    }
+    else {
+      return "true"
+    }
+  }
+
+  function getCharFilterCondition(colName) {
+    if(charIds && charIds.length > 0) {
+      return "(" + colName + " in " + makeSqlWildcards(charIds) + ")"
+    }
+    else {
+      return "true"
+    }
+  }
+
+  function getPlayerFilterParams() {
+    var codeValue = slippiCode.makeSqlWildcard()
+    var nameValue = slippiName.makeSqlWildcard()
+
+    if(slippiCode.filterText && slippiName.filterText) {
+      return [codeValue, nameValue]
+    }
+    else if(slippiCode.filterText) {
+      return [codeValue]
+    }
+    else if(slippiName.filterText) {
+      return [nameValue]
+    }
+    else {
+      return []
+    }
+  }
+
+  function getCharFilterParams() {
+    if(charIds && charIds.length > 0) {
+      return charIds
+    }
+    else {
+      return []
+    }
+  }
 }

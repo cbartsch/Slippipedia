@@ -46,6 +46,9 @@ Rectangle {
 
       Layout.preferredWidth: labelWidth
       Layout.alignment: Qt.AlignVCenter
+
+      maximumLineCount: 1
+      elide: Text.ElideRight
     }
 
     AppTextInput {

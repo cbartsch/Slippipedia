@@ -7,12 +7,19 @@ import "../data"
 Item {
   id: gameFilterSettings
 
+  property alias settingsCategory: settings.category
+
   signal filterChanged
 
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
   property double startDateMs: -1
   property double endDateMs: -1
+
+  property int minFrames: -1
+  property int maxFrames: -1
+
+  readonly property var stageIds: settings.stageIds.map(id => ~~id)
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
@@ -22,12 +29,13 @@ Item {
                                         [1]: "Opponent",
                                       })
 
-  readonly property var stageIds: settings.stageIds.map(id => ~~id)
+  readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
-  property alias settingsCategory: settings.category
+  readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter
 
-  readonly property bool hasFilter: hasDateFilter || hasStageFilter || hasWinnerFilter
   readonly property bool hasDateFilter: startDateMs >= 0 || endDateMs >= 0
+  readonly property bool hasDurationFilter: minFrames >= 0 || maxFrames >= 0
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3
 
@@ -55,7 +63,16 @@ Item {
 
     dText = dText ? "Date: " + dText : ""
 
-    return [sText, wText, dText].filter(_ => _).join("\n") || ""
+    var minText = minFrames >= 0 ? dataModel.formatTime(minFrames) : ""
+    var maxText = maxFrames >= 0 ? dataModel.formatTime(maxFrames) : ""
+
+    var durText = minText && maxText
+        ? qsTr("Between %1 and %2").arg(minText).arg(maxText)
+        : minText ? "Longer than " + minText
+                  : maxText ? "Shorter than " + maxText : ""
+    durText = durText ? "Duration: " + durText : ""
+
+    return [sText, wText, dText, durText].filter(_ => _).join("\n") || ""
   }
 
   Settings {
@@ -68,6 +85,10 @@ Item {
     // start and end date as Date.getTime() ms values
     property alias startDateMs: gameFilterSettings.startDateMs
     property alias endDateMs: gameFilterSettings.endDateMs
+
+    // min and max game duration in frames
+    property alias minFrames: gameFilterSettings.minFrames
+    property alias maxFrames: gameFilterSettings.maxFrames
   }
 
   function reset() {
@@ -75,6 +96,8 @@ Item {
     settings.winnerPlayerIndex = -3
     settings.startDateMs = -1
     settings.endDateMs = -1
+    settings.minFrames = -1
+    settings.maxFrames = -1
   }
 
   function addStage(stageId) {
@@ -108,5 +131,57 @@ Item {
 
     startDateMs += ms
     endDateMs += ms
+  }
+
+  // DB filtering functions
+  function getGameFilterCondition() {
+    var winnerCondition = ""
+    if(winnerPlayerIndex === -2) {
+      // check for tie
+      winnerCondition = "r.winnerPort < 0"
+    }
+    else if(winnerPlayerIndex === -1) {
+      // check for either player wins (no tie)
+      winnerCondition = "r.winnerPort >= 0"
+    }
+    else if(winnerPlayerIndex === 0) {
+      // p = matched player
+      winnerCondition = "r.winnerPort = p.port"
+    }
+    else if(winnerPlayerIndex === 1) {
+      // p2 = matched opponent
+      winnerCondition = "r.winnerPort = p2.port"
+    }
+
+    var stageCondition = ""
+    if(stageIds && stageIds.length > 0) {
+      stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
+    }
+
+    var startDateCondition = startDateMs < 0 ? "" : "r.date >= ?"
+    var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
+    var minFramesCondition = minFrames < 0 ? "" : "r.duration >= ?"
+    var maxFramesCondition = maxFrames < 0 ? "" : "r.duration <= ?"
+
+    var condition = [
+          winnerCondition, stageCondition,
+          startDateCondition, endDateCondition,
+          minFramesCondition, maxFramesCondition
+        ]
+    .map(c => (c || true))
+    .join(" and ")
+
+    return "(" + condition + ")"
+  }
+
+  function getGameFilterParams() {
+    var isoFormat = "yyyy-MM-ddTHH:mm:ss.zzz"
+
+    var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
+    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toLocaleString(Qt.locale(), isoFormat)]
+    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toLocaleString(Qt.locale(), isoFormat)]
+    var durationParams = [minFrames, maxFrames].filter(f => f > 0)
+
+    return stageIdParams.concat(startDateParams).concat(endDateParams).concat(durationParams)
   }
 }
