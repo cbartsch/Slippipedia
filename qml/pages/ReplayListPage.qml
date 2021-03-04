@@ -54,8 +54,8 @@ BasePage {
     }
 
     section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
-    section.property: "section"
     section.criteria: ViewSection.FullString
+    section.property: "section"
     section.delegate: ReplaySectionHeader {
       sData: sectionData[section] || emptySection
 

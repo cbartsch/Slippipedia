@@ -492,11 +492,12 @@ order by yearMonth desc"
         obj.id = row.yearMonth
 
         var months = [
-              "January", "Febuary", "March", "April", "May", "June",
+              "January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"
             ]
 
-        obj.name = months[parseInt(row.month) - 1] + " " + row.year
+        obj.section = row.year
+        obj.name = months[parseInt(row.month) - 1]
 
         result[obj.id] = obj
       }

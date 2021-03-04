@@ -5,6 +5,7 @@ import Felgo 3.0
 import "../../model/data"
 import "../listitems"
 import "../icons"
+import "../visual"
 
 Item {
   id: analyticsListView
@@ -64,8 +65,6 @@ Item {
 
       emptyText.text: "No replays found."
 
-      spacing: dp(Theme.contentPadding)
-
       model: SortFilterProxyModel {
         id: sfpm
 
@@ -75,6 +74,29 @@ Item {
           id: listModel
           source: analyticsListView.model
           keyField: "id"
+        }
+      }
+
+      // this shows empty sections
+    //  section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+
+      section.property: "section"
+      section.delegate: Rectangle {
+        width: listView.width
+        height: dp(60)
+        color: Theme.backgroundColor
+        visible: !!section
+
+        AppText {
+          text: section
+          anchors.left: parent.left
+          anchors.bottom: parent.bottom
+          anchors.margins: dp(Theme.contentPadding)
+          font.pixelSize: sp(24)
+        }
+
+        Divider {
+
         }
       }
 
@@ -91,14 +113,14 @@ Item {
           charId: ~~model.id
           visible: showsCharacters
           Layout.preferredWidth: height * 66/56
-          Layout.preferredHeight: dp(56)
+          Layout.preferredHeight: parent.height - dp(Theme.contentPadding)
         }
 
         StageIcon {
           stageId: ~~model.id
           visible: showsStages
           Layout.preferredWidth: height * 62/48
-          Layout.preferredHeight: dp(56)
+          Layout.preferredHeight: parent.height - dp(Theme.contentPadding)
         }
 
         Item {
