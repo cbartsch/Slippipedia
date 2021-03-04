@@ -55,8 +55,12 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
 
   m_stats["endStocks"] = p.end_stocks;
   m_stats["selfDestructs"] = p.self_destructs;
-  m_stats["stocksLost"] = p.start_stocks - p.end_stocks - p.self_destructs;
-  m_stats["stocksTaken"] = o.start_stocks - o.end_stocks - o.self_destructs;
+
+  auto stocksLost = p.start_stocks - p.end_stocks - p.self_destructs;
+  auto stocksTaken = o.start_stocks - o.end_stocks - o.self_destructs;
+  m_stats["stocksLost"] = stocksLost;
+  m_stats["stocksTaken"] = stocksTaken;
+
   m_stats["endPercent"] = p.end_pct;
   m_stats["startStocks"] = p.start_stocks;
   m_stats["damageDealt"] = p.damage_dealt;
@@ -65,6 +69,7 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
   m_stats["damagePerOpening"] = p.mean_opening_percent;
   m_stats["openingsPerKill"] = p.mean_kill_openings;
   m_stats["killPercent"] = p.mean_kill_percent;
+  m_stats["totalKillPercent"] = p.mean_kill_percent * stocksTaken;
 
   m_stats["taunts"] = p.taunts;
   m_stats["grabs"] = p.grabs;

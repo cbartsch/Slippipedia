@@ -17,7 +17,7 @@ Item {
 
   readonly property real totalDamageDealt: statsData && statsData.damageDealt || 0
   readonly property real damagePerMinute: totalDamageDealt / (totalGameDuration / 60 / 60)
-  readonly property real damagePerStock: totalDamageDealt / stocksTaken.value
+  readonly property real damagePerStock: stocksTaken.value == 0 ? 0 : statsData.totalKillPercent / stocksTaken.value
 
   readonly property real lCancels: statsData && statsData.lCancels || 0
   readonly property real lCancelsMissed: statsData && statsData.lCancelsMissed || 0
@@ -43,7 +43,7 @@ Item {
 
   readonly property Stat openings: Stat { name: "openings" }
   readonly property real damagePerOpening: totalDamageDealt / openings.value
-  readonly property real openingsPerKill: openings.value / stocksTaken.value
+  readonly property real openingsPerKill: stocksTaken.value == 0 ? 0 : openings.value / stocksTaken.value
 
   readonly property real techRate: techs.value / (techs.value + missedTechs.value)
 

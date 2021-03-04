@@ -41,7 +41,7 @@ Item {
   // db
   property var dataBaseConnection
 
-  readonly property string dbLatestVersion: "1.4"
+  readonly property string dbLatestVersion: "1.5"
   readonly property string dbCurrentVersion: dataBaseConnection.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
