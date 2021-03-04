@@ -55,6 +55,24 @@ Item {
   property var stageDataMap: ({})
   readonly property var stageData: Object.values(stageDataMap)
 
+  readonly property var stageDataAnalytics: stageData ? Object.values(stageData).map(
+                                                         item => {
+                                                           item.winRate = item.gamesFinished === 0
+                                                             ? 0 : (item.gamesWon / item.gamesFinished)
+                                                           return item
+                                                         })
+                                                     : []
+
+  property var timeData: ({})
+
+  readonly property var timeDataAnalytics: timeData ? Object.values(timeData).map(
+                                                         item => {
+                                                           item.winRate = item.gamesFinished === 0
+                                                             ? 0 : (item.gamesWon / item.gamesFinished)
+                                                           return item
+                                                         })
+                                                     : []
+
   readonly property var stageDataSss: MeleeData.stageData
   .filter(s => s.id > 0)
   .map((s, index) => {
@@ -75,6 +93,8 @@ Item {
   // compute all data - no bindings as this can be slow
   function refresh(numPlayerTags) {
     var limit = numPlayerTags || 1
+
+    timeData = dataBase.getTimeStats()
 
     statsData = dataBase.getReplayStats(false)
     statsDataOpponent = dataBase.getReplayStats(true)

@@ -49,7 +49,7 @@ App {
     id: dataModel
 
     // if DB has no replays, show DB page, otherwise, go to stats directly
-    onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate ? 1 : 0
+    onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate ? 2 : 0
   }
 
   Navigation {
@@ -66,18 +66,33 @@ App {
       }
     }
 
-    // filtering is currently not a main navigation item but a modal in the pages where it's relevant
-//    NavigationItem {
-//      id: filteringItem
-//      title: "Filtering"
-//      icon: IconType.filter
+    NavigationItem {
+      title: "Statistics"
+      icon: IconType.barchart
 
-//      NavigationStack {
-//        FilterPage {
-//          stats: dataModel.stats
-//        }
-//      }
-//    }
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
+      NavigationStack {
+        StatisticsPage {
+          stats: dataModel.stats
+        }
+      }
+    }
+
+    NavigationItem {
+      title: "Analytics"
+      icon: IconType.lightbulbo
+
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
+      NavigationStack {
+        AnalyticsPage {
+          stats: dataModel.stats
+        }
+      }
+    }
 
     NavigationItem {
       title: "Browser"
@@ -89,20 +104,6 @@ App {
       NavigationStack {
         id: stack
         ReplayListPage {
-          stats: dataModel.stats
-        }
-      }
-    }
-
-    NavigationItem {
-      title: "Statistics"
-      icon: IconType.barchart
-
-      onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
-
-      NavigationStack {
-        StatisticsPage {
           stats: dataModel.stats
         }
       }

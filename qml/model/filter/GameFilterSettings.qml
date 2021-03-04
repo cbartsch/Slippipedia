@@ -110,6 +110,10 @@ Item {
     settings.endStocks = -1
   }
 
+  function setStage(stageId) {
+    settings.stageIds = stageId
+  }
+
   function addStage(stageId) {
     settings.stageIds = stageIds.concat(stageId)
   }
@@ -165,7 +169,7 @@ Item {
 
     var stageCondition = ""
     if(stageIds && stageIds.length > 0) {
-      stageCondition = "r.stageId in " + makeSqlWildcards(stageIds)
+      stageCondition = "r.stageId in " + dataModel.globalDataBase.makeSqlWildcards(stageIds)
     }
 
     var startDateCondition = startDateMs < 0 ? "" : "r.date >= ?"

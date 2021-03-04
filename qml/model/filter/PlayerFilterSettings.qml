@@ -83,6 +83,10 @@ Item {
 
   // filtering
 
+  function setCharFilter(charId) {
+    settings.charIds = charId
+  }
+
   function addCharFilter(charId) {
     settings.charIds = charIds.concat(charId)
   }
@@ -122,7 +126,7 @@ Item {
 
   function getCharFilterCondition(colName) {
     if(charIds && charIds.length > 0) {
-      return "(" + colName + " in " + makeSqlWildcards(charIds) + ")"
+      return "(" + colName + " in " + dataModel.globalDataBase.makeSqlWildcards(charIds) + ")"
     }
     else {
       return "true"

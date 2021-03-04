@@ -383,7 +383,13 @@ limit ?").arg(playerCol).arg(getFilterCondition())
     return readFromDb(function(tx) {
       var playerCol = isOpponent ? "p2" : "p"
 
-      var sql = qsTr("select %1.charId charId, count(distinct r.id) c from replays r
+      // gamesWon is the number of games P1 won, regardless of isOpponent parameter
+      var sql = qsTr("select
+%1.charId charId,
+count(distinct r.id) numGames,
+sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
+sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 where %2
@@ -399,11 +405,12 @@ order by %1.charId").arg(playerCol).arg(getFilterCondition())
       for (var i = 0; i < results.rows.length; i++) {
         var row = results.rows.item(i)
 
-        result[row.charId] = {
-          id: row.charId,
-          count: row.c,
-          name: MeleeData.charNames[row.charId]
-        }
+        var obj = row
+        obj.id = row.charId
+        obj.count = row.numGames
+        obj.name = MeleeData.charNames[row.charId]
+
+        result[row.charId] = obj
       }
 
       return result
@@ -414,7 +421,12 @@ order by %1.charId").arg(playerCol).arg(getFilterCondition())
     log("get stage stats")
 
     return readFromDb(function(tx) {
-      var sql = "select stageId, count(distinct r.id) c from replays r
+      var sql = "select
+stageId,
+count(distinct r.id) numGames,
+sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
+sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 where " + getFilterCondition() + "
@@ -437,12 +449,56 @@ order by stageId"
           continue
         }
 
-        result[row.stageId] = {
-          id: row.stageId,
-          count: row.c,
-          name: data.name || "Unknown",
-          shortName: data.shortName || "Unknown"
-        }
+        var obj = row
+        obj.id = row.stageId
+        obj.name = data.name || "Unknown"
+        obj.shortName = data.shortName || "Unknown"
+
+        result[row.stageId] = obj
+      }
+
+      return result
+    }, [])
+  }
+
+  function getTimeStats() {
+    log("get time stats")
+
+    return readFromDb(function(tx) {
+      var sql = "select
+strftime('%Y-%m', date) yearMonth,
+strftime('%m', date) month,
+strftime('%Y', date) year,
+count(distinct r.id) numGames,
+sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
+sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+where " + getFilterCondition() + "
+group by yearMonth
+order by yearMonth desc"
+
+      var params = getFilterParams()
+
+      var results = tx.executeSql(sql, params)
+
+      var result = {}
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var row = results.rows.item(i)
+
+        var obj = row
+        obj.id = row.yearMonth
+
+        var months = [
+              "January", "Febuary", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"
+            ]
+
+        obj.name = months[parseInt(row.month) - 1] + " " + row.year
+
+        result[obj.id] = obj
       }
 
       return result

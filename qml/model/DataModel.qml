@@ -39,6 +39,7 @@ Item {
   property alias stats: stats
 
   // db
+  property alias globalDataBase: globalDataBase
   property var dataBaseConnection
 
   readonly property string dbLatestVersion: "1.5"
@@ -145,12 +146,6 @@ Item {
     console.log("DB version updated.", dataBaseConnection.version, dbCurrentVersion)
 
     dbUpdaterChanged() // refresh bindings
-  }
-
-  // replay list
-
-  function getReplayList(max, start) {
-    return globalDataBase.getReplayList(max, start)
   }
 
   // utils

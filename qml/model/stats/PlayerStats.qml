@@ -65,6 +65,14 @@ Item {
   property var charData: ({})
   readonly property var charDataCss: toCssCharData(charData)
 
+  readonly property var charDataAnalytics: charData ? Object.values(charData).map(
+                                                        item => {
+                                                          item.winRate = item.gamesFinished === 0
+                                                            ? 0 : (item.gamesWon / item.gamesFinished)
+                                                          return item
+                                                        })
+                                                    : []
+
   property var topPlayerTags: []
   property var topSlippiCodes: []
 

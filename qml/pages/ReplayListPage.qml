@@ -15,6 +15,8 @@ BasePage {
   id: replayListPage
   title: qsTr("Replay browser")
 
+  property bool filterChangeable: true
+
   property int numReplays: 25
 
   property var replayList: []
@@ -34,6 +36,7 @@ BasePage {
     IconButtonBarItem {
       icon: IconType.filter
       onClicked: showFilteringPage()
+      visible: filterChangeable
     }
     IconButtonBarItem {
       icon: IconType.refresh
@@ -76,7 +79,7 @@ BasePage {
 
     header: FilterInfoItem {
       stats: replayListPage.stats
-      clickable: true
+      clickable: filterChangeable
     }
 
     footer: AppListItem {
@@ -111,8 +114,6 @@ BasePage {
 
     gameFilter: GameFilterSettings {
       settingsCategory: "session-game-filter"
-
-      Component.onCompleted: console.log("custom session filter", startDateMs, endDateMs)
     }
   }
 
@@ -141,7 +142,7 @@ BasePage {
   }
 
   function loadMore() {
-    var loaded = dataModel.getReplayList(numReplays, replayList.length)
+    var loaded = stats.dataBase.getReplayList(numReplays, replayList.length)
 
     if(!loaded || loaded.length === 0) {
       hasMore = false

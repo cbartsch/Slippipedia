@@ -104,50 +104,13 @@ Item {
       height: dp(Theme.contentPadding / 2)
     }
 
-    RowLayout {
+    StatsInfoItem {
       Layout.preferredWidth: parent.width
 
-      Column {
-        Layout.fillWidth: true
+      listButtonVisible: false
 
-        AppText {
-          font.pixelSize: dp(16)
-          color: Theme.secondaryTextColor
-
-          width: parent.width
-          text: !sData ? "" : dataModel.formatDate(sData.dateFirst) + " - " + dataModel.formatDate(sData.dateLast)
-        }
-
-        AppText {
-          Layout.preferredWidth: parent.width
-          font.pixelSize: dp(16)
-          color: Theme.secondaryTextColor
-
-          maximumLineCount: 1
-          elide: Text.ElideRight
-
-          width: parent.width
-          text: !sData ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
-                                                                      : qsTr("Games won: %1 / %2 (%3). Games not finished: %4")
-          .arg(sData.gamesWon).arg(sData.gamesFinished)
-          .arg(dataModel.formatPercentage(sData.gamesWon / sData.gamesFinished))
-          .arg(sData.numGames - sData.gamesFinished)
-
-          RippleMouseArea {
-            anchors.fill: parent
-            onClicked: showFilteringPage()
-          }
-        }
-      }
-
-      AppToolButton {
-        Layout.preferredWidth: implicitWidth
-
-        iconType: IconType.barchart
-        toolTipText: "Show statistics for session"
-
-        onClicked: showStats()
-      }
+      stats: sData
+      onShowStats: sectionHeader.showStats()
     }
   }
 }
