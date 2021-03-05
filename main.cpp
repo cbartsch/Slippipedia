@@ -39,11 +39,11 @@ int main(int argc, char *argv[])
   felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
 #endif
 
-  Utils::registerQml();
+  Utils::registerQml(QML_MODULE_NAME);
 
-  qmlRegisterType<SlippiParser>("Slippi", 1, 0, "SlippiParser");
-  qmlRegisterUncreatableType<SlippiReplay>("Slippi", 1, 0, "SlippiReplay", "Returned by SlippiParser");
-  qmlRegisterUncreatableType<PlayerData>("Slippi", 1, 0, "PlayerData", "Returned by SlippiParser");
+  qmlRegisterType<SlippiParser>(QML_MODULE_NAME, 1, 0, "SlippiParser");
+  qmlRegisterUncreatableType<SlippiReplay>(QML_MODULE_NAME, 1, 0, "SlippiReplay", "Returned by SlippiParser");
+  qmlRegisterUncreatableType<PlayerData>(QML_MODULE_NAME, 1, 0, "PlayerData", "Returned by SlippiParser");
 
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);

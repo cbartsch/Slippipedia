@@ -9,7 +9,7 @@ class Utils : public QObject
 
   Utils();
 public:
-  static void registerQml();
+  static void registerQml(const char *qmlModuleName);
 
   Q_INVOKABLE bool exploreToFile(const QString &filePath);
 

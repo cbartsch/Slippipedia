@@ -1,0 +1,167 @@
+import QtQuick 2.0
+import QtQuick.Controls 2.12 as QQ
+import Felgo 3.0
+
+import Slippipedia 1.0
+
+Column {
+  id: gameFilterOptions
+
+  property GameFilterSettings filter: null
+  property ReplayStats stats: null
+
+  SimpleSection {
+    title: "Game Duration"
+  }
+
+  CheckableListItem {
+    text: "Filter by game duration"
+    detailText: "Input a minimum and/or maximum game duration to match replays."
+
+    checked: filter.hasDurationFilter
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset duration filter"
+
+      visible: filter.hasDurationFilter
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.minFrames = -1
+        filter.maxFrames = -1
+      }
+    }
+  }
+
+  TextInputField {
+    labelText: "Game longer than (in seconds):"
+    placeholderText: "Enter duration..."
+
+    labelWidth: sp(250)
+    showOptions: false
+
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
+
+    text: filter.minFrames >= 0 ? filter.minFrames / 60 : ""
+
+    onTextChanged: filter.minFrames = text ? text * 60 : -1
+  }
+
+  TextInputField {
+    labelText: "Game shorter than (in seconds):"
+    placeholderText: "Enter duration..."
+
+    labelWidth: sp(250)
+    showOptions: false
+
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
+
+    text: filter.maxFrames >= 0 ? filter.maxFrames / 60 : ""
+
+    onTextChanged: filter.maxFrames = text ? text * 60 : -1
+  }
+
+  SimpleSection {
+    title: "Winner"
+  }
+
+  CheckableListItem {
+    text: "Filter by game result"
+    detailText: "Filter by won, lost, tied games or games with any result."
+
+    backgroundColor: filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset result filter"
+      visible: filter.hasWinnerFilter
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.winnerPlayerIndex = -3
+        filter.endStocks = -1
+      }
+    }
+  }
+
+  Rectangle {
+    width: parent.width
+    height: winnerRadioRow.height
+    color: Theme.controlBackgroundColor
+
+    Flow {
+      id: winnerRadioRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: spacing
+      spacing: dp(Theme.contentPadding)
+
+      QQ.ButtonGroup {
+        id: rbgWinner
+        buttons: [winnerRadioAny, winnerRadioTie, winnerRadioEither, winnerRadioMe, winnerRadioOpponent]
+
+        onCheckedButtonChanged: filter.winnerPlayerIndex = checkedButton.value
+      }
+
+      AppRadio {
+        id: winnerRadioAny
+        text: "Any"
+        value: -3
+        checked: filter ? filter.winnerPlayerIndex === value : false
+        height: dp(48)
+      }
+      AppRadio {
+        id: winnerRadioMe
+        text: "Won"
+        value: 0
+        checked: filter ? filter.winnerPlayerIndex === value : false
+        height: dp(48)
+      }
+      AppRadio {
+        id: winnerRadioOpponent
+        text: "Lost"
+        value: 1
+        checked: filter ? filter.winnerPlayerIndex === value : false
+        height: dp(48)
+      }
+      AppRadio {
+        id: winnerRadioEither
+        text: "Either (no tie)"
+        value: -1
+        checked: filter ? filter.winnerPlayerIndex === value : false
+        height: dp(48)
+      }
+      AppRadio {
+        id: winnerRadioTie
+        text: "No result"
+        value: -2
+        checked: filter ? filter.winnerPlayerIndex === value : false
+        height: dp(48)
+      }
+    }
+  }
+
+  Item {
+    width: parent.width
+    height: 1
+
+    Divider { }
+  }
+
+  TextInputField {
+    labelText: "Stocks left (winner):"
+    placeholderText: "Enter number..."
+
+    labelWidth: sp(180)
+    showOptions: false
+
+    textInput.inputMethodHints: Qt.ImhDigitsOnly
+
+    text: filter.endStocks >= 0 ? filter.endStocks : ""
+
+    onTextChanged: filter.endStocks = text ? text : -1
+  }
+}

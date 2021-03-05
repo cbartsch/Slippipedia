@@ -1,0 +1,67 @@
+module SlippiQml
+
+singleton MeleeData 1.0     model/data/MeleeData.qml
+
+# ---- Model
+
+DataModel 1.0               model/DataModel.qml
+
+DataBase 1.0                model/db/DataBase.qml
+
+FilterSettings 1.0          model/filter/FilterSettings.qml
+GameFilterSettings 1.0      model/filter/GameFilterSettings.qml
+PlayerFilterSettings 1.0    model/filter/PlayerFilterSettings.qml
+TextFilter 1.0              model/filter/TextFilter.qml
+
+PlayerStats 1.0             model/stats/PlayerStats.qml
+ReplayStats 1.0             model/stats/ReplayStats.qml
+Stat 1.0                    model/stats/Stat.qml
+
+# ---- Pages
+
+AnalyticsPage 1.0           pages/AnalyticsPage.qml
+DatabasePage 1.0            pages/DatabasePage.qml
+FilterPage 1.0              pages/FilterPage.qml
+ReplayListPage 1.0          pages/ReplayListPage.qml
+StatisticsPage 1.0          pages/StatisticsPage.qml
+
+# ---- Views
+
+AnalyticsListView 1.0       views/analytics/AnalyticsListView.qml
+
+FilterInfoItem 1.0          views/filter/FilterInfoItem.qml
+FilterModal 1.0             views/filter/FilterModal.qml
+GameFilterOptions 1.0       views/filter/GameFilterOptions.qml
+PlayerFilterOptions 1.0     views/filter/PlayerFilterOptions.qml
+ResultFilterOptions 1.0     views/filter/ResultFilterOptions.qml
+
+CharacterGrid 1.0           views/grids/CharacterGrid.qml
+NameGrid 1.0                views/grids/NameGrid.qml
+StageGrid 1.0               views/grids/StageGrid.qml
+StatsGrid 1.0               views/grids/StatsGrid.qml
+
+StatsInfoItem 1.0           views/stats/StatsInfoItem.qml
+StatsOverview 1.0           views/stats/StatsOverview.qml
+StatsList 1.0               views/stats/StatsList.qml
+StatsTags 1.0               views/stats/StatsTags.qml
+
+# ---- Controls
+
+AppToolButton 1.0           controls/generic/AppToolButton.qml
+BaseNavigationStack 1.0     controls/generic/BaseNavigationStack.qml
+BasePage 1.0                controls/generic/BasePage.qml
+DateRangeRow 1.0            controls/generic/DateRangeRow.qml
+TextInputField 1.0          controls/generic/TextInputField.qml
+
+CheckableListItem 1.0       controls/listitems/CheckableListItem.qml
+ReplayListItem 1.0          controls/listitems/ReplayListItem.qml
+ReplaySectionHeader 1.0     controls/listitems/ReplaySectionHeader.qml
+
+CharacterIcon 1.0           controls/icons/CharacterIcon.qml
+StageIcon 1.0               controls/icons/StageIcon.qml
+StockIcon 1.0               controls/icons/StockIcon.qml
+
+Divider 1.0                 controls/visual/Divider.qml
+LoadingIcon 1.0             controls/visual/LoadingIcon.qml
+ReplayIcons 1.0             controls/visual/ReplayIcons.qml
+UiAnimation 1.0             controls/visual/UiAnimation.qml

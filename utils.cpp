@@ -12,8 +12,8 @@ Utils::Utils()
 
 }
 
-void Utils::registerQml() {
-  qmlRegisterSingletonType<Utils>("Slippi", 1, 0, "Utils", [](QQmlEngine*, QJSEngine*) -> QObject* {
+void Utils::registerQml(const char *qmlModuleName) {
+  qmlRegisterSingletonType<Utils>(qmlModuleName, 1, 0, "Utils", [](QQmlEngine*, QJSEngine*) -> QObject* {
     return new Utils();
   });
 }

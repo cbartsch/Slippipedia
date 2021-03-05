@@ -2,11 +2,7 @@ import Felgo 3.0
 
 import QtQuick 2.0
 
-import Slippi 1.0
-
-import "model"
-import "pages"
-import "views/controls"
+import Slippipedia 1.0
 
 App {
   id: app
