@@ -452,6 +452,7 @@ order by stageId"
         var obj = row
         obj.id = row.stageId
         obj.name = data.name || "Unknown"
+        obj.count = row.numGames
         obj.shortName = data.shortName || "Unknown"
 
         result[row.stageId] = obj

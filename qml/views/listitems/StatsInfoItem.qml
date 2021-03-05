@@ -75,7 +75,7 @@ RowLayout {
 
     visible: statsButtonVisible
     iconType: IconType.barchart
-    toolTipText: "Show statistics for session"
+    toolTipText: "Show statistics for games"
 
     onClicked: showStats()
   }

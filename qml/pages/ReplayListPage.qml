@@ -25,8 +25,11 @@ BasePage {
 
   property bool hasMore: true
 
+  readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
+
   // load first page when showing this page
   onSelected: if(replayList.length == 0) loadMore()
+  onPushed: if(replayList.length == 0) loadMore()
 
   filterModal.onClosed: if(stats) refresh()
 
@@ -53,11 +56,19 @@ BasePage {
       keyField: "id"
     }
 
-    section.labelPositioning: ViewSection.InlineLabels | ViewSection.CurrentLabelAtStart
+    // labels at start are kinda bugged
+    section.labelPositioning: ViewSection.InlineLabels// | ViewSection.CurrentLabelAtStart
     section.criteria: ViewSection.FullString
     section.property: "section"
     section.delegate: ReplaySectionHeader {
       sData: sectionData[section] || emptySection
+      checked: currentSection === section
+
+      Text {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        text: "S " + this
+      }
 
       onShowStats: {
         // TODO find out why it can be off by a minute (or the seconds are truncated)
@@ -69,7 +80,9 @@ BasePage {
         sessionFilter.opponentFilter.slippiCode.filterText = sData.code2
         sessionFilter.opponentFilter.slippiName.filterText = sData.name2
 
-        navigationStack.push(statisticsPageC)
+        navigationStack.push(statisticsPageC, {
+                              section: section
+                             })
       }
     }
 
@@ -129,6 +142,9 @@ BasePage {
     id: statisticsPageC
 
     StatisticsPage {
+      id: statisticsPage
+      property string section: ""
+
       filterChangeable: false
       stats: sessionStats
     }

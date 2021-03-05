@@ -29,7 +29,6 @@ BasePage {
   Column {
     id: header
     width: parent.width
-    spacing: dp(Theme.contentPadding)
 
     FilterInfoItem {
       stats: analyticsPage.stats

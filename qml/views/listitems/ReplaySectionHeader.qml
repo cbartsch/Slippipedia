@@ -23,11 +23,13 @@ Item {
   readonly property var chars1: Object.keys(sData.chars1)
   readonly property var chars2: Object.keys(sData.chars2)
 
+  property bool checked: false
+
   signal showStats
 
   Rectangle {
     anchors.fill: parent
-    color: Theme.backgroundColor
+    color: checked ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
   }
 
   ColumnLayout {

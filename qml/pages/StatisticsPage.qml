@@ -18,6 +18,7 @@ BasePage {
   readonly property int nameColumns: Math.round(width / dp(200))
 
   onSelected: stats.refresh(nameColumns * 5)
+  onPushed: stats.refresh(nameColumns * 5)
   filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5)
 
   flickable.interactive: false
@@ -36,7 +37,6 @@ BasePage {
   Column {
     id: header
     width: parent.width
-    spacing: dp(Theme.contentPadding)
 
     FilterInfoItem {
       stats: statisticsPage.stats
@@ -63,8 +63,7 @@ BasePage {
     anchors.fill: parent
     anchors.topMargin: header.height
 
-    // somehow the list doesn't scroll all the way to the bottom so add extra spacing
-    contentHeight: content.height + dp(18)
+    contentHeight: content.height
 
     Column {
       id: content

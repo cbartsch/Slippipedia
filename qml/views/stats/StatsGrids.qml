@@ -105,4 +105,9 @@ Column {
       { header: "Taunts", property: "taunts", type: "stat" },
     ]
   }
+
+  Item {
+    width: parent.width
+    height: dp(Theme.contentPadding)
+  }
 }

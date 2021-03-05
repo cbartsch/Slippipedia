@@ -6,9 +6,13 @@ import Slippi 1.0
 
 import "model"
 import "pages"
+import "views/controls"
 
 App {
   id: app
+
+  readonly property real splitPaneWidth: dp(500)
+  readonly property bool useSplitMode: width > dp(1000)
 
   onInitTheme: {
     Theme.colors.tintColor = "#21BA45" // slippi green
@@ -49,7 +53,31 @@ App {
     id: dataModel
 
     // if DB has no replays, show DB page, otherwise, go to stats directly
-    onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate ? 2 : 0
+    onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate
+                   ? navigation.count - 1 : 0
+  }
+
+  Rectangle {
+    anchors.fill: parent
+    color: Theme.backgroundColor
+  }
+
+  // global mouse back button handling:
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.BackButton
+
+    onClicked: {
+      if(mouse.button === Qt.BackButton) {
+        var stack = navigation.currentNavigationItem.navigationStack
+        if(stack && stack.depth > 1) {
+          stack.pop()
+          mouse.accepted = true
+          return
+        }
+      }
+      mouse.accepted = false
+    }
   }
 
   Navigation {
@@ -60,7 +88,7 @@ App {
       title: "Replay Database"
       icon: IconType.database
 
-      NavigationStack {
+      BaseNavigationStack {
         DatabasePage {
         }
       }
@@ -73,7 +101,7 @@ App {
       onSelected: if(page) page.selected()
       onPageChanged: if(page) page.selected()
 
-      NavigationStack {
+      BaseNavigationStack {
         StatisticsPage {
           stats: dataModel.stats
         }
@@ -87,7 +115,7 @@ App {
       onSelected: if(page) page.selected()
       onPageChanged: if(page) page.selected()
 
-      NavigationStack {
+      BaseNavigationStack {
         AnalyticsPage {
           stats: dataModel.stats
         }
@@ -101,8 +129,7 @@ App {
       onSelected: if(page) page.selected()
       onPageChanged: if(page) page.selected()
 
-      NavigationStack {
-        id: stack
+      BaseNavigationStack {
         ReplayListPage {
           stats: dataModel.stats
         }
