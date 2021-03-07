@@ -40,14 +40,13 @@ RowLayout {
     }
 
     AppText {
-      Layout.preferredWidth: parent.width
+      Layout.preferredWidth: Math.min(parent.width, implicitWidth)
       font.pixelSize: dp(16)
       color: Theme.secondaryTextColor
 
       maximumLineCount: 1
       elide: Text.ElideRight
 
-      width: parent.width
       text: !stats ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
                                                                   : qsTr("Win Rate: %3 (%1 / %2)")
       .arg(stats.gamesWon).arg(stats.gamesFinished)
@@ -56,6 +55,11 @@ RowLayout {
       RippleMouseArea {
         anchors.fill: parent
         onClicked: showFilteringPage()
+
+        hoverEffectEnabled: true
+        backgroundColor: Theme.listItem.selectedBackgroundColor
+        fillColor: backgroundColor
+        opacity: 0.5
       }
     }
   }

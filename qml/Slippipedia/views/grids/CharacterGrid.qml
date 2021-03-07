@@ -84,13 +84,18 @@ Grid {
       visible: true
       onClicked: charSelected(id, isSelected)
 
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
+
       Rectangle {
         anchors.fill: parent
 
+        z: -1
         color: !enabled
                ? Theme.backgroundColor
                : isSelected
-                 ? Theme.selectedBackgroundColor
+                 ? Qt.darker(Theme.selectedBackgroundColor, 1.5)
                  : Theme.controlBackgroundColor
 
         visible: hasChar

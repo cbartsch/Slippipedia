@@ -67,12 +67,16 @@ Column {
         color: !enabled
                ? Theme.backgroundColor
                : isSelected
-                 ? Theme.selectedBackgroundColor
+                 ? Qt.darker(Theme.selectedBackgroundColor, 1.5)
                  : Theme.controlBackgroundColor
 
         RippleMouseArea {
           anchors.fill: parent
           onClicked: stageSelected(id, stageItem.isSelected)
+
+          hoverEffectEnabled: true
+          backgroundColor: Theme.listItem.selectedBackgroundColor
+          fillColor: backgroundColor
 
           StageIcon {
             anchors.centerIn: parent
@@ -136,6 +140,10 @@ Column {
       anchors.fill: parent
 
       onClicked: stageSelected(0, otherItem.isSelected)
+
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
 
       AppText {
         anchors.fill: parent

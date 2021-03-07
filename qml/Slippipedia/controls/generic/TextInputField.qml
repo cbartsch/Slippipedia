@@ -33,6 +33,11 @@ Rectangle {
     anchors.fill: parent
 
     onClicked: input.forceActiveFocus()
+
+    hoverEffectEnabled: true
+    backgroundColor: Theme.listItem.selectedBackgroundColor
+    fillColor: backgroundColor
+    opacity: 0.5
   }
 
   RowLayout {

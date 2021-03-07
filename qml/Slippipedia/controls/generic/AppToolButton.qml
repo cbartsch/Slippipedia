@@ -17,6 +17,11 @@ ToolButton {
   RippleMouseArea {
     anchors.fill: parent
     onPressed: mouse.accepted = false
+
+    hoverEffectEnabled: true
+    backgroundColor: Theme.listItem.selectedBackgroundColor
+    fillColor: backgroundColor
+    opacity: 0.5
   }
 
   hoverEnabled: true

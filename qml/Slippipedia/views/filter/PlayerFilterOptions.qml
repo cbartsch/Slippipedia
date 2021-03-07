@@ -97,12 +97,19 @@ Column {
         text: "Match either code or tag"
         checked: filter ? !filter.filterCodeAndName : false
         height: dp(48)
-      }
+        padding: dp(Theme.contentPadding)
 
-      Item {
-        // space
-        width: dp(Theme.contentPadding)
-        height: 1
+        RippleMouseArea {
+          anchors.fill: parent
+
+          hoverEffectEnabled: true
+          backgroundColor: Theme.listItem.selectedBackgroundColor
+          fillColor: backgroundColor
+          opacity: 0.5
+
+          // this is only for the visual ripple effect
+          onPressed: mouse.accepted = false
+        }
       }
 
       AppRadio {
@@ -110,6 +117,19 @@ Column {
         checked: filter ? filter.filterCodeAndName : false
         text: "Match both code and tag"
         height: dp(48)
+        padding: dp(Theme.contentPadding)
+
+        RippleMouseArea {
+          anchors.fill: parent
+
+          hoverEffectEnabled: true
+          backgroundColor: Theme.listItem.selectedBackgroundColor
+          fillColor: backgroundColor
+          opacity: 0.5
+
+          // this is only for the visual ripple effect
+          onPressed: mouse.accepted = false
+        }
       }
     }
 

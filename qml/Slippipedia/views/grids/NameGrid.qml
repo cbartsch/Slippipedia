@@ -26,10 +26,10 @@ Grid {
 
         RippleMouseArea {
           anchors.fill: parent
-          hoverEffectEnabled: true
-          onClicked: nameGridOpponent.nameClicked(modelData.text)
           enabled: namesClickable
-          z: 1
+          onClicked: nameGridOpponent.nameClicked(modelData.text)
+
+          hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor
           opacity: 0.5
