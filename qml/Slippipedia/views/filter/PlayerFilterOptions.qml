@@ -8,7 +8,11 @@ Column {
   property bool me: true
   readonly property string meText: me ? "your" : "opponent's"
 
-  property PlayerFilterSettings filter: null
+  property ReplayStats stats: null
+  readonly property PlayerFilterSettings filter: stats ? stats.dataBase.filterSettings[
+                                                           me ? "playerFilter" : "opponentFilter"
+                                                         ]
+                                                       : null
 
   SimpleSection {
     title: me ? "Player" : "Opponent"
@@ -20,14 +24,14 @@ Column {
                 "Replays are matched based on either connect code, in-game tag or both."
 
 
-    checked: filter.hasPlayerFilter
+    checked: filter ? filter.hasPlayerFilter : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset player filter"
 
-      visible: filter.hasPlayerFilter
+      visible: filter ? filter.hasPlayerFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: {
@@ -41,26 +45,26 @@ Column {
     labelText: "Slippi code:"
     placeholderText: qsTr("Enter %1 Slippi code...").arg(meText)
 
-    text: filter.slippiCode.filterText
-    matchCaseSensitive: filter.slippiCode.matchCase
-    matchPartialText: filter.slippiCode.matchPartial
+    text:               filter ? filter.slippiCode.filterText : ""
+    matchCaseSensitive: filter ? filter.slippiCode.matchCase : false
+    matchPartialText:   filter ? filter.slippiCode.matchPartial : false
 
-    onTextChanged: filter.slippiCode.filterText = text
-    onMatchCaseSensitiveChanged: filter.slippiCode.matchCase = matchCaseSensitive
-    onMatchPartialTextChanged: filter.slippiCode.matchPartial = matchPartialText
+    onTextChanged:               if(filter) filter.slippiCode.filterText = text
+    onMatchCaseSensitiveChanged: if(filter) filter.slippiCode.matchCase = matchCaseSensitive
+    onMatchPartialTextChanged:   if(filter) filter.slippiCode.matchPartial = matchPartialText
   }
 
   TextInputField {
     labelText: "Slippi name:"
     placeholderText: qsTr("Enter %1 Slippi name...").arg(meText)
 
-    text: filter.slippiName.filterText
-    matchCaseSensitive: filter.slippiName.matchCase
-    matchPartialText: filter.slippiName.matchPartial
+    text:               filter ? filter.slippiName.filterText : ""
+    matchCaseSensitive: filter ? filter.slippiName.matchCase : false
+    matchPartialText:   filter ? filter.slippiName.matchPartial : false
 
-    onTextChanged: filter.slippiName.filterText = text
-    onMatchCaseSensitiveChanged: filter.slippiName.matchCase = matchCaseSensitive
-    onMatchPartialTextChanged: filter.slippiName.matchPartial = matchPartialText
+    onTextChanged:               if(filter) filter.slippiName.filterText = text
+    onMatchCaseSensitiveChanged: if(filter) filter.slippiName.matchCase = matchCaseSensitive
+    onMatchPartialTextChanged:   if(filter) filter.slippiName.matchPartial = matchPartialText
   }
 
   Rectangle {
@@ -91,7 +95,7 @@ Column {
       AppRadio {
         id: radioMatchOr
         text: "Match either code or tag"
-        checked: !filter.filterCodeAndName
+        checked: filter ? !filter.filterCodeAndName : false
         height: dp(48)
       }
 
@@ -103,7 +107,7 @@ Column {
 
       AppRadio {
         id: radioMatchAnd
-        checked: filter.filterCodeAndName
+        checked: filter ? filter.filterCodeAndName : false
         text: "Match both code and tag"
         height: dp(48)
       }
@@ -120,14 +124,14 @@ Column {
     text: "Filter by specific characters"
     detailText: "Find replays using selected characters. Click again to unselect."
 
-    checked: filter.hasCharFilter
+    checked: filter ? filter.hasCharFilter : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset character filter"
 
-      visible: filter.hasCharFilter
+      visible: filter ? filter.hasCharFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: filter.removeAllCharFilters()
@@ -140,7 +144,7 @@ Column {
     sourceModel: stats ? stats.statsPlayer.charDataCss : []
     stats: filterPage.stats
 
-    charIds: filter.charIds
+    charIds: filter ? filter.charIds : []
     onCharSelected: {
       if(isSelected) {
         // char is selected -> unselect

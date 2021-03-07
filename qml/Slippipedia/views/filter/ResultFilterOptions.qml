@@ -7,8 +7,8 @@ import Slippipedia 1.0
 Column {
   id: gameFilterOptions
 
-  property GameFilterSettings filter: null
   property ReplayStats stats: null
+  readonly property GameFilterSettings filter: stats ? stats.dataBase.filterSettings.gameFilter : null
 
   SimpleSection {
     title: "Game Duration"
@@ -18,14 +18,14 @@ Column {
     text: "Filter by game duration"
     detailText: "Input a minimum and/or maximum game duration to match replays."
 
-    checked: filter.hasDurationFilter
+    checked: filter ? filter.hasDurationFilter : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset duration filter"
 
-      visible: filter.hasDurationFilter
+      visible: filter ? filter.hasDurationFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: {
@@ -44,7 +44,7 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter.minFrames >= 0 ? filter.minFrames / 60 : ""
+    text: filter && filter.minFrames >= 0 ? filter.minFrames / 60 : ""
 
     onTextChanged: filter.minFrames = text ? text * 60 : -1
   }
@@ -58,7 +58,7 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter.maxFrames >= 0 ? filter.maxFrames / 60 : ""
+    text: filter && filter.maxFrames >= 0 ? filter.maxFrames / 60 : ""
 
     onTextChanged: filter.maxFrames = text ? text * 60 : -1
   }
@@ -71,13 +71,13 @@ Column {
     text: "Filter by game result"
     detailText: "Filter by won, lost, tied games or games with any result."
 
-    backgroundColor: filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
+    backgroundColor: filter && filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset result filter"
-      visible: filter.hasWinnerFilter
+      visible: filter ? filter.hasWinnerFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: {
@@ -160,7 +160,7 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter.endStocks >= 0 ? filter.endStocks : ""
+    text: filter && filter.endStocks >= 0 ? filter.endStocks : ""
 
     onTextChanged: filter.endStocks = text ? text : -1
   }

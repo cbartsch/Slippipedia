@@ -73,14 +73,11 @@ BasePage {
       sData: sectionData[section] || emptySection
       checked: currentSection === section
 
-      onShowStats: {
-        console.log("create page with sdata2", JSON.stringify(sData))
-
-        navigationStack.push(statisticsPageC, {
-                               section: section,
-                               sData: sData
-                             })
-      }
+      onShowStats: showSessionStats(sData.code1, sData.name1,
+                                    sData.code2, sData.name2,
+                                    // TODO find out why it can be off by a minute (or the seconds are truncated)
+                                    sData.dateFirst.getTime() - 1000 * 60,
+                                    sData.dateLast.getTime() + 1000 * 60)
     }
 
     delegate: ReplayListItem {
@@ -99,46 +96,6 @@ BasePage {
         property: "opacity"
         from: 0
         to: 1
-      }
-    }
-  }
-  Component {
-    id: statisticsPageC
-
-    StatisticsPage {
-      id: statisticsPage
-
-      property string section: ""
-      property var sData: ({})
-
-      filterChangeable: false
-      stats: sessionStats
-
-      Component.onCompleted: {
-        sessionFilter.copyFrom(replayListPage.stats.dataBase.filterSettings)
-
-        // TODO find out why it can be off by a minute (or the seconds are truncated)
-        sessionFilter.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
-        sessionFilter.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
-
-        sessionFilter.playerFilter.slippiCode.filterText = sData.code1
-        sessionFilter.playerFilter.slippiName.filterText = sData.name1
-        sessionFilter.opponentFilter.slippiCode.filterText = sData.code2
-        sessionFilter.opponentFilter.slippiName.filterText = sData.name2
-      }
-
-      FilterSettings {
-        id: sessionFilter
-
-        persistenceEnabled: false
-      }
-
-      ReplayStats {
-        id: sessionStats
-
-        dataBase: DataBase {
-          filterSettings: sessionFilter
-        }
       }
     }
   }

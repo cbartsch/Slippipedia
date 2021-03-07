@@ -26,22 +26,22 @@ Page {
 
       AppTabButton {
         text: "Me"
-        showIcon: dataModel.playerFilter.hasFilter
+        showIcon: stats ? stats.dataBase.playerFilter.hasFilter : false
         tabIcon: IconType.check
       }
       AppTabButton {
         text: "Opponent"
-        showIcon: dataModel.opponentFilter.hasFilter
+        showIcon: stats ? stats.dataBase.opponentFilter.hasFilter : false
         tabIcon: IconType.check
       }
       AppTabButton {
         text: "Results"
-        showIcon: dataModel.gameFilter.hasResultFilter
+        showIcon: stats ? stats.dataBase.gameFilter.hasResultFilter : false
         tabIcon: IconType.check
       }
       AppTabButton {
         text: "Game"
-        showIcon: dataModel.gameFilter.hasGameFilter
+        showIcon: stats ? stats.dataBase.gameFilter.hasGameFilter : false
         tabIcon: IconType.check
       }
     }
@@ -66,20 +66,18 @@ Page {
         PlayerFilterOptions {
           id: filterOptionsMe
           me: true
-          filter: dataModel.playerFilter
+          stats: filterPage.stats
         }
         PlayerFilterOptions {
           id: filterOptionsOpponent
           me: false
-          filter: dataModel.opponentFilter
+          stats: filterPage.stats
         }
         ResultFilterOptions {
-          filter: dataModel.gameFilter
-          stats: dataModel.stats
+          stats: filterPage.stats
         }
         GameFilterOptions {
-          filter: dataModel.gameFilter
-          stats: dataModel.stats
+          stats: filterPage.stats
         }
       }
     }

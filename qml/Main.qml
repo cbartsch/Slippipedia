@@ -147,6 +147,88 @@ App {
     }
   }
 
+  // additional pages with custom filters to push to the current stack:
+
+  Component {
+    id: statisticsPageC
+
+    StatisticsPage {
+      property var filterData: ({})
+
+      filterChangeable: true
+
+      stats: ReplayStats {
+        dataBase: DataBase {
+          filterSettings: FilterSettings {
+            id: customFilter
+
+            persistenceEnabled: false
+          }
+        }
+      }
+
+      Component.onCompleted: customFilter.setFromData(filterData)
+    }
+  }
+
+  Component {
+    id: replayListPageC
+
+    ReplayListPage {
+      property var filterData: ({})
+
+      filterChangeable: true
+
+      stats: ReplayStats {
+        dataBase: DataBase {
+          filterSettings: FilterSettings {
+            id: customFilter
+
+            persistenceEnabled: false
+          }
+        }
+      }
+
+      Component.onCompleted: customFilter.setFromData(filterData)
+    }
+  }
+
+  function showPage(page, charId, opponentCharId, stageId, yearMonth) {
+    var stack = navigation.currentNavigationItem.navigationStack
+
+    if(stack) {
+      stack.push(page, { filterData: {
+                     charId: charId,
+                     opponentCharId: opponentCharId,
+                     stageId: stageId,
+                     time: yearMonth
+                   } })
+    }
+  }
+
+  // show list view for specific char, opponent char, stage and/or month of year
+  function showList(charId, opponentCharId, stageId, yearMonth) {
+    showPage(replayListPageC, charId, opponentCharId, stageId, yearMonth)
+  }
+
+  // show stats view for specific char, opponent char, stage and/or month of year
+  function showStats(charId, opponentCharId, stageId, yearMonth) {
+    showPage(statisticsPageC, charId, opponentCharId, stageId, yearMonth)
+  }
+
+  // show stats view for specific players and time frame
+  function showSessionStats(code1, name1, code2, name2, startMs, endMs) {
+    var stack = navigation.currentNavigationItem.navigationStack
+
+    if(stack) {
+      stack.push(statisticsPageC, { filterData: {
+                     code1: code1, name1: name1,
+                     code2: code2, name2: name2,
+                     startMs: startMs, endMs: endMs
+                   } })
+    }
+  }
+
   function isNan(number) {
     return number !== number
   }

@@ -7,8 +7,8 @@ import Slippipedia 1.0
 Column {
   id: gameFilterOptions
 
-  property GameFilterSettings filter: null
   property ReplayStats stats: null
+  readonly property GameFilterSettings filter: stats ? stats.dataBase.filterSettings.gameFilter : null
 
   SimpleSection {
     title: "Date range"
@@ -18,13 +18,13 @@ Column {
     text: "Filter by replay date"
     detailText: "Select a date range to match replays in."
 
-    checked: filter.hasDateFilter
+    checked: filter ? filter.hasDateFilter : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset stage filter"
-      visible: filter.hasDateFilter
+      visible: filter ? filter.hasDateFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: clearDateRange()
@@ -148,13 +148,13 @@ Column {
     text: "Filter by specific stage"
     detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
 
-    checked: filter.hasStageFilter
+    checked: filter ? filter.hasStageFilter : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
       iconType: IconType.trash
       toolTipText: "Reset stage filter"
-      visible: filter.hasStageFilter
+      visible: filter ? filter.hasStageFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
       onClicked: filter.removeAllStages()
