@@ -6,12 +6,8 @@ import Slippipedia 1.0
 NavigationStack {
   id: stack
 
-  splitView: useSplitMode
-  leftColumnWidth:  depth > 1 ? splitPaneWidth : width
+  splitView: depth > 1 && useSplitMode
+  leftColumnWidth: splitPaneWidth
 
   navigationBar.backButtonVisible: splitView || depth > 1
-
-  Behavior on leftColumnWidth {
-    UiAnimation { }
-  }
 }

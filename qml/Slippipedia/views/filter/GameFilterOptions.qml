@@ -14,7 +14,7 @@ Column {
     title: "Date range"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: "Filter by replay date"
     detailText: "Select a date range to match replays in."
 
@@ -144,7 +144,7 @@ Column {
     title: "Stage"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: "Filter by specific stage"
     detailText: "Select a stage to limit all stats to that stage. Click again to unselect."
 

@@ -14,7 +14,7 @@ Column {
     title: "Game Duration"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: "Filter by game duration"
     detailText: "Input a minimum and/or maximum game duration to match replays."
 
@@ -67,7 +67,7 @@ Column {
     title: "Winner"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: "Filter by game result"
     detailText: "Filter by won, lost, tied games or games with any result."
 

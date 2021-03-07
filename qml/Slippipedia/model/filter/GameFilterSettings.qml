@@ -110,6 +110,16 @@ Item {
     settings.endStocks = -1
   }
 
+  function copyFrom(other) {
+    setStage(other.stageIds)
+    winnerPlayerIndex = other.winnerPlayerIndex
+    minFrames = other.minFrames
+    maxFrames = other.maxFrames
+    endStocks = other.endStocks
+    startDateMs = other.startDateMs
+    endDateMs = other.endDateMs
+  }
+
   function setStage(stageId) {
     settings.stageIds = stageId
   }

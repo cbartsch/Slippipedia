@@ -18,7 +18,7 @@ Item {
     return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
   }
 
-  property GameFilterSettings gameFilter:  GameFilterSettings {
+  property GameFilterSettings gameFilter: GameFilterSettings {
     settingsCategory: "stage-filter"
 
     onFilterChanged: filterSettings.filterChanged()
@@ -41,5 +41,11 @@ Item {
     playerFilter.reset()
     opponentFilter.reset()
     gameFilter.reset()
+  }
+
+  function copyFrom(other) {
+    playerFilter.copyFrom(other.playerFilter)
+    opponentFilter.copyFrom(other.opponentFilter)
+    gameFilter.copyFrom(other.gameFilter)
   }
 }

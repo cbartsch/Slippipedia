@@ -49,6 +49,7 @@ Item {
       pText = "\"" + pText + "\""
     }
 
+
     var cText = null
     if(charIds.length > 0) {
       cText = charIds.map(id => MeleeData.charNames[id]).join(", ")
@@ -71,7 +72,6 @@ Item {
     property alias filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
 
     property var charIds: []
-    property var stageIds: []
   }
 
   function reset() {
@@ -79,6 +79,20 @@ Item {
     settings.charIds = []
     slippiCode.reset()
     slippiName.reset()
+  }
+
+  function copyFrom(other) {
+    setCharFilter(other.charIds)
+
+    slippiCode.filterText = other.slippiCode.filterText
+    slippiCode.matchCase = other.slippiCode.matchCase
+    slippiCode.matchPartial = other.slippiCode.matchPartial
+
+    slippiName.filterText = other.slippiName.filterText
+    slippiName.matchCase = other.slippiName.matchCase
+    slippiName.matchPartial = other.slippiName.matchPartial
+
+    filterCodeAndName = other.filterCodeAndName
   }
 
   // filtering

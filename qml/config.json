@@ -1,8 +1,8 @@
 {
   "title": "Slippipedia",
-  "identifier": "at.cb.SlippiStatsApp",
+  "identifier": "at.cb.Slippipedia",
   "orientation": "auto",
   "versioncode": 1,
-  "versionname": "1.0.0",
+  "versionname": "1.0",
   "stage": "test"
 }

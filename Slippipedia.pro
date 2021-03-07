@@ -24,11 +24,12 @@ live_client {
 }
 
 use_resources {
-  RESOURCES += resources.qrc # uncomment for publishing
+  RESOURCES += resources.qrc
 }
-else {
+# do not deploy when using live client, it deploys manually to cache folder
+else:!live_client {
   qmlFolder.source = qml
-  DEPLOYMENTFOLDERS += qmlFolder # comment for publishing
+  DEPLOYMENTFOLDERS += qmlFolder
 
   assetsFolder.source = assets
   DEPLOYMENTFOLDERS += assetsFolder
@@ -38,8 +39,8 @@ FELGO_PLUGINS += googleanalytics
 
 # Project identifier and version
 # More information: https://felgo.com/doc/felgo-publishing/#project-configuration
-PRODUCT_IDENTIFIER = at.cb.SlippiStatsApp
-PRODUCT_VERSION_NAME = 1.0.0
+PRODUCT_IDENTIFIER = at.cb.Slippipedia
+PRODUCT_VERSION_NAME = 1.0
 PRODUCT_VERSION_CODE = 1
 
 # Optionally set a license key that is used instead of the license key from
@@ -67,10 +68,13 @@ ios {
 
 # set application icons for win and macx
 win32 {
-    RC_FILE += win/app_icon.rc
+    RC_ICONS = win/icon.ico
 }
 macx {
     ICON = macx/app_icon.icns
 }
 
 include(slippi/slippi.pri)
+
+# always show qml files in Qt Creator
+OTHER_FILES += $$files(qml/**, true)

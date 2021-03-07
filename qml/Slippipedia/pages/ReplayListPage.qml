@@ -73,13 +73,9 @@ BasePage {
       sData: sectionData[section] || emptySection
       checked: currentSection === section
 
-      Text {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        text: "S " + this
-      }
-
       onShowStats: {
+        sessionFilter.copyFrom(replayListPage.stats.dataBase.filterSettings)
+
         // TODO find out why it can be off by a minute (or the seconds are truncated)
         sessionFilter.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
         sessionFilter.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60

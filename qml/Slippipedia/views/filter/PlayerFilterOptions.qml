@@ -14,7 +14,7 @@ Column {
     title: me ? "Player" : "Opponent"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: qsTr("Filter by %1 Slippi code and/or tag").arg(meText)
     detailText: (me ? "Add player filter to show win rate and oppponent stats. " : "") +
                 "Replays are matched based on either connect code, in-game tag or both."
@@ -116,7 +116,7 @@ Column {
     title: "Character"
   }
 
-  CheckableListItem {
+  CustomListItem {
     text: "Filter by specific characters"
     detailText: "Find replays using selected characters. Click again to unselect."
 

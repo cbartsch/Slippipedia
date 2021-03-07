@@ -147,6 +147,10 @@ BasePage {
   }
 
   function setFilter(charId, opponentCharId, stageId, time) {
+
+    // copy all filters from global filter
+    analyticsFilter.copyFrom(analyticsPage.stats.dataBase.filterSettings)
+
     // set desired filters:
     analyticsFilter.playerFilter.setCharFilter(charId >= 0
         ? [charId]
@@ -171,21 +175,6 @@ BasePage {
       analyticsFilter.gameFilter.startDateMs = dataModel.gameFilter.startDateMs
       analyticsFilter.gameFilter.endDateMs = dataModel.gameFilter.endDateMs
     }
-
-
-    // copy all filters from global filter - TODO find better way to do this:
-    analyticsFilter.playerFilter.slippiCode.filterText = dataModel.playerFilter.slippiCode.filterText
-    analyticsFilter.playerFilter.slippiName.filterText = dataModel.playerFilter.slippiName.filterText
-    analyticsFilter.playerFilter.filterCodeAndName = dataModel.playerFilter.filterCodeAndName
-
-    analyticsFilter.opponentFilter.slippiCode.filterText = dataModel.opponentFilter.slippiCode.filterText
-    analyticsFilter.opponentFilter.slippiName.filterText = dataModel.opponentFilter.slippiName.filterText
-    analyticsFilter.opponentFilter.filterCodeAndName = dataModel.opponentFilter.filterCodeAndName
-
-    analyticsFilter.gameFilter.winnerPlayerIndex = dataModel.gameFilter.winnerPlayerIndex
-    analyticsFilter.gameFilter.minFrames = dataModel.gameFilter.minFrames
-    analyticsFilter.gameFilter.maxFrames = dataModel.gameFilter.maxFrames
-    analyticsFilter.gameFilter.endStocks = dataModel.gameFilter.endStocks
   }
 
   function showList(charId, opponentCharId, stageId, time) {

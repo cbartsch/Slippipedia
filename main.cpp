@@ -47,6 +47,9 @@ int main(int argc, char *argv[])
 
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);
+
+  // load QML module:
+  engine.addImportPath(client.cacheDirectory() + "/Slippipedia/qml");
 #else
   engine.load(QUrl(felgo.mainQmlFileName()));
 #endif

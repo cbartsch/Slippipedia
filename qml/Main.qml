@@ -50,7 +50,7 @@ App {
 
     // if DB has no replays, show DB page, otherwise, go to stats directly
     onInitialized: navigation.currentIndex = stats.totalReplays > 0 && !dataModel.dbNeedsUpdate
-                   ? navigation.count - 1 : 0
+                   ? navigation.count - 2 : 0
   }
 
   Rectangle {
@@ -127,6 +127,20 @@ App {
 
       BaseNavigationStack {
         ReplayListPage {
+          stats: dataModel.stats
+        }
+      }
+    }
+
+    NavigationItem {
+      title: "About"
+      icon: IconType.exclamationcircle
+
+      onSelected: if(page) page.selected()
+      onPageChanged: if(page) page.selected()
+
+      BaseNavigationStack {
+        AboutPage {
           stats: dataModel.stats
         }
       }
