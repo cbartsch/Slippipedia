@@ -11,7 +11,7 @@ BasePage {
   title: qsTr("Replay statistics")
 
   property bool filterChangeable: true
-  readonly property int nameColumns: Math.round(width / dp(200))
+  readonly property int nameColumns: Math.round(content.width / dp(200))
 
   onSelected: stats.refresh(nameColumns * 5)
   onPushed: stats.refresh(nameColumns * 5)

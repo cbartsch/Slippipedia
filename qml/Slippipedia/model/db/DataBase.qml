@@ -230,7 +230,7 @@ values %2")
 
     return readFromDb(function(tx) {
       // if no player filter specified, match smaller port for P1
-      var portCondition = playerFilter.hasPlayerFilter
+      var portCondition = playerFilter.hasPlayerFilter || opponentFilter.hasPlayerFilter
           ? "p.port != p2.port" : "p.port < p2.port"
 
       var playerCol = isOpponent ? "p2" : "p"

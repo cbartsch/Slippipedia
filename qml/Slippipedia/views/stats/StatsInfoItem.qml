@@ -55,6 +55,7 @@ RowLayout {
       RippleMouseArea {
         anchors.fill: parent
         onClicked: showFilteringPage()
+        enabled: !dataModel.playerFilter.hasPlayerFilter
 
         hoverEffectEnabled: true
         backgroundColor: Theme.listItem.selectedBackgroundColor

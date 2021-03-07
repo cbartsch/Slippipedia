@@ -10,6 +10,8 @@ App {
   readonly property real splitPaneWidth: dp(500)
   readonly property bool useSplitMode: width > dp(1000)
 
+  storeWindowGeometry: true
+
   onInitTheme: {
     Theme.colors.tintColor = "#21BA45" // slippi green
 

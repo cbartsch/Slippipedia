@@ -71,13 +71,20 @@ Item {
       gameFilter.endDateMs = date.getTime()
     }
 
-    if(data.code1) playerFilter.slippiCode.filterText = data.code1
-    if(data.name1) playerFilter.slippiName.filterText = data.name1
+    if("code1" in data) playerFilter.slippiCode.filterText = data.code1
+    if("name1" in data) playerFilter.slippiName.filterText = data.name1
     if(data.code1 && data.name1) playerFilter.filterCodeAndName = true
 
-    if(data.code2) opponentFilter.slippiCode.filterText = data.code2
-    if(data.name2) opponentFilter.slippiName.filterText = data.name2
+    if("code2" in data) opponentFilter.slippiCode.filterText = data.code2
+    if("name2" in data) opponentFilter.slippiName.filterText = data.name2
     if(data.code2 && data.name2) opponentFilter.filterCodeAndName = true
+
+    if(data.exact) {
+      playerFilter.slippiName.matchCase = true
+      playerFilter.slippiName.matchPartial = false
+      opponentFilter.slippiName.matchCase = true
+      opponentFilter.slippiName.matchPartial = false
+    }
 
     if(data.startMs) gameFilter.startDateMs = data.startMs
     if(data.endMs)   gameFilter.endDateMs = data.endMs

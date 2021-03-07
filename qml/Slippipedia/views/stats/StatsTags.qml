@@ -20,7 +20,7 @@ Column {
     columns: nameColumns
 
     namesClickable: true
-    onNameClicked: showList({ name1: name })
+    onNameClicked: showList({ name1: name, code1: "", name2: "", code2: "", exact: true })
   }
 
   SimpleSection {
@@ -41,7 +41,7 @@ Column {
     columns: nameColumns
 
     namesClickable: true
-    onNameClicked: showList({ name2: name })
+    onNameClicked: showList({ name1: "", code1: "", name2: name, code2: "", exact: true })
   }
 
   SimpleSection {
@@ -62,7 +62,7 @@ Column {
     columns: nameColumns
 
     namesClickable: true
-    onNameClicked: showList({ code2: name })
+    onNameClicked: showList({ name1: "", code1: "", name2: "", code2: name, exact: true })
   }
 
   Item {

@@ -98,6 +98,8 @@ Item {
         width: listView.width
         height: dp(72)
 
+        property bool showsCharName: width > dp(540)
+
         Item {
           Layout.preferredHeight: 1
           Layout.preferredWidth: dp(Theme.contentPadding)
@@ -128,6 +130,7 @@ Item {
           Layout.preferredWidth: dp(140)
           font.pixelSize: sp(20)
           color: Theme.tintColor
+          visible: showsCharName
 
           text: model && model.name || "?"
         }
@@ -135,6 +138,7 @@ Item {
         Item {
           Layout.preferredHeight: 1
           Layout.preferredWidth: dp(Theme.contentPadding)
+          visible: showsCharName
         }
 
         StatsInfoItem {
