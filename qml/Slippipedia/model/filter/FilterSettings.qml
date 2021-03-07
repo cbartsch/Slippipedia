@@ -63,8 +63,8 @@ Item {
       gameFilter.setStage(data.stageId >= 0 ? [data.stageId] : [])
     }
 
-    if(data.time) {
-      var date = Date.fromLocaleDateString(Qt.locale(), data.time, "yyyy-MM")
+    if(data.yearMonth) {
+      var date = Date.fromLocaleDateString(Qt.locale(), data.yearMonth, "yyyy-MM")
       gameFilter.startDateMs = date.getTime()
 
       date.setMonth(date.getMonth() + 1)

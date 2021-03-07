@@ -73,11 +73,15 @@ BasePage {
       sData: sectionData[section] || emptySection
       checked: currentSection === section
 
-      onShowStats: showSessionStats(sData.code1, sData.name1,
-                                    sData.code2, sData.name2,
+      onShowStats: app.showStats({
+                                   code1: sData.code1,
+                                   name1: sData.name1,
+                                   code2: sData.code2,
+                                   name2: sData.name2,
                                     // TODO find out why it can be off by a minute (or the seconds are truncated)
-                                    sData.dateFirst.getTime() - 1000 * 60,
-                                    sData.dateLast.getTime() + 1000 * 60)
+                                   startMs: sData.dateFirst.getTime() - 1000 * 60,
+                                   endMs: sData.dateLast.getTime() + 1000 * 60
+                                 })
     }
 
     delegate: ReplayListItem {

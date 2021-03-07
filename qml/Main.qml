@@ -193,40 +193,22 @@ App {
     }
   }
 
-  function showPage(page, charId, opponentCharId, stageId, yearMonth) {
+  function showPage(page, filterData) {
     var stack = navigation.currentNavigationItem.navigationStack
 
     if(stack) {
-      stack.push(page, { filterData: {
-                     charId: charId,
-                     opponentCharId: opponentCharId,
-                     stageId: stageId,
-                     time: yearMonth
-                   } })
+      stack.push(page, { filterData: filterData })
     }
   }
 
   // show list view for specific char, opponent char, stage and/or month of year
-  function showList(charId, opponentCharId, stageId, yearMonth) {
-    showPage(replayListPageC, charId, opponentCharId, stageId, yearMonth)
+  function showList(filterData) {
+    showPage(replayListPageC, filterData)
   }
 
   // show stats view for specific char, opponent char, stage and/or month of year
-  function showStats(charId, opponentCharId, stageId, yearMonth) {
-    showPage(statisticsPageC, charId, opponentCharId, stageId, yearMonth)
-  }
-
-  // show stats view for specific players and time frame
-  function showSessionStats(code1, name1, code2, name2, startMs, endMs) {
-    var stack = navigation.currentNavigationItem.navigationStack
-
-    if(stack) {
-      stack.push(statisticsPageC, { filterData: {
-                     code1: code1, name1: name1,
-                     code2: code2, name2: name2,
-                     startMs: startMs, endMs: endMs
-                   } })
-    }
+  function showStats(filterData) {
+    showPage(statisticsPageC, filterData)
   }
 
   function isNan(number) {
