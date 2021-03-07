@@ -13,7 +13,7 @@ AppListItem {
   Behavior on backgroundColor { UiAnimation {} }
 
   rightItem: Item {
-    height: parent.height
+    height: customListItem.height
     width: height
     visible: hasExternalLink
 

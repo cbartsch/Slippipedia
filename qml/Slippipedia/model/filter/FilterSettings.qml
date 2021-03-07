@@ -4,7 +4,7 @@ import Felgo 3.0
 Item {
   id: filterSettings
 
-  signal filterChanged
+  property bool persistenceEnabled: false
 
   readonly property string displayText: {
     var pText = playerFilter.displayText
@@ -20,21 +20,18 @@ Item {
 
   property GameFilterSettings gameFilter: GameFilterSettings {
     settingsCategory: "stage-filter"
-
-    onFilterChanged: filterSettings.filterChanged()
+    persistenceEnabled: filterSettings.persistenceEnabled
   }
 
   property PlayerFilterSettings playerFilter: PlayerFilterSettings {
     settingsCategory: "player-filter"
-
-    onFilterChanged: filterSettings.filterChanged()
+    persistenceEnabled: filterSettings.persistenceEnabled
   }
 
 
   property PlayerFilterSettings opponentFilter: PlayerFilterSettings {
     settingsCategory: "player-filter-opponent"
-
-    onFilterChanged: filterSettings.filterChanged()
+    persistenceEnabled: filterSettings.persistenceEnabled
   }
 
   function reset() {

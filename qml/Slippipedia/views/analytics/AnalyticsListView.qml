@@ -129,7 +129,7 @@ Item {
           font.pixelSize: sp(20)
           color: Theme.tintColor
 
-          text: model.name
+          text: model && model.name || "?"
         }
 
         Item {

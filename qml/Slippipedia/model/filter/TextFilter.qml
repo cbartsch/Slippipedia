@@ -6,12 +6,6 @@ QtObject {
   property bool matchCase: false
   property bool matchPartial: true
 
-  signal propertyChanged
-
-  onFilterTextChanged: propertyChanged()
-  onMatchCaseChanged: propertyChanged()
-  onMatchPartialChanged: propertyChanged()
-
   function reset() {
     filterText = ""
     matchCase = false

@@ -74,19 +74,11 @@ BasePage {
       checked: currentSection === section
 
       onShowStats: {
-        sessionFilter.copyFrom(replayListPage.stats.dataBase.filterSettings)
-
-        // TODO find out why it can be off by a minute (or the seconds are truncated)
-        sessionFilter.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
-        sessionFilter.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
-
-        sessionFilter.playerFilter.slippiCode.filterText = sData.code1
-        sessionFilter.playerFilter.slippiName.filterText = sData.name1
-        sessionFilter.opponentFilter.slippiCode.filterText = sData.code2
-        sessionFilter.opponentFilter.slippiName.filterText = sData.name2
+        console.log("create page with sdata2", JSON.stringify(sData))
 
         navigationStack.push(statisticsPageC, {
-                               section: section
+                               section: section,
+                               sData: sData
                              })
       }
     }
@@ -110,42 +102,44 @@ BasePage {
       }
     }
   }
-
-  FilterSettings {
-    id: sessionFilter
-
-    playerFilter: PlayerFilterSettings {
-      settingsCategory: "session-player-filter"
-      filterCodeAndName: false
-    }
-
-    opponentFilter: PlayerFilterSettings {
-      settingsCategory: "session-opponent-filter"
-      filterCodeAndName: false
-    }
-
-    gameFilter: GameFilterSettings {
-      settingsCategory: "session-game-filter"
-    }
-  }
-
-  ReplayStats {
-    id: sessionStats
-
-    dataBase: DataBase {
-      filterSettings: sessionFilter
-    }
-  }
-
   Component {
     id: statisticsPageC
 
     StatisticsPage {
       id: statisticsPage
+
       property string section: ""
+      property var sData: ({})
 
       filterChangeable: false
       stats: sessionStats
+
+      Component.onCompleted: {
+        sessionFilter.copyFrom(replayListPage.stats.dataBase.filterSettings)
+
+        // TODO find out why it can be off by a minute (or the seconds are truncated)
+        sessionFilter.gameFilter.startDateMs = sData.dateFirst.getTime() - 1000 * 60
+        sessionFilter.gameFilter.endDateMs = sData.dateLast.getTime() + 1000 * 60
+
+        sessionFilter.playerFilter.slippiCode.filterText = sData.code1
+        sessionFilter.playerFilter.slippiName.filterText = sData.name1
+        sessionFilter.opponentFilter.slippiCode.filterText = sData.code2
+        sessionFilter.opponentFilter.slippiName.filterText = sData.name2
+      }
+
+      FilterSettings {
+        id: sessionFilter
+
+        persistenceEnabled: false
+      }
+
+      ReplayStats {
+        id: sessionStats
+
+        dataBase: DataBase {
+          filterSettings: sessionFilter
+        }
+      }
     }
   }
 

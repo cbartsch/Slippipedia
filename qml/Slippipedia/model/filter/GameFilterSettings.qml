@@ -7,9 +7,8 @@ import Slippipedia 1.0
 Item {
   id: gameFilterSettings
 
-  property alias settingsCategory: settings.category
-
-  signal filterChanged
+  property bool persistenceEnabled: false
+  property string settingsCategory: ""
 
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
@@ -21,7 +20,16 @@ Item {
 
   property int endStocks: -1
 
-  readonly property var stageIds: settings.stageIds.map(id => ~~id)
+  property var stageIds: []
+
+  // due to this being in a loader, can't use alias properties -> save on change:
+  onWinnerPlayerIndexChanged: if(settings.item) settings.item.winnerPlayerIndex = winnerPlayerIndex
+  onStartDateMsChanged:       if(settings.item) settings.item.startDateMs = startDateMs
+  onEndDateMsChanged:         if(settings.item) settings.item.endDateMs = endDateMs
+  onMinFramesChanged:         if(settings.item) settings.item.minFrames = minFrames
+  onMaxFramesChanged:         if(settings.item) settings.item.maxFrames = maxFrames
+  onEndStocksChanged:         if(settings.item) settings.item.endStocks = endStocks
+  onStageIdsChanged:          if(settings.item) settings.item.stageIds = stageIds
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
@@ -40,8 +48,6 @@ Item {
   readonly property bool hasDurationFilter: minFrames >= 0 || maxFrames >= 0
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || endStocks >= 0
-
-  onStageIdsChanged: filterChanged()
 
   readonly property string displayText: {
     var sText = null
@@ -81,33 +87,54 @@ Item {
         ].filter(_ => _).join("\n") || ""
   }
 
-  Settings {
-    id: settings
+  Loader {
+    id: settingsLoader
 
-    // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
-    property alias winnerPlayerIndex: gameFilterSettings.winnerPlayerIndex
-    property var stageIds: []
+    active: persistenceEnabled
+    onLoaded: item.apply()
 
-    // start and end date as Date.getTime() ms values
-    property alias startDateMs: gameFilterSettings.startDateMs
-    property alias endDateMs: gameFilterSettings.endDateMs
+    sourceComponent: Settings {
+      id: settings
 
-    // min and max game duration in frames
-    property alias minFrames: gameFilterSettings.minFrames
-    property alias maxFrames: gameFilterSettings.maxFrames
+      category: gameFilterSettings.settingsCategory
 
-    // stocks left at end of game (by player with more stocks left)
-    property alias endStocks: gameFilterSettings.endStocks
+      // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
+      property int winnerPlayerIndex: gameFilterSettings.winnerPlayerIndex
+
+      property var stageIds: gameFilterSettings.stageIds
+
+      // start and end date as Date.getTime() ms values
+      property double startDateMs: gameFilterSettings.startDateMs
+      property double endDateMs: gameFilterSettings.endDateMs
+
+      // min and max game duration in frames
+      property int minFrames: gameFilterSettings.minFrames
+      property int maxFrames: gameFilterSettings.maxFrames
+
+      // stocks left at end of game (by player with more stocks left)
+      property int endStocks: gameFilterSettings.endStocks
+
+      function apply() {
+        // due to this being in a loader, can't use alias properties -> apply on load:
+        gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
+        gameFilterSettings.startDateMs = startDateMs
+        gameFilterSettings.endDateMs = endDateMs
+        gameFilterSettings.minFrames = minFrames
+        gameFilterSettings.maxFrames = maxFrames
+        gameFilterSettings.endStocks = endStocks
+        gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
+      }
+    }
   }
 
   function reset() {
-    settings.stageIds = []
-    settings.winnerPlayerIndex = -3
-    settings.startDateMs = -1
-    settings.endDateMs = -1
-    settings.minFrames = -1
-    settings.maxFrames = -1
-    settings.endStocks = -1
+    stageIds = []
+    winnerPlayerIndex = -3
+    startDateMs = -1
+    endDateMs = -1
+    minFrames = -1
+    maxFrames = -1
+    endStocks = -1
   }
 
   function copyFrom(other) {
@@ -120,22 +147,22 @@ Item {
     endDateMs = other.endDateMs
   }
 
-  function setStage(stageId) {
-    settings.stageIds = stageId
+  function setStage(stageIds) {
+    gameFilterSettings.stageIds = stageIds
   }
 
   function addStage(stageId) {
-    settings.stageIds = stageIds.concat(stageId)
+    gameFilterSettings.stageIds = stageIds.concat(stageId)
   }
 
   function removeStage(stageId) {
     var list = stageIds
     list.splice(list.indexOf(stageId), 1)
-    settings.stageIds = list
+    gameFilterSettings.stageIds = list
   }
 
   function removeAllStages() {
-    settings.stageIds = []
+    gameFilterSettings.stageIds = []
   }
 
   // set date range from now to numDays before now

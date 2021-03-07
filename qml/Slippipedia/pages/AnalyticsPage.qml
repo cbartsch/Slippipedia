@@ -103,37 +103,31 @@ BasePage {
     }
   }
 
-
-  FilterSettings {
-    id: analyticsFilter
-
-    playerFilter: PlayerFilterSettings {
-      settingsCategory: "analytics-player-filter"
-    }
-
-    opponentFilter: PlayerFilterSettings {
-      settingsCategory: "analytics-opponent-filter"
-    }
-
-    gameFilter: GameFilterSettings {
-      settingsCategory: "analytics-game-filter"
-    }
-  }
-
-  ReplayStats {
-    id: analyticsStats
-
-    dataBase: DataBase {
-      filterSettings: analyticsFilter
-    }
-  }
-
   Component {
     id: replayListPageC
 
     ReplayListPage {
+      property var filterData: ({})
+      property alias analyticsFilter: analyticsFilter
+
       filterChangeable: false
       stats: analyticsStats
+
+      Component.onCompleted: setFilter(this, filterData)
+
+      FilterSettings {
+        id: analyticsFilter
+
+        persistenceEnabled: false
+      }
+
+      ReplayStats {
+        id: analyticsStats
+
+        dataBase: DataBase {
+          filterSettings: analyticsFilter
+        }
+      }
     }
   }
 
@@ -141,51 +135,75 @@ BasePage {
     id: statisticsPageC
 
     StatisticsPage {
+      property var filterData: ({})
+      property alias analyticsFilter: analyticsFilter
+
       filterChangeable: false
       stats: analyticsStats
+
+      Component.onCompleted: setFilter(this, filterData)
+
+      FilterSettings {
+        id: analyticsFilter
+
+        persistenceEnabled: false
+      }
+
+      ReplayStats {
+        id: analyticsStats
+
+        dataBase: DataBase {
+          filterSettings: analyticsFilter
+        }
+      }
     }
   }
 
-  function setFilter(charId, opponentCharId, stageId, time) {
-
+  function setFilter(page, data) {
     // copy all filters from global filter
-    analyticsFilter.copyFrom(analyticsPage.stats.dataBase.filterSettings)
+    page.analyticsFilter.copyFrom(analyticsPage.stats.dataBase.filterSettings)
 
     // set desired filters:
-    analyticsFilter.playerFilter.setCharFilter(charId >= 0
-        ? [charId]
+    page.analyticsFilter.playerFilter.setCharFilter(data.charId >= 0
+        ? [data.charId]
         : dataModel.playerFilter.charIds)
 
-    analyticsFilter.opponentFilter.setCharFilter(opponentCharId >= 0
-        ? [opponentCharId]
+    page.analyticsFilter.opponentFilter.setCharFilter(data.opponentCharId >= 0
+        ? [data.opponentCharId]
         : dataModel.opponentFilter.charIds)
 
-    analyticsFilter.gameFilter.setStage(stageId >= 0
-        ? [stageId]
+    page.analyticsFilter.gameFilter.setStage(data.stageId >= 0
+        ? [data.stageId]
         : dataModel.gameFilter.stageIds)
 
-    if(time) {
-      var date = Date.fromLocaleDateString(Qt.locale(), time, "yyyy-MM")
-      analyticsFilter.gameFilter.startDateMs = date.getTime()
+    if(data.time) {
+      var date = Date.fromLocaleDateString(Qt.locale(), data.time, "yyyy-MM")
+      page.analyticsFilter.gameFilter.startDateMs = date.getTime()
 
       date.setMonth(date.getMonth() + 1)
-      analyticsFilter.gameFilter.endDateMs = date.getTime()
+      page.analyticsFilter.gameFilter.endDateMs = date.getTime()
     }
     else {
-      analyticsFilter.gameFilter.startDateMs = dataModel.gameFilter.startDateMs
-      analyticsFilter.gameFilter.endDateMs = dataModel.gameFilter.endDateMs
+      page.analyticsFilter.gameFilter.startDateMs = dataModel.gameFilter.startDateMs
+      page.analyticsFilter.gameFilter.endDateMs = dataModel.gameFilter.endDateMs
     }
   }
 
   function showList(charId, opponentCharId, stageId, time) {
-    setFilter(charId, opponentCharId, stageId, time)
-
-    navigationStack.push(replayListPageC)
+    navigationStack.push(replayListPageC, { filterData: {
+                             charId: charId,
+                             opponentCharId: opponentCharId,
+                             stageId: stageId,
+                             time: time
+                           } })
   }
 
   function showStats(charId, opponentCharId, stageId, time) {
-    setFilter(charId, opponentCharId, stageId, time)
-
-    navigationStack.push(statisticsPageC)
+    navigationStack.push(statisticsPageC, { filterData: {
+                             charId: charId,
+                             opponentCharId: opponentCharId,
+                             stageId: stageId,
+                             time: time
+                           } })
   }
 }

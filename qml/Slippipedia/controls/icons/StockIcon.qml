@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import Felgo 3.0
 
@@ -18,21 +18,19 @@ Item {
 
   visible: charId >= 0
 
-  implicitWidth: sprite.width
-  implicitHeight: sprite.height
+  implicitWidth: sprite.implicitWidth
+  implicitHeight: sprite.implicitHeight
 
-  SingleSpriteFromSpriteSheet {
+  Image {
     id: sprite
 
     source: "../../../../assets/img/stock_icon_sheet.png"
 
-    frameX: sheetPos.x + skinId * sheetDist.x
-    frameY: sheetPos.y + skinId * sheetDist.y
-    frameWidth: 24
-    frameHeight: 24
+    sourceClipRect: Qt.rect(sheetPos.x + skinId * sheetDist.x,
+                            sheetPos.y + skinId * sheetDist.y,
+                            24, 24)
 
-    transformOrigin: Item.TopLeft
-    scale: stockIcon.width / sprite.width
+    anchors.fill: parent
 
     // disable filtering for pixel art stock icons
     layer.enabled: true

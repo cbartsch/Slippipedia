@@ -7,28 +7,35 @@ import Slippipedia 1.0
 Item {
   id: playerFilterSettings
 
-  signal filterChanged
-
-  property alias settingsCategory: settings.category
+  property string settingsCategory: ""
+  property bool persistenceEnabled: false
 
   property TextFilter slippiCode: TextFilter {
     id: slippiCode
-    onPropertyChanged: filterChanged()
+
+    onFilterTextChanged:   if(settings.item) settings.item.slippiCodeText = filterText
+    onMatchCaseChanged:    if(settings.item) settings.item.slippiCodeCase = matchCase
+    onMatchPartialChanged: if(settings.item) settings.item.slippiCodePartial = matchPartial
   }
   property TextFilter slippiName: TextFilter {
     id: slippiName
-    onPropertyChanged: filterChanged()
+
+    onFilterTextChanged:   if(settings.item) settings.item.slippiNameText = filterText
+    onMatchCaseChanged:    if(settings.item) settings.item.slippiNameCase = matchCase
+    onMatchPartialChanged: if(settings.item) settings.item.slippiNamePartial = matchPartial
   }
+
   property bool filterCodeAndName: true
+
+  property var charIds: []
+
+  // due to this being in a loader, can't use alias properties -> save on change:
+  onFilterCodeAndNameChanged: if(settings.item) settings.item.filterCodeAndName = filterCodeAndName
+  onCharIdsChanged:           if(settings.item) settings.item.charIds = charIds
 
   readonly property bool hasFilter: hasPlayerFilter || hasCharFilter
   readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != ""
   readonly property bool hasCharFilter: charIds && charIds.length > 0
-
-  readonly property var charIds: settings.charIds.map(id => ~~id) // settings stores as list of string, convert to int
-
-  onFilterCodeAndNameChanged: filterChanged()
-  onCharIdsChanged: filterChanged()
 
   readonly property string displayText: {
     var pText
@@ -58,25 +65,46 @@ Item {
     return [pText, cText].filter(_ => _).join(", ") || ""
   }
 
-  Settings {
-    id: settings
+  Loader {
+    id: settingsLoader
 
-    property alias slippiCodeText: slippiCode.filterText
-    property alias slippiCodeCase: slippiCode.matchCase
-    property alias slippiCodePartial: slippiCode.matchPartial
+    active: persistenceEnabled
+    onLoaded: item.apply()
 
-    property alias slippiNameText: slippiName.filterText
-    property alias slippiNameCase: slippiName.matchCase
-    property alias slippiNamePartial: slippiName.matchPartial
+    sourceComponent: Settings {
+      id: settings
 
-    property alias filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
+      category: playerFilterSettings.settingsCategory
 
-    property var charIds: []
+      property string slippiCodeText: slippiCode.filterText
+      property bool slippiCodeCase: slippiCode.matchCase
+      property bool slippiCodePartial: slippiCode.matchPartial
+
+      property string slippiNameText: slippiName.filterText
+      property bool slippiNameCase: slippiName.matchCase
+      property bool slippiNamePartial: slippiName.matchPartial
+
+      property bool filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
+
+      property var charIds: playerFilterSettings.charIds
+
+      function apply() {
+        // due to this being in a loader, can't use alias properties -> apply on load:
+        playerFilterSettings.slippiCode.filterText = slippiCodeText
+        playerFilterSettings.slippiCode.matchCase = slippiCodeCase
+        playerFilterSettings.slippiCode.matchPartial = slippiCodePartial
+        playerFilterSettings.slippiName.filterText = slippiNameText
+        playerFilterSettings.slippiName.matchCase = slippiNameCase
+        playerFilterSettings.slippiName.matchPartial = slippiNamePartial
+        playerFilterSettings.filterCodeAndName = filterCodeAndName
+        playerFilterSettings.charIds = charIds.map(id => ~~id) // settings stores as list of string, convert to int
+      }
+    }
   }
 
   function reset() {
-    settings.stageIds = []
-    settings.charIds = []
+    stageIds = []
+    charIds = []
     slippiCode.reset()
     slippiName.reset()
   }
@@ -97,22 +125,22 @@ Item {
 
   // filtering
 
-  function setCharFilter(charId) {
-    settings.charIds = charId
+  function setCharFilter(charIds) {
+    playerFilterSettings.charIds = charIds
   }
 
   function addCharFilter(charId) {
-    settings.charIds = charIds.concat(charId)
+    playerFilterSettings.charIds = charIds.concat(charId)
   }
 
   function removeCharFilter(charId) {
     var list = charIds
     list.splice(list.indexOf(charId), 1)
-    settings.charIds = list
+    playerFilterSettings.charIds = list
   }
 
   function removeAllCharFilters() {
-    settings.charIds = []
+    playerFilterSettings.charIds = []
   }
 
   // DB filtering functions

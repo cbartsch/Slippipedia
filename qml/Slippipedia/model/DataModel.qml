@@ -81,7 +81,7 @@ Item {
   FilterSettings {
     id: filterSettings
 
-    onFilterChanged: dbUpdaterChanged()
+    persistenceEnabled: true // persist only the global filter
   }
 
   ReplayStats {

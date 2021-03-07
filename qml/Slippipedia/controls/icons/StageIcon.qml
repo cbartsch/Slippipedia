@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import Felgo 3.0
 
@@ -16,10 +16,10 @@ Item {
                                || -1
 
 
-  implicitWidth: sprite.width
-  implicitHeight: sprite.height
+  implicitWidth: sprite.implicitWidth
+  implicitHeight: sprite.implicitHeight
 
-  SingleSpriteFromSpriteSheet {
+  Image {
     id: sprite
 
     visible: cssId >= 0
@@ -28,14 +28,12 @@ Item {
 
     source: "../../../../assets/img/sss_icon_sheet.png"
 
-    frameX:      isSmallIcon ? 1   : 2 + 65 * (cssId % 9)
-    frameY:      isSmallIcon ? 172 : 2 + 57 * Math.floor(cssId / 9)
-    frameWidth:  isSmallIcon ? 48  : 62
-    frameHeight: isSmallIcon ? 48  : 54
+    sourceClipRect: Qt.rect(isSmallIcon ? 1   : 2 + 65 * (cssId % 9),
+                            isSmallIcon ? 172 : 2 + 57 * Math.floor(cssId / 9),
+                            isSmallIcon ? 48  : 62,
+                            isSmallIcon ? 48  : 54)
 
-    transform: Scale {
-      xScale: stageIcon.width / sprite.width
-      yScale: stageIcon.height / sprite.height
-    }
+    anchors.fill: parent
+    layer.enabled: true
   }
 }

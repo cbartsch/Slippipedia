@@ -5,13 +5,15 @@ import Slippipedia 1.0
 AppListItem {
   id: replayListItem
 
+  width: parent ? parent.width : 0
+
   backgroundColor: Theme.backgroundColor
 
   text: stageId && stageId >= 0
         ? qsTr("%1 - %2").arg(dataModel.formatTime(duration))
           .arg((MeleeData.stageMap[stageId] || {
                   name: "Unknown stage", shortName: "?"
-                })[replayListItem.width > dp(450) ? "name" : "shortName"])
+                })[replayListItem.width > dp(510) ? "name" : "shortName"])
         : ""
 
   Binding { target: textItem; property: "maximumLineCount"; value: 1 }
@@ -21,9 +23,9 @@ AppListItem {
     replayModel: model
     anchors.verticalCenter: parent.verticalCenter
 
-    width: replayListItem.width > dp(410)
+    width: replayListItem.width > dp(412)
            ? implicitWidth
-           : (replayListItem.width - dp(410) + implicitWidth)
+           : (replayListItem.width - dp(412) + implicitWidth)
   }
 
   rightItem: Row {
