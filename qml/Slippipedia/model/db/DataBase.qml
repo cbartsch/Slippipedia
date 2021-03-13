@@ -22,6 +22,7 @@ Item {
     db.transaction(function (tx) {
       tx.executeSql("create table if not exists Replays (
 id integer not null primary key,
+hasData bool,
 date date,
 stageId integer,
 winnerPort integer,
@@ -75,11 +76,17 @@ foreign key(replayId) references replays(id)
     var time = new Date().getTime()
 
     db.transaction(function(tx) {
+      if(!replay) {
+        tx.executeSql("insert or replace into Replays (filePath, hasData)
+                       values (?, false)", [fileName])
+        return
+      }
+
       var winnerIndex = replay.winningPlayerIndex
       var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
 
-      tx.executeSql("insert or replace into Replays (id, date, stageId, winnerPort, duration, filePath)
-                     values (?, ?, ?, ?, ?, ?)",
+      tx.executeSql("insert or replace into Replays (hasData, id, date, stageId, winnerPort, duration, filePath)
+                     values (true, ?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId,
                       replay.date,
@@ -163,6 +170,7 @@ values %2")
         // opponent
         " and " + opponentFilter.getPlayerFilterCondition("p2") +
         " and " + opponentFilter.getCharFilterCondition("p2.charId") +
+        " and r.hasData = 1" + // only match replays that didn't fail parsing
         ")"
   }
 

@@ -110,6 +110,9 @@ Item {
     }
 
     onReplayFailedToParse: {
+      // store "failed" replay to not show it as "new" file
+      globalDataBase.analyzeReplay(filePath, null)
+
       console.warn("Could not parse replay", filePath, ":", errorMessage)
       numFilesFailed++
     }
