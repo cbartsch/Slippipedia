@@ -1,6 +1,7 @@
 import Felgo 3.0
 
 import QtQuick 2.0
+import QtQuick.Controls.Styles 1.4
 
 import Slippipedia 1.0
 
@@ -85,6 +86,11 @@ App {
     NavigationItem {
       title: "Replay Database"
       icon: IconType.database
+
+      iconComponent: CustomTabIcon {
+        selected: navigation.currentIndex === 0
+        badgeValue: dataModel.newFiles.length || ""
+      }
 
       BaseNavigationStack {
         DatabasePage {
