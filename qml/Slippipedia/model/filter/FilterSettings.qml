@@ -47,8 +47,14 @@ Item {
   }
 
   function setFromData(data) {
-    // copy all filters from global filter
-    copyFrom(dataModel.filterSettings)
+    if("sourceFilter" in data) {
+      // copy all filters from specified source filter
+      copyFrom(data.sourceFilter)
+    }
+    else {
+      // copy all filters from global filter
+      copyFrom(dataModel.filterSettings)
+    }
 
     // set desired filters:
     if(data.charId) {

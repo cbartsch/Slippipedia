@@ -13,7 +13,7 @@ Item {
   // replay settings
   property alias replayFolder: globalSettings.replayFolder
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
-  property var newFiles: globalDataBase.getNewReplays(allFiles)
+  property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
   // analyze progress
   property bool progressCancelled: false

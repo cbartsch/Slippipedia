@@ -37,6 +37,9 @@ BasePage {
     FilterInfoItem {
       stats: statisticsPage.stats
       clickable: filterChangeable
+
+      showListButton: statisticsPage.navigationStack.depth > 1
+      onShowList: app.showList({ sourceFilter: statisticsPage.stats.dataBase.filterSettings })
     }
 
     AppTabBar {

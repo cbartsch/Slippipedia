@@ -49,6 +49,9 @@ BasePage {
     FilterInfoItem {
       stats: replayListPage.stats
       clickable: filterChangeable
+
+      showStatsButton: replayListPage.navigationStack.depth > 1
+      onShowStats: app.showStats({ sourceFilter: replayListPage.stats.dataBase.filterSettings })
     }
   }
 

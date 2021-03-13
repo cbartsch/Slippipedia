@@ -9,7 +9,13 @@ Column {
 
   property ReplayStats stats: null
 
+  property bool showListButton: false
+  property bool showStatsButton: false
   property bool showResetButton: false
+
+  signal showList
+  signal showStats
+
   property bool clickable: false
 
   property int numReplays: stats ? stats.totalReplays : 0
@@ -35,15 +41,35 @@ Column {
     mouseArea.enabled: filterItem.clickable
     backgroundColor: filterItem.clickable ? Theme.controlBackgroundColor : Theme.backgroundColor
 
-    rightItem: AppToolButton {
-      iconType: IconType.trash
-      toolTipText: "Reset all filters"
-      visible: showResetButton
+    rightItem: Row {
       anchors.verticalCenter: parent.verticalCenter
+      spacing: dp(Theme.contentPadding)
 
-      onClicked: InputDialog.confirm(app, "Reset all filters?", accepted => {
-                                       if(accepted) stats.dataBase.filterSettings.reset()
-                                     })
+      AppToolButton {
+        visible: showListButton
+        iconType: IconType.list
+        toolTipText: "Show list of games"
+
+        onClicked: showList()
+      }
+
+      AppToolButton {
+        visible: showStatsButton
+        iconType: IconType.barchart
+        toolTipText: "Show statistics for games"
+
+        onClicked: showStats()
+      }
+
+      AppToolButton {
+        iconType: IconType.trash
+        toolTipText: "Reset all filters"
+        visible: showResetButton
+
+        onClicked: InputDialog.confirm(app, "Reset all filters?", accepted => {
+                                         if(accepted) stats.dataBase.filterSettings.reset()
+                                       })
+      }
     }
   }
 }

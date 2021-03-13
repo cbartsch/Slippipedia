@@ -222,7 +222,7 @@ values %2")
       }
 
       return newFiles
-    }, 0)
+    }, [])
   }
 
   function getReplaySummary(isOpponent) {
