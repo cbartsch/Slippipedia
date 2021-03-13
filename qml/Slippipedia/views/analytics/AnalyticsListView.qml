@@ -98,7 +98,7 @@ Item {
         width: listView.width
         height: dp(72)
 
-        property bool showsCharName: width > dp(540)
+        property bool showsCharName: width > dp(540) || (!showsStages && !showsCharacters)
 
         Item {
           Layout.preferredHeight: 1
@@ -127,7 +127,7 @@ Item {
 
         AppText {
           Layout.alignment: Qt.AlignVCenter
-          Layout.preferredWidth: dp(140)
+          Layout.preferredWidth: dp(100)
           font.pixelSize: sp(20)
           color: Theme.tintColor
           visible: showsCharName
