@@ -13,25 +13,37 @@ Item {
   property TextFilter slippiCode: TextFilter {
     id: slippiCode
 
-    onFilterTextChanged:   if(settings.item) settings.item.slippiCodeText = filterText
-    onMatchCaseChanged:    if(settings.item) settings.item.slippiCodeCase = matchCase
-    onMatchPartialChanged: if(settings.item) settings.item.slippiCodePartial = matchPartial
+    onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiCodeText = filterText
+    onMatchCaseChanged:    if(settingsLoader.item) settingsLoader.item.slippiCodeCase = matchCase
+    onMatchPartialChanged: if(settingsLoader.item) settingsLoader.item.slippiCodePartial = matchPartial
+
+    onFilterChanged: playerFilterSettings.filterChanged()
   }
   property TextFilter slippiName: TextFilter {
     id: slippiName
 
-    onFilterTextChanged:   if(settings.item) settings.item.slippiNameText = filterText
-    onMatchCaseChanged:    if(settings.item) settings.item.slippiNameCase = matchCase
-    onMatchPartialChanged: if(settings.item) settings.item.slippiNamePartial = matchPartial
+    onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiNameText = filterText
+    onMatchCaseChanged:    if(settingsLoader.item) settingsLoader.item.slippiNameCase = matchCase
+    onMatchPartialChanged: if(settingsLoader.item) settingsLoader.item.slippiNamePartial = matchPartial
+
+    onFilterChanged: playerFilterSettings.filterChanged()
   }
 
   property bool filterCodeAndName: true
 
   property var charIds: []
 
+  signal filterChanged
+
   // due to this being in a loader, can't use alias properties -> save on change:
-  onFilterCodeAndNameChanged: if(settings.item) settings.item.filterCodeAndName = filterCodeAndName
-  onCharIdsChanged:           if(settings.item) settings.item.charIds = charIds
+  onFilterCodeAndNameChanged: {
+    filterChanged()
+    if(settingsLoader.item) settingsLoader.item.filterCodeAndName = filterCodeAndName
+  }
+  onCharIdsChanged: {
+    filterChanged()
+    if(settingsLoader.item) settingsLoader.item.charIds = charIds
+  }
 
   readonly property bool hasFilter: hasPlayerFilter || hasCharFilter
   readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != ""

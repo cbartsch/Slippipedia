@@ -18,20 +18,24 @@ Item {
     return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
   }
 
+  signal filterChanged
+
   property GameFilterSettings gameFilter: GameFilterSettings {
     settingsCategory: "stage-filter"
     persistenceEnabled: filterSettings.persistenceEnabled
+    onFilterChanged: filterSettings.filterChanged()
   }
 
   property PlayerFilterSettings playerFilter: PlayerFilterSettings {
     settingsCategory: "player-filter"
     persistenceEnabled: filterSettings.persistenceEnabled
+    onFilterChanged: filterSettings.filterChanged()
   }
-
 
   property PlayerFilterSettings opponentFilter: PlayerFilterSettings {
     settingsCategory: "player-filter-opponent"
     persistenceEnabled: filterSettings.persistenceEnabled
+    onFilterChanged: filterSettings.filterChanged()
   }
 
   function reset() {

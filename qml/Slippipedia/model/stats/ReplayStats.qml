@@ -8,12 +8,14 @@ Item {
 
   property DataBase dataBase
 
-  // Replay summary data - always update:
-  readonly property var summaryData: dataBase.getReplaySummary(false, dbUpdater)
+  readonly property bool isLoading: refreshTimer.running
 
-  // Detailed stats data - update in refresh()
-  property var statsData
-  property var statsDataOpponent
+  // Replay summary data
+  property var summaryData: null
+
+  // Detailed stats data
+  property var statsData: null
+  property var statsDataOpponent: null
 
   // public accessors for player stats
   property alias statsPlayer: statsPlayer
@@ -32,6 +34,12 @@ Item {
 
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
   readonly property real winRate: totalReplaysFilteredWon / totalReplaysFilteredWithResult
+
+  Connections {
+    target: dataBase ? dataBase.filterSettings : null
+
+    onFilterChanged: refreshSummary()
+  }
 
   PlayerStats {
     id: statsPlayer
@@ -89,9 +97,34 @@ Item {
     refresh()
   }
 
+  function refreshSummary() {
+    console.log("refresh summary")
+    summaryData = dataBase.getReplaySummary(false)
+  }
+
   // compute all data - no bindings as this can be slow
+  // instead call after a delay so the UI is more responsive
+  // (bg thread would be better!)
   function refresh(numPlayerTags) {
-    var limit = numPlayerTags || 1
+    refreshTimer.numPlayerTags = numPlayerTags || 1
+    refreshTimer.start()
+  }
+
+  Timer {
+    id: refreshTimer
+
+    property int numPlayerTags
+
+    running: false
+    repeat: false
+    interval: 250
+    onTriggered: doRefresh(numPlayerTags)
+  }
+
+  function doRefresh(numPlayerTags) {
+    refreshSummary()
+
+    var limit = numPlayerTags
 
     timeData = dataBase.getTimeStats()
 

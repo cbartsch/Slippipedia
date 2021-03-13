@@ -10,6 +10,7 @@ BasePage {
 
   flickable.interactive: false
 
+  onAppeared: stats.refresh()
   filterModal.onClosed: if(stats) stats.refresh()
 
   rightBarItem: NavigationBarRow {
@@ -100,6 +101,21 @@ BasePage {
 
       onShowList: app.showList(filterData(-1, -1, -1, id))
       onShowStats: app.showStats(filterData(-1, -1, -1, id))
+    }
+  }
+
+  Rectangle {
+    anchors.fill: parent
+    anchors.topMargin: header.height
+
+    color: "#80000000"
+
+    visible: stats.isLoading
+
+    AppText {
+      anchors.centerIn: parent
+      text: "Loading..."
+      font.pixelSize: sp(32)
     }
   }
 

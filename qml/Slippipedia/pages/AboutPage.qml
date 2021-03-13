@@ -17,6 +17,7 @@ BasePage {
   readonly property string twitterUrl: "https://twitter.com/ChrisuSSBMtG"
   readonly property string githubUrl: "https://github.com/cbartsch/Slippipedia"
   readonly property string homeUrl: "https://cbartsch.github.io"
+  readonly property string discordUrl: "https://discord.gg/jKf9XQE"
 
   readonly property string slippiUrl: "https://slippi.gg"
   readonly property string slippcUrl: "https://github.com/pcrain/slippc"
@@ -209,9 +210,12 @@ BasePage {
       onSelected: nativeUtils.openUrl(felgoUrl)
     }
 
-    AppListItem {
+    CustomListItem {
       text: "Shoutouts to DAFT Home <3"
       detailText: "And everyone else who helped test and improve this app"
+
+      hasExternalLink: true
+      backgroundColor: Theme.controlBackgroundColor
 
       leftItem: AppImage {
         source: "../../../assets/img/daft.png"
@@ -222,8 +226,7 @@ BasePage {
         fillMode: Image.PreserveAspectFit
       }
 
-      enabled: false
-      backgroundColor: Theme.backgroundColor
+      onSelected: nativeUtils.openUrl(discordUrl)
     }
   }
 }

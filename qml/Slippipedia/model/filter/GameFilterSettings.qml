@@ -22,14 +22,16 @@ Item {
 
   property var stageIds: []
 
+  signal filterChanged
+
   // due to this being in a loader, can't use alias properties -> save on change:
-  onWinnerPlayerIndexChanged: if(settings.item) settings.item.winnerPlayerIndex = winnerPlayerIndex
-  onStartDateMsChanged:       if(settings.item) settings.item.startDateMs = startDateMs
-  onEndDateMsChanged:         if(settings.item) settings.item.endDateMs = endDateMs
-  onMinFramesChanged:         if(settings.item) settings.item.minFrames = minFrames
-  onMaxFramesChanged:         if(settings.item) settings.item.maxFrames = maxFrames
-  onEndStocksChanged:         if(settings.item) settings.item.endStocks = endStocks
-  onStageIdsChanged:          if(settings.item) settings.item.stageIds = stageIds
+  onWinnerPlayerIndexChanged: filterChanged()
+  onStartDateMsChanged:       filterChanged()
+  onEndDateMsChanged:         filterChanged()
+  onMinFramesChanged:         filterChanged()
+  onMaxFramesChanged:         filterChanged()
+  onEndStocksChanged:         filterChanged()
+  onStageIdsChanged:          filterChanged()
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
@@ -92,6 +94,19 @@ Item {
 
     active: persistenceEnabled
     onLoaded: item.apply()
+
+    Connections {
+      target: settingsLoader.item ? gameFilterSettings : null
+
+      // due to this being in a loader, can't use alias properties -> save on change:
+      onWinnerPlayerIndexChanged: settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
+      onStartDateMsChanged:       settingsLoader.item.startDateMs = startDateMs
+      onEndDateMsChanged:         settingsLoader.item.endDateMs = endDateMs
+      onMinFramesChanged:         settingsLoader.item.minFrames = minFrames
+      onMaxFramesChanged:         settingsLoader.item.maxFrames = maxFrames
+      onEndStocksChanged:         settingsLoader.item.endStocks = endStocks
+      onStageIdsChanged:          settingsLoader.item.stageIds = stageIds
+    }
 
     sourceComponent: Settings {
       id: settings

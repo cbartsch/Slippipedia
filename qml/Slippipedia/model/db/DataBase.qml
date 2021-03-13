@@ -6,7 +6,7 @@ import Slippipedia 1.0
 Item {
   id: dataBase
 
-  property var debugLog: false
+  property var debugLog: true
   property var debugLogSql: false
 
   // db
@@ -127,6 +127,8 @@ values %2")
   }
 
   function readFromDb(callback, defaultValue) {
+    if(!db) return defaultValue
+
     var time = new Date().getTime()
 
     var res = defaultValue

@@ -13,14 +13,14 @@ BasePage {
   property bool filterChangeable: true
   readonly property int nameColumns: Math.round(content.width / dp(200))
 
-  onSelected: stats.refresh(nameColumns * 5)
-  onPushed: stats.refresh(nameColumns * 5)
+  onAppeared: stats.refresh(nameColumns * 5)
   filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5)
 
   flickable.interactive: false
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
+      visible: dataModel.isProcessing || !stats.summaryData
     }
 
     IconButtonBarItem {
@@ -79,6 +79,21 @@ BasePage {
 
         StatsTags { }
       }
+    }
+  }
+
+  Rectangle {
+    anchors.fill: parent
+    anchors.topMargin: header.height
+
+    color: "#80000000"
+
+    visible: stats.isLoading
+
+    AppText {
+      anchors.centerIn: parent
+      text: "Loading..."
+      font.pixelSize: sp(32)
     }
   }
 }

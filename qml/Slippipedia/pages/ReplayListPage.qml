@@ -22,8 +22,7 @@ BasePage {
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
   // load first page when showing this page
-  onSelected: if(replayList.length == 0) loadMore()
-  onPushed: if(replayList.length == 0) loadMore()
+  onAppeared: if(replayList.length == 0) loadMore()
 
   filterModal.onClosed: if(stats) refresh()
 
