@@ -193,7 +193,7 @@ values %2")
     }, 0)
   }
 
-  function getNewReplays(fileList) {
+  function getNewReplays(fileList) {    
     // find all files in fileList that do not have a replay in the database
 
     // do in 1 iteration instead of n*m:
@@ -202,37 +202,44 @@ values %2")
 
     // probably fails if files get renamed or moved
 
-    return readFromDb(function(tx) {
+    fileList.sort()
+
+    var paths = readFromDb(function(tx) {
       var results = tx.executeSql("select filePath from Replays order by filePath")
 
-      fileList.sort()
-
-      var fli = 0
-      var rli = 0
-
-      var newFiles = []
-      while(fli < fileList.length) {
-        var file = fileList[fli]
-        var dbFile = rli < results.rows.length ? results.rows.item(rli).filePath : ""
-
-        if(!dbFile || file < dbFile) {
-          // file is only in fileList
-          newFiles.push(file)
-          fli++
-        }
-        else if(file === dbFile) {
-          // file is in both lists
-          fli++
-          rli++
-        }
-        else {
-          // file is only in DB list
-          rli++
-        }
+      var paths = []
+      for(var i = 0; i < results.rows.length; i++) {
+        paths.push(results.rows.item(i).filePath)
       }
 
-      return newFiles
+      return paths
     }, [])
+
+    var fli = 0
+    var rli = 0
+
+    var newFiles = []
+    while(fli < fileList.length) {
+      var file = fileList[fli]
+      var dbFile = rli < paths.length ? paths[rli] : ""
+
+      if(!dbFile || file < dbFile) {
+        // file is only in fileList
+        newFiles.push(file)
+        fli++
+      }
+      else if(file === dbFile) {
+        // file is in both lists
+        fli++
+        rli++
+      }
+      else {
+        // file is only in DB list
+        rli++
+      }
+    }
+
+    return newFiles
   }
 
   function getReplaySummary(isOpponent) {
