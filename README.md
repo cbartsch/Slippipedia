@@ -25,7 +25,7 @@ Download the latest release for your operating system. Start the included `.app`
 
 Select your Slippi replay directory. Per default, this should be in `(documents)/Slippi`. In this case, the folder should be pre-selected automatically.
 
-![replay folder](images/replay-folder.png)
+![replay folder](media/replay-folder.png)
 
 ### Analyze replays
 
@@ -35,13 +35,13 @@ Depending on your setup and the number of replays, this can take a few minutes.
 Replays only need to be analyzed once. The database persists after app restarts.
 When you have new replays or change the folder, you can choose to only analyze new replays.
 
-![analyzing](images/analyzing.png)
+![analyzing](media/analyzing.png)
 
 ### Set player filter
 
 For more detailed output, like win rate and opponent stats, set your Slippi name and/or tag in the filter configuration.
 
-![player filter](images/filter-player.png)
+![player filter](media/filter-player.png)
 
 ### Explore stats
 
@@ -57,7 +57,7 @@ Second tab shows detailed stats.
 
 Third tab shows player tags and codes. Click a code to show all games with or versus that specific player.
 
-![stats](images/stats.png)
+![stats](media/stats.png)
 
 #### Analytics
 
@@ -65,7 +65,7 @@ Analytics groups stats by character, matchup, stage and time frame.
 
 Click the statistics icon to show statistics for a certain group. Click the list icon to show those games in the browser.
 
-![analytics](images/analytics.png)
+![analytics](media/analytics.png)
 
 #### Browser
 
@@ -75,7 +75,7 @@ Click the play icon to can re-watch them (needs [Slippi Desktop app](https://git
 
 Click the statistics icon for a session to show statistics pre-filtered for exactly those games.
 
-![browser](images/browser.png)
+![browser](media/browser.png)
 
 ### Filtering
 
@@ -87,7 +87,7 @@ Navigate back to show filtered data.
 
 First tab lets configures the player filter. Set your Slippi name and/or tag to enable win rate, opponent data etc. You can also filter by one or more specific characters.
 
-![player filter](images/filter-player-all.png)
+![player filter](media/filter-player-all.png)
 
 Second tab lets you filter for specific opponents and characters.
 
@@ -95,10 +95,46 @@ Second tab lets you filter for specific opponents and characters.
 
 Third tab lets you filter by game results. Set a min/max game duration, game outcom and remaining stocks. You can use this e.g. to filter short games that probably did not finish.
 
-![result filter](images/filter-result.png)
+![result filter](media/filter-result.png)
 
 #### Game filter
 
 Fourth tab lets you filter by game data. Set a time frame and one or more specific stages.
 
-![stage filter](images/filter-stage.png)
+![stage filter](media/filter-stage.png)
+
+## Building & Deployment
+
+The project can be built with the [Felgo SDK](https://felgo.com).
+Open the file `Slippipedia.pro` in Qt Creator and build for one of the supported platforms:
+
+* Mac OS (Clang)
+* Windows (MinGW)
+
+To create a release build, change build stage in `qml/config.json` to `"stage":"publish"`.
+
+### Deployment
+
+For deployment, the referenced libraries need to be added to the binary. 
+This can be done with the included deployment tools from Qt.
+
+#### Mac OS
+
+Create a release build, then use `macdeployqt`.
+* Add the option `-qmldir=<qml_dir>` to specify the QML folder to scan for plugin imports.
+* Add the option `-dmg` to output a disk image.
+* Add the option `-codesign=<certificate_id>`to sign the disk image.
+
+```
+/Applications/Felgo/Felgo/clang_64/bin/macdeployqt Slippipedia.app -qmldir="$(pwd)/../../qml" -dmg -codesign=VB6Z5JQJTD
+```
+
+#### Windows
+
+Create a release build, then use `windeployqt` from a Qt command line (use `qtenv2.bat` to set up the environment).
+
+This adds all the libraries to the folder next to the `.exe` file.
+
+
+
+
