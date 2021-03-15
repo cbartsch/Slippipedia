@@ -35,7 +35,7 @@ When you have new replays, or change the folder, you can choose to only analyze 
 
 For more detailed output, like win rate and opponent stats, set your Slippi name and/or tag in the filter configuration.
 
-![filter-player](images/filter-player.png)
+![player filter](images/filter-player.png)
 
 ### Explore stats
 
@@ -43,7 +43,13 @@ Use the tabs to explore data about your replays.
 
 #### Statistics
 
-Statistics shows global stats. First tab shows number of games, win rate, character usage (me/opponent), stage usage. Second tab shows detailed stats. Third tab shows player tags and codes.
+Statistics shows global stats. 
+
+First tab shows number of games, win rate, character usage (me/opponent), stage usage. 
+
+Second tab shows detailed stats. 
+
+Third tab shows player tags and codes. Click a code to show all games with or versus that specific player.
 
 ![stats](images/stats.png)
 
@@ -51,11 +57,17 @@ Statistics shows global stats. First tab shows number of games, win rate, charac
 
 Analytics groups stats by character, matchup, stage and time frame. 
 
+Click the statistics icon to show statistics for a certain group. Click the list icon to show those games in the browser.
+
 ![analytics](images/analytics.png)
 
 #### Browser
 
-Browser lists the replays one by one. Click the play icon to can re-watch them (needs [Slippi Desktop app](https://github.com/project-slippi/slippi-desktop-app)). Click the folder icon to find a specific replay file on your file system.
+Browser lists the replays one by one. 
+
+Click the play icon to can re-watch them (needs [Slippi Desktop app](https://github.com/project-slippi/slippi-desktop-app)). Click the folder icon to find a specific replay file on your file system.
+
+Click the statistics icon for a session to show statistics pre-filtered for exactly those games.
 
 ![browser](images/browser.png)
 
@@ -63,11 +75,13 @@ Browser lists the replays one by one. Click the play icon to can re-watch them (
 
 Restrict your replays by detailed criteria. All other stats, analytics and browser consider the filter settings.
 
+Navigate back to show filtered data.
+
 #### Player and opponent filter
 
 First tab lets configures the player filter. Set your Slippi name and/or tag to enable win rate, opponent data etc. You can also filter by one or more specific characters.
 
-![player filter](images/filter-player.png)
+![player filter](images/filter-player-all.png)
 
 Second tab lets you filter for specific opponents and characters.
 
