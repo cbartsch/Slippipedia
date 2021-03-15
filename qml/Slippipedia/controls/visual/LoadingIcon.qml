@@ -4,6 +4,7 @@ import Felgo 3.0
 IconButtonBarItem {
   icon: IconType.spinner
   visible: dataModel.isProcessing
+  enabled: false
 
   RotationAnimation on rotation {
     from: 0
