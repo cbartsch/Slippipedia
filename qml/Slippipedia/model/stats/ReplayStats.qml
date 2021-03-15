@@ -21,9 +21,9 @@ Item {
   property alias statsPlayer: statsPlayer
   property alias statsOpponent: statsOpponent
 
-  // public accessors for summary data
-  property int totalReplays: dataBase.getNumReplays(dbUpdater)
+  property int totalReplays: dataModel.totalReplays
 
+  // public accessors for summary data
   property int totalReplaysFiltered: summaryData && summaryData.count || 0
   property int totalReplaysFilteredWithResult: summaryData && summaryData.gameEndedCount || 0
   property int totalReplaysFilteredWon: summaryData && summaryData.winCount || 0
@@ -98,7 +98,6 @@ Item {
   }
 
   function refreshSummary() {
-    console.log("refresh summary")
     summaryData = dataBase.getReplaySummary(false)
   }
 
@@ -124,8 +123,6 @@ Item {
   function doRefresh(numPlayerTags) {
     refreshSummary()
 
-    var limit = numPlayerTags
-
     timeData = dataBase.getTimeStats()
 
     statsData = dataBase.getReplayStats(false)
@@ -134,7 +131,7 @@ Item {
     stageDataMap = dataBase.getStageStats()
     otherStageAmount = dataBase.getOtherStageAmount()
 
-    statsPlayer.refresh(limit)
-    statsOpponent.refresh(limit)
+    statsPlayer.refresh(numPlayerTags)
+    statsOpponent.refresh(numPlayerTags)
   }
 }

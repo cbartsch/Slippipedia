@@ -1,6 +1,8 @@
 import QtQuick 2.0
 import QtQuick.LocalStorage 2.12
 
+import Felgo 3.0
+
 import Qt.labs.settings 1.1
 
 import Slippipedia 1.0
@@ -11,7 +13,7 @@ Item {
   property int dbUpdater: 0
 
   // replay settings
-  property alias replayFolder: globalSettings.replayFolder
+  property string replayFolder: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
@@ -29,6 +31,9 @@ Item {
   property alias gameFilter: filterSettings.gameFilter
   property alias playerFilter: filterSettings.playerFilter
   property alias opponentFilter: filterSettings.opponentFilter
+
+  // global data
+  property int totalReplays: globalDataBase.getNumReplays(dbUpdater)
 
   // stats
   property alias stats: stats
@@ -59,10 +64,10 @@ Item {
   }
 
   onNumFilesSucceededChanged: {
+    // refresh after 100 items
     if(numFilesSucceeded % 100 === 0) {
-      dbUpdaterChanged() // refresh bindings after 100 items
+      dbUpdaterChanged()
       stats.refresh()
-      // TODO removed for now, makes the UI very slow (only reload parts of the data instead)
     }
   }
 
@@ -93,7 +98,7 @@ Item {
   Settings {
     id: globalSettings
 
-    property string replayFolder: ""
+    property alias replayFolder: dataModel.replayFolder
   }
 
   SlippiParser {
