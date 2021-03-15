@@ -8,6 +8,12 @@ This program can analyze a large number of Slippi replays and display detailed, 
 * Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
 * Built with Felgo SDK ([felgo.com](https://felgo.com))
 
+## Contact
+
+Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the issue tracker on this page or contact me via social media:
+
+* Twitter - [ChrisuSSBMtG](https://twitter.com/ChrisuSSBMtG)
+
 ## How to Use
 
 Download the latest release for your operating system. Start the included `.app` or the `.exe` file.
