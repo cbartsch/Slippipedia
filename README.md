@@ -27,8 +27,11 @@ Select your Slippi replay directory. Per default, this should be in `(documents)
 
 ### Analyze replays
 
-This step reads each replay and stores the relevant information in a database for fast lookup. Depending on your setup and the number of replays, this can take a few minutes.
-When you have new replays, or change the folder, you can choose to only analyze new replays.
+This step reads each replay and stores the relevant information in a database for fast lookup. 
+Depending on your setup and the number of replays, this can take a few minutes.
+
+Replays only need to be analyzed once. The database persists after app restarts.
+When you have new replays or change the folder, you can choose to only analyze new replays.
 
 ![analyzing](images/analyzing.png)
 
