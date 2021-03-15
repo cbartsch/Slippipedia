@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>assets/img/css_icon_sheet.png</file>
-        <file>assets/img/css_portrait_sheet.png</file>
         <file>assets/img/sss_icon_sheet.png</file>
         <file>assets/img/stock_icon_sheet.png</file>
         <file>assets/img/daft.png</file>
@@ -56,5 +55,6 @@
         <file>qml/Slippipedia/controls/visual/LoadingIcon.qml</file>
         <file>qml/Slippipedia/controls/visual/ReplayIcons.qml</file>
         <file>qml/Slippipedia/controls/visual/UiAnimation.qml</file>
+        <file>qml/Slippipedia/controls/generic/CustomTabIcon.qml</file>
     </qresource>
 </RCC>

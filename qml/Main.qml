@@ -8,6 +8,9 @@ import Slippipedia 1.0
 App {
   id: app
 
+  width: dp(800)
+  height: dp(600)
+
   readonly property real splitPaneWidth: dp(500)
   readonly property bool useSplitMode: width > dp(1000)
 
