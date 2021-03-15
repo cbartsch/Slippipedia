@@ -7,6 +7,7 @@ This program can analyze a large number of Slippi replays and display detailed, 
 * Slippi ([slippi.gg](https://slippi.gg))
 * Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
 * Built with Felgo SDK ([felgo.com](https://felgo.com))
+* Game sprites ripped on [spriters-resource.com](https://www.spriters-resource.com/gamecube/ssbm/) by [Mr C.](https://www.spriters-resource.com/submitter/Mr.+C/) and [Colton](https://www.spriters-resource.com/submitter/Colton/)
 
 ## Contact
 
