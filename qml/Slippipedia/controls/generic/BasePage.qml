@@ -15,10 +15,16 @@ FlickablePage {
 
   rightBarItem: LoadingIcon { }
 
+  onAppeared: logPage(title)
+  onSelected: logPage(title)
+
   FilterModal {
     id: filterModal
     stats: basePage.stats
     page: basePage
+
+    onOpened: logPage("Filtering")
+    onClosed: logPage(basePage.title)
   }
 
   function showFilteringPage() {

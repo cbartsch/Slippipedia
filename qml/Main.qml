@@ -8,9 +8,6 @@ import Slippipedia 1.0
 App {
   id: app
 
-  width: dp(800)
-  height: dp(600)
-
   readonly property real splitPaneWidth: dp(500)
   readonly property bool useSplitMode: width > dp(1000)
 
@@ -43,12 +40,8 @@ App {
   }
 
   GoogleAnalytics {
+    id: analytics
     propertyId: "UA-163972040-2"
-
-    onPluginLoaded: {
-      console.log("GA log main screen")
-      logScreen("Main")
-    }
   }
 
   DataModel {
@@ -90,6 +83,8 @@ App {
       title: "Replay Database"
       icon: IconType.database
 
+      onSelected: if(page) page.selected()
+
       iconComponent: CustomTabIcon {
         selected: navigation.currentIndex === 0
         badgeValue: dataModel.newFiles.length || ""
@@ -106,7 +101,6 @@ App {
       icon: IconType.barchart
 
       onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
 
       BaseNavigationStack {
         StatisticsPage {
@@ -120,7 +114,6 @@ App {
       icon: IconType.lightbulbo
 
       onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
 
       BaseNavigationStack {
         AnalyticsPage {
@@ -134,7 +127,6 @@ App {
       icon: IconType.list
 
       onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
 
       BaseNavigationStack {
         ReplayListPage {
@@ -148,7 +140,6 @@ App {
       icon: IconType.exclamationcircle
 
       onSelected: if(page) page.selected()
-      onPageChanged: if(page) page.selected()
 
       BaseNavigationStack {
         AboutPage {
@@ -228,5 +219,11 @@ App {
 
   function isDateValid(date) {
     return date && !isNan(date.getTime())
+  }
+
+  function logPage(title) {
+    console.log("log page:", title)
+
+    analytics.logScreen(title)
   }
 }
