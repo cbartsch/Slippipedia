@@ -2,6 +2,8 @@
 
 This program can analyze a large number of Slippi replays and display detailed, filterable statistics and info.
 
+![video](media/analytics.gif)
+
 ## Credits
 
 * Slippi ([slippi.gg](https://slippi.gg))
