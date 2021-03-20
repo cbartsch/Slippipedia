@@ -10,9 +10,12 @@ HEADERS += \
     $$PWD/slippireplay.h \
     $$SLIPPC_SRC/analysis.h \
     $$SLIPPC_SRC/analyzer.h \
+    $$SLIPPC_SRC/compressor.h \
     $$SLIPPC_SRC/enums.h \
+    $$SLIPPC_SRC/lzma.h \
     $$SLIPPC_SRC/parser.h \
     $$SLIPPC_SRC/replay.h \
+    $$SLIPPC_SRC/schema.h \
     $$SLIPPC_SRC/util.h
 
 SOURCES += \
@@ -20,6 +23,12 @@ SOURCES += \
     $$PWD/slippireplay.cpp \
     $$SLIPPC_SRC/analysis.cpp \
     $$SLIPPC_SRC/analyzer.cpp \
+    $$SLIPPC_SRC/compressor.cpp \
  #   $$SLIPPC_SRC/main.cpp \
     $$SLIPPC_SRC/parser.cpp \
     $$SLIPPC_SRC/replay.cpp
+
+win32 {
+  message(load lib)
+  LIBS += -L $$PWD/slippc/lib-win -static -llzma-x86
+}
