@@ -70,12 +70,18 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
   QString errorMessage;
   try {
     slip::Parser parser(0);
-    parser.load(filePath.toLocal8Bit().data());
-    QScopedPointer<slip::Analysis> analysis(parser.analyze());
 
-    replay->fromAnalysis(filePath, analysis.data());
+    bool success = parser.load(filePath.toLocal8Bit().data());
 
-    emit m_item->replayParsed(filePath, replay);
+    if(success) {
+      QScopedPointer<slip::Analysis> analysis(parser.analyze());
+      replay->fromAnalysis(filePath, analysis.data());
+
+      emit m_item->replayParsed(filePath, replay);
+    }
+    else {
+      emit m_item->replayFailedToParse(filePath, "");
+    }
   }
   catch(std::exception &ex) {
     // qWarning() << "Could not parse SLP file" << filePath << ex.what();
