@@ -55,6 +55,7 @@ foreign key(replayId) references replays(id)
       )").arg(statsCols))
 
       tx.executeSql("create table if not exists Punishes (
+id integer not null primary key,
 replayId integer,
 port integer,
 
@@ -74,7 +75,6 @@ numMoves integer,
 killDirection integer,
 didKill bool,
 
-primary key(replayId, port, startFrame),
 foreign key(replayId) references replays(id)
       )")
 
@@ -84,7 +84,9 @@ foreign key(replayId) references replays(id)
       tx.executeSql("create index if not exists player_replay_index on players(replayId)")
       tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
 
-      tx.executeSql("create index if not exists punish_id_index on punishes(replayId, port, startFrame)")
+      tx.executeSql("create index if not exists punish_replay_index on punishes(replayId)")
+      tx.executeSql("create index if not exists punish_port_index on punishes(port)")
+      tx.executeSql("create index if not exists punish_replay_port_index on punishes(replayId, port)")
 
       // can only configure this globally, set like to be case sensitive:
       tx.executeSql("pragma case_sensitive_like = true")
@@ -150,7 +152,7 @@ values %2")
 
         player.punishes.forEach(function(punish) {
           var params = [
-                replay.uniqueId, player.port,
+                punish.uniqueId, replay.uniqueId, player.port,
                 punish.startFrame, punish.endFrame, punish.durationFrames,
                 punish.startPercent, punish.endPercent, punish.damage,
                 punish.openingDynamic, punish.openingMoveId, punish.lastMoveId, punish.numMoves,
@@ -158,7 +160,7 @@ values %2")
               ]
 
           tx.executeSql(qsTr("insert or replace into Punishes (
-replayId, port,
+id, replayId, port,
 startFrame, endFrame, duration,
 startPercent, endPercent, damage,
 openingDynamic, openingMoveId, lastMoveId, numMoves,
@@ -586,7 +588,7 @@ order by yearMonth desc"
   }
 
   function getReplayList(max, start) {
-    log("get list")
+    log("get replay list")
 
     return readFromDb(function(tx) {
       var sql = "select
@@ -598,6 +600,46 @@ join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
 where p.port != p2.port and " + getFilterCondition() + "
 group by r.id
+order by r.date desc
+limit ? offset ?"
+
+      var params = getFilterParams().concat([max, start])
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+
+        item.date = new Date(item.date)
+
+        result.push(item)
+      }
+
+      return result
+    }, [])
+  }
+
+  function getPunishList(max, start) {
+    log("get punish list")
+
+    return readFromDb(function(tx) {
+      var sql = "select
+pu.id id,
+pu.numMoves numMoves, pu.openingDynamic openingDynamic,
+pu.openingMoveId openingMoveId, pu.lastMoveId lastMoveId,
+pu.didKill didKill, pu.killDirection killDirection,
+pu.startFrame startFrame, pu.endFrame endFrame, pu.duration duration,
+pu.startPercent startPercent, pu.endPercent endPercent, pu.damage damage,
+r.id replayId, r.date date, r.filePath filePath, r.duration gameDuration, r.stageId stageId, r.winnerPort winnerPort,
+p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
+from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+join punishes pu on pu.replayId = r.id and pu.port = p.port
+where " + getFilterCondition() + "
 order by r.date desc
 limit ? offset ?"
 

@@ -10,6 +10,8 @@
 struct PunishData : public QObject {
   Q_OBJECT
 
+  Q_PROPERTY(qint64 uniqueId MEMBER m_uniqueId)
+
   Q_PROPERTY(int numMoves MEMBER m_numMoves)
   Q_PROPERTY(Dynamic openingDynamic MEMBER m_openingDynamic)
   Q_PROPERTY(int openingMoveId MEMBER m_openingMoveId)
@@ -50,6 +52,8 @@ public:
   inline int durationFrames() const { return m_endFrame - m_startFrame; }
 
 private:
+  qint64 m_uniqueId;
+
   int m_numMoves, m_openingMoveId, m_lastMoveId,
     m_startFrame, m_endFrame;
 

@@ -26,7 +26,6 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   uniqueId = m_date.toSecsSinceEpoch();
   uniqueId = uniqueId * 17 + m_stageId;
   uniqueId = uniqueId * 17 + m_gameDuration;
-  uniqueId = uniqueId * 17 + m_stageId;
 
   m_uniqueId = uniqueId;
 
@@ -152,14 +151,27 @@ PunishData::PunishData(QObject *parent, const slip::Analysis &analysis,
 
   m_killDirection = Direction(punish.kill_dir);
 
-  auto &firstAttack = p.attacks[firstAttackIndex];
-  auto &lastAttack = firstAttack;
+  auto *firstAttack = &p.attacks[firstAttackIndex];
+  auto *lastAttack = firstAttack;
 
-  for(auto *attack = &firstAttack; attack->punish_id == punishIndex && attack < p.attacks + MAX_ATTACKS; attack++) {
-    lastAttack = *attack;
+  for(auto attack = firstAttack; attack->punish_id == punishIndex && attack < p.attacks + MAX_ATTACKS; attack++) {
+    lastAttack = attack;
   }
 
-  m_openingDynamic = Dynamic(firstAttack.opening);
-  m_openingMoveId = firstAttack.move_id;
-  m_lastMoveId = lastAttack.move_id;
+  m_openingDynamic = Dynamic(firstAttack->opening);
+  m_openingMoveId = firstAttack->move_id;
+  m_lastMoveId = punish.last_move_id;
+
+  // compute pseudo-unique hash for game
+  qint64 uniqueId = 0;
+  uniqueId = m_startFrame;
+  uniqueId = uniqueId * 17 + m_endFrame;
+  uniqueId = uniqueId * 17 + m_startPercent;
+  uniqueId = uniqueId * 17 + m_endPercent;
+  uniqueId = uniqueId * 17 + m_killDirection;
+  uniqueId = uniqueId * 17 + m_numMoves;
+  uniqueId = uniqueId * 17 + m_openingMoveId;
+  uniqueId = uniqueId * 17 + m_lastMoveId;
+
+  m_uniqueId = uniqueId;
 }

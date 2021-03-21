@@ -24,12 +24,15 @@ AboutPage 1.0               pages/AboutPage.qml
 AnalyticsPage 1.0           pages/AnalyticsPage.qml
 DatabasePage 1.0            pages/DatabasePage.qml
 FilterPage 1.0              pages/FilterPage.qml
-ReplayListPage 1.0          pages/ReplayListPage.qml
+BrowserPage 1.0             pages/BrowserPage.qml
 StatisticsPage 1.0          pages/StatisticsPage.qml
 
 # ---- Views
 
 AnalyticsListView 1.0       views/analytics/AnalyticsListView.qml
+
+PunishListView 1.0          views/browser/PunishListView.qml
+ReplayListView 1.0          views/browser/ReplayListView.qml
 
 FilterInfoItem 1.0          views/filter/FilterInfoItem.qml
 FilterModal 1.0             views/filter/FilterModal.qml

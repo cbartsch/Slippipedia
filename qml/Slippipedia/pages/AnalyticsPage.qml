@@ -56,9 +56,6 @@ BasePage {
     anchors.fill: parent
     anchors.topMargin: header.height
 
-    width: parent.width
-    height: currentItem ? currentItem.implicitHeight : dp(500)
-
     AnalyticsListView {
       showsCharacters: true
       model: stats.statsPlayer.charDataAnalytics

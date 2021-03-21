@@ -129,7 +129,7 @@ App {
       onSelected: if(page) page.selected()
 
       BaseNavigationStack {
-        ReplayListPage {
+        BrowserPage {
           stats: dataModel.stats
         }
       }
@@ -174,9 +174,9 @@ App {
   }
 
   Component {
-    id: replayListPageC
+    id: browserPageC
 
-    ReplayListPage {
+    BrowserPage {
       property var filterData: ({})
 
       filterChangeable: true
@@ -205,7 +205,7 @@ App {
 
   // show list view for specific char, opponent char, stage and/or month of year
   function showList(filterData) {
-    showPage(replayListPageC, filterData)
+    showPage(browserPageC, filterData)
   }
 
   // show stats view for specific char, opponent char, stage and/or month of year

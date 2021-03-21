@@ -1,19 +1,14 @@
-import Felgo 3.0
-
 import QtQuick 2.0
-import QtQuick.Controls 2.12 as QC2
+import Felgo 3.0
 
 import Slippipedia 1.0
 
-BasePage {
-  id: replayListPage
-  title: qsTr("Replay browser")
+Item {
+  property var replayList: []
 
-  property bool filterChangeable: true
+  property alias count: listView.count
 
   property int numReplays: 25
-
-  property var replayList: []
 
   property var sectionData: ({})
 
@@ -21,45 +16,9 @@ BasePage {
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
-  // load first page when showing this page
-  onAppeared: if(replayList.length == 0) loadMore()
-
-  filterModal.onClosed: if(stats) refresh()
-
-  rightBarItem: NavigationBarRow {
-    LoadingIcon {
-    }
-    IconButtonBarItem {
-      icon: IconType.filter
-      onClicked: showFilteringPage()
-      visible: filterChangeable
-    }
-    IconButtonBarItem {
-      icon: IconType.refresh
-      onClicked: refresh()
-    }
-  }
-
-
-  Column {
-    id: header
-    width: parent.width
-
-    FilterInfoItem {
-      stats: replayListPage.stats
-      clickable: filterChangeable
-
-      showStatsButton: replayListPage.navigationStack.depth > 1
-      onShowStats: app.showStats({ sourceFilter: replayListPage.stats.dataBase.filterSettings })
-    }
-  }
-
-
   AppListView {
     id: listView
-
     anchors.fill: parent
-    anchors.topMargin: header.height
 
     model: JsonListModel {
       id: listModel
@@ -80,7 +39,7 @@ BasePage {
                                    name1: sData.name1,
                                    code2: sData.code2,
                                    name2: sData.name2,
-                                    // TODO find out why it can be off by a minute (or the seconds are truncated)
+                                   // TODO find out why it can be off by a minute (or the seconds are truncated)
                                    startMs: sData.dateFirst.getTime() - 1000 * 60,
                                    endMs: sData.dateLast.getTime() + 1000 * 60
                                  })

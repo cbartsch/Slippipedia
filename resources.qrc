@@ -24,7 +24,7 @@
         <file>qml/Slippipedia/pages/AnalyticsPage.qml</file>
         <file>qml/Slippipedia/pages/DatabasePage.qml</file>
         <file>qml/Slippipedia/pages/FilterPage.qml</file>
-        <file>qml/Slippipedia/pages/ReplayListPage.qml</file>
+        <file>qml/Slippipedia/pages/BrowserPage.qml</file>
         <file>qml/Slippipedia/pages/StatisticsPage.qml</file>
         <file>qml/Slippipedia/views/analytics/AnalyticsListView.qml</file>
         <file>qml/Slippipedia/views/filter/FilterInfoItem.qml</file>
