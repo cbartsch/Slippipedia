@@ -57,6 +57,7 @@ Column {
       { header: "Laggy aerials", property: "nonCancelledAerialRate", type: "percentage" },
       { header: "Intangible ledgedashes / game", property: "avgLedgedashes", type: "decimal" },
       { header: "Average GALINT", property: "avgGalint", type: "decimal" },
+      { header: "Maximum GALINT", property: "maxGalint", type: "integer" },
     ]
   }
 
@@ -72,6 +73,38 @@ Column {
       { header: "Wavelands", property: "wavelands", type: "stat" },
       { header: "Dashdances ", property: "dashdances", type: "stat" },
       { header: "Pivots", property: "pivots", type: "stat" },
+    ]
+  }
+
+  StatsGrid {
+    width: parent.width
+
+    title: "Inputs per minute"
+
+    statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+    rowData: [
+      { header: "Actions (APM)", property: "actionsPerMinute", type: "stat" },
+      { header: "Action states (ASPM)", property: "stateChangesPerMinute", type: "stat" },
+      { header: "Digital inputs", property: "buttonsPressedPerMinute", type: "stat" },
+      { header: "Control stick moves", property: "analogStickMovesPerMinute", type: "stat" },
+      { header: "C stick moves", property: "cStickMovesPerMinute", type: "stat" }
+    ]
+  }
+
+  StatsGrid {
+    width: parent.width
+
+    title: "Inputs per game"
+
+    statsList: [ stats.statsPlayer, stats.statsOpponent ]
+
+    rowData: [
+      { header: "Actions", property: "actions", type: "stat" },
+      { header: "Action states", property: "stateChanges", type: "stat" },
+      { header: "Digital inputs", property: "buttonsPressed", type: "stat" },
+      { header: "Control stick moves", property: "analogStickMoves", type: "stat" },
+      { header: "C stick moves", property: "cStickMoves", type: "stat" }
     ]
   }
 

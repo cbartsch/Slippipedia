@@ -92,10 +92,16 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
 
   m_stats["apm"] = p.apm;
   m_stats["aspm"] = p.aspm;
+
+  qreal gameDurationMinutes = (qreal)analysis.game_length / 60 / 60;
+  m_stats["totalActions"] = p.apm * gameDurationMinutes;
   m_stats["buttonsPressed"] = p.button_count;
   m_stats["analogStickMoves"] = p.astick_count;
   m_stats["cStickMoves"] = p.cstick_count;
-  m_stats["analogMoves"] = p.state_changes;
+  m_stats["stateChanges"] = p.state_changes;
+  // note: p.state_changes is not, like the comment says, analog movoes
+  // it is just total state changes (aspm * time)
+  // thus we don't need to save the aspm value
 
   m_stats["pivots"] = p.pivots;
   m_stats["wavedashes"] = p.wavedashes;

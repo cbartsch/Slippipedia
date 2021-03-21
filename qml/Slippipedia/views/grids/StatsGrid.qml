@@ -18,7 +18,6 @@ Column {
 
   SimpleSection {
     id: title
-    title: "Tech skill stats"
   }
 
   RowLayout {
@@ -75,6 +74,7 @@ Column {
             case "stat": return value.format()
             case "percentage": return dataModel.formatPercentage(value)
             case "decimal": return value.toFixed(2)
+            case "integer": return value.toFixed(0)
             default: return dataModel.formatNumber(value)
             }
           }

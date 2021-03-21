@@ -320,6 +320,16 @@ where %1").arg(getFilterCondition())
     }, 0)
   }
 
+  function statFunc(stat) {
+    // most stats can be summed up but some need a different function
+    // return an SQL aggregate function name for this particular stat:
+    switch(stat) {
+    case "maxGalint": return "max"
+    default: return "sum"
+    }
+
+  }
+
   function getReplayStats(isOpponent) {
     log("get replay stats")
 
@@ -345,7 +355,9 @@ where %1").arg(getFilterCondition())
       var opponentCol = isOpponent ? "p" : "p2"
 
       var statColCondition = statCols
-      .map(c => qsTr("sum(%1.s_%2) %2").arg(playerCol).arg(c)
+      .map(c =>
+           qsTr("%3(%1.s_%2) %2")
+           .arg(playerCol).arg(c).arg(statFunc(c))
            ).join(",")
 
       var sql = qsTr("select

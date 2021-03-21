@@ -31,6 +31,7 @@ Item {
 
   readonly property real averageGameDuration: summaryData && summaryData.avgDuration || 0
   readonly property real totalGameDuration: averageGameDuration * totalReplaysFiltered
+  readonly property real totalGameDurationMinutes: averageGameDuration * totalReplaysFiltered / 60 / 60
 
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
   readonly property real winRate: totalReplaysFilteredWon / totalReplaysFilteredWithResult
