@@ -8,7 +8,6 @@ SlippiReplay::SlippiReplay(QObject *parent) : QObject(parent)
 }
 
 SlippiReplay::~SlippiReplay() {
- // qDebug() << "Replay destruction";
 }
 
 void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysis) {
@@ -53,6 +52,20 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
   m_charId = p.char_id;
   m_charSkinId = p.color;
 
+  unsigned int aIndex = 0;
+
+  for(unsigned int pIndex = 0; pIndex < MAX_PUNISHES; pIndex++) {
+    if(p.punishes[pIndex].end_frame == 0) {
+      break;
+    }
+
+    m_punishes << QVariant::fromValue(new PunishData(this, analysis, p, o, pIndex, aIndex));
+
+    while(p.attacks[aIndex].punish_id == pIndex && aIndex < MAX_ATTACKS) {
+      aIndex++;
+    }
+  }
+
   m_stats["endStocks"] = p.end_stocks;
   m_stats["selfDestructs"] = p.self_destructs;
 
@@ -77,6 +90,13 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
   m_stats["grabEscapes"] = p.grab_escapes;
   m_stats["ledgeGrabs"] = p.ledge_grabs;
 
+  m_stats["apm"] = p.apm;
+  m_stats["aspm"] = p.aspm;
+  m_stats["buttonsPressed"] = p.button_count;
+  m_stats["analogStickMoves"] = p.astick_count;
+  m_stats["cStickMoves"] = p.cstick_count;
+  m_stats["analogMoves"] = p.state_changes;
+
   m_stats["pivots"] = p.pivots;
   m_stats["wavedashes"] = p.wavedashes;
   m_stats["wavelands"] = p.wavelands;
@@ -96,10 +116,44 @@ PlayerData::PlayerData(QObject *parent, const slip::Analysis &analysis,
   m_stats["lCancelsMissed"] = p.l_cancels_missed;
   m_stats["ledgedashes"] = p.galint_ledgedashes;
   m_stats["avgGalint"] = p.mean_galint;
+  m_stats["maxGalint"] = p.max_galint;
   m_stats["totalGalint"] = p.mean_galint * p.galint_ledgedashes;
 
   m_stats["edgeCancelAerials"] = p.edge_cancel_aerials;
   m_stats["edgeCancelSpecials"] = p.edge_cancel_specials;
   m_stats["teeterCancelAerials"] = p.teeter_cancel_aerials;
   m_stats["teeterCancelSpecials"] = p.teeter_cancel_specials;
+}
+
+PunishData::PunishData(QObject *parent, const slip::Analysis &analysis,
+                       const slip::AnalysisPlayer &p, const slip::AnalysisPlayer &o,
+                       int punishIndex, int firstAttackIndex)
+  : QObject(parent)
+{
+  // maybe useful for stats added later:
+  Q_UNUSED(analysis)
+  Q_UNUSED(o)
+
+  auto &punish = p.punishes[punishIndex];
+
+  m_numMoves = punish.num_moves;
+
+  m_startPercent = punish.start_pct;
+  m_endPercent = punish.end_pct;
+
+  m_startFrame = punish.start_frame;
+  m_endFrame = punish.end_frame;
+
+  m_killDirection = Direction(punish.kill_dir);
+
+  auto &firstAttack = p.attacks[firstAttackIndex];
+  auto &lastAttack = firstAttack;
+
+  for(auto *attack = &firstAttack; attack->punish_id == punishIndex && attack < p.attacks + MAX_ATTACKS; attack++) {
+    lastAttack = *attack;
+  }
+
+  m_openingDynamic = Dynamic(firstAttack.opening);
+  m_openingMoveId = firstAttack.move_id;
+  m_lastMoveId = lastAttack.move_id;
 }

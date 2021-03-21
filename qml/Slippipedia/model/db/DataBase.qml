@@ -54,11 +54,37 @@ primary key(replayId, port),
 foreign key(replayId) references replays(id)
       )").arg(statsCols))
 
+      tx.executeSql("create table if not exists Punishes (
+replayId integer,
+port integer,
+
+startFrame integer,
+endFrame integer,
+duration integer,
+
+startPercent real,
+endPercent real,
+damage real,
+
+openingDynamic integer,
+openingMoveId integer,
+lastMoveId integer,
+numMoves integer,
+
+killDirection integer,
+didKill bool,
+
+primary key(replayId, port, startFrame),
+foreign key(replayId) references replays(id)
+      )")
+
       tx.executeSql("create index if not exists stage_index on replays(stageId)")
 
       tx.executeSql("create index if not exists char_index on players(charId)")
       tx.executeSql("create index if not exists player_replay_index on players(replayId)")
       tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
+
+      tx.executeSql("create index if not exists punish_id_index on punishes(replayId, port, startFrame)")
 
       // can only configure this globally, set like to be case sensitive:
       tx.executeSql("pragma case_sensitive_like = true")
@@ -69,6 +95,7 @@ foreign key(replayId) references replays(id)
     db.transaction(function(tx) {
       tx.executeSql("drop table if exists Replays")
       tx.executeSql("drop table if exists Players")
+      tx.executeSql("drop table if exists Punishes")
     })
   }
 
@@ -117,7 +144,30 @@ slippiName, slippiCode, cssTag, %1
 )
 values %2")
                       .arg(Object.keys(player.stats).map(key => "s_" + key).join(","))
-                      .arg(makeSqlWildcards(params)), params)
+                      .arg(makeSqlWildcards(params)),
+                      params)
+
+
+        player.punishes.forEach(function(punish) {
+          var params = [
+                replay.uniqueId, player.port,
+                punish.startFrame, punish.endFrame, punish.durationFrames,
+                punish.startPercent, punish.endPercent, punish.damage,
+                punish.openingDynamic, punish.openingMoveId, punish.lastMoveId, punish.numMoves,
+                punish.killDirection, punish.didKill
+              ]
+
+          tx.executeSql(qsTr("insert or replace into Punishes (
+replayId, port,
+startFrame, endFrame, duration,
+startPercent, endPercent, damage,
+openingDynamic, openingMoveId, lastMoveId, numMoves,
+killDirection, didKill
+  )
+  values %1")
+                        .arg(makeSqlWildcards(params)),
+                        params)
+        })
       })
     })
 

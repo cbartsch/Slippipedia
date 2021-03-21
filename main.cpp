@@ -44,6 +44,7 @@ int main(int argc, char *argv[])
   qmlRegisterType<SlippiParser>(QML_MODULE_NAME, 1, 0, "SlippiParser");
   qmlRegisterUncreatableType<SlippiReplay>(QML_MODULE_NAME, 1, 0, "SlippiReplay", "Returned by SlippiParser");
   qmlRegisterUncreatableType<PlayerData>(QML_MODULE_NAME, 1, 0, "PlayerData", "Returned by SlippiParser");
+  qmlRegisterUncreatableType<PunishData>(QML_MODULE_NAME, 1, 0, "PunishData", "Returned by SlippiParser");
 
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);

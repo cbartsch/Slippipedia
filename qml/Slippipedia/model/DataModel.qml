@@ -42,7 +42,7 @@ Item {
   property alias globalDataBase: globalDataBase
   property var dataBaseConnection
 
-  readonly property string dbLatestVersion: "1.5"
+  readonly property string dbLatestVersion: "2.0"
   readonly property string dbCurrentVersion: dataBaseConnection.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
