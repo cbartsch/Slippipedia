@@ -143,7 +143,7 @@ Column {
             id: directionCheckBox
             text: modelData
             anchors.centerIn: parent
-            checked: filter.killDirections.indexOf(killDirection) >= 0
+            checked: filter ? filter.killDirections.indexOf(killDirection) >= 0 : false
 
             onCheckedChanged: {
               if(checked) {

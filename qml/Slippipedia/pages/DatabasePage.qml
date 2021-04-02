@@ -45,42 +45,6 @@ BasePage {
     }
 
     SimpleSection {
-      title: "Slippi Desktop App folder"
-    }
-
-    AppListItem {
-      text: "Click to select Slippi Desktop App folder..."
-      detailText: "Used to play replays & combos."
-
-      onSelected: fileDialogDesktop.open()
-
-      FileDialog {
-        id: fileDialogDesktop
-        title: "Please choose a file"
-        selectMultiple: false
-        selectFolder: true
-        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
-
-        onAccepted: dataModel.desktopAppFolder = fileUtils.stripSchemeFromUrl(fileUrl)
-      }
-    }
-
-    AppListItem {
-      text: dataModel.desktopAppFolder
-      detailText: dataModel.hasDesktopApp ? "Desktop app found." : "Desktop app not found."
-
-      leftItem: Icon {
-        anchors.verticalCenter: parent.verticalCenter
-        size: dp(24)
-        color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
-        icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
-      }
-
-      enabled: false
-      backgroundColor: Theme.backgroundColor
-    }
-
-    SimpleSection {
       title: "Replay database"
     }
 
@@ -166,6 +130,80 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       value: dataModel.processProgress
       width: parent.width
       visible: dataModel.isProcessing
+    }
+
+
+
+    SimpleSection {
+      title: "Slippi Desktop App folder"
+    }
+
+    AppListItem {
+      text: "Click to select Slippi Desktop App folder..."
+      detailText: "Used to play replays & combos."
+
+      onSelected: fileDialogDesktop.open()
+
+      FileDialog {
+        id: fileDialogDesktop
+        title: "Please choose a file"
+        selectMultiple: false
+        selectFolder: true
+        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
+
+        onAccepted: dataModel.desktopAppFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+      }
+    }
+
+    AppListItem {
+      text: dataModel.desktopAppFolder
+      detailText: dataModel.hasDesktopApp ? "Desktop app found." : "Desktop app not found."
+
+      leftItem: Icon {
+        anchors.verticalCenter: parent.verticalCenter
+        size: dp(24)
+        color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
+        icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
+      }
+
+      enabled: false
+      backgroundColor: Theme.backgroundColor
+    }
+
+    SimpleSection {
+      title: "Melee ISO file"
+    }
+
+    AppListItem {
+      text: "Click to select your Melee ISO file..."
+      detailText: "Used to play replays & combos."
+
+      onSelected: fileDialogIso.open()
+
+      FileDialog {
+        id: fileDialogIso
+        title: "Please choose a file"
+        selectMultiple: false
+        selectFolder: false
+        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.meleeIsoPath)
+
+        onAccepted: dataModel.meleeIsoPath = fileUtils.stripSchemeFromUrl(fileUrl)
+      }
+    }
+
+    AppListItem {
+      text: dataModel.meleeIsoPath
+      detailText: dataModel.hasMeleeIso ? "Melee ISO found." : "Melee ISO not found."
+
+      leftItem: Icon {
+        anchors.verticalCenter: parent.verticalCenter
+        size: dp(24)
+        color: dataModel.hasMeleeIso ? Theme.tintColor : "red"
+        icon: dataModel.hasMeleeIso ? IconType.check : IconType.times
+      }
+
+      enabled: false
+      backgroundColor: Theme.backgroundColor
     }
   }
 

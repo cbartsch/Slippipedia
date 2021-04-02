@@ -12,8 +12,8 @@ AppFlickable {
 
   property var model: ({})
 
-  readonly property var charsIds1: Object.keys(model.chars1)
-  readonly property var charsIds2: Object.keys(model.chars2)
+  readonly property var charsIds1: model && model.chars1 ? Object.keys(model.chars1) : []
+  readonly property var charsIds2: model && model.chars2 ? Object.keys(model.chars2) : []
 
   Row {
     id: titleContent
@@ -36,7 +36,7 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: playerInfoRow.model.chars1[modelData]
+        skinId: playerInfoRow.model.chars1 && playerInfoRow.model.chars1[modelData] || 0
       }
     }
 
@@ -54,7 +54,7 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: playerInfoRow.model.chars2[modelData]
+        skinId: playerInfoRow.model.chars2 && playerInfoRow.model.chars2[modelData] || 0
       }
     }
 

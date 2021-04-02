@@ -18,7 +18,11 @@ Item {
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
   property string desktopAppFolder: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Desktop App")
-  readonly property bool hasDesktopApp: fileUtils.existsFile(desktopAppFolder + "/dolphin/Slippi Dolphin.exe")
+  readonly property string desktopDolphinPath: desktopAppFolder + "/dolphin/Slippi Dolphin.exe"
+  readonly property bool hasDesktopApp: fileUtils.existsFile(desktopDolphinPath)
+
+  property string meleeIsoPath: ""
+  readonly property bool hasMeleeIso: !!meleeIsoPath && fileUtils.existsFile(meleeIsoPath)
 
   // analyze progress
   property bool progressCancelled: false
@@ -102,6 +106,8 @@ Item {
     id: globalSettings
 
     property alias replayFolder: dataModel.replayFolder
+    property alias desktopAppFolder: dataModel.desktopAppFolder
+    property alias meleeIsoPath: dataModel.meleeIsoPath
   }
 
   SlippiParser {
@@ -232,5 +238,70 @@ Item {
     return qsTr("%1 (%2) vs %3 (%4)")
         .arg(replay.name1).arg(replay.code1)
         .arg(replay.name2).arg(replay.code2)
+  }
+
+  // replay functions
+
+  function openReplayFolder(filePath) {
+    Utils.exploreToFile(filePath)
+  }
+
+  function openReplayFile(filePath) {
+    if(!hasDesktopApp) {
+      // just open file normally
+      fileUtils.openFile(filePath)
+      return
+    }
+
+    var slippiInput = { replay: filePath }
+
+    startDolphin(slippiInput)
+  }
+
+  function replayPunishes(punishList) {
+    if(!hasDesktopApp) {
+      return false
+    }
+    if(!punishList || punishList.length === 0) {
+      return false
+    }
+
+    var startFrames = 60 * 2
+    var paddingFrames = 60 * 3 // 2 seconds
+
+    // convert to playback dolphin input format:
+    var punishQueue = punishList.map(pu => ({
+                                         path: pu.filePath,
+                                         startFrame: pu.startFrame - paddingFrames - startFrames,
+                                         endFrame: pu.endFrame + paddingFrames - startFrames
+                                       }))
+
+    var slippiInput = {
+      mode: "queue",
+      replay: "", // not required in queue mode
+      isRealTimeMode: false,
+      outputOverlayFiles: false, // what is this?
+      queue: punishQueue
+    }
+
+    startDolphin(slippiInput)
+  }
+
+  function startDolphin(slippiInput) {
+    var tempJsonFilePath = fileUtils.storageLocation(FileUtils.AppDataLocation, "input.json")
+    fileUtils.writeFile(tempJsonFilePath, JSON.stringify(slippiInput, null, "  "))
+
+    var options = [
+          "-i", tempJsonFilePath, // load input JSON file
+        ]
+
+    if(hasMeleeIso) {
+      options = options.concat([
+                                 "-e", meleeIsoPath // auto-start melee ISO in dolphin
+                               ])
+    }
+
+    // start > Slippi Dolphin -i punish.json
+    Utils.startCommand(desktopDolphinPath, options)
   }
 }

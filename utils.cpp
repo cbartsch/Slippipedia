@@ -29,7 +29,15 @@ bool Utils::exploreToFile(const QString &filePath)
 
   return true;
 #endif
+  // TODO other OS implementations
   return false;
+}
+
+void Utils::startCommand(const QString &command, const QStringList &arguments)
+{
+  QProcess *p = new QProcess(this);
+
+  p->start(command, arguments);
 }
 
 QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilters, bool recursive)

@@ -7,6 +7,12 @@ AppListItem {
 
   property var replayModel: model
 
+  property alias toolBtnFolder: toolBtnFolder
+  property alias toolBtnOpen: toolBtnOpen
+
+  signal openReplayFolder(string filePath)
+  signal openReplayFile(string filePath)
+
   width: parent ? parent.width : 0
 
   backgroundColor: Theme.backgroundColor
@@ -47,18 +53,10 @@ AppListItem {
     AppToolButton {
       id: toolBtnOpen
       iconType: IconType.play
-      onClicked: openReplay(replayModel.filePath)
+      onClicked: openReplayFile(replayModel.filePath)
       toolTipText: "Open replay file"
       height: width
       anchors.verticalCenter: parent.verticalCenter
     }
-  }
-
-  function openReplayFolder(filePath) {
-    Utils.exploreToFile(filePath)
-  }
-
-  function openReplay(filePath) {
-    fileUtils.openFile(filePath)
   }
 }

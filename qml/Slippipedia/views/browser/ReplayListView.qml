@@ -46,6 +46,8 @@ Item {
     }
 
     delegate: ReplayListItem {
+      onOpenReplayFolder: dataModel.openReplayFolder(filePath)
+      onOpenReplayFile: dataModel.openReplayFile(filePath)
     }
 
     footer: AppListItem {

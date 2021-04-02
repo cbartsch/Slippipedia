@@ -18,6 +18,8 @@ AppModal {
 
   NavigationStack {
     FilterPage {
+      id: filterPage
+
       stats: filterModal.stats
       height: modal.modalHeight
 
@@ -28,5 +30,9 @@ AppModal {
         onClicked: filterModal.close()
       }
     }
+  }
+
+  function showTab(index) {
+    filterPage.showTab(index)
   }
 }

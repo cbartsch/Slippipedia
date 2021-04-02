@@ -22,9 +22,9 @@ Item {
 
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
-        charId: replayModel.char1
-        skinId: replayModel.skin1
-        opacity: replayModel.endStocks1 > index ? 1 : 0.25
+        charId: replayModel && replayModel.char1 || 0
+        skinId: replayModel && replayModel.skin1 || 0
+        opacity: replayModel && replayModel.endStocks1 > index ? 1 : 0.25
 
         width: dp(20)
         height: dp(20)
@@ -54,8 +54,8 @@ Item {
 
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
-        charId: replayModel.char2
-        skinId: replayModel.skin2
+        charId: replayModel && replayModel.char2 || 0
+        skinId: replayModel && replayModel.skin2 || 0
         opacity: replayModel.endStocks2 > index ? 1 : 0.25
 
         width: dp(20)
@@ -70,7 +70,7 @@ Item {
 
     StageIcon {
       anchors.verticalCenter: parent.verticalCenter
-      stageId: replayModel.stageId
+      stageId: replayModel && replayModel.stageId || 0
       width: dp(62 * 0.8)
       height: dp(54 * 0.8)
     }

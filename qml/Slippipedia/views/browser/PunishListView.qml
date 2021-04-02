@@ -10,7 +10,7 @@ Item {
 
   property alias count: listView.count
 
-  property int numPunishes: 50
+  property int numPunishes: 25
 
   property var sectionData: ({})
 
@@ -20,9 +20,37 @@ Item {
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
+  AppListItem {
+    id: header
+
+    text: qsTr("%1 punishes found.").arg(listView.count)
+
+    detailText: "Set up punish filter to refine your search."
+
+    onSelected: {
+      filterModal.showTab(4)
+      filterModal.open()
+    }
+
+    rightItem: Row {
+      height: parent.height
+
+      AppToolButton {
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
+
+        iconType: IconType.play
+        toolTipText: "Replay all punishes"
+
+        onClicked: dataModel.replayPunishes(punishList)
+      }
+    }
+  }
+
   AppListView {
     id: listView
     anchors.fill: parent
+    anchors.topMargin: header.height
 
     model: SortFilterProxyModel {
       sourceModel: JsonListModel {
@@ -40,21 +68,26 @@ Item {
       width: parent.width
 
       PlayerInfoRow {
+        model: sectionData[section] || {}
+
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.margins: dp(Theme.contentPadding)
         height: dp(48)
-
-        model: sectionData[section] || {}
       }
 
       ReplayListItem {
         replayModel: sectionData[section] || {}
+
+        toolBtnOpen.toolTipText: "Replay all punishes"
+
+        onOpenReplayFolder: dataModel.openReplayFolder(filePath)
+        onOpenReplayFile: dataModel.replayPunishes(sectionData[section].punishes)
       }
     }
 
     delegate: AppListItem {
-      text: qsTr("%1 moves, %2% %3 (Opening: %4)")
+      text: qsTr("%1 moves, %2%%3 (Opening: %4)")
       .arg(model.numMoves).arg(model.damage)
       .arg(model.didKill ? " killed " + MeleeData.killDirectionNames[model.killDirection] : "")
       .arg(MeleeData.dynamicNames[model.openingDynamic])
@@ -66,8 +99,22 @@ Item {
       .arg(MeleeData.moveNames[model.openingMoveId])
       .arg(MeleeData.moveNames[model.lastMoveId])
 
-      enabled: false
+      mouseArea.enabled: false
       backgroundColor: Theme.backgroundColor
+
+      rightItem: Row {
+        height: parent.height
+
+        AppToolButton {
+          height: width
+          anchors.verticalCenter: parent.verticalCenter
+
+          iconType: IconType.play
+          toolTipText: "Replay punish"
+
+          onClicked: dataModel.replayPunishes([model])
+        }
+      }
     }
 
     footer: AppListItem {
@@ -114,7 +161,7 @@ Item {
 
   Timer {
     id: loadTimer
-    interval: 500
+    interval: 250
 
     onTriggered: doLoadMore()
   }
@@ -138,6 +185,10 @@ Item {
                                  sectionData[section] = item
                                  sectionData[section].chars1 = { [item.char1] : item.skin1 }
                                  sectionData[section].chars2 = { [item.char2] : item.skin2 }
+                                 sectionData[section].punishes = [item]
+                               }
+                               else {
+                                 sectionData[section].punishes.push(item)
                                }
 
                                item.section = section

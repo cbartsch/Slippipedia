@@ -97,4 +97,8 @@ Page {
       }
     }
   }
+
+  function showTab(index) {
+    filterTabs.currentIndex = index
+  }
 }
