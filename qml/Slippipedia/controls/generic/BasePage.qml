@@ -18,6 +18,12 @@ FlickablePage {
   onAppeared: logPage(title)
   onSelected: logPage(title)
 
+  Binding {
+    target: stats ? stats.dataBase.filterSettings : null
+    property: "showPunishFilter"
+    value: filterModal.showPunishOptions
+  }
+
   FilterModal {
     id: filterModal
     stats: basePage.stats

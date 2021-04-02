@@ -4,7 +4,7 @@ CONFIG += c++11
 
 QT += core gui widgets qml
 
-CONFIG += live_client
+#CONFIG += live_client
 #CONFIG += use_resources
 
 QML_IMPORT_PATH += $$PWD/qml

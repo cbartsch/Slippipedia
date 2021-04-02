@@ -12,6 +12,7 @@ DataBase 1.0                model/db/DataBase.qml
 FilterSettings 1.0          model/filter/FilterSettings.qml
 GameFilterSettings 1.0      model/filter/GameFilterSettings.qml
 PlayerFilterSettings 1.0    model/filter/PlayerFilterSettings.qml
+PunishFilterSettings 1.0    model/filter/PunishFilterSettings.qml
 TextFilter 1.0              model/filter/TextFilter.qml
 
 PlayerStats 1.0             model/stats/PlayerStats.qml
@@ -38,6 +39,7 @@ FilterInfoItem 1.0          views/filter/FilterInfoItem.qml
 FilterModal 1.0             views/filter/FilterModal.qml
 GameFilterOptions 1.0       views/filter/GameFilterOptions.qml
 PlayerFilterOptions 1.0     views/filter/PlayerFilterOptions.qml
+PunishFilterOptions 1.0     views/filter/PunishFilterOptions.qml
 ResultFilterOptions 1.0     views/filter/ResultFilterOptions.qml
 
 CharacterGrid 1.0           views/grids/CharacterGrid.qml

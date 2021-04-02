@@ -126,7 +126,14 @@ Item {
 
   // kill direction index -> text
   readonly property var killDirectionNames: [
-    "None", "Up", "Right", "Down", "Left", "Up-Right", "Up-Left", "Down-Right", "Down-Left"
+    "None",
+    "Up", "Right", "Down", "Left",
+    "Up-Right", "Up-Left", "Down-Right", "Down-Left"
+  ]
+
+  // the diagonal ones seem to never occur in real games
+  readonly property var killDirectionNamesUsed: [
+    "None", "Up", "Right", "Down", "Left"
   ]
 
   // dynamic id -> text

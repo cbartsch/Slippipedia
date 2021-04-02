@@ -9,6 +9,8 @@ AppModal {
   property Page page: null
   property ReplayStats stats: null
 
+  property bool showPunishOptions: false
+
   pushBackContent: page.navigationStack
   modalHeight: pushBackContent.height * 0.85
   fullscreen: false
@@ -18,6 +20,8 @@ AppModal {
     FilterPage {
       stats: filterModal.stats
       height: modal.modalHeight
+
+      showPunishOptions: filterModal.showPunishOptions
 
       leftBarItem: IconButtonBarItem {
         icon: IconType.angleleft

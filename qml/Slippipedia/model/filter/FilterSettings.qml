@@ -5,6 +5,7 @@ Item {
   id: filterSettings
 
   property bool persistenceEnabled: false
+  property bool showPunishFilter: false
 
   readonly property string displayText: {
     var pText = playerFilter.displayText
@@ -15,7 +16,10 @@ Item {
 
     var gText = gameFilter.displayText
 
-    return [pText, oText, gText].filter(_ => _).join("\n") || "(nothing)"
+    var puText = punishFilter.displayText
+    puText = puText ? "Punish: " + puText : ""
+
+    return [pText, oText, gText, showPunishFilter ? puText : ""].filter(_ => _).join("\n") || "(nothing)"
   }
 
   signal filterChanged
@@ -38,16 +42,24 @@ Item {
     onFilterChanged: filterSettings.filterChanged()
   }
 
+  property PunishFilterSettings punishFilter: PunishFilterSettings {
+    settingsCategory: "punish-filter"
+    persistenceEnabled: filterSettings.persistenceEnabled
+    onFilterChanged: filterSettings.filterChanged()
+  }
+
   function reset() {
     playerFilter.reset()
     opponentFilter.reset()
     gameFilter.reset()
+    punishFilter.reset()
   }
 
   function copyFrom(other) {
     playerFilter.copyFrom(other.playerFilter)
     opponentFilter.copyFrom(other.opponentFilter)
     gameFilter.copyFrom(other.gameFilter)
+    punishFilter.copyFrom(other.punishFilter)
   }
 
   function setFromData(data) {
@@ -98,5 +110,7 @@ Item {
 
     if(data.startMs) gameFilter.startDateMs = data.startMs
     if(data.endMs)   gameFilter.endDateMs = data.endMs
+
+    // TODO apply punish filter from data
   }
 }

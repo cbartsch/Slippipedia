@@ -17,6 +17,7 @@ Item {
   readonly property PlayerFilterSettings playerFilter: filterSettings.playerFilter
   readonly property PlayerFilterSettings opponentFilter: filterSettings.opponentFilter
   readonly property GameFilterSettings gameFilter: filterSettings.gameFilter
+  readonly property PunishFilterSettings punishFilter: filterSettings.punishFilter
 
   function createTables(replay) {
     db.transaction(function (tx) {
@@ -214,7 +215,7 @@ killDirection, didKill
     return res
   }
 
-  function getFilterCondition() {
+  function getFilterCondition(usePunishFilter = false) {
     return "(" +
         // game
         gameFilter.getGameFilterCondition() +
@@ -224,17 +225,20 @@ killDirection, didKill
         // opponent
         " and " + opponentFilter.getPlayerFilterCondition("p2") +
         " and " + opponentFilter.getCharFilterCondition("p2.charId") +
+        // punish
+        " and " + (usePunishFilter ? punishFilter.getPunishFilterCondition() : "true") +
         " and r.hasData = 1" + // only match replays that didn't fail parsing
         ")"
   }
 
-  function getFilterParams() {
+  function getFilterParams(usePunishFilter = false) {
     // game, then me, then opponent
     return gameFilter.getGameFilterParams()
     .concat(playerFilter.getPlayerFilterParams())
     .concat(playerFilter.getCharFilterParams())
     .concat(opponentFilter.getPlayerFilterParams())
     .concat(opponentFilter.getCharFilterParams())
+    .concat(usePunishFilter ? punishFilter.getPunishFilterParams() : [])
   }
 
   function getNumReplays() {
@@ -639,11 +643,11 @@ from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 join punishes pu on pu.replayId = r.id and pu.port = p.port
-where " + getFilterCondition() + " and (pu.numMoves > 2 or pu.didKill)
+where " + getFilterCondition(true) + "
 order by r.date desc
 limit ? offset ?"
 
-      var params = getFilterParams().concat([max, start])
+      var params = getFilterParams(true).concat([max, start])
 
       var results = tx.executeSql(sql, params)
 

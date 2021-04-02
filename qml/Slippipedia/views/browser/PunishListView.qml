@@ -25,10 +25,6 @@ Item {
     anchors.fill: parent
 
     model: SortFilterProxyModel {
-//      filters: ExpressionFilter {
-//        expression: model.numMoves > 1
-//      }
-
       sourceModel: JsonListModel {
         source: punishList
         keyField: "id"
@@ -46,7 +42,7 @@ Item {
       PlayerInfoRow {
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: Theme.contentPadding
+        anchors.margins: dp(Theme.contentPadding)
         height: dp(48)
 
         model: sectionData[section] || {}
@@ -126,6 +122,8 @@ Item {
   function doLoadMore() {
     var loaded = stats.dataBase.getPunishList(numPunishes, punishList.length)
 
+    isLoading = false
+
     if(!loaded || loaded.length === 0) {
       hasMore = false
       return
@@ -150,8 +148,6 @@ Item {
     punishList.push.apply(punishList, adapted)
 
     punishListChanged()
-
-    isLoading = false
   }
 
   function refresh() {

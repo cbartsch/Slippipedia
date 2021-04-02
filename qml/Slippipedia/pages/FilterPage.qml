@@ -11,6 +11,8 @@ Page {
 
   property ReplayStats stats: null
 
+  property bool showPunishOptions: false
+
   Column {
     id: header
     width: parent.width
@@ -43,6 +45,15 @@ Page {
         text: "Game"
         showIcon: stats ? stats.dataBase.gameFilter.hasGameFilter : false
         tabIcon: IconType.check
+      }
+      Repeater {
+        model: showPunishOptions ? 1 : 0
+
+        AppTabButton {
+          text: "Punishes"
+          showIcon: stats ? stats.dataBase.punishFilter.hasFilter : false
+          tabIcon: IconType.check
+        }
       }
     }
   }
@@ -78,6 +89,10 @@ Page {
         }
         GameFilterOptions {
           stats: filterPage.stats
+        }
+        PunishFilterOptions {
+          stats: filterPage.stats
+          visible: showPunishOptions
         }
       }
     }

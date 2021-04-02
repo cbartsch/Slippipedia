@@ -17,6 +17,7 @@ BasePage {
   onAppeared: loadInitial()
 
   filterModal.onClosed: if(stats) refresh()
+  filterModal.showPunishOptions: listTabs.currentIndex === 1
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
@@ -31,7 +32,6 @@ BasePage {
       onClicked: refresh()
     }
   }
-
 
   Column {
     id: header

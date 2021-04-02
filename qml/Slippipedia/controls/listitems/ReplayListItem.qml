@@ -38,7 +38,7 @@ AppListItem {
     AppToolButton {
       id: toolBtnFolder
       iconType: IconType.folder
-      onClicked: openReplayFolder(filePath)
+      onClicked: openReplayFolder(replayModel.filePath)
       toolTipText: qsTr("Show in file explorer: %1").arg(fileUtils.cropPathAndKeepFilename(filePath))
       height: width
       anchors.verticalCenter: parent.verticalCenter
@@ -47,7 +47,7 @@ AppListItem {
     AppToolButton {
       id: toolBtnOpen
       iconType: IconType.play
-      onClicked: openReplay(filePath)
+      onClicked: openReplay(replayModel.filePath)
       toolTipText: "Open replay file"
       height: width
       anchors.verticalCenter: parent.verticalCenter
