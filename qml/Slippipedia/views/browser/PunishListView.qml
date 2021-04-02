@@ -4,6 +4,8 @@ import Felgo 3.0
 import Slippipedia 1.0
 
 Item {
+  id: punishListView
+
   property var punishList: []
 
   property alias count: listView.count
@@ -13,6 +15,8 @@ Item {
   property var sectionData: ({})
 
   property bool hasMore: true
+
+  property bool isLoading: false
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
@@ -35,23 +39,26 @@ Item {
     section.labelPositioning: ViewSection.InlineLabels// | ViewSection.CurrentLabelAtStart
     section.criteria: ViewSection.FullString
     section.property: "section"
-    section.delegate: SimpleSection {
-//      sData: sectionData[section] || emptySection
-//      checked: currentSection === section
 
-//      onShowStats: app.showStats({
-//                                   code1: sData.code1,
-//                                   name1: sData.name1,
-//                                   code2: sData.code2,
-//                                   name2: sData.name2,
-//                                   // TODO find out why it can be off by a minute (or the seconds are truncated)
-//                                   startMs: sData.dateFirst.getTime() - 1000 * 60,
-//                                   endMs: sData.dateLast.getTime() + 1000 * 60
-//                                 })
+    section.delegate: Column {
+      width: parent.width
+
+      PlayerInfoRow {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.margins: Theme.contentPadding
+        height: dp(48)
+
+        model: sectionData[section] || {}
+      }
+
+      ReplayListItem {
+        replayModel: sectionData[section] || {}
+      }
     }
 
     delegate: AppListItem {
-      text: qsTr("%1 moves, %2 %%3 (%4)")
+      text: qsTr("%1 moves, %2% %3 (Opening: %4)")
       .arg(model.numMoves).arg(model.damage)
       .arg(model.didKill ? " killed " + MeleeData.killDirectionNames[model.killDirection] : "")
       .arg(MeleeData.dynamicNames[model.openingDynamic])
@@ -59,7 +66,7 @@ Item {
       detailText: qsTr("%1: %4 - %2: %5 (%3)")
       .arg(dataModel.formatTime(model.startFrame))
       .arg(dataModel.formatTime(model.endFrame))
-      .arg(dataModel.formatTime(model.duration))
+      .arg(dataModel.formatTime(model.punishDuration))
       .arg(MeleeData.moveNames[model.openingMoveId])
       .arg(MeleeData.moveNames[model.lastMoveId])
 
@@ -84,6 +91,18 @@ Item {
     }
   }
 
+  Rectangle {
+    anchors.fill: parent
+    color: "#80000000"
+    visible: punishListView.isLoading
+
+    AppText {
+      anchors.centerIn: parent
+      text: "Loading punishes..."
+      font.pixelSize: sp(32)
+    }
+  }
+
   function clear() {
     listView.positionViewAtBeginning()
     punishList = []
@@ -92,6 +111,19 @@ Item {
   }
 
   function loadMore() {
+    isLoading = true
+
+    loadTimer.start()
+  }
+
+  Timer {
+    id: loadTimer
+    interval: 500
+
+    onTriggered: doLoadMore()
+  }
+
+  function doLoadMore() {
     var loaded = stats.dataBase.getPunishList(numPunishes, punishList.length)
 
     if(!loaded || loaded.length === 0) {
@@ -104,33 +136,11 @@ Item {
                                var section = item.replayId // TODO sensible section name for replay
                                section = dataModel.formatDate(item.date) + " - " + dataModel.playersText(item)
 
-//                               if(!(section in sectionData)) {
-//                                 sectionData[section] = {
-//                                   name1: item.name1,
-//                                   code1: item.code1,
-//                                   name2: item.name2,
-//                                   code2: item.code2,
-//                                   chars1: {},
-//                                   chars2: {},
-//                                   dateLast: item.date,
-//                                   numGames: 0,
-//                                   gamesFinished: 0,
-//                                   gamesWon: 0
-//                                 }
-//                               }
-
-//                               sectionData[section].chars1[item.char1] = item.skin1
-//                               sectionData[section].chars2[item.char2] = item.skin2
-//                               sectionData[section].dateFirst = item.date
-//                               sectionData[section].numGames++
-
-//                               if(item.winnerPort >= 0) {
-//                                 sectionData[section].gamesFinished++
-//                               }
-
-//                               if(item.winnerPort === item.port1) {
-//                                 sectionData[section].gamesWon++
-//                               }
+                               if(!(section in sectionData)) {
+                                 sectionData[section] = item
+                                 sectionData[section].chars1 = { [item.char1] : item.skin1 }
+                                 sectionData[section].chars2 = { [item.char2] : item.skin2 }
+                               }
 
                                item.section = section
 
@@ -140,6 +150,8 @@ Item {
     punishList.push.apply(punishList, adapted)
 
     punishListChanged()
+
+    isLoading = false
   }
 
   function refresh() {

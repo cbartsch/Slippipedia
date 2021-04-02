@@ -57,6 +57,7 @@ BaseNavigationStack 1.0     controls/generic/BaseNavigationStack.qml
 BasePage 1.0                controls/generic/BasePage.qml
 CustomTabIcon 1.0           controls/generic/CustomTabIcon.qml
 DateRangeRow 1.0            controls/generic/DateRangeRow.qml
+PlayerInfoRow 1.0           controls/generic/PlayerInfoRow.qml
 TextInputField 1.0          controls/generic/TextInputField.qml
 
 CustomListItem 1.0          controls/listitems/CustomListItem.qml

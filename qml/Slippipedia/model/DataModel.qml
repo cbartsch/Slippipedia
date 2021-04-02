@@ -12,10 +12,13 @@ Item {
 
   property int dbUpdater: 0
 
-  // replay settings
+  // settings
   property string replayFolder: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
+
+  property string desktopAppFolder: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Desktop App")
+  readonly property bool hasDesktopApp: fileUtils.existsFile(desktopAppFolder + "/dolphin/Slippi Dolphin.exe")
 
   // analyze progress
   property bool progressCancelled: false
@@ -64,8 +67,8 @@ Item {
   }
 
   onNumFilesSucceededChanged: {
-    // refresh after 100 items
-    if(numFilesSucceeded % 100 === 0) {
+    // refresh after n items
+    if(numFilesSucceeded % 500 === 0) {
       dbUpdaterChanged()
       stats.refresh()
     }

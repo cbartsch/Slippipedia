@@ -5,13 +5,15 @@ import Slippipedia 1.0
 AppListItem {
   id: replayListItem
 
+  property var replayModel: model
+
   width: parent ? parent.width : 0
 
   backgroundColor: Theme.backgroundColor
 
-  text: stageId && stageId >= 0
-        ? qsTr("%1 - %2").arg(dataModel.formatTime(duration))
-          .arg((MeleeData.stageMap[stageId] || {
+  text: replayModel.stageId && replayModel.stageId >= 0
+        ? qsTr("%1 - %2").arg(dataModel.formatTime(replayModel.duration))
+          .arg((MeleeData.stageMap[replayModel.stageId] || {
                   name: "Unknown stage", shortName: "?"
                 })[replayListItem.width > dp(510) ? "name" : "shortName"])
         : ""
@@ -20,7 +22,7 @@ AppListItem {
 //  Binding { target: textItem; property: "visible"; value: !mouseArea.containsMouse }
 
   leftItem: ReplayIcons {
-    replayModel: model
+    replayModel: replayListItem.replayModel
     anchors.verticalCenter: parent.verticalCenter
 
     width: replayListItem.width > dp(412)
@@ -32,6 +34,7 @@ AppListItem {
     visible: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered
     height: dp(48)
     spacing: dp(Theme.contentPadding) / 2
+
     AppToolButton {
       id: toolBtnFolder
       iconType: IconType.folder
@@ -40,6 +43,7 @@ AppListItem {
       height: width
       anchors.verticalCenter: parent.verticalCenter
     }
+
     AppToolButton {
       id: toolBtnOpen
       iconType: IconType.play

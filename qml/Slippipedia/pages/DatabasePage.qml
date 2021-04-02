@@ -16,6 +16,71 @@ BasePage {
     width: parent.width
 
     SimpleSection {
+      title: "Replay folder"
+    }
+
+    AppListItem {
+      text: "Click to select replay folder..."
+      detailText: "Used for finding & analyzing replays."
+
+      onSelected: fileDialogReplays.open()
+
+      FileDialog {
+        id: fileDialogReplays
+        title: "Please choose a file"
+        selectMultiple: false
+        selectFolder: true
+        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
+
+        onAccepted: dataModel.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+      }
+    }
+
+    AppListItem {
+      text: dataModel.replayFolder
+      detailText: dataModel.allFiles.length +  " replays found."
+
+      enabled: false
+      backgroundColor: Theme.backgroundColor
+    }
+
+    SimpleSection {
+      title: "Slippi Desktop App folder"
+    }
+
+    AppListItem {
+      text: "Click to select Slippi Desktop App folder..."
+      detailText: "Used to play replays & combos."
+
+      onSelected: fileDialogDesktop.open()
+
+      FileDialog {
+        id: fileDialogDesktop
+        title: "Please choose a file"
+        selectMultiple: false
+        selectFolder: true
+        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
+
+        onAccepted: dataModel.desktopAppFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+      }
+    }
+
+    AppListItem {
+      text: dataModel.desktopAppFolder
+      detailText: dataModel.hasDesktopApp ? "Desktop app found." : "Desktop app not found."
+
+      leftItem: Icon {
+        anchors.verticalCenter: parent.verticalCenter
+        size: dp(24)
+        color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
+        icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
+      }
+
+      enabled: false
+      backgroundColor: Theme.backgroundColor
+    }
+
+    SimpleSection {
       title: "Replay database"
     }
 
@@ -45,19 +110,6 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
     AppListItem {
       text: "Clear database"
       onSelected: clearDb()
-    }
-
-    SimpleSection {
-      title: "Replay folder"
-    }
-
-    AppListItem {
-      text: dataModel.replayFolder || "Select replay folder..."
-      onSelected: {
-        console.log("open to", fileDialog.folder)
-        fileDialog.open()
-      }
-      detailText: dataModel.allFiles.length +  " replays found."
     }
 
     SimpleSection {
@@ -115,17 +167,6 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       width: parent.width
       visible: dataModel.isProcessing
     }
-  }
-
-  FileDialog {
-    id: fileDialog
-    title: "Please choose a file"
-    selectMultiple: false
-    selectFolder: true
-    folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
-
-    onAccepted: dataModel.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
-    onRejected: console.log("Folder dialog canceled")
   }
 
   function clearDb() {

@@ -6,8 +6,10 @@ Item {
 
   property string badgeValue: ""
   property bool selected: false
+  property alias iconType: icon.icon
 
   Icon {
+    id: icon
     icon: IconType.database
     size: parent.height
     anchors.centerIn: parent

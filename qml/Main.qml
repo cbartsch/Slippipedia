@@ -80,12 +80,12 @@ App {
     navigationMode: navigationModeTabs
 
     NavigationItem {
-      title: "Replay Database"
-      icon: IconType.database
+      title: "Setup"
 
       onSelected: if(page) page.selected()
 
       iconComponent: CustomTabIcon {
+        iconType: IconType.gear
         selected: navigation.currentIndex === 0
         badgeValue: dataModel.newFiles.length || ""
       }

@@ -17,9 +17,6 @@ Item {
 
   property var sData: emptySection
 
-  readonly property var chars1: Object.keys(sData.chars1)
-  readonly property var chars2: Object.keys(sData.chars2)
-
   property bool checked: false
 
   signal showStats
@@ -38,63 +35,10 @@ Item {
       Layout.fillHeight: true
       Layout.fillWidth: true
 
-      AppFlickable {
+      PlayerInfoRow {
         id: titleFlick
         anchors.fill: parent
-        flickableDirection: Flickable.HorizontalFlick
-        contentWidth: Math.max(titleContent.width, width)
-
-        Row {
-          id: titleContent
-          height: parent.height
-          anchors.verticalCenter: parent.verticalCenter
-
-          spacing: dp(Theme.contentPadding) / 2
-
-          AppText {
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: sp(20)
-            color: Theme.tintColor
-
-            text: qsTr("%1 (%2)").arg(sData.name1).arg(sData.code1)
-          }
-
-          Repeater {
-            model: chars1
-
-            StockIcon {
-              anchors.verticalCenter: parent.verticalCenter
-              charId: modelData
-              skinId: sData.chars1[modelData]
-            }
-          }
-
-          AppText {
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: sp(18)
-            color: Theme.secondaryTextColor
-
-            text: "vs"
-          }
-
-          Repeater {
-            model: chars2
-
-            StockIcon {
-              anchors.verticalCenter: parent.verticalCenter
-              charId: modelData
-              skinId: sData.chars2[modelData]
-            }
-          }
-
-          AppText {
-            anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: sp(20)
-            color: Theme.tintColor
-
-            text: qsTr("%1 (%2)").arg(sData.name2).arg(sData.code2)
-          }
-        }
+        model: sData
       }
     }
 

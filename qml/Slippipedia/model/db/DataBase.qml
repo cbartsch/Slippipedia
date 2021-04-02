@@ -6,7 +6,7 @@ import Slippipedia 1.0
 Item {
   id: dataBase
 
-  property var debugLog: false
+  property var debugLog: true
   property var debugLogSql: false
 
   // db
@@ -630,16 +630,16 @@ pu.id id,
 pu.numMoves numMoves, pu.openingDynamic openingDynamic,
 pu.openingMoveId openingMoveId, pu.lastMoveId lastMoveId,
 pu.didKill didKill, pu.killDirection killDirection,
-pu.startFrame startFrame, pu.endFrame endFrame, pu.duration duration,
+pu.startFrame startFrame, pu.endFrame endFrame, pu.duration punishDuration,
 pu.startPercent startPercent, pu.endPercent endPercent, pu.damage damage,
-r.id replayId, r.date date, r.filePath filePath, r.duration gameDuration, r.stageId stageId, r.winnerPort winnerPort,
+r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
 p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 join punishes pu on pu.replayId = r.id and pu.port = p.port
-where " + getFilterCondition() + "
+where " + getFilterCondition() + " and (pu.numMoves > 2 or pu.didKill)
 order by r.date desc
 limit ? offset ?"
 
