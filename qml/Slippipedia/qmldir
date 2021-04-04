@@ -63,6 +63,7 @@ PlayerInfoRow 1.0           controls/generic/PlayerInfoRow.qml
 TextInputField 1.0          controls/generic/TextInputField.qml
 
 CustomListItem 1.0          controls/listitems/CustomListItem.qml
+PunishListItem 1.0          controls/listitems/PunishListItem.qml
 ReplayListItem 1.0          controls/listitems/ReplayListItem.qml
 ReplaySectionHeader 1.0     controls/listitems/ReplaySectionHeader.qml
 

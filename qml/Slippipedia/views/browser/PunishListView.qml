@@ -20,10 +20,14 @@ Item {
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
+  property string prevSessionSection: ""
+
   AppListItem {
     id: header
 
-    text: qsTr("%1 punishes found.").arg(listView.count)
+    text: qsTr("%1%2 punishes found.")
+    .arg(listView.count)
+    .arg(hasMore ? "+" : "")
 
     detailText: "Set up punish filter to refine your search."
 
@@ -74,6 +78,9 @@ Item {
         anchors.right: parent.right
         anchors.margins: dp(Theme.contentPadding)
         height: dp(48)
+
+      // sections having different heights is buggy...
+      //  visible: model.showNames
       }
 
       ReplayListItem {
@@ -86,35 +93,8 @@ Item {
       }
     }
 
-    delegate: AppListItem {
-      text: qsTr("%1 moves, %2%%3 (Opening: %4)")
-      .arg(model.numMoves).arg(model.damage)
-      .arg(model.didKill ? " killed " + MeleeData.killDirectionNames[model.killDirection] : "")
-      .arg(MeleeData.dynamicNames[model.openingDynamic])
-
-      detailText: qsTr("%1: %4 - %2: %5 (%3)")
-      .arg(dataModel.formatTime(model.startFrame))
-      .arg(dataModel.formatTime(model.endFrame))
-      .arg(dataModel.formatTime(model.punishDuration))
-      .arg(MeleeData.moveNames[model.openingMoveId])
-      .arg(MeleeData.moveNames[model.lastMoveId])
-
-      mouseArea.enabled: false
-      backgroundColor: Theme.backgroundColor
-
-      rightItem: Row {
-        height: parent.height
-
-        AppToolButton {
-          height: width
-          anchors.verticalCenter: parent.verticalCenter
-
-          iconType: IconType.play
-          toolTipText: "Replay punish"
-
-          onClicked: dataModel.replayPunishes([model])
-        }
-      }
+    delegate: PunishListItem {
+      punishModel: model
     }
 
     footer: AppListItem {
@@ -151,6 +131,7 @@ Item {
     punishList = []
     sectionData = {}
     hasMore = true
+    prevSessionSection = ""
   }
 
   function loadMore() {
@@ -178,14 +159,18 @@ Item {
 
     // adapt model with extra data for list view (sections, ...)
     var adapted = loaded.map(item => {
-                               var section = item.replayId // TODO sensible section name for replay
-                               section = dataModel.formatDate(item.date) + " - " + dataModel.playersText(item)
+                               var sessionSection = dataModel.playersText(item)
+                               var section = dataModel.formatDate(item.date) + " - " + sessionSection
+
+                               var isNewSession = sessionSection !== prevSessionSection
+                               prevSessionSection = sessionSection
 
                                if(!(section in sectionData)) {
                                  sectionData[section] = item
                                  sectionData[section].chars1 = { [item.char1] : item.skin1 }
                                  sectionData[section].chars2 = { [item.char2] : item.skin2 }
                                  sectionData[section].punishes = [item]
+                                 sectionData[section].showNames = isNewSession
                                }
                                else {
                                  sectionData[section].punishes.push(item)

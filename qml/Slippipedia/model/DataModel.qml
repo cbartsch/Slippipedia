@@ -240,6 +240,19 @@ Item {
         .arg(replay.name2).arg(replay.code2)
   }
 
+  function damageColor(damage) {
+    var factor = damage / 100
+
+    var base = Qt.rgba(1, 0, 0, 1)
+
+    if(factor > 1) {
+      return Qt.darker(base, factor)
+    }
+    else {
+      return Qt.lighter(base, 2 - factor)
+    }
+  }
+
   // replay functions
 
   function openReplayFolder(filePath) {
