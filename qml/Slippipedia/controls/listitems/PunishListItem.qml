@@ -19,7 +19,7 @@ AppListItem {
     spacing: dp(Theme.contentPadding)
 
     Column {
-      Layout.preferredWidth: dp(90)
+      Layout.preferredWidth: dp(80)
       anchors.verticalCenter: parent.verticalCenter
       spacing: dp(Theme.contentPadding) / 4
 
@@ -27,7 +27,7 @@ AppListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         text: dataModel.formatNumber(punishModel.damage) + "%"
 
-        font.pixelSize: sp(22)
+        font.pixelSize: sp(20)
         font.bold: true
         color: dataModel.damageColor(punishModel.damage)
       }
@@ -59,7 +59,7 @@ AppListItem {
         height: sp(16)
 
         AppText {
-          text: qsTr("%1%").arg(dataModel.formatNumber(punishModel.endPercent))
+          text: qsTr("%1%").arg(punishModel.endPercent.toFixed(0))
 
           font.pixelSize: sp(16)
           font.bold: true

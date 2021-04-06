@@ -598,8 +598,8 @@ order by yearMonth desc"
     return readFromDb(function(tx) {
       var sql = "select
 r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
+ p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
@@ -638,8 +638,8 @@ pu.didKill didKill, pu.killDirection killDirection,
 pu.startFrame startFrame, pu.endFrame endFrame, pu.duration punishDuration,
 pu.startPercent startPercent, pu.endPercent endPercent, pu.stocks stocks, pu.damage damage,
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
-p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
+ p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port

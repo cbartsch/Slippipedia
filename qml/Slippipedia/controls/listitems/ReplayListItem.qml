@@ -13,16 +13,22 @@ AppListItem {
   signal openReplayFolder(string filePath)
   signal openReplayFile(string filePath)
 
+  property bool showPercent: showOptions
+
+  readonly property bool showOptions: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered
+  readonly property bool useShortStageName: replayListItem.width > dp(510)
+  readonly property string stageNameProperty: useShortStageName  ? "name" : "shortName"
+  readonly property var emptyStage: ({ name: "Unknown stage", shortName: "?" })
+  readonly property var stageData: replayModel.stageId && replayModel.stageId >= 0 && MeleeData.stageMap[replayModel.stageId] || emptyStage
+  readonly property string stageName: stageData[stageNameProperty]
+
   width: parent ? parent.width : 0
 
   backgroundColor: Theme.backgroundColor
 
-  text: replayModel.stageId && replayModel.stageId >= 0
-        ? qsTr("%1 - %2").arg(dataModel.formatTime(replayModel.duration))
-          .arg((MeleeData.stageMap[replayModel.stageId] || {
-                  name: "Unknown stage", shortName: "?"
-                })[replayListItem.width > dp(510) ? "name" : "shortName"])
-        : ""
+  text: showOptions
+        ? fileUtils.cropPathAndKeepFilename(replayModel.filePath)
+        : qsTr("%1 - %2").arg(dataModel.formatTime(replayModel.duration)).arg(stageName)
 
   Binding { target: textItem; property: "maximumLineCount"; value: 1 }
 //  Binding { target: textItem; property: "visible"; value: !mouseArea.containsMouse }
@@ -31,13 +37,15 @@ AppListItem {
     replayModel: replayListItem.replayModel
     anchors.verticalCenter: parent.verticalCenter
 
+    showPercent: replayListItem.showPercent
+
     width: replayListItem.width > dp(412)
            ? implicitWidth
            : (replayListItem.width - dp(412) + implicitWidth)
   }
 
   rightItem: Row {
-    visible: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered
+    visible: showOptions
     height: dp(48)
     spacing: dp(Theme.contentPadding) / 2
 
@@ -45,7 +53,7 @@ AppListItem {
       id: toolBtnFolder
       iconType: IconType.folder
       onClicked: openReplayFolder(replayModel.filePath)
-      toolTipText: qsTr("Show in file explorer: %1").arg(fileUtils.cropPathAndKeepFilename(filePath))
+      toolTipText: "Show in file explorer"
       height: width
       anchors.verticalCenter: parent.verticalCenter
     }

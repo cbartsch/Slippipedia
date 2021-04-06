@@ -9,6 +9,8 @@ Item {
 
   property var replayModel: ({})
 
+  property bool showPercent: false
+
   Row {
     id: content
     anchors.verticalCenter: parent.verticalCenter
@@ -16,11 +18,26 @@ Item {
     scale: parent.width / width
     transformOrigin: Item.Left
 
-    StockIcons {
+    Column {
       anchors.verticalCenter: parent.verticalCenter
-      charId: replayModel && replayModel.char1 || 0
-      skinId: replayModel && replayModel.skin1 || 0
-      numStocks: replayModel && replayModel.endStocks1 || 0
+      width: stockIcons1.width
+
+      StockIcons {
+        id: stockIcons1
+        charId: replayModel && replayModel.char1 || 0
+        skinId: replayModel && replayModel.skin1 || 0
+        numStocks: replayModel && replayModel.endStocks1 || 0
+      }
+
+      AppText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: replayModel && replayModel.endStocks1 > 0 ? qsTr("%1%").arg(replayModel.endPercent1.toFixed(0)) : "KO" || ""
+
+        visible: showPercent
+        font.pixelSize: sp(16)
+        font.bold: true
+        color: replayModel && replayModel.endStocks1 > 0 ? dataModel.damageColor(replayModel.endPercent1) : "#80ffffff"
+      }
     }
 
     Item {
@@ -41,11 +58,26 @@ Item {
       height: 1
     }
 
-    StockIcons {
+    Column {
       anchors.verticalCenter: parent.verticalCenter
-      charId: replayModel && replayModel.char2 || 0
-      skinId: replayModel && replayModel.skin2 || 0
-      numStocks: replayModel && replayModel.endStocks2 || 0
+      width: stockIcons2.width
+
+      StockIcons {
+        id: stockIcons2
+        charId: replayModel && replayModel.char2 || 0
+        skinId: replayModel && replayModel.skin2 || 0
+        numStocks: replayModel && replayModel.endStocks2 || 0
+      }
+
+      AppText {
+        anchors.horizontalCenter: parent.horizontalCenter
+        text: replayModel && replayModel.endStocks2 > 0 ? qsTr("%1%").arg(replayModel.endPercent2.toFixed(0)) : "KO" || ""
+
+        visible: showPercent
+        font.pixelSize: sp(16)
+        font.bold: true
+        color: replayModel && replayModel.endStocks2 > 0 ? dataModel.damageColor(replayModel.endPercent2) : "#80ffffff"
+      }
     }
 
     Item {
