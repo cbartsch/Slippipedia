@@ -15,6 +15,8 @@ Item {
   property bool didKill: false
 
   property var killDirections: []
+  property var openingMoveIds: []
+  property var lastMoveIds: []
 
   signal filterChanged
 
@@ -23,15 +25,20 @@ Item {
   onMinDamageChanged:      filterChanged()
   onDidKillChanged:        filterChanged()
   onKillDirectionsChanged: filterChanged()
+  onOpeningMoveIdsChanged: filterChanged()
+  onLastMoveIdsChanged:    filterChanged()
 
 
   readonly property bool hasFilter: hasNumMovesFilter || hasDamageFilter ||
-                                    hasDidKillFilter || hasKillDirectionFilter
+                                    hasDidKillFilter || hasKillDirectionFilter ||
+                                    hasOpeningMoveFilter || hasLastMoveFilter
 
   readonly property bool hasNumMovesFilter: minMoves > 1
   readonly property bool hasDamageFilter: minDamage > 0
   readonly property bool hasDidKillFilter: didKill
   readonly property bool hasKillDirectionFilter: killDirections.length > 0
+  readonly property bool hasOpeningMoveFilter: openingMoveIds.length > 0
+  readonly property bool hasLastMoveFilter: lastMoveIds.length > 0
 
   readonly property string displayText: {
     var movesText = minMoves > 1 ? qsTr("%1+ moves").arg(minMoves) : ""
@@ -41,8 +48,15 @@ Item {
     var killDirectionsText = killDirections.length == 0
         ? "" : ("Kill direction: " + killDirections.map(d => MeleeData.killDirectionNames[d]).join(", "))
 
+    var openingMovesText = openingMoveIds.length == 0
+        ? "" : ("Opening: " + openingMoveIds.map(d => MeleeData.moveNames[d]).join(", "))
+
+    var lastMovesText = lastMoveIds.length == 0
+        ? "" : ("Last move: " + lastMoveIds.map(d => MeleeData.moveNames[d]).join(", "))
+
     return [
-          movesText, damageText, didKillText, killDirectionsText
+          movesText, damageText, didKillText,
+          killDirectionsText, openingMovesText, lastMovesText
         ].filter(_ => _).join(", ") || ""
   }
 
@@ -56,10 +70,12 @@ Item {
       target: settingsLoader.item ? punishFilterSettings : null
 
       // due to this being in a loader, can't use alias properties -> save on change:
-      onMinMovesChanged:      settingsLoader.item.minMoves = minMoves
-      onMinDamageChanged:     settingsLoader.item.minDamage = minDamage
-      onDidKillChanged:       settingsLoader.item.didKill = didKill
+      onMinMovesChanged:       settingsLoader.item.minMoves = minMoves
+      onMinDamageChanged:      settingsLoader.item.minDamage = minDamage
+      onDidKillChanged:        settingsLoader.item.didKill = didKill
       onKillDirectionsChanged: settingsLoader.item.killDirections = killDirections
+      onOpeningMoveIdsChanged: settingsLoader.item.openingMoveIds = openingMoveIds
+      onLastMoveIdsChanged:    settingsLoader.item.lastMoveIds = lastMoveIds
     }
 
     sourceComponent: Settings {
@@ -71,6 +87,8 @@ Item {
       property real minDamage: punishFilterSettings.minDamage
       property bool didKill: punishFilterSettings.didKill
       property var killDirections: punishFilterSettings.killDirections
+      property var openingMoveIds: punishFilterSettings.openingMoveIds
+      property var lastMoveIds: punishFilterSettings.lastMoveIds
 
       function apply() {
         // due to this being in a loader, can't use alias properties -> apply on load:
@@ -78,6 +96,8 @@ Item {
         punishFilterSettings.minDamage = minDamage
         punishFilterSettings.didKill = didKill
         punishFilterSettings.killDirections = killDirections.map(id => ~~id) // settings stores as list of string, convert to int
+        punishFilterSettings.openingMoveIds = openingMoveIds.map(id => ~~id)
+        punishFilterSettings.lastMoveIds = lastMoveIds.map(id => ~~id)
       }
     }
   }
@@ -116,10 +136,48 @@ Item {
     killDirections = []
   }
 
+  function setOpeningMove(openingMoveIds) {
+    punishFilterSettings.openingMoveIds = openingMoveIds
+  }
+
+  function addOpeningMove(moveId) {
+    if(openingMoveIds.indexOf(moveId) < 0) {
+      openingMoveIds = openingMoveIds.concat(moveId)
+    }
+  }
+
+  function removeOpeningMove(moveId) {
+    var list = openingMoveIds
+    list.splice(list.indexOf(moveId), 1)
+    openingMoveIds = list
+  }
+
+  function removeAllOpeningMoves() {
+    lastMoveIds = []
+  }
+
+  function setLastMove(lastMoveIds) {
+    punishFilterSettings.lastMoveIds = lastMoveIds
+  }
+
+  function addLastMove(moveId) {
+    if(lastMoveIds.indexOf(moveId) < 0) {
+      lastMoveIds = lastMoveIds.concat(moveId)
+    }
+  }
+
+  function removeLastMove(moveId) {
+    var list = lastMoveIds
+    list.splice(list.indexOf(moveId), 1)
+    lastMoveIds = list
+  }
+
+  function removeAllLastMoves() {
+    lastMoveIds = []
+  }
+
   // DB filtering functions
   function getPunishFilterCondition() {
-    console.log("get punish filter condition", hasNumMovesFilter, minMoves)
-
     var minMovesCondition = hasNumMovesFilter ? "pu.numMoves >= ?" : ""
     var minDamageCondition = hasDamageFilter ? "pu.damage >= ?" : ""
     var didKillCondition = hasDidKillFilter ? "pu.didKill = 1" : ""
@@ -129,11 +187,23 @@ Item {
           dataModel.globalDataBase.makeSqlWildcards(killDirections)
         : ""
 
+    var openingMovesCondition = hasOpeningMoveFilter
+        ? "pu.openingMoveId in " +
+          dataModel.globalDataBase.makeSqlWildcards(openingMoveIds)
+        : ""
+
+    var lastMovesCondition = hasLastMoveFilter
+        ? "pu.lastMoveId in " +
+          dataModel.globalDataBase.makeSqlWildcards(lastMoveIds)
+        : ""
+
     var condition = [
           minMovesCondition,
           minDamageCondition,
           didKillCondition,
-          killDirectionCondition
+          killDirectionCondition,
+          openingMovesCondition,
+          lastMovesCondition
         ]
     .map(c => (c || true))
     .join(" and ")
@@ -145,9 +215,13 @@ Item {
     var minMovesParams = hasNumMovesFilter ? [minMoves] : []
     var minDamageParams = hasDamageFilter ? [minDamage] : []
     var killDirectionParams = hasKillDirectionFilter ? killDirections : []
+    var openingMoveParams = hasOpeningMoveFilter ? openingMoveIds : []
+    var lastMoveParams = hasLastMoveFilter ? lastMoveIds : []
 
     return minMovesParams
     .concat(minDamageParams)
     .concat(killDirectionParams)
+    .concat(openingMoveParams)
+    .concat(lastMoveParams)
   }
 }

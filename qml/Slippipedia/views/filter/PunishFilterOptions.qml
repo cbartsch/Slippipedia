@@ -82,6 +82,7 @@ Column {
       onClicked: {
         filter.didKill = false
         filter.removeAllKillDirections()
+        didKillCheckBox.checked = false
       }
     }
   }
@@ -151,6 +152,174 @@ Column {
               }
               else {
                 filter.removeKillDirection(killDirection)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  Divider { anchors.bottom: undefined }
+
+  SimpleSection {
+    title: "Opening"
+  }
+
+  CustomListItem {
+    text: "Filter by opening"
+    detailText: "Select properties of how the punish was started."
+
+    checked: filter ? filter.hasOpeningMoveFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset opening filter"
+      visible: filter ? filter.hasOpeningMoveFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.removeAllOpeningMoves()
+      }
+    }
+  }
+
+  Rectangle {
+    width: parent.width
+    height: openingMoveFlow.height
+    color: Theme.controlBackgroundColor
+
+    Flow {
+      id: openingMoveFlow
+      width: parent.width
+
+      Item {
+        height: dp(48)
+        width: openingText.width + dp(Theme.contentPadding) * 2
+
+        AppText {
+          id: openingText
+          text: "Opening move:"
+          anchors.centerIn: parent
+        }
+      }
+
+      Repeater {
+        model: MeleeData.moveNamesShortUsed
+
+        Item {
+          readonly property int moveId: MeleeData.moveIdsShort[moveName]
+          readonly property string moveName: modelData
+
+          height: dp(48)
+          width: moveCheckBox.width + dp(Theme.contentPadding) * 2
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: moveCheckBox.checked = !moveCheckBox.checked
+          }
+
+          AppCheckBox {
+            id: moveCheckBox
+            text: moveName
+            anchors.centerIn: parent
+            checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
+
+            onCheckedChanged: {
+              if(checked) {
+                filter.addOpeningMove(moveId)
+              }
+              else {
+                filter.removeOpeningMove(moveId)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  Divider { anchors.bottom: undefined }
+
+  SimpleSection {
+    title: "Last move"
+  }
+
+  CustomListItem {
+    text: "Filter by last move"
+    detailText: "Select properties of how the punish ended."
+
+    checked: filter ? filter.hasLastMoveFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset last move filter"
+      visible: filter ? filter.hasLastMoveFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.removeAllLastMoves()
+      }
+    }
+  }
+
+  Rectangle {
+    width: parent.width
+    height: lastMoveFlow.height
+    color: Theme.controlBackgroundColor
+
+    Flow {
+      id: lastMoveFlow
+      width: parent.width
+
+      Item {
+        height: dp(48)
+        width: lastText.width + dp(Theme.contentPadding) * 2
+
+        AppText {
+          id: lastText
+          text: "Last move:"
+          anchors.centerIn: parent
+        }
+      }
+
+      Repeater {
+        model: MeleeData.moveNamesShortUsed
+
+        Item {
+          readonly property int moveId: MeleeData.moveIdsShort[moveName]
+          readonly property string moveName: modelData
+
+          height: dp(48)
+          width: moveCheckBox.width + dp(Theme.contentPadding) * 2
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: moveCheckBox.checked = !moveCheckBox.checked
+          }
+
+          AppCheckBox {
+            id: moveCheckBox
+            text: moveName
+            anchors.centerIn: parent
+            checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
+
+            onCheckedChanged: {
+              if(checked) {
+                filter.addLastMove(moveId)
+              }
+              else {
+                filter.removeLastMove(moveId)
               }
             }
           }
