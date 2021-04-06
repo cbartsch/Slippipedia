@@ -20,7 +20,7 @@ AppListItem {
 
     Column {
       Layout.preferredWidth: dp(80)
-      anchors.verticalCenter: parent.verticalCenter
+      Layout.alignment: Qt.AlignVCenter
       spacing: dp(Theme.contentPadding) / 4
 
       AppText {
@@ -41,8 +41,8 @@ AppListItem {
     }
 
     Column {
-      anchors.verticalCenter: parent.verticalCenter
       Layout.preferredWidth: stockIcons.width
+      Layout.alignment: Qt.AlignVCenter
       spacing: dp(Theme.contentPadding) / 4
 
       StockIcons {
@@ -82,7 +82,7 @@ AppListItem {
 
     Column {
       Layout.fillWidth: true
-      anchors.verticalCenter: parent.verticalCenter
+      Layout.alignment: Qt.AlignVCenter
       spacing: dp(Theme.contentPadding) / 4
 
       AppText {
