@@ -23,6 +23,7 @@ struct PunishData : public QObject {
 
   Q_PROPERTY(qreal startPercent MEMBER m_startPercent)
   Q_PROPERTY(qreal endPercent MEMBER m_endPercent)
+  Q_PROPERTY(qreal stocks MEMBER m_stocks)
   Q_PROPERTY(qreal damage READ damage)
 
   Q_PROPERTY(bool didKill READ didKill)
@@ -55,7 +56,7 @@ private:
   qint64 m_uniqueId;
 
   int m_numMoves, m_openingMoveId, m_lastMoveId,
-    m_startFrame, m_endFrame;
+    m_startFrame, m_endFrame, m_stocks;
 
   qreal m_startPercent, m_endPercent;
 

@@ -74,4 +74,5 @@ StockIcon 1.0               controls/icons/StockIcon.qml
 Divider 1.0                 controls/visual/Divider.qml
 LoadingIcon 1.0             controls/visual/LoadingIcon.qml
 ReplayIcons 1.0             controls/visual/ReplayIcons.qml
+StockIcons 1.0              controls/visual/StockIcons.qml
 UiAnimation 1.0             controls/visual/UiAnimation.qml

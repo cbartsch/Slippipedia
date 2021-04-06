@@ -16,9 +16,10 @@ AppListItem {
   leftItem: RowLayout {
     width: punishListItem.width - dp(100)
     height: parent.height
+    spacing: dp(Theme.contentPadding)
 
     Column {
-      Layout.preferredWidth: dp(100)
+      Layout.preferredWidth: dp(90)
       anchors.verticalCenter: parent.verticalCenter
       spacing: dp(Theme.contentPadding) / 4
 
@@ -27,12 +28,55 @@ AppListItem {
         text: dataModel.formatNumber(punishModel.damage) + "%"
 
         font.pixelSize: sp(22)
+        font.bold: true
         color: dataModel.damageColor(punishModel.damage)
       }
 
       AppText {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: qsTr("%1 moves").arg(punishModel.numMoves)
+        text: qsTr("%1 %2")
+        .arg(punishModel.numMoves)
+        .arg(punishModel.numMoves > 1 ? "moves" : "move")
+      }
+    }
+
+    Column {
+      anchors.verticalCenter: parent.verticalCenter
+      Layout.preferredWidth: stockIcons.width
+      spacing: dp(Theme.contentPadding) / 4
+
+      StockIcons {
+        id: stockIcons
+        anchors.horizontalCenter: parent.horizontalCenter
+        charId: punishModel && punishModel.char2 || 0
+        skinId: punishModel && punishModel.skin2 || 0
+        numStocks: punishModel && punishModel.stocks || 0
+      }
+
+      Row {
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: dp(Theme.contentPadding) / 2
+        height: sp(16)
+
+        AppText {
+          text: qsTr("%1%").arg(dataModel.formatNumber(punishModel.endPercent))
+
+          font.pixelSize: sp(16)
+          font.bold: true
+          color: dataModel.damageColor(punishModel.endPercent)
+        }
+      }
+    }
+
+    Item {
+      height: parent.height
+      width: dp(32)
+
+      AppText {
+        text: "KO"
+        anchors.centerIn: parent
+        visible: punishModel.didKill
+        font.pixelSize: sp(24)
       }
     }
 

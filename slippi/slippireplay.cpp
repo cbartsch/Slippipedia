@@ -145,6 +145,7 @@ PunishData::PunishData(QObject *parent, const slip::Analysis &analysis,
 
   m_startPercent = punish.start_pct;
   m_endPercent = punish.end_pct;
+  m_stocks = punish.stocks;
 
   m_startFrame = punish.start_frame;
   m_endFrame = punish.end_frame;

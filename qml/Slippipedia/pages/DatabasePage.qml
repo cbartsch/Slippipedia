@@ -132,8 +132,6 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       visible: dataModel.isProcessing
     }
 
-
-
     SimpleSection {
       title: "Slippi Desktop App folder"
     }

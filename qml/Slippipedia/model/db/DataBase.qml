@@ -62,6 +62,7 @@ port integer,
 
 startFrame integer,
 endFrame integer,
+stocks integer,
 duration integer,
 
 startPercent real,
@@ -155,7 +156,7 @@ values %2")
           var params = [
                 punish.uniqueId, replay.uniqueId, player.port,
                 punish.startFrame, punish.endFrame, punish.durationFrames,
-                punish.startPercent, punish.endPercent, punish.damage,
+                punish.startPercent, punish.endPercent, punish.stocks, punish.damage,
                 punish.openingDynamic, punish.openingMoveId, punish.lastMoveId, punish.numMoves,
                 punish.killDirection, punish.didKill
               ]
@@ -163,7 +164,7 @@ values %2")
           tx.executeSql(qsTr("insert or replace into Punishes (
 id, replayId, port,
 startFrame, endFrame, duration,
-startPercent, endPercent, damage,
+startPercent, endPercent, stocks, damage,
 openingDynamic, openingMoveId, lastMoveId, numMoves,
 killDirection, didKill
   )
@@ -635,7 +636,7 @@ pu.numMoves numMoves, pu.openingDynamic openingDynamic,
 pu.openingMoveId openingMoveId, pu.lastMoveId lastMoveId,
 pu.didKill didKill, pu.killDirection killDirection,
 pu.startFrame startFrame, pu.endFrame endFrame, pu.duration punishDuration,
-pu.startPercent startPercent, pu.endPercent endPercent, pu.damage damage,
+pu.startPercent startPercent, pu.endPercent endPercent, pu.stocks stocks, pu.damage damage,
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
 p.slippiName name1, p.slippiCode code1, p.charIdOriginal char1, p.skinId skin1, p.port port1, p.s_endStocks endStocks1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2
