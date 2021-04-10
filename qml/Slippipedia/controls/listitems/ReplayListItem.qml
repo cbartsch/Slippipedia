@@ -15,7 +15,7 @@ AppListItem {
 
   property bool showPercent: showOptions
 
-  readonly property bool showOptions: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered
+  readonly property bool showOptions: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered || toolBtnSetup.hovered
   readonly property bool useShortStageName: replayListItem.width > dp(510)
   readonly property string stageNameProperty: useShortStageName  ? "name" : "shortName"
   readonly property var emptyStage: ({ name: "Unknown stage", shortName: "?" })
@@ -61,10 +61,23 @@ AppListItem {
     AppToolButton {
       id: toolBtnOpen
       iconType: IconType.play
-      onClicked: openReplayFile(replayModel.filePath)
       toolTipText: "Open replay file"
       height: width
       anchors.verticalCenter: parent.verticalCenter
+
+      visible: dataModel.hasDesktopApp
+      onClicked: openReplayFile(replayModel.filePath)
+    }
+
+    AppToolButton {
+      id: toolBtnSetup
+      iconType: IconType.gear
+      toolTipText: "Set Slippi Desktop App folder to play replays."
+      height: width
+      anchors.verticalCenter: parent.verticalCenter
+
+      visible: !dataModel.hasDesktopApp
+      onClicked: showSetup()
     }
   }
 }

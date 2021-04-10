@@ -31,7 +31,11 @@ Item {
 
       AppText {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: replayModel && replayModel.endStocks1 > 0 ? qsTr("%1%").arg(replayModel.endPercent1.toFixed(0)) : "KO" || ""
+
+        // the game also rounds down for displaying percent
+        text: replayModel && replayModel.endStocks1 > 0
+              ? qsTr("%1%").arg(Math.floor(replayModel.endPercent1))
+              : "KO" || ""
 
         visible: showPercent
         font.pixelSize: sp(16)
@@ -71,7 +75,9 @@ Item {
 
       AppText {
         anchors.horizontalCenter: parent.horizontalCenter
-        text: replayModel && replayModel.endStocks2 > 0 ? qsTr("%1%").arg(replayModel.endPercent2.toFixed(0)) : "KO" || ""
+        text: replayModel && replayModel.endStocks2 > 0
+              ? qsTr("%1%").arg(Math.floor(replayModel.endPercent2))
+              : "KO" || ""
 
         visible: showPercent
         font.pixelSize: sp(16)

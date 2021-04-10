@@ -16,6 +16,13 @@ Item {
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
+
+  Connections {
+    target: dataModel
+
+    onIsProcessingChanged: refresh()
+  }
+
   AppListView {
     id: listView
     anchors.fill: parent

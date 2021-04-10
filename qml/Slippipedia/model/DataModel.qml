@@ -279,14 +279,14 @@ Item {
       return false
     }
 
-    var startFrames = 60 * 2
-    var paddingFrames = 60 * 3 // 2 seconds
+    var startFrames = 60 * 5
+    var paddingFrames = 60 * 2 // 2 seconds
 
     // convert to playback dolphin input format:
     var punishQueue = punishList.map(pu => ({
                                          path: pu.filePath,
                                          startFrame: pu.startFrame - paddingFrames - startFrames,
-                                         endFrame: pu.endFrame + paddingFrames - startFrames
+                                         endFrame: pu.endFrame + paddingFrames
                                        }))
 
     var slippiInput = {

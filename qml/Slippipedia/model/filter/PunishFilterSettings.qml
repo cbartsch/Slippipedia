@@ -113,7 +113,9 @@ Item {
     minMoves = other.minMoves
     minDamage = other.minDamage
     didKill = other.didKill
-    killDirection = other.killDirection
+    killDirections = other.killDirections
+    openingMoveIds = other.openingMoveIds
+    lastMoveIds = other.lastMoveIds
   }
 
   function setKillDirection(killDirections) {

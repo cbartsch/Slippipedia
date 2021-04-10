@@ -195,6 +195,10 @@ App {
     }
   }
 
+  function showSetup() {
+    navigation.currentIndex = 0
+  }
+
   function showPage(page, filterData) {
     var stack = navigation.currentNavigationItem.navigationStack
 

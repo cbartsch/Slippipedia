@@ -59,7 +59,8 @@ AppListItem {
         height: sp(16)
 
         AppText {
-          text: qsTr("%1%").arg(punishModel.endPercent.toFixed(0))
+          // the game also rounds down for displaying percent
+          text: qsTr("%1%").arg(Math.floor(punishModel.endPercent))
 
           font.pixelSize: sp(16)
           font.bold: true
@@ -93,17 +94,18 @@ AppListItem {
       }
 
       AppText {
-        text: qsTr("%1 %2: %3%4")
+        text: qsTr("%1 %2: %3")
         .arg(dataModel.formatTime(punishModel.endFrame))
-        .arg(punishModel.didKill ? "Killed with" : "Last move")
+        .arg(punishModel.didKill
+          ? qsTr("Killed (%1) with").arg(MeleeData.killDirectionNames[punishModel.killDirection])
+          : "Last move")
         .arg(MeleeData.moveNames[punishModel.lastMoveId])
-        .arg(punishModel.didKill ? qsTr(" (%1)").arg(MeleeData.killDirectionNames[punishModel.killDirection]) : "")
       }
     }
   }
 
   rightItem: Row {
-    visible: mouseArea.containsMouse || toolBtnOpen.hovered
+    visible: mouseArea.containsMouse || toolBtnOpen.hovered || toolBtnSetup.hovered
     height: parent.height
     spacing: dp(Theme.contentPadding) / 2
 
@@ -116,7 +118,19 @@ AppListItem {
       iconType: IconType.play
       toolTipText: "Replay punish"
 
+      visible: dataModel.hasDesktopApp
       onClicked: dataModel.replayPunishes([punishModel])
+    }
+
+    AppToolButton {
+      id: toolBtnSetup
+      iconType: IconType.gear
+      toolTipText: "Set Slippi Desktop App folder to replay punish."
+      height: width
+      anchors.verticalCenter: parent.verticalCenter
+
+      visible: !dataModel.hasDesktopApp
+      onClicked: showSetup()
     }
   }
 }

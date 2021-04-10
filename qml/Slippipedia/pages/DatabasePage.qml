@@ -85,6 +85,8 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       text: qsTr("Analyze %1 replays").arg(dataModel.allFiles.length)
 
       visible: !dataModel.isProcessing
+      enabled: dataModel.allFiles.length > 0
+      backgroundColor: enabled ? Theme.controlBackgroundColor : Theme.backgroundColor
 
       onSelected: dataModel.parseReplays(dataModel.allFiles)
     }
@@ -93,8 +95,10 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       text: dataModel.newFiles
             ? qsTr("Analyze %1 new replays").arg(dataModel.newFiles.length)
             : "No new replays found."
-      enabled: dataModel.newFiles
+
       visible: !dataModel.isProcessing
+      enabled: dataModel.newFiles.length > 0
+      backgroundColor: enabled ? Theme.controlBackgroundColor : Theme.backgroundColor
 
       onSelected: dataModel.parseReplays(dataModel.newFiles)
     }
@@ -174,7 +178,8 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
 
     AppListItem {
       text: "Click to select your Melee ISO file..."
-      detailText: "Used to play replays & combos."
+      detailText: "Used to play replays & combos.
+If not configured, start Melee manually from the replay Dolphin."
 
       onSelected: fileDialogIso.open()
 

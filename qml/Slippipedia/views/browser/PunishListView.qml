@@ -22,6 +22,12 @@ Item {
 
   property string prevSessionSection: ""
 
+  Connections {
+    target: dataModel
+
+    onIsProcessingChanged: refresh()
+  }
+
   AppListItem {
     id: header
 
@@ -46,7 +52,19 @@ Item {
         iconType: IconType.play
         toolTipText: "Replay all punishes"
 
+        visible: dataModel.hasDesktopApp
         onClicked: dataModel.replayPunishes(punishList)
+      }
+
+      AppToolButton {
+        id: toolBtnSetup
+        iconType: IconType.gear
+        toolTipText: "Set Slippi Desktop App folder to replay punishes."
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
+
+        visible: !dataModel.hasDesktopApp
+        onClicked: showSetup()
       }
     }
   }
