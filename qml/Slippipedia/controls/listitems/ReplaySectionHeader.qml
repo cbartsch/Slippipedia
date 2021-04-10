@@ -8,16 +8,19 @@ Item {
   id: sectionHeader
 
   width: parent.width
-  height: dp(120)
+  height: content.height
 
   readonly property var emptySection: ({
                                          chars1: [],
                                          chars2: []
                                        })
 
-  property var sData: emptySection
+  property var sectionModel: emptySection
 
   property bool checked: false
+
+  property alias listButtonVisible: statsItem.listButtonVisible
+  property alias statsButtonVisible: statsItem.statsButtonVisible
 
   signal showStats
 
@@ -26,33 +29,28 @@ Item {
     color: checked ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
   }
 
-  ColumnLayout {
+  Column {
     id: content
-    anchors.fill: parent
+    anchors.left: parent.left
+    anchors.right: parent.right
     anchors.margins: dp(Theme.contentPadding)
+    anchors.verticalCenter: parent.verticalCenter
+    spacing: dp(Theme.contentPadding) / 4
 
-    Item {
-      Layout.fillHeight: true
-      Layout.fillWidth: true
-
-      PlayerInfoRow {
-        id: titleFlick
-        anchors.fill: parent
-        model: sData
-      }
-    }
-
-    Item {
-      width: 1
-      height: dp(Theme.contentPadding / 2)
+    PlayerInfoRow {
+      id: titleFlick
+      width: parent.width
+      model: sectionModel
     }
 
     StatsInfoItem {
-      Layout.preferredWidth: parent.width
+      id: statsItem
+
+      width: parent.width
 
       listButtonVisible: false
 
-      stats: sData
+      stats: sectionModel
       onShowStats: sectionHeader.showStats()
     }
   }

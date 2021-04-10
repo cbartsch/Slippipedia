@@ -8,7 +8,7 @@ AppFlickable {
 
   flickableDirection: Flickable.HorizontalFlick
   contentWidth: Math.max(titleContent.width, width)
-  implicitHeight: titleContent.height
+  height: titleContent.height
 
   property var model: ({})
 
@@ -17,7 +17,6 @@ AppFlickable {
 
   Row {
     id: titleContent
-    height: parent.height
     anchors.verticalCenter: parent.verticalCenter
 
     spacing: dp(Theme.contentPadding) / 2

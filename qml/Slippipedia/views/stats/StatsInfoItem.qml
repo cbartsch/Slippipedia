@@ -15,11 +15,15 @@ RowLayout {
   signal showList
   signal showStats
 
+  height: Math.max(content.height, dateText.height)
+
   Column {
+    id: content
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignVCenter
 
     AppText {
+      id: dateText
       font.pixelSize: dp(16)
       color: Theme.secondaryTextColor
 
@@ -27,7 +31,8 @@ RowLayout {
       visible: text
 
       text: !stats || !(stats.dateFirst || stats.dateLast)
-            ? "" : (dataModel.formatDate(stats.dateFirst) + " - " + dataModel.formatDate(stats.dateLast))
+            ? stats.date ? dataModel.formatDate(stats.date) : ""
+            : (dataModel.formatDate(stats.dateFirst) + " - " + dataModel.formatDate(stats.dateLast))
     }
 
     AppText {
@@ -35,6 +40,7 @@ RowLayout {
       color: Theme.secondaryTextColor
 
       width: parent.width
+      visible: "numGames" in stats
 
       text: qsTr("%1 games").arg(stats.numGames)
     }
@@ -46,6 +52,8 @@ RowLayout {
 
       maximumLineCount: 1
       elide: Text.ElideRight
+
+      visible: "gamesFinished" in stats
 
       text: !stats ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
                                                                   : qsTr("Win Rate: %3 (%1 / %2)")

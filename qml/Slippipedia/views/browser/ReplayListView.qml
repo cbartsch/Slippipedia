@@ -38,8 +38,9 @@ Item {
     section.criteria: ViewSection.FullString
     section.property: "section"
     section.delegate: ReplaySectionHeader {
-      sData: sectionData[section] || emptySection
+      sectionModel: sectionData[section] || emptySection
       checked: currentSection === section
+      height: dp(110)
 
       onShowStats: app.showStats({
                                    code1: sData.code1,

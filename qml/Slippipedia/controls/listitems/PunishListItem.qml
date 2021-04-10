@@ -9,6 +9,8 @@ AppListItem {
 
   property var punishModel: ({})
 
+  readonly property bool showOptions: mouseArea.containsMouse || toolBtnOpen.hovered || toolBtnSetup.hovered
+
   height: dp(60)
 
   backgroundColor: Theme.backgroundColor
@@ -57,6 +59,7 @@ AppListItem {
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: dp(Theme.contentPadding) / 2
         height: sp(16)
+        visible: showOptions
 
         AppText {
           // the game also rounds down for displaying percent
@@ -105,7 +108,7 @@ AppListItem {
   }
 
   rightItem: Row {
-    visible: mouseArea.containsMouse || toolBtnOpen.hovered || toolBtnSetup.hovered
+    visible: showOptions
     height: parent.height
     spacing: dp(Theme.contentPadding) / 2
 

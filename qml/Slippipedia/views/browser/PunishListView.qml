@@ -89,13 +89,10 @@ Item {
     section.delegate: Column {
       width: parent.width
 
-      PlayerInfoRow {
-        model: sectionData[section] || {}
-
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.margins: dp(Theme.contentPadding)
-        height: dp(48)
+      ReplaySectionHeader {
+        sectionModel: sectionData[section] || {}
+        height: dp(64)
+        statsButtonVisible: false
 
       // sections having different heights is buggy...
       //  visible: model.showNames
