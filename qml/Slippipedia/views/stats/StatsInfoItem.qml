@@ -55,7 +55,7 @@ RowLayout {
 
       visible: "gamesFinished" in stats
 
-      text: !stats ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure player filter to see win rate"
+      text: !stats ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
                                                                   : qsTr("Win Rate: %3 (%1 / %2)")
       .arg(stats.gamesWon).arg(stats.gamesFinished)
       .arg(dataModel.formatPercentage(stats.gamesWon / stats.gamesFinished))

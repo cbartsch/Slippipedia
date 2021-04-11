@@ -8,7 +8,7 @@ Row {
 
   property alias headingText: heading.text
 
-  visible: playerFilter.hasFilter
+  visible: playerFilter && playerFilter.hasFilter || false
 
   spacing: dp(2)
 
@@ -18,7 +18,7 @@ Row {
   }
 
   AppText {
-    text: playerFilter.nameFilterText
+    text: playerFilter && playerFilter.nameFilterText || ""
     color: Theme.secondaryTextColor
   }
 
@@ -31,10 +31,11 @@ Row {
   Repeater {
     // for zelda/sheik, insert both IDs to display both icons
     // because it's treated as 1 character for filtering
-    model: playerFilter.charIds.reduce((acc, id) => id === 18 || id === 19
-                                       ? acc.concat([18, 19])
-                                       : acc.concat(id),
-                                       [])
+    model: playerFilter && playerFilter.charIds.reduce(
+             (acc, id) => id === 18 || id === 19
+             ? acc.concat([18, 19])
+             : acc.concat(id),
+             []) || []
 
     StockIcon {
       charId: modelData

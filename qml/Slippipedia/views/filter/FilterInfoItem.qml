@@ -39,7 +39,7 @@ Column {
 
     detailTextItem: FilterDescription {
       id: description
-      filter: stats.dataBase.filterSettings
+      filter: stats && stats.dataBase.filterSettings || null
     }
 
     onSelected: showFilteringPage()

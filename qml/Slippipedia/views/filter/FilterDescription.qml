@@ -8,10 +8,12 @@ Column {
 
   property bool showPunishFilter: false
 
-  readonly property bool hasFilter: filter.playerFilter.hasFilter ||
-                                    filter.opponentFilter.hasFilter ||
-                                    filter.gameFilter.hasFilter ||
-                                    (showPunishFilter ? filter.punishFilter.hasFilter : false)
+  readonly property bool hasFilter: filter && (
+                                      filter.playerFilter.hasFilter ||
+                                      filter.opponentFilter.hasFilter ||
+                                      filter.gameFilter.hasFilter ||
+                                      (showPunishFilter ? filter.punishFilter.hasFilter : false)
+                                      )
 
   AppText {
     text: hasFilter ? "Matching:" : "No filter configured."
@@ -19,23 +21,23 @@ Column {
   }
 
   PlayerFilterDescription {
-    playerFilter: filter.playerFilter
+    playerFilter: filter && filter.playerFilter || null
     headingText: "Me:"
   }
 
   PlayerFilterDescription {
-    playerFilter: filter.opponentFilter
+    playerFilter: filter && filter.opponentFilter || null
     headingText: "Opponent:"
   }
 
   AppText {
-    text: filter.gameFilter.displayText
+    text: filter && filter.gameFilter.displayText || ""
     color: Theme.secondaryTextColor
   }
 
   AppText {
     visible: showPunishFilter && filter.punishFilter.hasFilter
-    text: "Punish: " + filter.punishFilter.displayText
+    text: filter && "Punish: " + filter.punishFilter.displayText || ""
     color: Theme.secondaryTextColor
   }
 }
