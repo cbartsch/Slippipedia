@@ -152,7 +152,14 @@ Create a release build, then use `macdeployqt`.
 
 ### Windows
 
-Create a release build, then use `windeployqt` from a Qt command line (use `qtenv2.bat` to set up the environment).
+Create a release build, then copy the .exe file Somewhere.
+Use `windeployqt` from a Qt command line (use `qtenv2.bat` to set up the environment).
+
+Add the `-qmldir` parameter so it finds all dependencies from QML imports.
+
+```
+> windeployqt -qmldir ../../qml .
+```
 
 This adds all the libraries to the folder next to the `.exe` file.
 
