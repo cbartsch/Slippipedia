@@ -4,6 +4,10 @@ This program can analyze a large number of Slippi replays and display detailed, 
 
 ![video](media/analytics.gif)
 
+# Download
+
+Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/latest) for your OS.
+
 # Table of Contents
 
 * [Credits](#credits)
