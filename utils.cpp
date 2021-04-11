@@ -6,6 +6,9 @@
 #include <QProcess>
 #include <QtDebug>
 
+#ifdef Q_OS_WIN
+#include <shlobj.h>
+#endif
 
 Utils::Utils()
 {
@@ -21,13 +24,24 @@ void Utils::registerQml(const char *qmlModuleName) {
 bool Utils::exploreToFile(const QString &filePath)
 {
 #ifdef Q_OS_WIN
-  QString mod = filePath;
+  // convert to 16bit string with native backslashes
+  WCHAR filePathW[256];
+  mbstowcs(filePathW, QDir::toNativeSeparators(filePath).toLocal8Bit(), filePath.length() + 1);
 
-  QString arg = "/select," + mod.replace("/", "\\");
+  // get native reference to file
+  PIDLIST_ABSOLUTE pidl;
+  auto ret = SHParseDisplayName(filePathW, nullptr, &pidl, 0, nullptr);
 
-  QProcess::execute("explorer.exe", {arg});
+  if(ret < 0) {
+    return false;
+  }
 
-  return true;
+  // show in explorer
+  ret = SHOpenFolderAndSelectItems(pidl, 0, nullptr, 0);
+  ILFree(pidl);
+
+  return ret >= 0;
+
 #endif
   // TODO other OS implementations
   return false;
