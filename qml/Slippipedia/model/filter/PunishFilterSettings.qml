@@ -11,7 +11,7 @@ Item {
   property string settingsCategory: ""
 
   property int minMoves: 3
-  property real minDamage: 60
+  property real minDamage: 50
   property bool didKill: false
 
   property var killDirections: []

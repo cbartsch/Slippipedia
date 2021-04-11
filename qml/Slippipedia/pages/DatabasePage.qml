@@ -3,6 +3,7 @@ import Felgo 3.0
 import QtQuick 2.0
 import QtQuick.Controls 2.12
 import QtQuick.Dialogs 1.2
+import QtGraphicalEffects 1.0
 
 import Slippipedia 1.0
 
@@ -27,7 +28,7 @@ BasePage {
 
       FileDialog {
         id: fileDialogReplays
-        title: "Please choose a file"
+        title: "Select replay folder"
         selectMultiple: false
         selectFolder: true
         folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
@@ -148,7 +149,7 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
 
       FileDialog {
         id: fileDialogDesktop
-        title: "Please choose a file"
+        title: "Select Slippi Desktop App folder"
         selectMultiple: false
         selectFolder: true
         folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
@@ -172,31 +173,72 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       backgroundColor: Theme.backgroundColor
     }
 
+    AppListItem {
+      visible: !dataModel.hasDesktopApp
+
+      property url desktopAppDownloadUrl: "https://slippi.gg/downloads"
+
+      leftItem: Item {
+        height: dp(24)
+        width: height
+        anchors.verticalCenter: parent.verticalCenter
+
+        AppImage {
+          id: slippiImg
+          anchors.fill: parent
+          visible: false
+          source: "../../../assets/img/slippi.svg"
+          fillMode: Image.PreserveAspectFit
+        }
+
+        ColorOverlay {
+          anchors.fill: parent
+          source: slippiImg
+          color: Theme.tintColor
+        }
+      }
+
+      text: "Download Desktop App (Launcher)"
+      detailText: desktopAppDownloadUrl
+
+      onSelected: nativeUtils.openUrl(desktopAppDownloadUrl)
+    }
+
     SimpleSection {
       title: "Melee ISO file"
     }
 
     AppListItem {
       text: "Click to select your Melee ISO file..."
-      detailText: "Used to play replays & combos.
-If not configured, start Melee manually from the replay Dolphin."
+      detailText: "Used to auto-play replays & combos in the replay Dolphin.
+Leave empty to start an ISO manually, which is useful if your replays are from different Melee mods/versions."
 
       onSelected: fileDialogIso.open()
 
       FileDialog {
         id: fileDialogIso
-        title: "Please choose a file"
+        title: "Select Melee ISO file"
         selectMultiple: false
         selectFolder: false
+        nameFilters: ["ISO files (*.iso)"]
         folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.meleeIsoPath)
 
         onAccepted: dataModel.meleeIsoPath = fileUtils.stripSchemeFromUrl(fileUrl)
+      }
+
+      rightItem: AppToolButton {
+        iconType: IconType.trash
+        toolTipText: "Reset ISO path"
+        visible: dataModel.hasMeleeIso
+        anchors.verticalCenter: parent.verticalCenter
+
+        onClicked: dataModel.meleeIsoPath = ""
       }
     }
 
     AppListItem {
       text: dataModel.meleeIsoPath
-      detailText: dataModel.hasMeleeIso ? "Melee ISO found." : "Melee ISO not found."
+      detailText: dataModel.hasMeleeIso ? "File exists." : "Melee ISO not found."
 
       leftItem: Icon {
         anchors.verticalCenter: parent.verticalCenter

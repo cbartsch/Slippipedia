@@ -56,5 +56,14 @@
         <file>qml/Slippipedia/controls/visual/ReplayIcons.qml</file>
         <file>qml/Slippipedia/controls/visual/UiAnimation.qml</file>
         <file>qml/Slippipedia/controls/generic/CustomTabIcon.qml</file>
+        <file>qml/Slippipedia/views/filter/FilterDescription.qml</file>
+        <file>qml/Slippipedia/views/filter/PlayerFilterDescription.qml</file>
+        <file>qml/Slippipedia/views/filter/PunishFilterOptions.qml</file>
+        <file>qml/Slippipedia/model/filter/PunishFilterSettings.qml</file>
+        <file>qml/Slippipedia/views/browser/PunishListView.qml</file>
+        <file>qml/Slippipedia/views/browser/ReplayListView.qml</file>
+        <file>qml/Slippipedia/controls/generic/PlayerInfoRow.qml</file>
+        <file>qml/Slippipedia/controls/visual/StockIcons.qml</file>
+        <file>qml/Slippipedia/controls/listitems/PunishListItem.qml</file>
     </qresource>
 </RCC>
