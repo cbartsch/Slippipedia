@@ -18,12 +18,6 @@ FlickablePage {
   onAppeared: logPage(title)
   onSelected: logPage(title)
 
-  Binding {
-    target: stats ? stats.dataBase.filterSettings : null
-    property: "showPunishFilter"
-    value: filterModal.showPunishOptions
-  }
-
   FilterModal {
     id: filterModal
     stats: basePage.stats
@@ -33,7 +27,11 @@ FlickablePage {
     onClosed: logPage(basePage.title)
   }
 
-  function showFilteringPage() {
+  function showFilteringPage(tabIndex) {
+    if(typeof tabIndex === "number") {
+      filterModal.showTab(tabIndex)
+    }
+
     filterModal.open()
   }
 }

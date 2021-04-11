@@ -5,7 +5,11 @@ Item {
   id: filterSettings
 
   property bool persistenceEnabled: false
-  property bool showPunishFilter: false
+
+  readonly property bool hasFilter: gameFilter.hasFilter ||
+                                    playerFilter.hasFilter ||
+                                    opponentFilter.hasFilter ||
+                                    punishFilter.hasFilter
 
   readonly property string displayText: {
     var pText = playerFilter.displayText
@@ -19,7 +23,7 @@ Item {
     var puText = punishFilter.displayText
     puText = puText ? "Punish: " + puText : ""
 
-    return [pText, oText, gText, showPunishFilter ? puText : ""].filter(_ => _).join("\n") || "(nothing)"
+    return [pText, oText, gText, puText].filter(_ => _).join("\n") || "(nothing)"
   }
 
   signal filterChanged

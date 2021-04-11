@@ -94,6 +94,8 @@ BasePage {
       anchors.centerIn: parent
       text: "Loading..."
       font.pixelSize: sp(32)
+      style: Text.Outline
+      styleColor: "black"
     }
   }
 }

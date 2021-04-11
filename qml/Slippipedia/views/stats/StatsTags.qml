@@ -32,7 +32,7 @@ Column {
     detailText: "Filter by Slippi code and/or name to see opposing player tags."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage()
+    onSelected: showFilteringPage(0)
   }
 
   NameGrid {
@@ -53,7 +53,7 @@ Column {
     detailText: "Filter by Slippi code and/or name to see opposing Slippi codes."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage()
+    onSelected: showFilteringPage(0)
   }
 
   NameGrid {

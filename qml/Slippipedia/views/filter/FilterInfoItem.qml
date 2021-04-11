@@ -17,6 +17,7 @@ Column {
   signal showStats
 
   property bool clickable: false
+  property alias showPunishFilter: description.showPunishFilter
 
   property int numReplays: stats ? stats.totalReplays : 0
   property int numReplaysFiltered: stats ? stats.totalReplaysFiltered : 0
@@ -34,7 +35,12 @@ Column {
     .arg(numReplaysFiltered).arg(numReplays)
     .arg(dataModel.formatPercentage(amountFiltered))
 
-    detailText: qsTr("Matching:\n%1").arg(stats ? stats.dataBase.filterSettings.displayText : "")
+    //detailText: qsTr("Matching:\n%1").arg(stats ? stats.dataBase.filterSettings.displayText : "")
+
+    detailTextItem: FilterDescription {
+      id: description
+      filter: stats.dataBase.filterSettings
+    }
 
     onSelected: showFilteringPage()
 

@@ -35,6 +35,8 @@ AnalyticsListView 1.0       views/analytics/AnalyticsListView.qml
 PunishListView 1.0          views/browser/PunishListView.qml
 ReplayListView 1.0          views/browser/ReplayListView.qml
 
+FilterDescription 1.0       views/filter/FilterDescription.qml
+PlayerFilterDescription 1.0 views/filter/PlayerFilterDescription.qml
 FilterInfoItem 1.0          views/filter/FilterInfoItem.qml
 FilterModal 1.0             views/filter/FilterModal.qml
 GameFilterOptions 1.0       views/filter/GameFilterOptions.qml

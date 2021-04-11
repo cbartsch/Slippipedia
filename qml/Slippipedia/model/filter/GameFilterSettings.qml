@@ -82,7 +82,7 @@ Item {
                   : maxText ? "Shorter than " + maxText : ""
     durText = durText ? "Duration: " + durText : ""
 
-    var stockText = endStocks < 0 ? "" : ("Stocks left: " + endStocks)
+    var stockText = endStocks < 0 ? "" : (qsTr("Stocks left: %1+").arg(endStocks))
 
     return [
           sText, wText, dText, durText, stockText

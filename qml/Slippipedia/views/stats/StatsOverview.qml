@@ -53,7 +53,7 @@ Column {
     detailText: "Filter by Slippi code and/or name to see win rate."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage()
+    onSelected: showFilteringPage(0)
   }
 
   AppListItem {
@@ -91,7 +91,7 @@ Column {
     detailText: "Filter by Slippi code and/or name to see opposing characters."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage()
+    onSelected: showFilteringPage(0)
   }
 
   CharacterGrid {

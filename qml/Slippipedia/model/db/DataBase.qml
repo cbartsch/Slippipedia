@@ -244,7 +244,7 @@ killDirection, didKill
 
   function getNumReplays() {
     return readFromDb(function(tx) {
-      var results = tx.executeSql("select count(*) c from Replays")
+      var results = tx.executeSql("select count(*) c from Replays where hasData = 1")
 
       return results.rows.item(0).c
     }, 0)

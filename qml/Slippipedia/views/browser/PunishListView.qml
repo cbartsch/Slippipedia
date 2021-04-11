@@ -138,6 +138,8 @@ Item {
       anchors.centerIn: parent
       text: "Loading punishes..."
       font.pixelSize: sp(32)
+      style: Text.Outline
+      styleColor: "black"
     }
   }
 

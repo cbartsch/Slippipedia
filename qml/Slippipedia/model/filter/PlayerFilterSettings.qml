@@ -49,10 +49,10 @@ Item {
   readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != ""
   readonly property bool hasCharFilter: charIds && charIds.length > 0
 
-  readonly property string displayText: {
-    var pText
+  readonly property string nameFilterText: {
     var codeText = slippiCode.filterText
     var nameText = slippiName.filterText
+    var pText
 
     if(codeText && nameText) {
       pText = qsTr("%1%2%3")
@@ -67,6 +67,12 @@ Item {
     if(pText) {
       pText = "\"" + pText + "\""
     }
+
+    return pText
+  }
+
+  readonly property string displayText: {
+    var pText = nameFilterText
 
 
     var cText = null

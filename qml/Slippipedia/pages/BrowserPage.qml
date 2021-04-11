@@ -40,6 +40,7 @@ BasePage {
     FilterInfoItem {
       stats: browserPage.stats
       clickable: filterChangeable
+      showPunishFilter: filterModal.showPunishOptions
 
       showStatsButton: browserPage.navigationStack.depth > 1
       onShowStats: app.showStats({ sourceFilter: browserPage.stats.dataBase.filterSettings })
