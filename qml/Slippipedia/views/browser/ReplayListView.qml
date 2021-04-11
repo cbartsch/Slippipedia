@@ -43,13 +43,13 @@ Item {
       height: dp(110)
 
       onShowStats: app.showStats({
-                                   code1: sData.code1,
-                                   name1: sData.name1,
-                                   code2: sData.code2,
-                                   name2: sData.name2,
+                                   code1: sectionModel.code1,
+                                   name1: sectionModel.name1,
+                                   code2: sectionModel.code2,
+                                   name2: sectionModel.name2,
                                    // TODO find out why it can be off by a minute (or the seconds are truncated)
-                                   startMs: sData.dateFirst.getTime() - 1000 * 60,
-                                   endMs: sData.dateLast.getTime() + 1000 * 60
+                                   startMs: sectionModel.dateFirst.getTime() - 1000 * 60,
+                                   endMs: sectionModel.dateLast.getTime() + 1000 * 60
                                  })
     }
 
