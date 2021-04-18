@@ -67,10 +67,9 @@ Column {
     onMatchPartialTextChanged:   if(filter) filter.slippiName.matchPartial = matchPartialText
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: radioRow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: radioRow
@@ -92,44 +91,20 @@ Column {
         onCheckedButtonChanged: filter.filterCodeAndName = radioMatchAnd.checked
       }
 
-      AppRadio {
+      CustomRadio {
         id: radioMatchOr
         text: "Match either code or tag"
         checked: filter ? !filter.filterCodeAndName : false
         height: dp(48)
         padding: dp(Theme.contentPadding)
-
-        RippleMouseArea {
-          anchors.fill: parent
-
-          hoverEffectEnabled: true
-          backgroundColor: Theme.listItem.selectedBackgroundColor
-          fillColor: backgroundColor
-          opacity: 0.5
-
-          // this is only for the visual ripple effect
-          onPressed: mouse.accepted = false
-        }
       }
 
-      AppRadio {
+      CustomRadio {
         id: radioMatchAnd
         checked: filter ? filter.filterCodeAndName : false
         text: "Match both code and tag"
         height: dp(48)
         padding: dp(Theme.contentPadding)
-
-        RippleMouseArea {
-          anchors.fill: parent
-
-          hoverEffectEnabled: true
-          backgroundColor: Theme.listItem.selectedBackgroundColor
-          fillColor: backgroundColor
-          opacity: 0.5
-
-          // this is only for the visual ripple effect
-          onPressed: mouse.accepted = false
-        }
       }
     }
 

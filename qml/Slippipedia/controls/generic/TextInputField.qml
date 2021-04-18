@@ -6,13 +6,12 @@ import Felgo 3.0
 
 import Slippipedia 1.0
 
-Rectangle {
+Item {
   id: textInputField
 
   anchors.left: parent.left
   anchors.right: parent.right
   height: dp(48)
-  color: Theme.controlBackgroundColor
 
   property alias divider: divider
 
@@ -31,8 +30,15 @@ Rectangle {
   signal accepted
   signal editingFinished
 
+  Rectangle {
+    anchors.fill: ripple
+    color: Theme.controlBackgroundColor
+  }
+
   RippleMouseArea {
+    id: ripple
     anchors.fill: parent
+    anchors.leftMargin: label.width > 0 ? label.width + dp(Theme.contentPadding) : 0
 
     onClicked: input.forceActiveFocus()
 
@@ -63,6 +69,7 @@ Rectangle {
 
       Layout.fillWidth: true
       Layout.alignment: Qt.AlignVCenter
+      Layout.leftMargin: label.width > 0 ? dp(Theme.contentPadding) : 0
 
       color: Theme.textColor
 

@@ -62,6 +62,7 @@ AppToolButton 1.0           controls/generic/AppToolButton.qml
 BaseNavigationStack 1.0     controls/generic/BaseNavigationStack.qml
 BasePage 1.0                controls/generic/BasePage.qml
 CustomTabIcon 1.0           controls/generic/CustomTabIcon.qml
+CustomRadio 1.0             controls/generic/CustomRadio.qml
 DateRangeRow 1.0            controls/generic/DateRangeRow.qml
 PlayerInfoRow 1.0           controls/generic/PlayerInfoRow.qml
 RangeOptions 1.0            controls/generic/RangeOptions.qml

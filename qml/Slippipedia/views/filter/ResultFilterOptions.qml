@@ -66,17 +66,15 @@ Column {
     }
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: winnerRadioRow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: winnerRadioRow
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.margins: spacing
-      spacing: dp(Theme.contentPadding)
 
       QQ.ButtonGroup {
         id: rbgWinner
@@ -85,35 +83,35 @@ Column {
         onCheckedButtonChanged: filter.winnerPlayerIndex = checkedButton.value
       }
 
-      AppRadio {
+      CustomRadio {
         id: winnerRadioAny
         text: "Any"
         value: -3
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
       }
-      AppRadio {
+      CustomRadio {
         id: winnerRadioMe
         text: "Won"
         value: 0
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
       }
-      AppRadio {
+      CustomRadio {
         id: winnerRadioOpponent
         text: "Lost"
         value: 1
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
       }
-      AppRadio {
+      CustomRadio {
         id: winnerRadioEither
         text: "Either (no tie)"
         value: -1
         checked: filter ? filter.winnerPlayerIndex === value : false
         height: dp(48)
       }
-      AppRadio {
+      CustomRadio {
         id: winnerRadioTie
         text: "No result"
         value: -2

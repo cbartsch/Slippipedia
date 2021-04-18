@@ -31,10 +31,9 @@ Column {
     }
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: dateOptionsRow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: dateOptionsRow

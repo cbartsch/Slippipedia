@@ -11,10 +11,6 @@ Column {
   readonly property PunishFilterSettings filter: stats ? stats.dataBase.filterSettings.punishFilter : null
 
   SimpleSection {
-    title: "Moves / damage"
-  }
-
-  SimpleSection {
     title: "Kill"
   }
 
@@ -54,10 +50,9 @@ Column {
     onSelected: didKillCheckBox.checked = !didKillCheckBox.checked
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: killDirectionFlow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: killDirectionFlow
@@ -77,20 +72,12 @@ Column {
       Repeater {
         model: MeleeData.killDirectionNamesUsed
 
-        Item {
+        Rectangle {
           readonly property int killDirection: index
 
           height: dp(48)
           width: directionCheckBox.width + dp(Theme.contentPadding) * 2
-
-          RippleMouseArea {
-            anchors.fill: parent
-            hoverEffectEnabled: true
-            backgroundColor: Theme.listItem.selectedBackgroundColor
-            fillColor: backgroundColor
-            opacity: 0.5
-            onClicked: directionCheckBox.checked = !directionCheckBox.checked
-          }
+          color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: directionCheckBox
@@ -107,12 +94,25 @@ Column {
               }
             }
           }
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: directionCheckBox.checked = !directionCheckBox.checked
+          }
         }
       }
     }
   }
 
   Divider { anchors.bottom: undefined }
+
+  SimpleSection {
+    title: "Moves / damage"
+  }
 
   CustomListItem {
     text: "Filter by attacks and damage"
@@ -209,10 +209,9 @@ Column {
     }
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: openingMoveFlow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: openingMoveFlow
@@ -232,21 +231,14 @@ Column {
       Repeater {
         model: MeleeData.moveNamesShortUsed
 
-        Item {
+        Rectangle {
           readonly property int moveId: MeleeData.moveIdsShort[moveName]
           readonly property string moveName: modelData
 
           height: dp(48)
           width: moveCheckBox.width + dp(Theme.contentPadding) * 2
 
-          RippleMouseArea {
-            anchors.fill: parent
-            hoverEffectEnabled: true
-            backgroundColor: Theme.listItem.selectedBackgroundColor
-            fillColor: backgroundColor
-            opacity: 0.5
-            onClicked: moveCheckBox.checked = !moveCheckBox.checked
-          }
+          color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: moveCheckBox
@@ -262,6 +254,15 @@ Column {
                 filter.removeOpeningMove(moveId)
               }
             }
+          }
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: moveCheckBox.checked = !moveCheckBox.checked
           }
         }
       }
@@ -293,10 +294,9 @@ Column {
     }
   }
 
-  Rectangle {
+  Item {
     width: parent.width
     height: lastMoveFlow.height
-    color: Theme.controlBackgroundColor
 
     Flow {
       id: lastMoveFlow
@@ -316,21 +316,13 @@ Column {
       Repeater {
         model: MeleeData.moveNamesShortUsed
 
-        Item {
+        Rectangle {
           readonly property int moveId: MeleeData.moveIdsShort[moveName]
           readonly property string moveName: modelData
 
           height: dp(48)
           width: moveCheckBox.width + dp(Theme.contentPadding) * 2
-
-          RippleMouseArea {
-            anchors.fill: parent
-            hoverEffectEnabled: true
-            backgroundColor: Theme.listItem.selectedBackgroundColor
-            fillColor: backgroundColor
-            opacity: 0.5
-            onClicked: moveCheckBox.checked = !moveCheckBox.checked
-          }
+          color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: moveCheckBox
@@ -346,6 +338,15 @@ Column {
                 filter.removeLastMove(moveId)
               }
             }
+          }
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: moveCheckBox.checked = !moveCheckBox.checked
           }
         }
       }

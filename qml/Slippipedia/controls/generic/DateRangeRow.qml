@@ -16,21 +16,72 @@ Row {
 
     flat: true
     onClicked: setPastRange(numDays)
+    horizontalPadding: dp(Theme.contentPadding) / 2
+
+    Rectangle {
+      anchors.fill: parent
+      color: ripple.pressed ? Theme.secondaryBackgroundColor : Theme.controlBackgroundColor
+      z: -1
+    }
+
+    RippleMouseArea {
+      id: ripple
+      anchors.fill: parent
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
+      opacity: 0.5
+      onClicked: btnDay.clicked()
+    }
   }
 
   IconButton {
+    id: btnMinus
     icon: IconType.minus
     size: dp(12)
     height: btnDay.height
     width: height / 2
     onClicked: addDateRange(-numDays)
+
+    Rectangle {
+      anchors.fill: parent
+      color: ripple2.pressed ? Theme.secondaryBackgroundColor : Theme.controlBackgroundColor
+      z: -1
+    }
+
+    RippleMouseArea {
+      id: ripple2
+      anchors.fill: parent
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
+      opacity: 0.5
+      onClicked: btnMinus.clicked()
+    }
   }
 
   IconButton {
+    id: btnPlus
     icon: IconType.plus
     size: dp(12)
     height: btnDay.height
     width: height / 2
     onClicked: addDateRange(numDays)
+
+    Rectangle {
+      anchors.fill: parent
+      color: ripple3.pressed ? Theme.secondaryBackgroundColor : Theme.controlBackgroundColor
+      z: -1
+    }
+
+    RippleMouseArea {
+      id: ripple3
+      anchors.fill: parent
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
+      opacity: 0.5
+      onClicked: btnPlus.clicked()
+    }
   }
 }

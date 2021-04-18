@@ -67,5 +67,6 @@
         <file>qml/Slippipedia/controls/visual/StockIcons.qml</file>
         <file>qml/Slippipedia/controls/listitems/PunishListItem.qml</file>
         <file>qml/Slippipedia/controls/generic/RangeOptions.qml</file>
+        <file>qml/Slippipedia/controls/generic/CustomRadio.qml</file>
     </qresource>
 </RCC>
