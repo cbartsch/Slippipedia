@@ -32,32 +32,14 @@ Column {
     }
   }
 
-  TextInputField {
-    labelText: "Game longer than (in seconds):"
-    placeholderText: "Enter duration..."
+  RangeOptions {
+    label.text: "Game duration (in seconds):"
+    labelWidth: dp(200)
 
-    labelWidth: sp(250)
-    showOptions: false
+    range: filter && filter.duration
 
-    textInput.inputMethodHints: Qt.ImhDigitsOnly
-
-    text: filter && filter.duration.from > 0 ? filter.duration.from / 60 : ""
-
-    onTextChanged: filter.duration.from = text ? text * 60 : -1
-  }
-
-  TextInputField {
-    labelText: "Game shorter than (in seconds):"
-    placeholderText: "Enter duration..."
-
-    labelWidth: sp(250)
-    showOptions: false
-
-    textInput.inputMethodHints: Qt.ImhDigitsOnly
-
-    text: filter && filter.duration.to > 0 ? filter.duration.to / 60 : ""
-
-    onTextChanged: filter.duration.to = text ? text * 60 : -1
+    textFunc: v => v / 60
+    valueFunc: v => v * 60
   }
 
   SimpleSection {
@@ -148,17 +130,10 @@ Column {
     Divider { }
   }
 
-  TextInputField {
-    labelText: "Stocks left (winner):"
-    placeholderText: "Enter number..."
+  RangeOptions {
+    label.text: "Stocks left (winner):"
+    labelWidth: dp(200)
 
-    labelWidth: sp(180)
-    showOptions: false
-
-    textInput.inputMethodHints: Qt.ImhDigitsOnly
-
-    text: filter && filter.endStocks.from > 0 ? filter.endStocks.from : ""
-
-    onTextChanged: filter.endStocks.from = text ? text : 0
+    range: filter && filter.endStocks
   }
 }

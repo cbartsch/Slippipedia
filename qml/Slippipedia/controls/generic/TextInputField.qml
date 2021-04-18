@@ -14,6 +14,8 @@ Rectangle {
   height: dp(48)
   color: Theme.controlBackgroundColor
 
+  property alias divider: divider
+
   property alias label: label
   property alias labelText: label.text
   property real labelWidth: dp(120)
@@ -85,5 +87,5 @@ Rectangle {
     }
   }
 
-  Divider { }
+  Divider { id: divider }
 }

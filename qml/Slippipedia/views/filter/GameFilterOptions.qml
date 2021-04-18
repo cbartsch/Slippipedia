@@ -69,75 +69,16 @@ Column {
     }
   }
 
-  TextInputField {
-    id: textFieldStart
-    labelText: "After:"
-    placeholderText: qsTr("DD/MM/YYYY hh:mm")
-    showOptions: false
+  RangeOptions {
+    id: dateOptions
 
-    text: filter ? dateText(filter.date.from) : ""
-    onEditingFinished: text = Qt.binding(() => dateText(filter.date.from))
+    label.text: "Date:"
+    labelWidth: dp(100)
 
-    onTextChanged: {
-      if(text == "") {
-        filter.date.from = 0
-        return
-      }
+    range: filter && filter.date
 
-      var formats = [
-            "dd/MM/yyyy hh:mm", "dd/MM/yyyy",
-            "dd.MM.yyyy hh:mm", "dd.MM.yyyy",
-          ]
-
-      var date
-      for(var i = 0; i < formats.length && !isDateValid(date); i++) {
-        date = Date.fromLocaleString(Qt.locale(), text, formats[i])
-      }
-
-      if(!isDateValid(date)) {
-        return
-      }
-
-      text = text // break binding to not re-format the date
-
-      filter.date.from = date.getTime()
-    }
-  }
-
-  TextInputField {
-    id: textFieldEnd
-    labelText: "Before:"
-    placeholderText: qsTr("DD/MM/YYYY hh:mm")
-    showOptions: false
-
-    text: filter ? dateText(filter.date.to) : ""
-    onEditingFinished: text = Qt.binding(() => dateText(filter.date.to))
-
-    onTextChanged: {
-      if(text == "") {
-        filter.date.to = 0
-        return
-      }
-
-      var formats = [
-            "dd/MM/yyyy hh:mm", "dd/MM/yyyy",
-            "dd.MM.yyyy hh:mm", "dd.MM.yyyy",
-          ]
-
-      var date
-
-      for(var i = 0; i < formats.length && !isDateValid(date); i++) {
-        date = Date.fromLocaleString(Qt.locale(), text, formats[i])
-      }
-
-      if(!isDateValid(date)) {
-        return
-      }
-
-      text = text // break binding to not re-format the date
-
-      filter.date.to = date.getTime()
-    }
+    textFunc: dateText
+    valueFunc: dateValue
   }
 
   SimpleSection {
@@ -204,11 +145,36 @@ Column {
   }
 
   function updateTexts() {
-    textFieldStart.text = Qt.binding(() => dateText(filter.date.from))
-    textFieldEnd.text = Qt.binding(() => dateText(filter.date.to))
+    dateOptions.inputFrom.text = Qt.binding(() => dateText(filter.date.from))
+    dateOptions.inputTo.text = Qt.binding(() => dateText(filter.date.to))
   }
 
   function dateText(dateMs) {
      return dateMs <= 0 ? "" : dataModel.formatDate(new Date(dateMs))
+  }
+
+  function dateValue(text, input) {
+    if(text === "") {
+      return 0
+    }
+
+    var formats = [
+          "dd/MM/yyyy hh:mm", "dd/MM/yyyy",
+          "dd.MM.yyyy hh:mm", "dd.MM.yyyy",
+        ]
+
+    var date
+    for(var i = 0; i < formats.length && !isDateValid(date); i++) {
+      date = Date.fromLocaleString(Qt.locale(), text, formats[i])
+    }
+
+    if(!isDateValid(date)) {
+      // text entered but no valid date - do not change value
+      return undefined
+    }
+
+    input.text = text // break binding to not re-format the date
+
+    return date.getTime()
   }
 }

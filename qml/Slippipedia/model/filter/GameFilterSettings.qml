@@ -101,16 +101,21 @@ Item {
 
     var stockText = ""
     if(endStocks.from > 0 && endStocks.to > 0) {
-      stockText = qsTr("%1-%2").arg(endStocks.from).arg(endStocks.to)
+      if(endStocks.from == endStocks.to) {
+        stockText = endStocks.from + ""
+      }
+      else {
+        stockText = qsTr("%1-%2").arg(endStocks.from).arg(endStocks.to)
+      }
     }
     else if(endStocks.from > 0) {
       stockText = qsTr("%1+").arg(endStocks.from)
     }
     else if(endStocks.to > 0) {
-      stockText = qsTr("<%1").arg(endStocks.to)
+      stockText = qsTr("≤%1").arg(endStocks.to)
     }
     if(stockText) {
-      stockText = "Stocks left: " + stockText
+      stockText = "Stocks left (winner): " + stockText
     }
 
     return [
