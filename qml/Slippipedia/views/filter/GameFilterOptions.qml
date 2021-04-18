@@ -75,12 +75,12 @@ Column {
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
 
-    text: filter ? dateText(filter.startDateMs) : ""
-    onEditingFinished: text = Qt.binding(() => dateText(filter.startDateMs))
+    text: filter ? dateText(filter.date.from) : ""
+    onEditingFinished: text = Qt.binding(() => dateText(filter.date.from))
 
     onTextChanged: {
       if(text == "") {
-        filter.startDateMs = -1
+        filter.date.from = 0
         return
       }
 
@@ -100,7 +100,7 @@ Column {
 
       text = text // break binding to not re-format the date
 
-      filter.startDateMs = date.getTime()
+      filter.date.from = date.getTime()
     }
   }
 
@@ -110,12 +110,12 @@ Column {
     placeholderText: qsTr("DD/MM/YYYY hh:mm")
     showOptions: false
 
-    text: filter ? dateText(filter.endDateMs) : ""
-    onEditingFinished: text = Qt.binding(() => dateText(filter.endDateMs))
+    text: filter ? dateText(filter.date.to) : ""
+    onEditingFinished: text = Qt.binding(() => dateText(filter.date.to))
 
     onTextChanged: {
       if(text == "") {
-        filter.endDateMs = -1
+        filter.date.to = 0
         return
       }
 
@@ -136,7 +136,7 @@ Column {
 
       text = text // break binding to not re-format the date
 
-      filter.endDateMs = date.getTime()
+      filter.date.to = date.getTime()
     }
   }
 
@@ -198,18 +198,17 @@ Column {
   }
 
   function clearDateRange() {
-    filter.startDateMs = -1
-    filter.endDateMs = -1
+    filter.date.reset()
 
     updateTexts()
   }
 
   function updateTexts() {
-    textFieldStart.text = Qt.binding(() => dateText(filter.startDateMs))
-    textFieldEnd.text = Qt.binding(() => dateText(filter.endDateMs))
+    textFieldStart.text = Qt.binding(() => dateText(filter.date.from))
+    textFieldEnd.text = Qt.binding(() => dateText(filter.date.to))
   }
 
   function dateText(dateMs) {
-     return dateMs < 0 ? "" : dataModel.formatDate(new Date(dateMs))
+     return dateMs <= 0 ? "" : dataModel.formatDate(new Date(dateMs))
   }
 }

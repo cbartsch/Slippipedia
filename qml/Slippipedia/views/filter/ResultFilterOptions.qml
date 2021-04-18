@@ -28,10 +28,7 @@ Column {
       visible: filter ? filter.hasDurationFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
-      onClicked: {
-        filter.minFrames = -1
-        filter.maxFrames = -1
-      }
+      onClicked: filter.duration.reset()
     }
   }
 
@@ -44,9 +41,9 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter && filter.minFrames >= 0 ? filter.minFrames / 60 : ""
+    text: filter && filter.duration.from > 0 ? filter.duration.from / 60 : ""
 
-    onTextChanged: filter.minFrames = text ? text * 60 : -1
+    onTextChanged: filter.duration.from = text ? text * 60 : -1
   }
 
   TextInputField {
@@ -58,9 +55,9 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter && filter.maxFrames >= 0 ? filter.maxFrames / 60 : ""
+    text: filter && filter.duration.to > 0 ? filter.duration.to / 60 : ""
 
-    onTextChanged: filter.maxFrames = text ? text * 60 : -1
+    onTextChanged: filter.duration.to = text ? text * 60 : -1
   }
 
   SimpleSection {
@@ -82,7 +79,7 @@ Column {
 
       onClicked: {
         filter.winnerPlayerIndex = -3
-        filter.endStocks = -1
+        filter.endStocks.reset()
       }
     }
   }
@@ -160,8 +157,8 @@ Column {
 
     textInput.inputMethodHints: Qt.ImhDigitsOnly
 
-    text: filter && filter.endStocks >= 0 ? filter.endStocks : ""
+    text: filter && filter.endStocks.from > 0 ? filter.endStocks.from : ""
 
-    onTextChanged: filter.endStocks = text ? text : -1
+    onTextChanged: filter.endStocks.from = text ? text : 0
   }
 }

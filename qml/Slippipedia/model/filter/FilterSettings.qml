@@ -91,10 +91,10 @@ Item {
 
     if(data.yearMonth) {
       var date = Date.fromLocaleDateString(Qt.locale(), data.yearMonth, "yyyy-MM")
-      gameFilter.startDateMs = date.getTime()
+      gameFilter.date.from = date.getTime()
 
       date.setMonth(date.getMonth() + 1)
-      gameFilter.endDateMs = date.getTime()
+      gameFilter.date.to = date.getTime()
     }
 
     if("code1" in data) playerFilter.slippiCode.filterText = data.code1
@@ -112,8 +112,8 @@ Item {
       opponentFilter.slippiName.matchPartial = false
     }
 
-    if(data.startMs) gameFilter.startDateMs = data.startMs
-    if(data.endMs)   gameFilter.endDateMs = data.endMs
+    if(data.startMs) gameFilter.date.from = data.startMs
+    if(data.endMs)   gameFilter.date.to = data.endMs
 
     // TODO apply punish filter from data
   }

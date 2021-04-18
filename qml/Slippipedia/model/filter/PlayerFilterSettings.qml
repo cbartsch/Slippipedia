@@ -10,7 +10,7 @@ Item {
   property string settingsCategory: ""
   property bool persistenceEnabled: false
 
-  property TextFilter slippiCode: TextFilter {
+  property TextSettings slippiCode: TextSettings {
     id: slippiCode
 
     onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiCodeText = filterText
@@ -19,7 +19,7 @@ Item {
 
     onFilterChanged: playerFilterSettings.filterChanged()
   }
-  property TextFilter slippiName: TextFilter {
+  property TextSettings slippiName: TextSettings {
     id: slippiName
 
     onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiNameText = filterText

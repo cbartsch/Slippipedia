@@ -12,13 +12,35 @@ Item {
 
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
-  property double startDateMs: -1
-  property double endDateMs: -1
+  // duration from-to in frames
+  property RangeSettings duration: RangeSettings {
+    id: duration
 
-  property int minFrames: -1
-  property int maxFrames: -1
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minFrames = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxFrames = to
 
-  property int endStocks: -1
+    onFilterChanged: gameFilterSettings.filterChanged()
+  }
+
+  // date from-to in ms
+  property RangeSettings date: RangeSettings {
+    id: date
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.startDateMs = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.endDateMs = to
+
+    onFilterChanged: gameFilterSettings.filterChanged()
+  }
+
+  // date from-to in ms
+  property RangeSettings endStocks: RangeSettings {
+    id: endStocks
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.endStocksMin = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.endStocksMax = to
+
+    onFilterChanged: gameFilterSettings.filterChanged()
+  }
 
   property var stageIds: []
 
@@ -26,11 +48,6 @@ Item {
 
   // due to this being in a loader, can't use alias properties -> save on change:
   onWinnerPlayerIndexChanged: filterChanged()
-  onStartDateMsChanged:       filterChanged()
-  onEndDateMsChanged:         filterChanged()
-  onMinFramesChanged:         filterChanged()
-  onMaxFramesChanged:         filterChanged()
-  onEndStocksChanged:         filterChanged()
   onStageIdsChanged:          filterChanged()
 
   readonly property var winnerTexts: ({
@@ -46,10 +63,10 @@ Item {
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
   readonly property bool hasGameFilter: hasDateFilter || hasStageFilter
 
-  readonly property bool hasDateFilter: startDateMs >= 0 || endDateMs >= 0
-  readonly property bool hasDurationFilter: minFrames >= 0 || maxFrames >= 0
+  readonly property bool hasDateFilter: date.hasFilter
+  readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
-  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || endStocks >= 0
+  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || endStocks.hasFilter
 
   readonly property string displayText: {
     var sText = null
@@ -60,8 +77,8 @@ Item {
     var wText = winnerPlayerIndex == -3
         ? "" : ("Winner: " + winnerTexts[winnerPlayerIndex])
 
-    var sdText = startDateMs > 0 ? new Date(startDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
-    var edText = endDateMs > 0 ? new Date(endDateMs).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var sdText = date.from > 0 ? new Date(date.from).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var edText = date.to > 0 ? new Date(date.to).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
 
     var dText = sdText && edText
         ? sdText + " to " + edText
@@ -73,8 +90,8 @@ Item {
 
     dText = dText ? "Date: " + dText : ""
 
-    var minText = minFrames >= 0 ? dataModel.formatTime(minFrames) : ""
-    var maxText = maxFrames >= 0 ? dataModel.formatTime(maxFrames) : ""
+    var minText = duration.from > 0 ? dataModel.formatTime(duration.from) : ""
+    var maxText = duration.to > 0 ? dataModel.formatTime(duration.to) : ""
 
     var durText = minText && maxText
         ? qsTr("Between %1 and %2").arg(minText).arg(maxText)
@@ -82,7 +99,19 @@ Item {
                   : maxText ? "Shorter than " + maxText : ""
     durText = durText ? "Duration: " + durText : ""
 
-    var stockText = endStocks < 0 ? "" : (qsTr("Stocks left: %1+").arg(endStocks))
+    var stockText = ""
+    if(endStocks.from > 0 && endStocks.to > 0) {
+      stockText = qsTr("%1-%2").arg(endStocks.from).arg(endStocks.to)
+    }
+    else if(endStocks.from > 0) {
+      stockText = qsTr("%1+").arg(endStocks.from)
+    }
+    else if(endStocks.to > 0) {
+      stockText = qsTr("<%1").arg(endStocks.to)
+    }
+    if(stockText) {
+      stockText = "Stocks left: " + stockText
+    }
 
     return [
           sText, wText, dText, durText, stockText
@@ -100,11 +129,6 @@ Item {
 
       // due to this being in a loader, can't use alias properties -> save on change:
       onWinnerPlayerIndexChanged: settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
-      onStartDateMsChanged:       settingsLoader.item.startDateMs = startDateMs
-      onEndDateMsChanged:         settingsLoader.item.endDateMs = endDateMs
-      onMinFramesChanged:         settingsLoader.item.minFrames = minFrames
-      onMaxFramesChanged:         settingsLoader.item.maxFrames = maxFrames
-      onEndStocksChanged:         settingsLoader.item.endStocks = endStocks
       onStageIdsChanged:          settingsLoader.item.stageIds = stageIds
     }
 
@@ -119,47 +143,52 @@ Item {
       property var stageIds: gameFilterSettings.stageIds
 
       // start and end date as Date.getTime() ms values
-      property double startDateMs: gameFilterSettings.startDateMs
-      property double endDateMs: gameFilterSettings.endDateMs
+      property double startDateMs: gameFilterSettings.date.from
+      property double endDateMs: gameFilterSettings.date.to
 
       // min and max game duration in frames
-      property int minFrames: gameFilterSettings.minFrames
-      property int maxFrames: gameFilterSettings.maxFrames
+      property int minFrames: gameFilterSettings.duration.from
+      property int maxFrames: gameFilterSettings.duration.to
 
       // stocks left at end of game (by player with more stocks left)
-      property int endStocks: gameFilterSettings.endStocks
+      property int endStocksMin: gameFilterSettings.endStocks.from
+      property int endStocksMax: gameFilterSettings.endStocks.to
 
       function apply() {
         // due to this being in a loader, can't use alias properties -> apply on load:
+
+        gameFilterSettings.date.from = startDateMs
+        gameFilterSettings.date.to = endDateMs
+
+        gameFilterSettings.duration.from = minFrames
+        gameFilterSettings.duration.to = maxFrames
+
+        gameFilterSettings.endStocks.from = endStocksMin
+        gameFilterSettings.endStocks.to = endStocksMax
+
         gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
-        gameFilterSettings.startDateMs = startDateMs
-        gameFilterSettings.endDateMs = endDateMs
-        gameFilterSettings.minFrames = minFrames
-        gameFilterSettings.maxFrames = maxFrames
-        gameFilterSettings.endStocks = endStocks
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
     }
   }
 
   function reset() {
+    duration.reset()
+    date.reset()
+    endStocks.reset()
+
     stageIds = []
     winnerPlayerIndex = -3
-    startDateMs = -1
-    endDateMs = -1
-    minFrames = -1
-    maxFrames = -1
-    endStocks = -1
   }
 
   function copyFrom(other) {
     setStage(other.stageIds)
+
+    duration.copyFrom(other.duration)
+    date.copyFrom(other.date)
+    endStocks.copyFrom(other.endStocks)
+
     winnerPlayerIndex = other.winnerPlayerIndex
-    minFrames = other.minFrames
-    maxFrames = other.maxFrames
-    endStocks = other.endStocks
-    startDateMs = other.startDateMs
-    endDateMs = other.endDateMs
   }
 
   function setStage(stageIds) {
@@ -184,19 +213,19 @@ Item {
   function setPastRange(numDays) {
     var ms = numDays * 24 * 60 * 60 * 1000
 
-    var date = new Date()
-    endDateMs = date.getTime()
+    var current = new Date()
+    date.to = current.getTime()
 
-    date.setTime(date.getTime() - ms)
-    startDateMs = date.getTime()
+    current.setTime(current.getTime() - ms)
+    date.from = current.getTime()
   }
 
   // move date range by numDays forward
   function addDateRange(numDays) {
     var ms = numDays * 24 * 60 * 60 * 1000
 
-    startDateMs += ms
-    endDateMs += ms
+    date.to += ms
+    date.from += ms
   }
 
   // DB filtering functions
@@ -224,17 +253,13 @@ Item {
       stageCondition = "r.stageId in " + dataModel.globalDataBase.makeSqlWildcards(stageIds)
     }
 
-    var startDateCondition = startDateMs < 0 ? "" : "r.date >= ?"
-    var endDateCondition = endDateMs < 0 ? "" : "r.date <= ?"
-    var minFramesCondition = minFrames < 0 ? "" : "r.duration >= ?"
-    var maxFramesCondition = maxFrames < 0 ? "" : "r.duration <= ?"
-    var endStocksCondition = endStocks < 0 ? "" : "max(p.s_endStocks, p2.s_endStocks) >= ?"
+    var dateCondition = date.getFilterCondition("r.date")
+    var durationCondition = duration.getFilterCondition("r.duration")
+    var endStocksCondition = endStocks.getFilterCondition("max(p.s_endStocks, p2.s_endStocks)")
 
     var condition = [
           winnerCondition, stageCondition,
-          startDateCondition, endDateCondition,
-          minFramesCondition, maxFramesCondition,
-          endStocksCondition
+          dateCondition, durationCondition, endStocksCondition
         ]
     .map(c => (c || true))
     .join(" and ")
@@ -246,14 +271,13 @@ Item {
     var isoFormat = "yyyy-MM-ddTHH:mm:ss.zzz"
 
     var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
-    var startDateParams = startDateMs < 0 ? [] : [new Date(startDateMs).toLocaleString(Qt.locale(), isoFormat)]
-    var endDateParams = endDateMs < 0 ? [] : [new Date(endDateMs).toLocaleString(Qt.locale(), isoFormat)]
-    var durationParams = [minFrames, maxFrames].filter(f => f > 0)
-    var endStocksParams = endStocks < 0 ? [] : [endStocks]
+
+    var dateParams = date.getFilterParams(v => new Date(v).toLocaleString(Qt.locale(), isoFormat))
+    var durationParams = duration.getFilterParams()
+    var endStocksParams = endStocks.getFilterParams()
 
     return stageIdParams
-    .concat(startDateParams)
-    .concat(endDateParams)
+    .concat(dateParams)
     .concat(durationParams)
     .concat(endStocksParams)
   }

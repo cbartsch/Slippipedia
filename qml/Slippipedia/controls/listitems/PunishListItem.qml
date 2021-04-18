@@ -43,9 +43,9 @@ AppListItem {
     }
 
     Column {
-      Layout.preferredWidth: stockIcons.width
+      Layout.preferredWidth: dp(100)
       Layout.alignment: Qt.AlignVCenter
-      spacing: dp(Theme.contentPadding) / 4
+      spacing: dp(Theme.contentPadding) / 2
 
       StockIcons {
         id: stockIcons
@@ -63,9 +63,22 @@ AppListItem {
 
         AppText {
           // the game also rounds down for displaying percent
+          text: qsTr("%1%").arg(Math.floor(punishModel.startPercent))
+
+          font.pixelSize: sp(14)
+          font.bold: true
+          color: dataModel.damageColor(punishModel.startPercent)
+        }
+
+        AppText {
+          text: "-"
+        }
+
+        AppText {
+          // the game also rounds down for displaying percent
           text: qsTr("%1%").arg(Math.floor(punishModel.endPercent))
 
-          font.pixelSize: sp(16)
+          font.pixelSize: sp(14)
           font.bold: true
           color: dataModel.damageColor(punishModel.endPercent)
         }

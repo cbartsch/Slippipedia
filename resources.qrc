@@ -16,7 +16,8 @@
         <file>qml/Slippipedia/model/filter/FilterSettings.qml</file>
         <file>qml/Slippipedia/model/filter/GameFilterSettings.qml</file>
         <file>qml/Slippipedia/model/filter/PlayerFilterSettings.qml</file>
-        <file>qml/Slippipedia/model/filter/TextFilter.qml</file>
+        <file>qml/Slippipedia/model/util/RangeSettings.qml</file>
+        <file>qml/Slippipedia/model/util/TextSettings.qml</file>
         <file>qml/Slippipedia/model/stats/PlayerStats.qml</file>
         <file>qml/Slippipedia/model/stats/ReplayStats.qml</file>
         <file>qml/Slippipedia/model/stats/Stat.qml</file>

@@ -189,14 +189,14 @@ Item {
         .arg(leadingZeros(minutes, 2))
         .arg(leadingZeros(seconds, 2))
     }
-    else if(minutes > 0) {
+    else /*if(minutes > 0)*/ {
       return qsTr("%1:%2")
         .arg(leadingZeros(minutes, 2))
         .arg(leadingZeros(seconds, 2))
     }
-    else {
-      return seconds + "s"
-    }
+//    else {
+//      return seconds + "s"
+//    }
   }
 
   function formatNumber(number) {

@@ -13,7 +13,9 @@ FilterSettings 1.0          model/filter/FilterSettings.qml
 GameFilterSettings 1.0      model/filter/GameFilterSettings.qml
 PlayerFilterSettings 1.0    model/filter/PlayerFilterSettings.qml
 PunishFilterSettings 1.0    model/filter/PunishFilterSettings.qml
-TextFilter 1.0              model/filter/TextFilter.qml
+
+RangeSettings 1.0           model/util/RangeSettings.qml
+TextSettings 1.0            model/util/TextSettings.qml
 
 PlayerStats 1.0             model/stats/PlayerStats.qml
 ReplayStats 1.0             model/stats/ReplayStats.qml

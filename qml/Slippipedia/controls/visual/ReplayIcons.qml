@@ -97,5 +97,18 @@ Item {
       width: dp(62 * 0.8)
       height: dp(54 * 0.8)
     }
+
+    Item {
+      width: dp(Theme.contentPadding)
+      height: 1
+    }
+
+    AppText {
+      anchors.verticalCenter: parent.verticalCenter
+      horizontalAlignment: Text.AlignHCenter
+      width: dp(40)
+
+      text: dataModel.formatTime(replayModel.duration)
+    }
   }
 }
