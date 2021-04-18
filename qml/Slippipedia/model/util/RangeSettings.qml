@@ -2,29 +2,49 @@ import QtQuick 2.0
 import Felgo 3.0
 
 QtObject {
-  property real from: 0
-  property real to: 0
+  property real from: -1
+  property real to: -1
 
-  readonly property bool hasFilter: from > 0 || to > 0
+  readonly property bool hasFilter: from >= 0 || to >= 0
 
   signal filterChanged
 
   onFromChanged:  filterChanged()
   onToChanged:    filterChanged()
 
+  readonly property var displayText: {
+    if(from >= 0 && to >= 0) {
+      if(from == to) {
+        return from + ""
+      }
+      else {
+        return qsTr("%1-%2").arg(from).arg(to)
+      }
+    }
+    else if(from >= 0) {
+      return qsTr("%1+").arg(from)
+    }
+    else if(to >= 0) {
+      return qsTr("≤%1").arg(to)
+    }
+    else {
+      return ""
+    }
+  }
+
   function reset() {
-    from = 0
-    to = 0
+    from = -1
+    to = -1
   }
 
   function getFilterCondition(colName) {
-    if(from > 0 && to > 0) {
+    if(from >= 0 && to >= 0) {
       return colName + " between ? and ?"
     }
-    else if(from > 0) {
+    else if(from >= 0) {
       return colName + " >= ?"
     }
-    else if(to > 0) {
+    else if(to >= 0) {
       return colName + " <= ?"
     }
     else {
@@ -34,7 +54,7 @@ QtObject {
 
   function getFilterParams(mapFunc) {
     return [from, to]
-      .filter(v => v > 0)
+      .filter(v => v >= 0)
       .map(v => mapFunc ? mapFunc(v) : v)
   }
 

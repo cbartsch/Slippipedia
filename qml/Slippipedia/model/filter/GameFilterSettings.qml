@@ -77,8 +77,8 @@ Item {
     var wText = winnerPlayerIndex == -3
         ? "" : ("Winner: " + winnerTexts[winnerPlayerIndex])
 
-    var sdText = date.from > 0 ? new Date(date.from).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
-    var edText = date.to > 0 ? new Date(date.to).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var sdText = date.from >= 0 ? new Date(date.from).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var edText = date.to >= 0 ? new Date(date.to).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
 
     var dText = sdText && edText
         ? sdText + " to " + edText
@@ -90,8 +90,8 @@ Item {
 
     dText = dText ? "Date: " + dText : ""
 
-    var minText = duration.from > 0 ? dataModel.formatTime(duration.from) : ""
-    var maxText = duration.to > 0 ? dataModel.formatTime(duration.to) : ""
+    var minText = duration.from >= 0 ? dataModel.formatTime(duration.from) : ""
+    var maxText = duration.to >= 0 ? dataModel.formatTime(duration.to) : ""
 
     var durText = minText && maxText
         ? qsTr("Between %1 and %2").arg(minText).arg(maxText)
@@ -99,24 +99,7 @@ Item {
                   : maxText ? "Shorter than " + maxText : ""
     durText = durText ? "Duration: " + durText : ""
 
-    var stockText = ""
-    if(endStocks.from > 0 && endStocks.to > 0) {
-      if(endStocks.from == endStocks.to) {
-        stockText = endStocks.from + ""
-      }
-      else {
-        stockText = qsTr("%1-%2").arg(endStocks.from).arg(endStocks.to)
-      }
-    }
-    else if(endStocks.from > 0) {
-      stockText = qsTr("%1+").arg(endStocks.from)
-    }
-    else if(endStocks.to > 0) {
-      stockText = qsTr("≤%1").arg(endStocks.to)
-    }
-    if(stockText) {
-      stockText = "Stocks left (winner): " + stockText
-    }
+    var stockText = endStocks.displayText ? "Stocks left (winner): " + endStocks.displayText : ""
 
     return [
           sText, wText, dText, durText, stockText

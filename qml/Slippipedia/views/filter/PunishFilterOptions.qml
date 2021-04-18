@@ -14,54 +14,6 @@ Column {
     title: "Moves / damage"
   }
 
-  CustomListItem {
-    text: "Filter by attacks and damage"
-    detailText: "Select a minimum number of moves and damage for matching punishes."
-
-    checked: filter ? filter.hasNumMovesFilter || filter.hasDamageFilter : false
-    mouseArea.enabled: false
-
-    rightItem: AppToolButton {
-      iconType: IconType.trash
-      toolTipText: "Reset moves/damage filter"
-      visible: filter ? filter.hasNumMovesFilter || filter.hasDamageFilter : false
-      anchors.verticalCenter: parent.verticalCenter
-
-      onClicked: {
-        filter.minMoves = 1
-        filter.minDamage = 0
-      }
-    }
-  }
-
-  TextInputField {
-    labelText: "Least number of moves:"
-    placeholderText: "Enter number..."
-
-    labelWidth: sp(250)
-    showOptions: false
-
-    textInput.inputMethodHints: Qt.ImhDigitsOnly
-
-    text: filter && filter.hasNumMovesFilter && filter.minMoves || ""
-
-    onTextChanged: if(filter) filter.minMoves = text || 1
-  }
-
-  TextInputField {
-    labelText: "More damage than:"
-    placeholderText: "Enter number..."
-
-    labelWidth: sp(250)
-    showOptions: false
-
-    textInput.inputMethodHints: Qt.ImhDigitsOnly
-
-    text: filter && filter.minDamage || ""
-
-    onTextChanged: if(filter) filter.minDamage = text || 0
-  }
-
   SimpleSection {
     title: "Kill"
   }
@@ -161,6 +113,78 @@ Column {
   }
 
   Divider { anchors.bottom: undefined }
+
+  CustomListItem {
+    text: "Filter by attacks and damage"
+    detailText: "Select number of moves and damage for matching punishes."
+
+    checked: filter ? filter.hasNumMovesFilter || filter.hasDamageFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset moves/damage filter"
+      visible: filter ? filter.hasNumMovesFilter || filter.hasDamageFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.numMoves.reset()
+        filter.damage.reset()
+      }
+    }
+  }
+
+  RangeOptions {
+    label.text: "Number of moves:"
+    labelWidth: dp(150)
+
+    range: filter && filter.numMoves
+  }
+
+  RangeOptions {
+    label.text: "Damage:"
+    labelWidth: dp(150)
+
+    range: filter && filter.damage
+  }
+
+  SimpleSection {
+    title: "Percent"
+  }
+
+  CustomListItem {
+    text: "Filter by player percent"
+    detailText: "Select player's percent range at start and/or end of punish."
+
+    checked: filter ? filter.hasStartPercentFilter || filter.hasEndPercentFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset player percent filter"
+      visible: filter ? filter.hasStartPercentFilter || filter.hasEndPercentFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: {
+        filter.startPercent.reset()
+        filter.endPercent.reset()
+      }
+    }
+  }
+
+  RangeOptions {
+    label.text: "At start of punish:"
+    labelWidth: dp(150)
+
+    range: filter && filter.startPercent
+  }
+
+  RangeOptions {
+    label.text: "At end of punish:"
+    labelWidth: dp(150)
+
+    range: filter && filter.endPercent
+  }
 
   SimpleSection {
     title: "Opening"

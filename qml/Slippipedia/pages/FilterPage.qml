@@ -20,6 +20,7 @@ Page {
     FilterInfoItem {
       stats: filterPage.stats
       showResetButton: true
+      showPunishFilter: filterPage.showPunishOptions && filterTabs.currentIndex === 4
     }
 
     AppTabBar {

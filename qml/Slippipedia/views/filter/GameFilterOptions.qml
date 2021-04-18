@@ -150,12 +150,12 @@ Column {
   }
 
   function dateText(dateMs) {
-     return dateMs <= 0 ? "" : dataModel.formatDate(new Date(dateMs))
+     return dateMs < 0 ? "" : dataModel.formatDate(new Date(dateMs))
   }
 
   function dateValue(text, input) {
     if(text === "") {
-      return 0
+      return -1
     }
 
     var formats = [

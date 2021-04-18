@@ -49,7 +49,7 @@ Column {
         textInput.inputMethodHints: Qt.ImhDigitsOnly
         divider.visible: false
 
-        text: range && range.from > 0 ? textFunc(range.from, inputFrom) : ""
+        text: range && range.from >= 0 ? textFunc(range.from, inputFrom) : ""
         onTextChanged: {
           if(text) {
             var newValue = valueFunc(text, inputFrom)
@@ -58,7 +58,7 @@ Column {
             }
           }
           else {
-            range.from = 0
+            range.from = -1
           }
         }
       }
@@ -80,7 +80,7 @@ Column {
         textInput.inputMethodHints: Qt.ImhDigitsOnly
         divider.visible: false
 
-        text: range && range.to > 0 ? textFunc(range.to, inputTo) : ""
+        text: range && range.to >= 0 ? textFunc(range.to, inputTo) : ""
         onTextChanged: {
           if(text) {
             var newValue = valueFunc(text, inputTo)
@@ -89,7 +89,7 @@ Column {
             }
           }
           else {
-            range.to = 0
+            range.to = -1
           }
         }
       }

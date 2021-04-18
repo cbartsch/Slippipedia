@@ -10,39 +10,78 @@ Item {
   property bool persistenceEnabled: false
   property string settingsCategory: ""
 
-  property int minMoves: 3
-  property real minDamage: 50
   property bool didKill: false
 
   property var killDirections: []
   property var openingMoveIds: []
   property var lastMoveIds: []
 
+  property RangeSettings numMoves: RangeSettings {
+    id: numMoves
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minMoves = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxMoves = to
+
+    onFilterChanged: punishFilterSettings.filterChanged()
+  }
+
+  property RangeSettings damage: RangeSettings {
+    id: damage
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minDamage = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxDamage = to
+
+    onFilterChanged: punishFilterSettings.filterChanged()
+  }
+
+  property RangeSettings startPercent: RangeSettings {
+    id: startPercent
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minStartPercent = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxStartPercent = to
+
+    onFilterChanged: punishFilterSettings.filterChanged()
+  }
+
+  property RangeSettings endPercent: RangeSettings {
+    id: endPercent
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minEndPercent = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxEndPercent = to
+
+    onFilterChanged: punishFilterSettings.filterChanged()
+  }
+
   signal filterChanged
 
   // due to this being in a loader, can't use alias properties -> save on change:
-  onMinMovesChanged:       filterChanged()
-  onMinDamageChanged:      filterChanged()
   onDidKillChanged:        filterChanged()
   onKillDirectionsChanged: filterChanged()
   onOpeningMoveIdsChanged: filterChanged()
   onLastMoveIdsChanged:    filterChanged()
 
-
   readonly property bool hasFilter: hasNumMovesFilter || hasDamageFilter ||
+                                    hasStartPercentFilter || hasEndPercentFilter ||
                                     hasDidKillFilter || hasKillDirectionFilter ||
                                     hasOpeningMoveFilter || hasLastMoveFilter
 
-  readonly property bool hasNumMovesFilter: minMoves > 1
-  readonly property bool hasDamageFilter: minDamage > 0
+  readonly property bool hasNumMovesFilter: numMoves.hasFilter
+  readonly property bool hasDamageFilter: damage.hasFilter
+  readonly property bool hasStartPercentFilter: startPercent.hasFilter
+  readonly property bool hasEndPercentFilter: endPercent.hasFilter
+
   readonly property bool hasDidKillFilter: didKill
+
   readonly property bool hasKillDirectionFilter: killDirections.length > 0
   readonly property bool hasOpeningMoveFilter: openingMoveIds.length > 0
   readonly property bool hasLastMoveFilter: lastMoveIds.length > 0
 
   readonly property string displayText: {
-    var movesText = minMoves > 1 ? qsTr("%1+ moves").arg(minMoves) : ""
-    var damageText = minDamage > 0 ? qsTr("%1+%").arg(minDamage) : ""
+    var movesText = numMoves.hasFilter ? numMoves.displayText + " moves" : ""
+    var damageText = damage.hasFilter ? damage.displayText + "%" : ""
+    var startPercentText = startPercent.hasFilter ? "Started at: " + startPercent.displayText + "%" : ""
+    var endPercentText = endPercent.hasFilter ? "Ended at: " + endPercent.displayText + "%" : ""
+
     var didKillText = didKill ? "Opponent was killed" : ""
 
     var killDirectionsText = killDirections.length == 0
@@ -55,7 +94,8 @@ Item {
         ? "" : ("Last move: " + lastMoveIds.map(d => MeleeData.moveNames[d]).join(", "))
 
     return [
-          movesText, damageText, didKillText,
+          movesText, damageText, startPercentText, endPercentText,
+          didKillText,
           killDirectionsText, openingMovesText, lastMovesText
         ].filter(_ => _).join(", ") || ""
   }
@@ -70,8 +110,6 @@ Item {
       target: settingsLoader.item ? punishFilterSettings : null
 
       // due to this being in a loader, can't use alias properties -> save on change:
-      onMinMovesChanged:       settingsLoader.item.minMoves = minMoves
-      onMinDamageChanged:      settingsLoader.item.minDamage = minDamage
       onDidKillChanged:        settingsLoader.item.didKill = didKill
       onKillDirectionsChanged: settingsLoader.item.killDirections = killDirections
       onOpeningMoveIdsChanged: settingsLoader.item.openingMoveIds = openingMoveIds
@@ -83,8 +121,18 @@ Item {
 
       category: punishFilterSettings.settingsCategory
 
-      property int minMoves: punishFilterSettings.minMoves
-      property real minDamage: punishFilterSettings.minDamage
+      property int minMoves: punishFilterSettings.numMoves.from
+      property int maxMoves: punishFilterSettings.numMoves.to
+
+      property real minDamage: punishFilterSettings.damage.from
+      property real maxDamage: punishFilterSettings.damage.to
+
+      property int minStartPercent: punishFilterSettings.startPercent.from
+      property int maxStartPercent: punishFilterSettings.startPercent.to
+
+      property real minEndPercent: punishFilterSettings.endPercent.from
+      property real maxEndPercent: punishFilterSettings.endPercent.to
+
       property bool didKill: punishFilterSettings.didKill
       property var killDirections: punishFilterSettings.killDirections
       property var openingMoveIds: punishFilterSettings.openingMoveIds
@@ -92,9 +140,20 @@ Item {
 
       function apply() {
         // due to this being in a loader, can't use alias properties -> apply on load:
-        punishFilterSettings.minMoves = minMoves
-        punishFilterSettings.minDamage = minDamage
+        punishFilterSettings.numMoves.from = minMoves
+        punishFilterSettings.numMoves.to = maxMoves
+
+        punishFilterSettings.damage.from = minDamage
+        punishFilterSettings.damage.to = maxDamage
+
+        punishFilterSettings.startPercent.from = minStartPercent
+        punishFilterSettings.startPercent.to = maxStartPercent
+
+        punishFilterSettings.endPercent.from = minEndPercent
+        punishFilterSettings.endPercent.to = maxEndPercent
+
         punishFilterSettings.didKill = didKill
+
         punishFilterSettings.killDirections = killDirections.map(id => ~~id) // settings stores as list of string, convert to int
         punishFilterSettings.openingMoveIds = openingMoveIds.map(id => ~~id)
         punishFilterSettings.lastMoveIds = lastMoveIds.map(id => ~~id)
@@ -103,16 +162,26 @@ Item {
   }
 
   function reset() {
-    minMoves = 1
-    minDamage = 0
+    numMoves.reset()
+    damage.reset()
+    startPercent.reset()
+    endPercent.reset()
+
     didKill = false
-    killDirection = -1
+
+    killDirections = []
+    openingMoveIds = []
+    lastMoveIds = []
   }
 
   function copyFrom(other) {
-    minMoves = other.minMoves
-    minDamage = other.minDamage
+    numMoves.copyFrom(other.numMoves)
+    damage.copyFrom(other.damage)
+    startPercent.copyFrom(other.startPercent)
+    endPercent.copyFrom(other.endPercent)
+
     didKill = other.didKill
+
     killDirections = other.killDirections
     openingMoveIds = other.openingMoveIds
     lastMoveIds = other.lastMoveIds
@@ -180,8 +249,11 @@ Item {
 
   // DB filtering functions
   function getPunishFilterCondition() {
-    var minMovesCondition = hasNumMovesFilter ? "pu.numMoves >= ?" : ""
-    var minDamageCondition = hasDamageFilter ? "pu.damage >= ?" : ""
+    var numMovesCondition = numMoves.getFilterCondition("pu.numMoves")
+    var damageCondition = damage.getFilterCondition("pu.damage")
+    var startPercentCondition = startPercent.getFilterCondition("pu.startPercent")
+    var endPercentCondition = endPercent.getFilterCondition("pu.endPercent")
+
     var didKillCondition = hasDidKillFilter ? "pu.didKill = 1" : ""
 
     var killDirectionCondition = hasKillDirectionFilter
@@ -200,8 +272,8 @@ Item {
         : ""
 
     var condition = [
-          minMovesCondition,
-          minDamageCondition,
+          numMovesCondition, damageCondition,
+          startPercentCondition, endPercentCondition,
           didKillCondition,
           killDirectionCondition,
           openingMovesCondition,
@@ -214,14 +286,19 @@ Item {
   }
 
   function getPunishFilterParams() {
-    var minMovesParams = hasNumMovesFilter ? [minMoves] : []
-    var minDamageParams = hasDamageFilter ? [minDamage] : []
+    var numMovesParams = numMoves.getFilterParams()
+    var damageParams = damage.getFilterParams()
+    var startPercentParams = startPercent.getFilterParams()
+    var endPercentParams = endPercent.getFilterParams()
+
     var killDirectionParams = hasKillDirectionFilter ? killDirections : []
     var openingMoveParams = hasOpeningMoveFilter ? openingMoveIds : []
     var lastMoveParams = hasLastMoveFilter ? lastMoveIds : []
 
-    return minMovesParams
-    .concat(minDamageParams)
+    return numMovesParams
+    .concat(damageParams)
+    .concat(startPercentParams)
+    .concat(endPercentParams)
     .concat(killDirectionParams)
     .concat(openingMoveParams)
     .concat(lastMoveParams)
