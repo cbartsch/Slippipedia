@@ -10,6 +10,7 @@ Item {
   property bool persistenceEnabled: false
   property string settingsCategory: ""
 
+  property int lossType: 0
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
   // duration from-to in frames
@@ -48,6 +49,7 @@ Item {
 
   // due to this being in a loader, can't use alias properties -> save on change:
   onWinnerPlayerIndexChanged: filterChanged()
+  onLossTypeChanged:          filterChanged()
   onStageIdsChanged:          filterChanged()
 
   readonly property var winnerTexts: ({
@@ -56,6 +58,12 @@ Item {
                                         [-1]: "Either (no tie)",
                                         [0]: "Me",
                                         [1]: "Opponent",
+                                      })
+
+  readonly property var lossTypeTexts: ({
+                                        [0]: "last stock gone",
+                                        [1]: "last stock + higher percent",
+                                        [2]: "fewer stocks / higher percent",
                                       })
 
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
@@ -74,8 +82,9 @@ Item {
       sText = "Stages: " + stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
     }
 
-    var wText = winnerPlayerIndex == -3
-        ? "" : ("Winner: " + winnerTexts[winnerPlayerIndex])
+    var wText = winnerPlayerIndex == -3 ? "" : qsTr("Winner: %1 (Loss if %2)")
+    .arg(winnerTexts[winnerPlayerIndex])
+    .arg(lossTypeTexts[lossType])
 
     var sdText = date.from >= 0 ? new Date(date.from).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
     var edText = date.to >= 0 ? new Date(date.to).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
@@ -117,6 +126,7 @@ Item {
 
       // due to this being in a loader, can't use alias properties -> save on change:
       onWinnerPlayerIndexChanged: settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
+      onLossTypeChanged:          settingsLoader.item.lossType = lossType
       onStageIdsChanged:          settingsLoader.item.stageIds = stageIds
     }
 
@@ -127,6 +137,9 @@ Item {
 
       // -3 = any, -2 = tie, -1 = either (no tie), 0 = me, 1 = opponent
       property int winnerPlayerIndex: gameFilterSettings.winnerPlayerIndex
+
+      // 0 = last stock gone, 1 = last stock + higher percent, 2 = fewer stocks / higher percent
+      property int lossType: gameFilterSettings.lossType
 
       property var stageIds: gameFilterSettings.stageIds
 
@@ -155,6 +168,7 @@ Item {
         gameFilterSettings.endStocks.to = endStocksMax
 
         gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
+        gameFilterSettings.lossType = lossType
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
     }
@@ -221,7 +235,7 @@ Item {
     var winnerCondition = ""
     if(winnerPlayerIndex === -2) {
       // check for tie
-      winnerCondition = "r.winnerPort < 0"
+      winnerCondition = "r.winnerPort < 0 and " + getGameNotEndedCondition()
     }
     else if(winnerPlayerIndex === -1) {
       // check for either player wins (no tie)
@@ -234,6 +248,9 @@ Item {
     else if(winnerPlayerIndex === 1) {
       // p2 = matched opponent
       winnerCondition = "r.winnerPort = p2.port"
+    }
+    if(winnerPlayerIndex > -2) {
+      winnerCondition += " and " + getGameEndedCondition()
     }
 
     var stageCondition = ""
@@ -268,5 +285,29 @@ Item {
     .concat(dateParams)
     .concat(durationParams)
     .concat(endStocksParams)
+  }
+
+  function getGameEndedCondition() {
+    switch(lossType) {
+    case 0: return "r.winnerPort >= 0 and (p.s_endStocks = 0 or p2.s_endStocks = 0)"
+    case 1: return "r.winnerPort >= 0 and (p.s_endStocks <= 1 or p2.s_endStocks <= 1)"
+    case 2: return "r.winnerPort >= 0"
+    }
+  }
+
+  function getGameNotEndedCondition() {
+    switch(lossType) {
+    case 0: return "r.winnerPort < 0 or (p.s_endStocks > 0 and p2.s_endStocks > 0)"
+    case 1: return "r.winnerPort < 0 or (p.s_endStocks > 1 and p2.s_endStocks > 1)"
+    case 2: return "r.winnerPort < 0"
+    }
+  }
+
+  function getWinnerCondition() {
+    switch(lossType) {
+    case 0: return  "r.winnerPort = p.port and p2.s_endStocks = 0"
+    case 1: return  "r.winnerPort = p.port and p2.s_endStocks <= 1"
+    case 2: return  "r.winnerPort = p.port"
+    }
   }
 }

@@ -307,17 +307,20 @@ killDirection, didKill
       var portCondition = playerFilter.hasPlayerFilter || opponentFilter.hasPlayerFilter
           ? "p.port != p2.port" : "p.port < p2.port"
 
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
       var playerCol = isOpponent ? "p2" : "p"
       var opponentCol = isOpponent ? "p" : "p2"
 
       var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,
-count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
-count(case winnerPort when p.port then 1 else null end) winCount
+count(case when %3 then 1 else null end) gameEndedCount,
+count(case when %4 then 1 else null end) winCount
 from replays r
 join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and " + portCondition + "
-where %1").arg(getFilterCondition())
+join players p2 on p2.replayId = r.id and %2
+where %1").arg(getFilterCondition()).arg(portCondition).arg(gameEndedCondition).arg(winnerCondition)
 
       var results = tx.executeSql(sql, getFilterParams())
 

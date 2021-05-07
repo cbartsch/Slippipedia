@@ -48,7 +48,7 @@ Column {
 
   CustomListItem {
     text: "Filter by game result"
-    detailText: "Filter by won, lost, tied games or games with any result."
+    detailText: "Filter by won, lost, tied games or games with any result. Set when to count a game as lost."
 
     backgroundColor: filter && filter.hasWinnerFilter ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
     mouseArea.enabled: false
@@ -74,7 +74,15 @@ Column {
       id: winnerRadioRow
       anchors.left: parent.left
       anchors.right: parent.right
-      anchors.margins: spacing
+      anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(1)
+
+      AppText {
+        width: dp(120)
+        height: dp(48)
+        verticalAlignment: Text.AlignVCenter
+        text: "Game result:"
+      }
 
       QQ.ButtonGroup {
         id: rbgWinner
@@ -124,6 +132,59 @@ Column {
   Item {
     width: parent.width
     height: 1
+
+    Divider { }
+  }
+
+  Item {
+    width: parent.width
+    height: lossTypeRadioRow.height
+
+    Flow {
+      id: lossTypeRadioRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(1)
+
+      AppText {
+        width: dp(120)
+        height: dp(48)
+        verticalAlignment: Text.AlignVCenter
+        text: "Count loss if:"
+      }
+
+      QQ.ButtonGroup {
+        id: rbgLossType
+        buttons: [radioLossNoStock, radioLossLastStock, radioLossPercent]
+
+        onCheckedButtonChanged: filter.lossType = radioLossNoStock.checked ? 0 : radioLossLastStock.checked ? 1 : 2
+      }
+
+      CustomRadio {
+        id: radioLossNoStock
+        text: "No stocks left"
+        checked: filter ? filter.lossType === 0 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossLastStock
+        text: "Last stock + higher percent"
+        checked: filter ? filter.lossType === 1 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossPercent
+        text: "Fewer stocks / higher percent"
+        checked: filter ? filter.lossType === 2 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+    }
 
     Divider { }
   }
