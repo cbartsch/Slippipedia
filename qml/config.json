@@ -2,7 +2,7 @@
   "title": "Slippipedia",
   "identifier": "at.cb.Slippipedia",
   "orientation": "auto",
-  "versioncode": 2,
-  "versionname": "1.0-RC",
-  "stage": "test"
+  "versioncode": 3,
+  "versionname": "1.0-Release",
+  "stage": "publish"
 }
