@@ -15,6 +15,7 @@ BasePage {
   readonly property string buildName: system.publishBuild ? "Release" : "Debug"
 
   readonly property string twitterUrl: "https://twitter.com/ChrisuSSBMtG"
+  readonly property string patreonUrl: "https://www.patreon.com/chrisu"
   readonly property string githubUrl: "https://github.com/cbartsch/Slippipedia"
   readonly property string homeUrl: "https://cbartsch.github.io"
   readonly property string discordUrl: "https://discord.gg/jKf9XQE"
@@ -68,7 +69,7 @@ BasePage {
     }
 
     CustomListItem {
-      text: "Twitter"
+      text: "Follow me on Twitter"
       detailText: twitterUrl
 
       hasExternalLink: true
@@ -91,7 +92,7 @@ BasePage {
     }
 
     CustomListItem {
-      text: "GitHub"
+      text: "Source code at GitHub"
       detailText: githubUrl
 
       hasExternalLink: true
@@ -110,6 +111,36 @@ BasePage {
         }
       }
       onSelected: nativeUtils.openUrl(githubUrl)
+    }
+
+    CustomListItem {
+      text: "Support me on Patreon"
+      detailText: patreonUrl
+
+      hasExternalLink: true
+      backgroundColor: Theme.controlBackgroundColor
+
+      leftItem: Item {
+        anchors.verticalCenter: parent.verticalCenter
+        height: iconSize
+        width: height
+
+        AppImage {
+          id: patreonImg
+          anchors.fill: parent
+          visible: false
+          source: "../../../assets/img/patreon-logo.png"
+          fillMode: Image.PreserveAspectFit
+        }
+
+        ColorOverlay {
+          anchors.fill: parent
+          source: patreonImg
+          color: pinkColor
+        }
+      }
+
+      onSelected: nativeUtils.openUrl(patreonUrl)
     }
 
     CustomListItem {
