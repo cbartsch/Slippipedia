@@ -121,7 +121,6 @@ Item {
   }
 
   function reset() {
-    stageIds = []
     charIds = []
     slippiCode.reset()
     slippiName.reset()
