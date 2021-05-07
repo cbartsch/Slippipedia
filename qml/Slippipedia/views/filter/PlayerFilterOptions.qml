@@ -76,6 +76,7 @@ Column {
       anchors.left: parent.left
       anchors.right: parent.right
       anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(1)
 
       AppText {
         width: dp(120)

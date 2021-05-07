@@ -22,7 +22,7 @@ Column {
   RowLayout {
     width: parent.width
     height: inputFrom.height
-    spacing: 0
+    spacing: dp(1)
 
     AppText {
       id: label

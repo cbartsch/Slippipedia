@@ -57,6 +57,7 @@ Column {
     Flow {
       id: killDirectionFlow
       width: parent.width
+      spacing: dp(1)
 
       Item {
         height: dp(48)
@@ -216,6 +217,7 @@ Column {
     Flow {
       id: openingMoveFlow
       width: parent.width
+      spacing: dp(1)
 
       Item {
         height: dp(48)
@@ -301,6 +303,7 @@ Column {
     Flow {
       id: lastMoveFlow
       width: parent.width
+      spacing: dp(1)
 
       Item {
         height: dp(48)

@@ -6,6 +6,8 @@ Row {
   signal setPastRange(int numDays)
   signal addDateRange(int numDays)
 
+  spacing: dp(1)
+
   AppButton {
     id: btnDay
     text: numDays === 1

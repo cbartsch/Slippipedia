@@ -162,11 +162,17 @@ Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLates
       text: dataModel.desktopAppFolder
       detailText: dataModel.hasDesktopApp ? "Desktop app found." : "Desktop app not found."
 
-      leftItem: Icon {
+      leftItem: Item {
+        width: dp(24)
+        height: width
         anchors.verticalCenter: parent.verticalCenter
-        size: dp(24)
-        color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
-        icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
+
+        Icon {
+          anchors.centerIn: parent
+          size: dp(24)
+          color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
+          icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
+        }
       }
 
       enabled: false
@@ -240,11 +246,17 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       text: dataModel.meleeIsoPath
       detailText: dataModel.hasMeleeIso ? "File exists." : "Melee ISO not found."
 
-      leftItem: Icon {
+      leftItem: Item {
+        height: dp(24)
+        width: height
         anchors.verticalCenter: parent.verticalCenter
-        size: dp(24)
-        color: dataModel.hasMeleeIso ? Theme.tintColor : "red"
-        icon: dataModel.hasMeleeIso ? IconType.check : IconType.times
+
+        Icon {
+          anchors.centerIn: parent
+          size: dp(24)
+          color: dataModel.hasMeleeIso ? Theme.tintColor : "red"
+          icon: dataModel.hasMeleeIso ? IconType.check : IconType.times
+        }
       }
 
       enabled: false
