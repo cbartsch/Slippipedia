@@ -10,6 +10,7 @@ Item {
   property bool persistenceEnabled: false
   property string settingsCategory: ""
 
+  property int gameEndType: -1
   property int lossType: 0
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
 
@@ -33,12 +34,20 @@ Item {
     onFilterChanged: gameFilterSettings.filterChanged()
   }
 
-  // date from-to in ms
-  property RangeSettings endStocks: RangeSettings {
-    id: endStocks
+  property RangeSettings endStocksWinner: RangeSettings {
+    id: endStocksWinner
 
     onFromChanged: if(settingsLoader.item) settingsLoader.item.endStocksMin = from
     onToChanged:   if(settingsLoader.item) settingsLoader.item.endStocksMax = to
+
+    onFilterChanged: gameFilterSettings.filterChanged()
+  }
+
+  property RangeSettings endStocksLoser: RangeSettings {
+    id: endStocksLoser
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.endStocks2Min = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.endStocks2Max = to
 
     onFilterChanged: gameFilterSettings.filterChanged()
   }
@@ -49,8 +58,20 @@ Item {
 
   // due to this being in a loader, can't use alias properties -> save on change:
   onWinnerPlayerIndexChanged: filterChanged()
+  onGameEndTypeChanged:       filterChanged()
   onLossTypeChanged:          filterChanged()
   onStageIdsChanged:          filterChanged()
+
+  // match slippi constants
+  readonly property var gameEndTypeTexts: ({
+                                             [-1]: "Any",
+                                             [SlippiReplay.Game]: "Game!",
+                                             [SlippiReplay.Time]: "Time!",
+                                             [SlippiReplay.NoContest]: "No contest (LRAS)",
+                                             [SlippiReplay.Resolved]: "Resolved",
+                                             [SlippiReplay.Unresolved]: "Unresolved"
+                                           })
+
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
@@ -64,6 +85,8 @@ Item {
                                         [0]: "last stock gone",
                                         [1]: "last stock + higher percent",
                                         [2]: "fewer stocks / higher percent",
+                                        [3]: "LRAS at last stock",
+                                        [4]: "any LRAS",
                                       })
 
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
@@ -74,7 +97,8 @@ Item {
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
-  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || endStocks.hasFilter
+  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || lossType > 0 || gameEndType > -1 ||
+                                          endStocksWinner.hasFilter || endStocksLoser.hasFilter
 
   readonly property string displayText: {
     var sText = null
@@ -82,7 +106,9 @@ Item {
       sText = "Stages: " + stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
     }
 
-    var wText = winnerPlayerIndex == -3 ? "" : qsTr("Winner: %1 (Loss if %2)")
+    var etText = gameEndType === -1 ? "" : qsTr("Game end type: %1").arg(gameEndTypeTexts[gameEndType])
+
+    var wText = qsTr("Winner: %1 (Loss if %2)")
     .arg(winnerTexts[winnerPlayerIndex])
     .arg(lossTypeTexts[lossType])
 
@@ -108,10 +134,11 @@ Item {
                   : maxText ? "Shorter than " + maxText : ""
     durText = durText ? "Duration: " + durText : ""
 
-    var stockText = endStocks.displayText ? "Stocks left (winner): " + endStocks.displayText : ""
+    var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""
+    var stockText2 = endStocksLoser.displayText ? "Stocks left (winner): " + endStocksLoser.displayText : ""
 
     return [
-          sText, wText, dText, durText, stockText
+          sText, etText, wText, dText, durText, stockText
         ].filter(_ => _).join("\n") || ""
   }
 
@@ -127,6 +154,7 @@ Item {
       // due to this being in a loader, can't use alias properties -> save on change:
       onWinnerPlayerIndexChanged: settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
       onLossTypeChanged:          settingsLoader.item.lossType = lossType
+      onGameEndTypeChanged:       settingsLoader.item.gameEndType = gameEndType
       onStageIdsChanged:          settingsLoader.item.stageIds = stageIds
     }
 
@@ -139,7 +167,11 @@ Item {
       property int winnerPlayerIndex: gameFilterSettings.winnerPlayerIndex
 
       // 0 = last stock gone, 1 = last stock + higher percent, 2 = fewer stocks / higher percent
+      // 3 = last stock + LRAS , 4 = LRAS
       property int lossType: gameFilterSettings.lossType
+
+      // match SlippiReplay enum
+      property int gameEndType: gameFilterSettings.gameEndType
 
       property var stageIds: gameFilterSettings.stageIds
 
@@ -152,8 +184,12 @@ Item {
       property int maxFrames: gameFilterSettings.duration.to
 
       // stocks left at end of game (by player with more stocks left)
-      property int endStocksMin: gameFilterSettings.endStocks.from
-      property int endStocksMax: gameFilterSettings.endStocks.to
+      property int endStocksMin: gameFilterSettings.endStocksWinner.from
+      property int endStocksMax: gameFilterSettings.endStocksWinner.to
+
+      // stocks left at end of game (by player with fewer stocks left)
+      property int endStocks2Min: gameFilterSettings.endStocksLoser.from
+      property int endStocks2Max: gameFilterSettings.endStocksLoser.to
 
       function apply() {
         // due to this being in a loader, can't use alias properties -> apply on load:
@@ -164,11 +200,14 @@ Item {
         gameFilterSettings.duration.from = minFrames
         gameFilterSettings.duration.to = maxFrames
 
-        gameFilterSettings.endStocks.from = endStocksMin
-        gameFilterSettings.endStocks.to = endStocksMax
+        gameFilterSettings.endStocksWinner.from = endStocksMin
+        gameFilterSettings.endStocksWinner.to = endStocksMax
+        gameFilterSettings.endStocksLoser.from = endStocks2Min
+        gameFilterSettings.endStocksLoser.to = endStocks2Max
 
         gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
         gameFilterSettings.lossType = lossType
+        gameFilterSettings.gameEndType = gameEndType
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
     }
@@ -177,10 +216,19 @@ Item {
   function reset() {
     duration.reset()
     date.reset()
-    endStocks.reset()
 
     stageIds = []
+
+    resetWinnerFilter()
+  }
+
+  function resetWinnerFilter() {
+    endStocksWinner.reset()
+    endStocksLoser.reset()
+
     winnerPlayerIndex = -3
+    lossType = 0
+    gameEndType = -1
   }
 
   function copyFrom(other) {
@@ -188,9 +236,12 @@ Item {
 
     duration.copyFrom(other.duration)
     date.copyFrom(other.date)
-    endStocks.copyFrom(other.endStocks)
+    endStocksWinner.copyFrom(other.endStocksWinner)
+    endStocksLoser.copyFrom(other.endStocksLoser)
 
     winnerPlayerIndex = other.winnerPlayerIndex
+    lossType = other.lossType
+    gameEndType = other.gameEndType
   }
 
   function setStage(stageIds) {
@@ -235,22 +286,18 @@ Item {
     var winnerCondition = ""
     if(winnerPlayerIndex === -2) {
       // check for tie
-      winnerCondition = "r.winnerPort < 0 and " + getGameNotEndedCondition()
+      winnerCondition = getGameNotEndedCondition()
     }
     else if(winnerPlayerIndex === -1) {
       // check for either player wins (no tie)
-      winnerCondition = "r.winnerPort >= 0"
+      winnerCondition = getGameEndedCondition()
     }
     else if(winnerPlayerIndex === 0) {
-      // p = matched player
-      winnerCondition = "r.winnerPort = p.port"
+      // p = matched player, p2 = matched opponent
+      winnerCondition = getWinnerCondition("p", "p2")
     }
     else if(winnerPlayerIndex === 1) {
-      // p2 = matched opponent
-      winnerCondition = "r.winnerPort = p2.port"
-    }
-    if(winnerPlayerIndex > -2) {
-      winnerCondition += " and " + getGameEndedCondition()
+      winnerCondition = getWinnerCondition("p2", "p")
     }
 
     var stageCondition = ""
@@ -260,11 +307,16 @@ Item {
 
     var dateCondition = date.getFilterCondition("r.date")
     var durationCondition = duration.getFilterCondition("r.duration")
-    var endStocksCondition = endStocks.getFilterCondition("max(p.s_endStocks, p2.s_endStocks)")
+    var endStocksCondition = endStocksWinner.getFilterCondition("max(p.s_endStocks, p2.s_endStocks)")
+    var endStocks2Condition = endStocksLoser.getFilterCondition("min(p.s_endStocks, p2.s_endStocks)")
+
+    var endTypeCondition = gameEndType === -1 ? "" : "r.endType = ?"
 
     var condition = [
           winnerCondition, stageCondition,
-          dateCondition, durationCondition, endStocksCondition
+          dateCondition, durationCondition,
+          endStocksCondition, endStocks2Condition,
+          endTypeCondition
         ]
     .map(c => (c || true))
     .join(" and ")
@@ -279,19 +331,27 @@ Item {
 
     var dateParams = date.getFilterParams(v => new Date(v).toLocaleString(Qt.locale(), isoFormat))
     var durationParams = duration.getFilterParams()
-    var endStocksParams = endStocks.getFilterParams()
+    var endStocksParams = endStocksWinner.getFilterParams()
+    var endStocks2Params = endStocksLoser.getFilterParams()
+    var endTypeParams = gameEndType === -1 ? [] : [gameEndType]
 
     return stageIdParams
     .concat(dateParams)
     .concat(durationParams)
     .concat(endStocksParams)
+    .concat(endStocks2Params)
+    .concat(endTypeParams)
   }
 
+  // note: the winnerPort is always set to the player who had fewer stocks or more percent
+  // -> can use it for option 2 directly
   function getGameEndedCondition() {
     switch(lossType) {
     case 0: return "r.winnerPort >= 0 and (p.s_endStocks = 0 or p2.s_endStocks = 0)"
     case 1: return "r.winnerPort >= 0 and (p.s_endStocks <= 1 or p2.s_endStocks <= 1)"
-    case 2: return "r.winnerPort >= 0"
+    case 2: return "r.winnerPort >= 0 and r.lrasPort < 0"
+    case 3: return "r.winnerPort >= 0 and (r.lrasPort < 0 or (p.s_endStocks <= 1 or p2.s_endStocks <= 1))"
+    case 4: return "r.winnerPort >= 0"
     }
   }
 
@@ -299,15 +359,23 @@ Item {
     switch(lossType) {
     case 0: return "r.winnerPort < 0 or (p.s_endStocks > 0 and p2.s_endStocks > 0)"
     case 1: return "r.winnerPort < 0 or (p.s_endStocks > 1 and p2.s_endStocks > 1)"
-    case 2: return "r.winnerPort < 0"
+    case 2: return "r.winnerPort < 0 or r.lrasPort >= 0"
+    case 3: return "r.winnerPort < 0 or (r.lrasPort >= 0 and (p.s_endStocks > 1 and p2.s_endStocks > 1))"
+    case 4: return "r.winnerPort < 0"
     }
   }
 
-  function getWinnerCondition() {
+  function getWinnerConditionWildcard() {
     switch(lossType) {
-    case 0: return  "r.winnerPort = p.port and p2.s_endStocks = 0"
-    case 1: return  "r.winnerPort = p.port and p2.s_endStocks <= 1"
-    case 2: return  "r.winnerPort = p.port"
+    case 0: return  "r.winnerPort = %1.port and %2.s_endStocks = 0"
+    case 1: return  "r.winnerPort = %1.port and %2.s_endStocks <= 1"
+    case 2: return  "r.winnerPort = %1.port and r.lrasPort < 0"
+    case 3: return  "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port and %2.s_endStocks <= 1)"
+    case 4: return  "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port)"
     }
+  }
+
+  function getWinnerCondition(playerCol = "p", opponentCol = "p2") {
+    return qsTr(getWinnerConditionWildcard()).arg(playerCol).arg(opponentCol)
   }
 }
