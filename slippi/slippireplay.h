@@ -115,8 +115,17 @@ class SlippiReplay : public QObject
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerIndex MEMBER m_winningPlayerIndex NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(EndType gameEndType MEMBER m_endType NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(int lrasPlayerIndex MEMBER m_lrasPlayerIndex NOTIFY parsedFromAnalysis)
 
 public:
+  // same values as slip::EndType
+  enum EndType {
+      Unresolved = 0, Resolved= 3,
+      Time = 1, Game = 2, NoContest= 7
+  };
+  Q_ENUM(EndType)
+
   explicit SlippiReplay(QObject *parent = nullptr);
   ~SlippiReplay();
 
@@ -135,7 +144,8 @@ private:
   QString m_filePath;
 
   QVariantList m_players;
-  int m_winningPlayerIndex;
+  int m_winningPlayerIndex, m_lrasPlayerIndex;
+  EndType m_endType;
 };
 
 #endif // SLIPPIREPLAY_H

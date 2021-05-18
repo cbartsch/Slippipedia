@@ -19,6 +19,8 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   m_stageId = analysis->stage_id;
   m_gameDuration = analysis->game_length;
   m_winningPlayerIndex = analysis->winner_port;
+  m_lrasPlayerIndex = analysis->lras_player;
+  m_endType = EndType(analysis->end_type);
   m_filePath = filePath;
 
   // compute pseudo-unique hash for game
