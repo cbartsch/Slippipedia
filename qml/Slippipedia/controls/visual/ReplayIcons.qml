@@ -11,6 +11,8 @@ Item {
 
   property bool showPercent: false
 
+  property real stockIconColumnWidth: dp(90)
+
   Row {
     id: content
     anchors.verticalCenter: parent.verticalCenter
@@ -20,27 +22,39 @@ Item {
 
     Column {
       anchors.verticalCenter: parent.verticalCenter
-      width: stockIcons1.width
+      width: stockIconColumnWidth
 
       StockIcons {
         id: stockIcons1
+        anchors.horizontalCenter: parent.horizontalCenter
         charId: replayModel && replayModel.char1 || 0
         skinId: replayModel && replayModel.skin1 || 0
         numStocks: replayModel && replayModel.endStocks1 || 0
       }
 
-      AppText {
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        // the game also rounds down for displaying percent
-        text: replayModel && replayModel.endStocks1 > 0
-              ? qsTr("%1%").arg(Math.floor(replayModel.endPercent1))
-              : "KO" || ""
-
+      Row {
         visible: showPercent
-        font.pixelSize: sp(16)
-        font.bold: true
-        color: replayModel && replayModel.endStocks1 > 0 ? dataModel.damageColor(replayModel.endPercent1) : "#80ffffff"
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: dp(4)
+
+        AppText {
+          // the game also rounds down for displaying percent
+          text: replayModel && replayModel.endStocks1 > 0
+                ? qsTr("%1%").arg(Math.floor(replayModel.endPercent1))
+                : "KO" || ""
+
+          font.pixelSize: sp(16)
+          font.bold: true
+          color: replayModel && replayModel.endStocks1 > 0 ? dataModel.damageColor(replayModel.endPercent1) : "#80ffffff"
+        }
+
+        AppText {
+          text: "(LRAS)"
+          visible: replayModel.lrasPort === replayModel.port1
+
+          font.pixelSize: sp(16)
+          color: Theme.textColor
+        }
       }
     }
 
@@ -64,25 +78,38 @@ Item {
 
     Column {
       anchors.verticalCenter: parent.verticalCenter
-      width: stockIcons2.width
+      width: stockIconColumnWidth
 
       StockIcons {
         id: stockIcons2
+        anchors.horizontalCenter: parent.horizontalCenter
         charId: replayModel && replayModel.char2 || 0
         skinId: replayModel && replayModel.skin2 || 0
         numStocks: replayModel && replayModel.endStocks2 || 0
       }
 
-      AppText {
-        anchors.horizontalCenter: parent.horizontalCenter
-        text: replayModel && replayModel.endStocks2 > 0
-              ? qsTr("%1%").arg(Math.floor(replayModel.endPercent2))
-              : "KO" || ""
-
+      Row {
         visible: showPercent
-        font.pixelSize: sp(16)
-        font.bold: true
-        color: replayModel && replayModel.endStocks2 > 0 ? dataModel.damageColor(replayModel.endPercent2) : "#80ffffff"
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: dp(4)
+
+        AppText {
+          text: replayModel && replayModel.endStocks2 > 0
+                ? qsTr("%1%").arg(Math.floor(replayModel.endPercent2))
+                : "KO" || ""
+
+          font.pixelSize: sp(16)
+          font.bold: true
+          color: replayModel && replayModel.endStocks2 > 0 ? dataModel.damageColor(replayModel.endPercent2) : "#80ffffff"
+        }
+
+        AppText {
+          text: "(LRAS)"
+          visible: replayModel.lrasPort === replayModel.port2
+
+          font.pixelSize: sp(16)
+          color: Theme.textColor
+        }
       }
     }
 
