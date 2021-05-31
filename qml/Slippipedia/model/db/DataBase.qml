@@ -311,9 +311,6 @@ killDirection, didKill
       var gameEndedCondition = gameFilter.getGameEndedCondition()
       var winnerCondition = gameFilter.getWinnerCondition()
 
-      var playerCol = isOpponent ? "p2" : "p"
-      var opponentCol = isOpponent ? "p" : "p2"
-
       var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,
 count(case when %3 then 1 else null end) gameEndedCount,
@@ -371,15 +368,18 @@ where %1").arg(getFilterCondition()).arg(portCondition).arg(gameEndedCondition).
            .arg(playerCol).arg(c).arg(statFunc(c))
            ).join(",")
 
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
       var sql = qsTr("select
 count(r.id) count, avg(r.duration) avgDuration,
-count(case when winnerPort >= 0 then 1 else null end) gameEndedCount,
-count(case winnerPort when p.port then 1 else null end) winCount,
+count(case when %3 then 1 else null end) gameEndedCount,
+count(case when %4 then 1 else null end) winCount,
 %2
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and " + portCondition + "
-where %1").arg(getFilterCondition()).arg(statColCondition)
+where %1").arg(getFilterCondition()).arg(statColCondition).arg(gameEndedCondition).arg(winnerCondition)
 
       var results = tx.executeSql(sql, getFilterParams())
 
@@ -471,19 +471,23 @@ limit ?").arg(playerCol).arg(getFilterCondition())
 
     return readFromDb(function(tx) {
       var playerCol = isOpponent ? "p2" : "p"
+      var opponentCol = isOpponent ? "p" : "p2"
 
       // gamesWon is the number of games P1 won, regardless of isOpponent parameter
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
       var sql = qsTr("select
 %1.charId charId,
 count(distinct r.id) numGames,
-sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
-sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+sum(case when %3 then 1 else 0 end) gamesFinished,
+sum(case when %4 then 1 else 0 end) gamesWon
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 where %2
 group by %1.charId
-order by %1.charId").arg(playerCol).arg(getFilterCondition())
+order by %1.charId").arg(playerCol).arg(getFilterCondition()).arg(gameEndedCondition).arg(winnerCondition)
 
       var params = getFilterParams()
 
@@ -510,17 +514,22 @@ order by %1.charId").arg(playerCol).arg(getFilterCondition())
     log("get stage stats")
 
     return readFromDb(function(tx) {
-      var sql = "select
+
+      // gamesWon is the number of games P1 won, regardless of isOpponent parameter
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
+      var sql = qsTr("select
 stageId,
 count(distinct r.id) numGames,
-sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
-sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+sum(case when %2 then 1 else 0 end) gamesFinished,
+sum(case when %3 then 1 else 0 end) gamesWon
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where " + getFilterCondition() + "
+where %1
 group by stageId
-order by stageId"
+order by stageId").arg(getFilterCondition()).arg(gameEndedCondition).arg(winnerCondition)
 
       var params = getFilterParams()
 
@@ -555,19 +564,24 @@ order by stageId"
     log("get time stats")
 
     return readFromDb(function(tx) {
-      var sql = "select
+
+      // gamesWon is the number of games P1 won, regardless of isOpponent parameter
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
+      var sql = qsTr("select
 strftime('%Y-%m', date) yearMonth,
 strftime('%m', date) month,
 strftime('%Y', date) year,
 count(distinct r.id) numGames,
-sum(case when r.winnerPort >= 0 then 1 else 0 end) gamesFinished,
-sum(case when r.winnerPort = p.port then 1 else 0 end) gamesWon
+sum(case when %2 then 1 else 0 end) gamesFinished,
+sum(case when %3 then 1 else 0 end) gamesWon
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where " + getFilterCondition() + "
+where %1
 group by yearMonth
-order by yearMonth desc"
+order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(winnerCondition)
 
       var params = getFilterParams()
 
