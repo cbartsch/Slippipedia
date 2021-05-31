@@ -4,18 +4,27 @@ This program can analyze a large number of Slippi replays and display detailed, 
 
 ![video](media/analytics.gif)
 
-
-
 # Download
 
 Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/latest) for your OS.
 
+# Contact
+
+Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the issue tracker on this page or contact me via social media:
+
+* Twitter - https://twitter.com/ChrisuSSBMtG
+* Support me on Patreon - https://www.patreon.com/chrisu
+
+# Credits
+
+* Slippi ([slippi.gg](https://slippi.gg))
+* Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
+* Built with Felgo SDK ([felgo.com](https://felgo.com))
+* Game sprites ripped on [spriters-resource.com](https://www.spriters-resource.com/gamecube/ssbm/) by [Mr C.](https://www.spriters-resource.com/submitter/Mr.+C/) and [Colton](https://www.spriters-resource.com/submitter/Colton/)
 
 
 # Table of Contents
 
-* [Credits](#credits)
-* [Contact](#contact)
 * [How to Use](#how-to-use)
   * [Select replay folder](#select-replay-folder)
   * [Analyze replays](#analyze-replays)
@@ -38,26 +47,9 @@ Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/l
 
 
 
-# Credits
-
-* Slippi ([slippi.gg](https://slippi.gg))
-* Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
-* Built with Felgo SDK ([felgo.com](https://felgo.com))
-* Game sprites ripped on [spriters-resource.com](https://www.spriters-resource.com/gamecube/ssbm/) by [Mr C.](https://www.spriters-resource.com/submitter/Mr.+C/) and [Colton](https://www.spriters-resource.com/submitter/Colton/)
-
-
-
-# Contact
-
-Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the issue tracker on this page or contact me via social media:
-
-* Twitter - [ChrisuSSBMtG](https://twitter.com/ChrisuSSBMtG)
-
 # How to Use
 
 Download the latest release for your operating system. Start the included `.app` or the `.exe` file.
-
-
 
 ## Select replay folder
 
@@ -65,6 +57,16 @@ Select your Slippi replay directory. Per default, this should be in `(documents)
 
 ![replay folder](media/replay-folder.png)
 
+## Other settings
+
+To start replays and punishes directly from Slippipedia, set your Slippi Desktop App folder.
+You can download the app from [slippi.gg](https://slippi.gg/downloads).
+If you installed it in the default path, Slippipedia can probably auto-detect it.
+
+Also set the path to your Melee ISO file to auto-start replays/punishes.
+You can also leave this empty and start Melee from the replay Dolphin manually.
+
+![settings](media/settings.png)
 
 
 ## Analyze replays
