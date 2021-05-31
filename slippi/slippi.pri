@@ -29,6 +29,10 @@ SOURCES += \
     $$SLIPPC_SRC/replay.cpp
 
 win32 {
-  message(load lib)
+  message(Load libzma windows)
   LIBS += -L $$PWD/slippc/lib-win -static -llzma-x86
+}
+osx {
+  message(Load libzma mac)
+  LIBS += -llzma
 }
