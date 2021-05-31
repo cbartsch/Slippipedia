@@ -8,7 +8,7 @@ import QtGraphicalEffects 1.0
 import Slippipedia 1.0
 
 BasePage {
-  title: qsTr("Replay database")
+  title: qsTr("Setup")
 
   flickable.contentHeight: content.height
 
