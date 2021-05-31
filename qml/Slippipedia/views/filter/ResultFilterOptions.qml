@@ -121,7 +121,7 @@ Column {
       }
       CustomRadio {
         id: winnerRadioTie
-        text: "No result"
+        text: "No result / tie"
         toolTipText: "Filter by games with no winner/loser"
         value: -2
         checked: filter ? filter.winnerPlayerIndex === value : false
@@ -133,88 +133,6 @@ Column {
   Item {
     width: parent.width
     height: 1
-
-    Divider { }
-  }
-
-  Item {
-    width: parent.width
-    height: lossTypeRadioRow.height
-
-    Flow {
-      id: lossTypeRadioRow
-      anchors.left: parent.left
-      anchors.right: parent.right
-      anchors.margins: dp(Theme.contentPadding)
-      spacing: dp(1)
-
-      AppText {
-        width: dp(120)
-        height: dp(48)
-        verticalAlignment: Text.AlignVCenter
-        text: "Count loss if:"
-      }
-
-      QQ.ButtonGroup {
-        id: rbgLossType
-        buttons: [radioLossNoStock, radioLossLastStock, radioLossPercent,
-                  radioLossLastLras, radioLossLras]
-
-        onCheckedButtonChanged: {
-          for(var i = 0; i < buttons.length; i++) {
-            if(buttons[i].checked) {
-              filter.lossType = i
-              break
-            }
-          }
-        }
-      }
-
-      CustomRadio {
-        id: radioLossNoStock
-        text: "No stocks left"
-        toolTipText: "Game counts as lost if the last stock is gone (normal game ending without LRAS)"
-        checked: filter ? filter.lossType === 0 : false
-        height: dp(48)
-        padding: dp(Theme.contentPadding)
-      }
-
-      CustomRadio {
-        id: radioLossLastLras
-        text: "Last stock + LRAS"
-        toolTipText: "Game counts as lost for the player who lost their last stock or ended the game with LRAS on their last stock (if any)"
-        checked: filter ? filter.lossType === 3 : false
-        height: dp(48)
-        padding: dp(Theme.contentPadding)
-      }
-
-      CustomRadio {
-        id: radioLossLras
-        text: "Any LRAS"
-        toolTipText: "Game counts as lost for the player who lost their last stock or ended the game with LRAS (if any)"
-        checked: filter ? filter.lossType === 4 : false
-        height: dp(48)
-        padding: dp(Theme.contentPadding)
-      }
-
-      CustomRadio {
-        id: radioLossLastStock
-        text: "Last stock + higher percent"
-        toolTipText: "Game counts as lost for the player at last stock and higher percent (if any)"
-        checked: filter ? filter.lossType === 1 : false
-        height: dp(48)
-        padding: dp(Theme.contentPadding)
-      }
-
-      CustomRadio {
-        id: radioLossPercent
-        text: "Fewer stocks / higher percent"
-        toolTipText: "Game always counts as lost for the player with fewer stocks or same number of stocks and higher percent"
-        checked: filter ? filter.lossType === 2 : false
-        height: dp(48)
-        padding: dp(Theme.contentPadding)
-      }
-    }
 
     Divider { }
   }
@@ -334,5 +252,107 @@ Column {
     labelWidth: dp(200)
 
     range: filter && filter.endStocksLoser
+  }
+
+  SimpleSection {
+    title: "Win/loss determination options"
+  }
+
+  CustomListItem {
+    text: "Set game loss type"
+    detailText: "Change how to determine a game's winner/loser. Losing your last stock always counts as losing a game. This setting affects the filters and the statistics."
+
+    backgroundColor: filter && filter.lossType > 0 ? Qt.darker(Theme.tintColor, 3) : Theme.backgroundColor
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Reset to default"
+      visible: filter ? filter.lossType > 0 : false
+      anchors.verticalCenter: parent.verticalCenter
+      onClicked: filter.lossType = 0
+    }
+  }
+
+  Item {
+    width: parent.width
+    height: lossTypeRadioRow.height
+
+    Flow {
+      id: lossTypeRadioRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(1)
+
+      AppText {
+        width: dp(120)
+        height: dp(48)
+        verticalAlignment: Text.AlignVCenter
+        text: "Count loss if:"
+      }
+
+      QQ.ButtonGroup {
+        id: rbgLossType
+        buttons: [radioLossNoStock, radioLossLastStock, radioLossPercent,
+                  radioLossLastLras, radioLossLras]
+
+        onCheckedButtonChanged: {
+          for(var i = 0; i < buttons.length; i++) {
+            if(buttons[i].checked) {
+              filter.lossType = i
+              break
+            }
+          }
+        }
+      }
+
+      CustomRadio {
+        id: radioLossNoStock
+        text: "No stocks left"
+        toolTipText: "Game counts as lost only if the last stock is gone (normal game ending without LRAS)"
+        checked: filter ? filter.lossType === 0 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossLastLras
+        text: "Last stock + LRAS"
+        toolTipText: "Game counts as lost for the player who lost their last stock or ended the game with LRAS on their last stock (if any)"
+        checked: filter ? filter.lossType === 3 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossLras
+        text: "Any LRAS"
+        toolTipText: "Game counts as lost for the player who lost their last stock or ended the game with LRAS (if any)"
+        checked: filter ? filter.lossType === 4 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossLastStock
+        text: "Last stock + higher percent"
+        toolTipText: "Game counts as lost for the player at last stock and higher percent (if any)"
+        checked: filter ? filter.lossType === 1 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+
+      CustomRadio {
+        id: radioLossPercent
+        text: "Fewer stocks / higher percent"
+        toolTipText: "Game always counts as lost for the player with fewer stocks or same number of stocks and higher percent"
+        checked: filter ? filter.lossType === 2 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+      }
+    }
+
+    Divider { }
   }
 }

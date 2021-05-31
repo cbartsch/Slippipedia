@@ -11,6 +11,9 @@ App {
   readonly property real splitPaneWidth: dp(500)
   readonly property bool useSplitMode: width > dp(1000)
 
+  width: dp(1024)
+  height: dp(768)
+
   storeWindowGeometry: true
 
   onInitTheme: {

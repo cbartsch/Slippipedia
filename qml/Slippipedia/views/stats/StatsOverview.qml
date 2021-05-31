@@ -38,14 +38,16 @@ Column {
   }
 
   AppListItem {
-    text: qsTr("Win rate: %1 (%2/%3)")
-    .arg(dataModel.formatPercentage(stats.winRate))
-    .arg(stats.totalReplaysFilteredWon)
-    .arg(stats.totalReplaysFilteredWithResult)
-
     backgroundColor: Theme.backgroundColor
     enabled: false
     visible: dataModel.playerFilter.hasPlayerFilter
+
+    leftItem: GameCountRow {
+      anchors.verticalCenter: parent.verticalCenter
+
+      gamesWon: stats.totalReplaysFilteredWon
+      gamesFinished: stats.totalReplaysFilteredWithResult
+    }
   }
 
   AppListItem {

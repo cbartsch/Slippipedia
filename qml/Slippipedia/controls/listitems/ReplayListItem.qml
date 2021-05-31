@@ -29,7 +29,6 @@ AppListItem {
   text: showOptions ? fileUtils.cropPathAndKeepFilename(replayModel.filePath) : stageName
 
   Binding { target: textItem; property: "maximumLineCount"; value: 1 }
-//  Binding { target: textItem; property: "visible"; value: !mouseArea.containsMouse }
 
   leftItem: ReplayIcons {
     replayModel: replayListItem.replayModel

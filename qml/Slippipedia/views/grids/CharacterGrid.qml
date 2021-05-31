@@ -125,8 +125,6 @@ Grid {
         anchors.verticalCenterOffset: -height * 0.18
         visible: showData && hasChar && count > 0
 
-        opacity: charIcon.opacity * 0.4 + 0.6
-
 //          AppText {
 //            width: parent.width
 //            text: name
@@ -148,17 +146,21 @@ Grid {
           styleColor: Theme.backgroundColor
           font.pixelSize: Math.min(charItem.height * 0.3, width * 0.23)
           font.bold: true
+
+          color: Qt.rgba(1, 1, 1, charIcon.opacity * 0.8 + 0.2)
         }
 
         AppText {
           width: parent.width
-          text: qsTr("%1 games").arg(count)
+          text: qsTr("%1 game%2").arg(count).arg(count === 1 ? "" : "s")
           maximumLineCount: 1
           elide: Text.ElideRight
           horizontalAlignment: Text.AlignHCenter
           style: Text.Outline
           styleColor: Theme.backgroundColor
           font.pixelSize: Math.min(charItem.height * 0.2, width * 0.17)
+
+          color: Qt.rgba(1, 1, 1, charIcon.opacity * 0.8 + 0.2)
         }
       }
     }

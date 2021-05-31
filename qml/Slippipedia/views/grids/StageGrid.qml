@@ -109,9 +109,10 @@ Column {
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
-              text: qsTr("%2 games\n(%3)")
-              .arg(count)
-              .arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
+              text: qsTr("%1 game%2\n(%3)")
+                .arg(count)
+                .arg(count === 1 ? "" : "s")
+                .arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
               style: Text.Outline
               styleColor: Theme.backgroundColor
             }

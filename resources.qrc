@@ -69,5 +69,6 @@
         <file>qml/Slippipedia/controls/generic/RangeOptions.qml</file>
         <file>qml/Slippipedia/controls/generic/CustomRadio.qml</file>
         <file>assets/img/patreon-logo.png</file>
+        <file>qml/Slippipedia/controls/generic/GameCountRow.qml</file>
     </qresource>
 </RCC>

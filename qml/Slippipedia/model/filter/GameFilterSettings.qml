@@ -75,8 +75,8 @@ Item {
 
   readonly property var winnerTexts: ({
                                         [-3]: "Any",
-                                        [-2]: "No result",
-                                        [-1]: "Either (no tie)",
+                                        [-2]: "No result / tie",
+                                        [-1]: "Either / no tie",
                                         [0]: "Me",
                                         [1]: "Opponent",
                                       })
@@ -97,7 +97,7 @@ Item {
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
-  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || lossType > 0 || gameEndType > -1 ||
+  readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || gameEndType > -1 ||
                                           endStocksWinner.hasFilter || endStocksLoser.hasFilter
 
   readonly property string displayText: {
@@ -227,7 +227,6 @@ Item {
     endStocksLoser.reset()
 
     winnerPlayerIndex = -3
-    lossType = 0
     gameEndType = -1
   }
 
@@ -318,7 +317,7 @@ Item {
           endStocksCondition, endStocks2Condition,
           endTypeCondition
         ]
-    .map(c => (c || true))
+    .map(c => ("(" + (c || true) + ")" ))
     .join(" and ")
 
     return "(" + condition + ")"
@@ -367,11 +366,11 @@ Item {
 
   function getWinnerConditionWildcard() {
     switch(lossType) {
-    case 0: return  "r.winnerPort = %1.port and %2.s_endStocks = 0"
-    case 1: return  "r.winnerPort = %1.port and %2.s_endStocks <= 1"
-    case 2: return  "r.winnerPort = %1.port and r.lrasPort < 0"
-    case 3: return  "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port and %2.s_endStocks <= 1)"
-    case 4: return  "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port)"
+    case 0: return "r.winnerPort = %1.port and %2.s_endStocks = 0"
+    case 1: return "r.winnerPort = %1.port and %2.s_endStocks <= 1"
+    case 2: return "r.winnerPort = %1.port and r.lrasPort < 0"
+    case 3: return "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port and %2.s_endStocks <= 1)"
+    case 4: return "(r.winnerPort = %1.port and %2.s_endStocks = 0) or (r.lrasPort = %2.port)"
     }
   }
 

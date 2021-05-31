@@ -5,6 +5,8 @@ import Felgo 3.0
 import Slippipedia 1.0
 
 RowLayout {
+  id: statsInfoItem
+
   property var stats: ({})
 
   property bool listButtonVisible: true
@@ -14,6 +16,8 @@ RowLayout {
 
   signal showList
   signal showStats
+
+  property color textColor: Theme.textColor
 
   height: Math.max(content.height, dateText.height)
 
@@ -25,51 +29,33 @@ RowLayout {
     AppText {
       id: dateText
       font.pixelSize: dp(16)
-      color: Theme.secondaryTextColor
+      color: statsInfoItem.textColor
 
       width: parent.width
       visible: text
 
       text: !stats || !(stats.dateFirst || stats.dateLast)
             ? stats.date ? dataModel.formatDate(stats.date) : ""
-            : (dataModel.formatDate(stats.dateFirst) + " - " + dataModel.formatDate(stats.dateLast))
+      : (dataModel.formatDate(stats.dateFirst) + " - " + dataModel.formatDate(stats.dateLast))
     }
 
     AppText {
       font.pixelSize: dp(16)
-      color: Theme.secondaryTextColor
+      color: statsInfoItem.textColor
 
       width: parent.width
       visible: "numGames" in stats
 
-      text: qsTr("%1 games").arg(stats.numGames)
+      text: qsTr("%1 game%2").arg(stats.numGames).arg(stats.numGames === 1 ? "" : "s")
     }
 
-    AppText {
-      Layout.preferredWidth: Math.min(parent.width, implicitWidth)
-      font.pixelSize: dp(16)
-      color: Theme.secondaryTextColor
-
-      maximumLineCount: 1
-      elide: Text.ElideRight
-
+    GameCountRow {
+      width: parent.width
       visible: "gamesFinished" in stats
+      textColor: statsInfoItem.textColor
 
-      text: !stats ? "" : !dataModel.playerFilter.hasPlayerFilter ? "Configure name filter to see win rate"
-                                                                  : qsTr("Win Rate: %3 (%1 / %2)")
-      .arg(stats.gamesWon).arg(stats.gamesFinished)
-      .arg(dataModel.formatPercentage(stats.gamesWon / stats.gamesFinished))
-
-      RippleMouseArea {
-        anchors.fill: parent
-        onClicked: showFilteringPage(0)
-        enabled: !dataModel.playerFilter.hasPlayerFilter
-
-        hoverEffectEnabled: true
-        backgroundColor: Theme.listItem.selectedBackgroundColor
-        fillColor: backgroundColor
-        opacity: 0.5
-      }
+      gamesWon: stats && stats.gamesWon || 0
+      gamesFinished: stats && stats.gamesFinished || 0
     }
   }
 

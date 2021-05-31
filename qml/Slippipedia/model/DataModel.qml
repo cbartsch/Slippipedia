@@ -160,7 +160,7 @@ Item {
     dbUpdaterChanged() // refresh bindings
   }
 
-  // utils
+  // utils (TODO move to another file)
 
   function formatPercentage(amount, numDecimals = 2) {
     return amount > 1
@@ -177,11 +177,12 @@ Item {
     var seconds = Math.floor(numFrames / 60 % 60)
 
     if(days > 0) {
-      return qsTr("%1 days %2:%3:%4")
+      return qsTr("%1 day%5 %2:%3:%4")
         .arg(days)
         .arg(leadingZeros(hours, 2))
         .arg(leadingZeros(minutes, 2))
         .arg(leadingZeros(seconds, 2))
+        .arg(days === 1 ? "" : "s")
     }
     else if(hours > 0) {
       return qsTr("%1:%2:%3")
@@ -251,6 +252,34 @@ Item {
     else {
       return Qt.lighter(base, 2 - factor)
     }
+  }
+
+  function winRateColor(winRate) {
+    var winAngle = Math.PI * 10/8
+    var lossAngle = Math.PI * 5/8
+
+    return polarColor(0.5, 0.5, lerp(lossAngle, winAngle, winRate))
+  }
+
+  function yuva(y, u, v, a) {
+    return Qt.rgba(
+          y + v * 1.403,
+          y - u * 0.344 - v * 0.714,
+          y + u * 1.77,
+          a)
+  }
+
+  function polarColor(luminance, chrominance, angle) {
+    var maxDist = 1 // distance to move from the center of the YUV plane when chrominance == 1
+
+    //calc UV coordinates based on angle and radius (chrominance)
+    var u = Math.cos(angle) * maxDist * chrominance
+    var v = Math.sin(angle) * maxDist * chrominance
+    return yuva(luminance, u, v, 1)
+  }
+
+  function lerp(a, b, ratio) {
+    return a * (1 - ratio) + b * ratio
   }
 
   // replay functions

@@ -84,7 +84,7 @@ Item {
         visible: !!section
 
         AppText {
-          text: section
+          text: section || "?"
           anchors.left: parent.left
           anchors.bottom: parent.bottom
           anchors.margins: dp(Theme.contentPadding)
@@ -144,6 +144,10 @@ Item {
         StatsInfoItem {
           Layout.preferredHeight: dp(48)
           Layout.fillWidth: true
+
+          textColor: Theme.textColor
+
+          height: undefined // remove binding since height is handled by layout
 
           stats: model
 
