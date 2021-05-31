@@ -154,7 +154,11 @@ Second tab lets you filter for specific opponents and characters.
 
 ### Game result filter
 
-Third tab lets you filter by game results. Set a min/max game duration, game outcom and remaining stocks. You can use this e.g. to filter short games that probably did not finish.
+Third tab lets you filter by game results.
+
+Set a min/max game duration, game outcome and remaining stocks for each player.
+
+You can also filter by the ending type to find timeouts and otherwise tied games.
 
 ![result filter](media/filter-result.png)
 
