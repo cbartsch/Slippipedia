@@ -27,7 +27,8 @@ Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/l
     * [Punishes](#punishes)
   * [Filtering](#filtering)
   	* [Player and opponent filter](#player-and-opponent-filter)
-  	* [Game result filter](#game-result-filter)
+    * [Game result filter](#game-result-filter)
+    * [Game loss type setting](#game-loss-type-setting)
     * [Game filter](#game-filter)
     * [Punish filter](#punish-filter)
 * [Building & Deployment](#building--deployment)
@@ -156,6 +157,22 @@ Second tab lets you filter for specific opponents and characters.
 Third tab lets you filter by game results. Set a min/max game duration, game outcom and remaining stocks. You can use this e.g. to filter short games that probably did not finish.
 
 ![result filter](media/filter-result.png)
+
+### Game loss type setting
+
+This tab also lets you change a global game loss type setting.
+This determines how Slippipedia counts a game as lost vs. as a tie.
+It affects the filters and the various win rate displays.
+
+There are five options to choose from.
+
+A game can count as lost only when the last stock is gone.
+It can also count if a player quits via LRAS at any point or during their last stock.
+
+The last options count a game as lost for any player with fewer stocks or higher percent,
+either at any point or only during the loser's last stock.
+
+![loss type filter](media/filter-result-losstype.png)
 
 ### Game filter
 
