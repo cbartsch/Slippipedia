@@ -2,7 +2,7 @@
 
 This program can analyze a large number of Slippi replays and display detailed, filterable statistics and info.
 
-![video](media/analytics.gif)
+![preview video](media/preview.gif)
 
 # Download
 
