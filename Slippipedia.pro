@@ -41,7 +41,7 @@ FELGO_PLUGINS += googleanalytics
 # More information: https://felgo.com/doc/felgo-publishing/#project-configuration
 PRODUCT_IDENTIFIER = at.cb.Slippipedia
 PRODUCT_VERSION_NAME = 1.0-Release
-PRODUCT_VERSION_CODE = 3
+PRODUCT_VERSION_CODE = 4
 
 # Optionally set a license key that is used instead of the license key from
 # main.qml file (App::licenseKey for your app or GameWindow::licenseKey for your game)
@@ -78,3 +78,6 @@ include(slippi/slippi.pri)
 
 # always show qml files in Qt Creator
 OTHER_FILES += $$files(qml/**, true)
+
+DISTFILES += \
+  qml/Slippipedia/controls/generic/GameCountRow.qml
