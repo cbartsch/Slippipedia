@@ -50,7 +50,7 @@ AppListItem {
       id: toolBtnFolder
       iconType: IconType.folder
       onClicked: openReplayFolder(replayModel.filePath)
-      toolTipText: "Show in file explorer"
+      toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
       height: width
       anchors.verticalCenter: parent.verticalCenter
     }

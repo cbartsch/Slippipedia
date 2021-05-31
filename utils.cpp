@@ -21,9 +21,9 @@ void Utils::registerQml(const char *qmlModuleName) {
   });
 }
 
+#ifdef Q_OS_WIN
 bool Utils::exploreToFile(const QString &filePath)
 {
-#ifdef Q_OS_WIN
   // convert to 16bit string with native backslashes
   WCHAR filePathW[256];
   mbstowcs(filePathW, QDir::toNativeSeparators(filePath).toLocal8Bit(), filePath.length() + 1);
@@ -41,11 +41,8 @@ bool Utils::exploreToFile(const QString &filePath)
   ILFree(pidl);
 
   return ret >= 0;
-
-#endif
-  // TODO other OS implementations
-  return false;
 }
+#endif
 
 void Utils::startCommand(const QString &command, const QStringList &arguments)
 {

@@ -68,10 +68,12 @@ ios {
 
 # set application icons for win and macx
 win32 {
-    RC_ICONS = win/icon.ico
+  RC_ICONS = win/icon.ico
 }
 macx {
-    ICON = macx/app_icon.icns
+  ICON = macx/app_icon.icns
+
+  SOURCES += utils_mac.mm
 }
 
 include(slippi/slippi.pri)
