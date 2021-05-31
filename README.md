@@ -4,9 +4,13 @@ This program can analyze a large number of Slippi replays and display detailed, 
 
 ![video](media/analytics.gif)
 
+
+
 # Download
 
 Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/latest) for your OS.
+
+
 
 # Table of Contents
 
@@ -20,14 +24,18 @@ Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/l
     * [Statistics](#statistics)
     * [Analytics](#analytics)
     * [Browser](#browser)
+    * [Punishes](#punishes)
   * [Filtering](#filtering)
   	* [Player and opponent filter](#player-and-opponent-filter)
   	* [Game result filter](#game-result-filter)
-  	* [Game filter](#game-filter)
+    * [Game filter](#game-filter)
+    * [Punish filter](#punish-filter)
 * [Building & Deployment](#building--deployment)
   * [Deployment](#deployment)
     * [MacOS](#macos)
     * [Windows](#windows)
+
+
 
 # Credits
 
@@ -35,6 +43,8 @@ Download the [latest release](https://github.com/cbartsch/Slippipedia/releases/l
 * Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
 * Built with Felgo SDK ([felgo.com](https://felgo.com))
 * Game sprites ripped on [spriters-resource.com](https://www.spriters-resource.com/gamecube/ssbm/) by [Mr C.](https://www.spriters-resource.com/submitter/Mr.+C/) and [Colton](https://www.spriters-resource.com/submitter/Colton/)
+
+
 
 # Contact
 
@@ -46,11 +56,15 @@ Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the is
 
 Download the latest release for your operating system. Start the included `.app` or the `.exe` file.
 
+
+
 ## Select replay folder
 
 Select your Slippi replay directory. Per default, this should be in `(documents)/Slippi`. In this case, the folder should be pre-selected automatically.
 
 ![replay folder](media/replay-folder.png)
+
+
 
 ## Analyze replays
 
@@ -67,6 +81,8 @@ When you have new replays or change the folder, you can choose to only analyze n
 For more detailed output, like win rate and opponent stats, set your Slippi name and/or tag in the filter configuration.
 
 ![player filter](media/filter-player.png)
+
+
 
 ## Explore stats
 
@@ -102,6 +118,25 @@ Click the statistics icon for a session to show statistics pre-filtered for exac
 
 ![browser](media/browser.png)
 
+### Punishes
+
+The browser can also show your punishes for every game.
+Switch to the punishes tab on top.
+
+You can replay all currently displayed punishes with the play button at the very top.
+You can also replay only a specific session's or specic game's punishes with the corresponding play button.
+To replay, set the Slippi Desktop App folder and optionally the Melee ISO folder in the setup tab.
+
+Per default it shows all punishes, regardless of number of moves or damage.
+This includes single hits.
+
+To refine the search, you can filter by various properties.
+See [Filtering](#filtering) for more info.
+
+![browser-punishes](media/browser-punishes.png)
+
+
+
 ## Filtering
 
 Restrict your replays by detailed criteria. All other stats, analytics and browser consider the filter settings.
@@ -127,6 +162,20 @@ Third tab lets you filter by game results. Set a min/max game duration, game out
 Fourth tab lets you filter by game data. Set a time frame and one or more specific stages.
 
 ![stage filter](media/filter-stage.png)
+
+### Punish filter
+
+Fifth tab lets you filter the punishes.
+Set kill properties, a range for number of moves, dealt damage and player percent.
+You can also set more specific move options.
+
+**Note:** This tab is only available when filtering from the punishes tab in the replay browser.
+
+![punish filter](media/filter-punishes.png)
+
+![punish filter detail](media/filter-punishes-detail.png)
+
+
 
 # Building & Deployment
 
