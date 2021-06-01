@@ -14,6 +14,7 @@ Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the is
 
 * Twitter - https://twitter.com/ChrisuSSBMtG
 * Support me on Patreon - https://www.patreon.com/chrisu
+* DAFT Home Community Discord - https://discord.gg/jKf9XQE
 
 # Credits
 
@@ -238,7 +239,3 @@ Add the `-qmldir` parameter so it finds all dependencies from QML imports.
 ```
 
 This adds all the libraries to the folder next to the `.exe` file.
-
-### Contact
-
-* [Discord](https://discord.gg/jKf9XQE)
