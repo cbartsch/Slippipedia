@@ -239,6 +239,6 @@ Add the `-qmldir` parameter so it finds all dependencies from QML imports.
 
 This adds all the libraries to the folder next to the `.exe` file.
 
+### Contact
 
-
-
+* [Discord](https://discord.gg/jKf9XQE)
