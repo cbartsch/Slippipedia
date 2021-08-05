@@ -25,7 +25,7 @@ Item {
   Connections {
     target: dataModel
 
-    onIsProcessingChanged: refresh()
+    onIsProcessingChanged: if(!dataModel.isProcessing) refresh()
   }
 
   AppListItem {
