@@ -166,6 +166,25 @@ Item {
 
   // utils (TODO move to another file)
 
+  function parseTime(text) {
+    // convert text "hh:mm:ss" to time in ms
+
+    var elems = text.split(":")
+
+    if(elems.length === 2) {
+      elems = ["00"].concat(elems)
+    }
+    if(elems.length === 3 && elems.every(a => a.match("[0-9]{2}"))) {
+      var hours = parseInt(elems[0])
+      var minutes = parseInt(elems[1])
+      var seconds = parseInt(elems[2])
+
+      return ((hours * 60 + minutes) * 60 + seconds) * 1000
+    }
+
+    return -1
+  }
+
   function formatPercentage(amount, numDecimals = 2) {
     return amount > 1
         ? "100%"
@@ -174,13 +193,20 @@ Item {
           : qsTr("%1%").arg((amount * 100).toFixed(numDecimals))
   }
 
-  function formatTime(numFrames) {
+  function formatTimeMs(numMs, showDays = true) {
+    return formatTime(numMs * 60 / 1000, showDays)
+  }
+
+  function formatTime(numFrames, showDays = true) {
     var days = Math.floor(numFrames / 60 / 60 / 60 / 24)
-    var hours = Math.floor(numFrames / 60 / 60 / 60 % 24)
+    var hours = Math.floor(numFrames / 60 / 60 / 60)
+    if(showDays) {
+      hours = hours % 24
+    }
     var minutes = Math.floor(numFrames / 60 / 60 % 60)
     var seconds = Math.floor(numFrames / 60 % 60)
 
-    if(days > 0) {
+    if(days > 0 && showDays) {
       return qsTr("%1 day%5 %2:%3:%4")
         .arg(days)
         .arg(leadingZeros(hours, 2))
