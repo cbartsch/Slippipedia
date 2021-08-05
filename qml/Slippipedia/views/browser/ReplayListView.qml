@@ -94,6 +94,26 @@ Item {
     var adapted = loaded.map(item => {
                                var section = dataModel.playersText(item)
 
+                               while(section in sectionData) {
+                                 var sData = sectionData[section]
+
+                                 // item.duration is in frames - calculate ms
+                                 var gameDurationMs = item.duration / 60 * 1000
+
+                                 // calculate time between first game of current session and this game's start time minus its duration
+                                 var tDiff = sData.dateFirst.getTime() - item.date.getTime() - gameDurationMs
+
+                                 var intervalMs = stats.dataBase.gameFilter.sessionSplitIntervalMs
+                                 if(intervalMs > 0 && tDiff > intervalMs) {
+                                   // time between games is greater than the session split interval
+
+                                   section += "2"
+                                 }
+                                 else {
+                                   break
+                                 }
+                               }
+
                                if(!(section in sectionData)) {
                                  sectionData[section] = {
                                    name1: item.name1,

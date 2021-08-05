@@ -13,6 +13,9 @@ Item {
   property int gameEndType: -1
   property int lossType: 0
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
+  property int sessionSplitIntervalMs: sessionSplitIntervalMsDefault // split sessions after 15 minutes
+
+  readonly property int sessionSplitIntervalMsDefault: 15 * 60 * 1000
 
   // duration from-to in frames
   property RangeSettings duration: RangeSettings {
@@ -56,11 +59,12 @@ Item {
 
   signal filterChanged
 
-  // due to this being in a loader, can't use alias properties -> save on change:
-  onWinnerPlayerIndexChanged: filterChanged()
-  onGameEndTypeChanged:       filterChanged()
-  onLossTypeChanged:          filterChanged()
-  onStageIdsChanged:          filterChanged()
+  // due to settings being in a loader, can't use alias properties -> save on change:
+  onWinnerPlayerIndexChanged:      filterChanged()
+  onGameEndTypeChanged:            filterChanged()
+  onLossTypeChanged:               filterChanged()
+  onStageIdsChanged:               filterChanged()
+  onSessionSplitIntervalMsChanged: filterChanged()
 
   // match slippi constants
   readonly property var gameEndTypeTexts: ({
@@ -92,13 +96,14 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasSessionSplitInterval
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || gameEndType > -1 ||
                                           endStocksWinner.hasFilter || endStocksLoser.hasFilter
+  readonly property bool hasSessionSplitInterval: sessionSplitIntervalMs != sessionSplitIntervalMsDefault
 
   readonly property string displayText: {
     var sText = null
@@ -152,10 +157,11 @@ Item {
       target: settingsLoader.item ? gameFilterSettings : null
 
       // due to this being in a loader, can't use alias properties -> save on change:
-      onWinnerPlayerIndexChanged: settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
-      onLossTypeChanged:          settingsLoader.item.lossType = lossType
-      onGameEndTypeChanged:       settingsLoader.item.gameEndType = gameEndType
-      onStageIdsChanged:          settingsLoader.item.stageIds = stageIds
+      onWinnerPlayerIndexChanged:      settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
+      onLossTypeChanged:               settingsLoader.item.lossType = lossType
+      onGameEndTypeChanged:            settingsLoader.item.gameEndType = gameEndType
+      onStageIdsChanged:               settingsLoader.item.stageIds = stageIds
+      onSessionSplitIntervalMsChanged: settingsLoader.item.sessionSplitIntervalMs = sessionSplitIntervalMs
     }
 
     sourceComponent: Settings {
@@ -172,6 +178,9 @@ Item {
 
       // match SlippiReplay enum
       property int gameEndType: gameFilterSettings.gameEndType
+
+      // split sessions against the same opponent after:
+      property int sessionSplitIntervalMs: gameFilterSettings.sessionSplitIntervalMs
 
       property var stageIds: gameFilterSettings.stageIds
 
@@ -208,6 +217,7 @@ Item {
         gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
         gameFilterSettings.lossType = lossType
         gameFilterSettings.gameEndType = gameEndType
+        gameFilterSettings.sessionSplitIntervalMs = sessionSplitIntervalMs
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
     }
@@ -220,6 +230,8 @@ Item {
     stageIds = []
 
     resetWinnerFilter()
+
+    sessionSplitIntervalMs = sessionSplitIntervalMsDefault
   }
 
   function resetWinnerFilter() {
@@ -241,6 +253,7 @@ Item {
     winnerPlayerIndex = other.winnerPlayerIndex
     lossType = other.lossType
     gameEndType = other.gameEndType
+    sessionSplitIntervalMs = other.sessionSplitIntervalMs
   }
 
   function setStage(stageIds) {

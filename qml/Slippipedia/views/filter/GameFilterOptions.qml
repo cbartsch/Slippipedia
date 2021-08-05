@@ -125,6 +125,54 @@ Column {
     }
   }
 
+
+  SimpleSection {
+    title: "Other options"
+  }
+
+  CustomListItem {
+    text: "Session split interval"
+    detailText: "Split sessions against the same opponent after certain amount of time."
+
+    checked: filter ? filter.hasSessionSplitInterval : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: qsTr("Reset session split interval to default (%1)").arg(dataModel.formatTimeMs(filter.sessionSplitIntervalMsDefault))
+      visible: filter ? filter.hasSessionSplitInterval : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: filter.sessionSplitIntervalMs = filter.sessionSplitIntervalMsDefault
+    }
+  }
+
+  TextInputField {
+    labelText: "Interval (hh:mm:ss)"
+    labelWidth: dp(240)
+    showOptions: false
+
+    text: filter && filter.sessionSplitIntervalMs > 0 ? dataModel.formatTimeMs(filter.sessionSplitIntervalMs, false) : ""
+    placeholderText: "Never split sessions"
+
+    onTextChanged: {
+      if(!filter) {
+        return
+      }
+
+      if(text.length === 0) {
+        filter.sessionSplitIntervalMs = 0
+        return
+      }
+
+      var intervalMs = dataModel.parseTime(text)
+
+      if(intervalMs >= 0) {
+        filter.sessionSplitIntervalMs = intervalMs
+      }
+    }
+  }
+
   function setPastRange(numDays) {
     filter.setPastRange(numDays)
 
