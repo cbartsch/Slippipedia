@@ -11,9 +11,38 @@
 
 #include <QtDebug>
 
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+
 #ifdef FELGO_LIVE
 #include <FelgoLiveClient>
 #endif
+
+// cannot configure DB pragmas in QML (error:
+// so do it here:
+QSqlDatabase setupDatabase(QQmlEngine& engine) {
+  auto dbName = engine.offlineStorageDatabaseFilePath("SlippiStatsDB");
+  QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QFileInfo(dbName).fileName());
+  db.setDatabaseName(dbName + ".sqlite");
+
+  if(db.open()) {
+    // use write-ahead-logging and normal sync mode for optimized performance
+    // https://www.sqlite.org/wal.html
+    // https://www.sqlite.org/pragma.html#pragma_synchronous
+    db.exec("pragma journal_mode = wal");
+    db.exec("pragma synchronous = off");
+  }
+
+  if(db.lastError().isValid()) {
+    qWarning() << "Could not set up database:" << db.lastError();
+  }
+  else {
+    qDebug() << "Successfully configured database."; // << dbName << QFileInfo(dbName).fileName();
+  }
+
+  return db;
+}
 
 int main(int argc, char *argv[])
 {
@@ -26,6 +55,9 @@ int main(int argc, char *argv[])
 
   QQmlApplicationEngine engine;
   felgo.initialize(&engine);
+
+  // the database connection exists for the lifetime of the app:
+  QSqlDatabase db(setupDatabase(engine));
 
   // Set an optional license key from project file
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
