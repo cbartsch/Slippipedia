@@ -57,6 +57,7 @@ Item {
 
   Component.onCompleted: {
     dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
+
     if(dataBaseConnection.version === "") {
       dataBaseConnection.changeVersion("", dbLatestVersion, function(tx) {
         console.log("DB initialized at version", dbCurrentVersion, dbLatestVersion)
@@ -74,6 +75,8 @@ Item {
     // refresh after n items
     if(numFilesSucceeded % 500 === 0) {
       dbUpdaterChanged()
+
+      //disable this if it causes the UI to lock up while analyzing
       stats.refresh()
     }
   }
@@ -81,6 +84,7 @@ Item {
   onIsProcessingChanged: {
     if(!isProcessing) {
       dbUpdaterChanged() // refresh bindings
+      stats.refresh()
     }
   }
 
