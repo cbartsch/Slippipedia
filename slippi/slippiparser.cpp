@@ -73,15 +73,21 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
 
     bool success = parser.load(filePath.toLocal8Bit().data());
 
-    if(success) {
-      QScopedPointer<slip::Analysis> analysis(parser.analyze());
-      replay->fromAnalysis(filePath, analysis.data());
+    if(!success) {
+      emit m_item->replayFailedToParse(filePath, "Could not load file");
+      return;
+    }
 
-      emit m_item->replayParsed(filePath, replay);
+    QScopedPointer<slip::Analysis> analysis(parser.analyze());
+
+    if(!analysis->success)  {
+      emit m_item->replayFailedToParse(filePath, "Could not analyze replay (doubles matches are not supported)");
+      return;
     }
-    else {
-      emit m_item->replayFailedToParse(filePath, "");
-    }
+
+    replay->fromAnalysis(filePath, analysis.data());
+
+    emit m_item->replayParsed(filePath, replay);
   }
   catch(std::exception &ex) {
     // qWarning() << "Could not parse SLP file" << filePath << ex.what();
