@@ -82,15 +82,15 @@ didKill bool,
 foreign key(replayId) references replays(id)
       )")
 
-      tx.executeSql("create index if not exists stage_index on replays(stageId)")
+      tx.executeSql("create index if not exists replay_index on replays(stageId)")
 
-      tx.executeSql("create index if not exists char_index on players(charId)")
-      tx.executeSql("create index if not exists player_replay_index on players(replayId)")
-      tx.executeSql("create index if not exists player_replay_port_index on players(replayId, port)")
+//      tx.executeSql("create index if not exists char_index on players(charId)")
+//      tx.executeSql("create index if not exists player_replay_index on players(replayId)")
+      tx.executeSql("create index if not exists player_index on players(replayId, port, charId)")
 
-      tx.executeSql("create index if not exists punish_replay_index on punishes(replayId)")
-      tx.executeSql("create index if not exists punish_port_index on punishes(port)")
-      tx.executeSql("create index if not exists punish_replay_port_index on punishes(replayId, port)")
+//      tx.executeSql("create index if not exists punish_replay_index on punishes(replayId)")
+//      tx.executeSql("create index if not exists punish_port_index on punishes(port)")
+      tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill)")
 
       // can only configure this globally, set like to be case sensitive:
       tx.executeSql("pragma case_sensitive_like = true")
