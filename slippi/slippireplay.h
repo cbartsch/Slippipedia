@@ -114,7 +114,7 @@ class SlippiReplay : public QObject
   Q_PROPERTY(QString filePath MEMBER m_filePath NOTIFY parsedFromAnalysis)
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
-  Q_PROPERTY(int winningPlayerIndex MEMBER m_winningPlayerIndex NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(int winningPlayerPort MEMBER m_winningPlayerPort NOTIFY parsedFromAnalysis)
   Q_PROPERTY(EndType gameEndType MEMBER m_endType NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int lrasPlayerIndex MEMBER m_lrasPlayerIndex NOTIFY parsedFromAnalysis)
 
@@ -144,7 +144,7 @@ private:
   QString m_filePath;
 
   QVariantList m_players;
-  int m_winningPlayerIndex, m_lrasPlayerIndex;
+  int m_winningPlayerPort, m_lrasPlayerIndex;
   EndType m_endType;
 };
 

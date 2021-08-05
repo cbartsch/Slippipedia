@@ -115,16 +115,13 @@ foreign key(replayId) references replays(id)
         return
       }
 
-      var winnerIndex = replay.winningPlayerIndex
-      var winnerTag = winnerIndex >= 0 ? replay.players[winnerIndex].slippiName : null
-
       tx.executeSql("insert or replace into Replays (hasData, id, date, stageId,
                                                      winnerPort, lrasPort, endType,
                                                      duration, filePath)
                      values (true, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId, replay.date, replay.stageId,
-                      winnerIndex, replay.lrasPlayerIndex, replay.gameEndType,
+                      replay.winningPlayerPort, replay.lrasPlayerIndex, replay.gameEndType,
                       replay.gameDuration, replay.filePath
                     ])
 
