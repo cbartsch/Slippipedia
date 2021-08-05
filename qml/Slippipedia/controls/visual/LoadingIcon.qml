@@ -13,4 +13,14 @@ IconButtonBarItem {
     running: true
     duration: 2000
   }
+
+  AppText {
+    anchors.centerIn: parent
+    text: qsTr("%1%").arg(Math.round(100 * dataModel.numFilesProcessed / dataModel.numFilesProcessing))
+    rotation: -parent.rotation
+    font.pixelSize: sp(12)
+    style: Text.Outline
+    styleColor: Theme.backgroundColor
+    opacity: 0.8
+  }
 }
