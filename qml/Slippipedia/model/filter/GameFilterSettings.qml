@@ -112,8 +112,8 @@ Item {
     .arg(winnerTexts[winnerPlayerIndex])
     .arg(lossTypeTexts[lossType])
 
-    var sdText = date.from >= 0 ? new Date(date.from).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
-    var edText = date.to >= 0 ? new Date(date.to).toLocaleString(Qt.locale(), "dd/MM/yyyy hh:mm") : ""
+    var sdText = date.from >= 0 ? dataModel.formatDate(new Date(date.from)) : ""
+    var edText = date.to >= 0 ? dataModel.formatDate(new Date(date.to)) : ""
 
     var dText = sdText && edText
         ? sdText + " to " + edText
