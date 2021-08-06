@@ -256,11 +256,9 @@ killDirection, didKill
         // game
         gameFilter.getGameFilterCondition() +
         // me
-        " and " + playerFilter.getPlayerFilterCondition("p") +
-        " and " + playerFilter.getCharFilterCondition("p.charId") +
+        " and " + playerFilter.getFilterCondition("p") +
         // opponent
-        " and " + opponentFilter.getPlayerFilterCondition("p2") +
-        " and " + opponentFilter.getCharFilterCondition("p2.charId") +
+        " and " + opponentFilter.getFilterCondition("p2") +
         // punish
         " and " + (usePunishFilter ? punishFilter.getPunishFilterCondition() : "true") +
         " and r.hasData = 1" + // only match replays that didn't fail parsing
@@ -270,10 +268,8 @@ killDirection, didKill
   function getFilterParams(usePunishFilter = false) {
     // game, then me, then opponent
     return gameFilter.getGameFilterParams()
-    .concat(playerFilter.getPlayerFilterParams())
-    .concat(playerFilter.getCharFilterParams())
-    .concat(opponentFilter.getPlayerFilterParams())
-    .concat(opponentFilter.getCharFilterParams())
+    .concat(playerFilter.getFilterParams())
+    .concat(opponentFilter.getFilterParams())
     .concat(usePunishFilter ? punishFilter.getPunishFilterParams() : [])
   }
 
@@ -654,8 +650,8 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
       var sql = qsTr(
             "select
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.lrasPort lrasPort, r.userFlag userFlag,
- p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
+ p.slippiName name1,  p.cssTag tag1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
+p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
 (case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
 from replays r
 join players p on p.replayId = r.id

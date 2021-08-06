@@ -22,11 +22,30 @@ AppFlickable {
     spacing: dp(Theme.contentPadding) / 2
 
     AppText {
+      id: nameText
       anchors.verticalCenter: parent.verticalCenter
       font.pixelSize: sp(20)
       color: Theme.tintColor
 
-      text: qsTr("%1 (%2)").arg(playerInfoRow.model.name1).arg(playerInfoRow.model.code1)
+      visible: !!text
+      text: model.name1 || model.tag1 || ""
+    }
+
+    AppText {
+      anchors.baseline: nameText.baseline
+      font.pixelSize: sp(12)
+      color: Theme.secondaryTextColor
+
+      visible: !!text
+      text: qsTr("%1").arg(model.code1)
+    }
+
+    AppText {
+      anchors.verticalCenter: parent.verticalCenter
+      font.pixelSize: sp(12)
+      color: MeleeData.portColors[model.port1] || "white"
+
+      text: qsTr("P%1").arg(model.port1 + 1)
     }
 
     Repeater {
@@ -35,7 +54,7 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: playerInfoRow.model.chars1 && playerInfoRow.model.chars1[modelData] || 0
+        skinId: model.chars1 && model.chars1[modelData] || 0
       }
     }
 
@@ -53,8 +72,16 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: playerInfoRow.model.chars2 && playerInfoRow.model.chars2[modelData] || 0
+        skinId: model.chars2 && model.chars2[modelData] || 0
       }
+    }
+
+    AppText {
+      anchors.verticalCenter: parent.verticalCenter
+      font.pixelSize: sp(12)
+      color: MeleeData.portColors[model.port2] || "white"
+
+      text: qsTr("P%1").arg(model.port2 + 1)
     }
 
     AppText {
@@ -62,7 +89,17 @@ AppFlickable {
       font.pixelSize: sp(20)
       color: Theme.tintColor
 
-      text: qsTr("%1 (%2)").arg(playerInfoRow.model.name2).arg(playerInfoRow.model.code2)
+      visible: !!text
+      text: model.name2 || model.tag2 || ""
+    }
+
+    AppText {
+      anchors.baseline: nameText.baseline
+      font.pixelSize: sp(12)
+      color: Theme.secondaryTextColor
+
+      visible: !!text
+      text: qsTr("%1").arg(model.code2)
     }
   }
 }
