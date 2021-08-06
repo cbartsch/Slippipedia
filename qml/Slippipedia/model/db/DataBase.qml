@@ -611,17 +611,23 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
     log("get replay list")
 
     return readFromDb(function(tx) {
-      var sql = "select
-r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort, r.lrasPort lrasPort,
+      var winnerConditionP1 = gameFilter.getWinnerCondition("p", "p2")
+      var winnerConditionP2 = gameFilter.getWinnerCondition("p2", "p")
+
+      var sql = qsTr(
+            "select
+r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.lrasPort lrasPort,
  p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
-p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
+p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
+(case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id
-where p.port != p2.port and " + getFilterCondition() + "
+where p.port != p2.port and %3
 group by r.id
 order by r.date desc
 limit ? offset ?"
+            ).arg(winnerConditionP1).arg(winnerConditionP2).arg(getFilterCondition())
 
       var params = getFilterParams().concat([max, start])
 
