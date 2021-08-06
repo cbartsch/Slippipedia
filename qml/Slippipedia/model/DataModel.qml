@@ -1,9 +1,7 @@
 import QtQuick 2.0
-import QtQuick.LocalStorage 2.12
+import Qt.labs.settings 1.1
 
 import Felgo 3.0
-
-import Qt.labs.settings 1.1
 
 import Slippipedia 1.0
 
@@ -52,43 +50,7 @@ Item {
   // db
   property alias globalDataBase: globalDataBase
 
-  // TODO move database related properties to DataBase
-  property var dataBaseConnection
-
-  // history:
-  // 2.1 - Slippipedia 1.0
-  // 2.2 - Slippipedia 1.1 - add Replays.userFlag
-  readonly property string dbLatestVersion: "2.2"
-  readonly property string dbCurrentVersion: dataBaseConnection.version
-  readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
-
   signal initialized
-
-  function initDb() {
-    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
-
-    if(dbCurrentVersion !== dbLatestVersion) {
-      dataBaseConnection.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
-        console.log("Update DB version from", dbCurrentVersion, "to", dbLatestVersion)
-
-        if(dbCurrentVersion === "2.1") {
-          tx.executeSql("alter table Replays add column userFlag integer default 0")
-        }
-      })
-
-      // reload object to update version property:
-      initDb()
-      return
-    }
-
-    console.log("DB open at version", dbCurrentVersion)
-  }
-
-  Component.onCompleted: {
-    initDb()
-
-    initialized()
-  }
 
   onNumFilesSucceededChanged: {
     // refresh after n items
@@ -112,6 +74,8 @@ Item {
 
     filterSettings: filterSettings
     db: dataBaseConnection
+
+    onInitialized: dataModel.initialized()
   }
 
   FilterSettings {

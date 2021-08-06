@@ -50,14 +50,14 @@ BasePage {
     }
 
     AppListItem {
-      visible: dataModel.dbNeedsUpdate
+      visible: dataModel.globalDataBase.dbNeedsUpdate
 
       text: "Database version outdated"
       detailText: qsTr("Your app's database version is outdated (%1 < %2). \
 This happens when updating to a new app version. \
 Please clear and re-build the database. \
 Otherwise, some app features might not work properly. \
-Click to clear database.").arg(dataModel.dbCurrentVersion).arg(dataModel.dbLatestVersion)
+Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(dataModel.globalDataBase.dbLatestVersion)
 
       onSelected: clearDb()
 

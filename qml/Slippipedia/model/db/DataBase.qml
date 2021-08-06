@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.LocalStorage 2.12
 import Felgo 3.0
 
 import Slippipedia 1.0
@@ -9,7 +10,7 @@ Item {
   property var debugLog: false
   property var debugLogSql: false
 
-  // db
+  // db connection from LocalStorage
   property var db: null
 
   property FilterSettings filterSettings: null
@@ -18,6 +19,41 @@ Item {
   readonly property PlayerFilterSettings opponentFilter: filterSettings.opponentFilter
   readonly property GameFilterSettings gameFilter: filterSettings.gameFilter
   readonly property PunishFilterSettings punishFilter: filterSettings.punishFilter
+
+  signal initialized
+
+  // history:
+  // 2.1 - Slippipedia 1.0
+  // 2.2 - Slippipedia 1.1 - add Replays.userFlag
+  readonly property string dbLatestVersion: "2.2"
+  readonly property string dbCurrentVersion: db.version
+  readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
+
+  function initDb() {
+    db = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
+
+    if(dbCurrentVersion !== dbLatestVersion) {
+      db.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
+        console.log("Update DB version from", dbCurrentVersion, "to", dbLatestVersion)
+
+        if(dbCurrentVersion === "2.1") {
+          tx.executeSql("alter table Replays add column userFlag integer default 0")
+        }
+      })
+
+      // reload object to update version property:
+      initDb()
+      return
+    }
+
+    console.log("DB open at version", dbCurrentVersion)
+  }
+
+  Component.onCompleted: {
+    initDb()
+
+    initialized()
+  }
 
   function createTables(replay) {
     db.transaction(function (tx) {
