@@ -84,16 +84,8 @@ Column {
             id: directionCheckBox
             text: modelData
             anchors.centerIn: parent
-            checked: filter ? filter.killDirections.indexOf(killDirection) >= 0 : false
 
-            onCheckedChanged: {
-              if(checked) {
-                filter.addKillDirection(killDirection)
-              }
-              else {
-                filter.removeKillDirection(killDirection)
-              }
-            }
+            checked: filter ? filter.killDirections.indexOf(killDirection) >= 0 : false
           }
 
           RippleMouseArea {
@@ -102,7 +94,14 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
-            onClicked: directionCheckBox.checked = !directionCheckBox.checked
+            onClicked: {
+              if(!directionCheckBox.checked) {
+                filter.addKillDirection(killDirection)
+              }
+              else {
+                filter.removeKillDirection(killDirection)
+              }
+            }
           }
         }
       }
@@ -204,9 +203,7 @@ Column {
       visible: filter ? filter.hasOpeningMoveFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
-      onClicked: {
-        filter.removeAllOpeningMoves()
-      }
+      onClicked: filter.removeAllOpeningMoves()
     }
   }
 
@@ -246,16 +243,8 @@ Column {
             id: moveCheckBox
             text: moveName
             anchors.centerIn: parent
-            checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
 
-            onCheckedChanged: {
-              if(checked) {
-                filter.addOpeningMove(moveId)
-              }
-              else {
-                filter.removeOpeningMove(moveId)
-              }
-            }
+            checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
           }
 
           RippleMouseArea {
@@ -264,7 +253,14 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
-            onClicked: moveCheckBox.checked = !moveCheckBox.checked
+            onClicked: {
+              if(!moveCheckBox.checked) {
+                filter.addOpeningMove(moveId)
+              }
+              else {
+                filter.removeOpeningMove(moveId)
+              }
+            }
           }
         }
       }
@@ -324,23 +320,15 @@ Column {
           readonly property string moveName: modelData
 
           height: dp(48)
-          width: moveCheckBox.width + dp(Theme.contentPadding) * 2
+          width: lmoveCheckBox.width + dp(Theme.contentPadding) * 2
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
-            id: moveCheckBox
+            id: lmoveCheckBox
             text: moveName
             anchors.centerIn: parent
-            checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
 
-            onCheckedChanged: {
-              if(checked) {
-                filter.addLastMove(moveId)
-              }
-              else {
-                filter.removeLastMove(moveId)
-              }
-            }
+            checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
           }
 
           RippleMouseArea {
@@ -349,7 +337,14 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
-            onClicked: moveCheckBox.checked = !moveCheckBox.checked
+            onClicked: {
+              if(!lmoveCheckBox.checked) {
+                filter.addLastMove(moveId)
+              }
+              else {
+                filter.removeLastMove(moveId)
+              }
+            }
           }
         }
       }

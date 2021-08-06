@@ -184,13 +184,8 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             anchors.left: parent.left
             anchors.leftMargin: dp(Theme.contentPadding)
-            checked: filter ? dataModel.hasFlag(filter.userFlagMask, flagId) : false
 
-            onCheckedChanged: {
-              console.log("set flag mask", filter.userFlagMask)
-              filter.userFlagMask = dataModel.setFlag(filter.userFlagMask, flagId, checked)
-              console.log("did set flag mask", filter.userFlagMask)
-            }
+            checked: filter ? dataModel.hasFlag(filter.userFlagMask, flagId) : false
           }
 
           Icon {
@@ -199,7 +194,9 @@ Column {
             anchors.rightMargin: dp(Theme.contentPadding)
             anchors.verticalCenter: parent.verticalCenter
             icon: IconType.star
-            color: Theme.tintColor
+            color: flagCheckBox.checked ? Theme.tintColor : Theme.textColor
+
+            Behavior on color { UiAnimation { } }
           }
 
           RippleMouseArea {
@@ -208,7 +205,8 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
-            onClicked: flagCheckBox.checked = !flagCheckBox.checked
+
+            onClicked: filter.userFlagMask = dataModel.setFlag(filter.userFlagMask, flagId, !flagCheckBox.checked)
           }
         }
       }
