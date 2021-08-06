@@ -82,6 +82,8 @@ App {
     id: navigation
     navigationMode: navigationModeTabs
 
+    onCurrentNavigationItemChanged: if(currentNavigationItem) currentNavigationItem.page.appeared()
+
     NavigationItem {
       title: "Setup"
 
