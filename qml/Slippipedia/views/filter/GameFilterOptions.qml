@@ -139,7 +139,8 @@ Column {
 
     rightItem: AppToolButton {
       iconType: IconType.trash
-      toolTipText: qsTr("Reset session split interval to default (%1)").arg(dataModel.formatTimeMs(filter.sessionSplitIntervalMsDefault))
+      toolTipText: qsTr("Reset session split interval to default (%1)")
+                   .arg(dataModel.formatTimeMs(filter ? filter.sessionSplitIntervalMsDefault : 0))
       visible: filter ? filter.hasSessionSplitInterval : false
       anchors.verticalCenter: parent.verticalCenter
 
