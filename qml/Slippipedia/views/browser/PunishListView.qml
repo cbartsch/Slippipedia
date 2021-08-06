@@ -25,7 +25,9 @@ Item {
   Connections {
     target: dataModel
 
-    onIsProcessingChanged: if(!dataModel.isProcessing) refresh()
+    onIsProcessingChanged: if(!dataModel.isProcessing &&
+                               punishListView.visible &&
+                               contentSwipe.currentItem === punishListView) refresh()
   }
 
   AppListItem {
