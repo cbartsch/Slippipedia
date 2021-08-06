@@ -16,8 +16,13 @@ BasePage {
   // load first page when showing this page
   onAppeared: loadInitial()
 
-  filterModal.onClosed: if(stats) refresh()
+  filterModal.onClosed: if(stats) loadInitial()
   filterModal.showPunishOptions: listTabs.currentIndex === 1
+
+  Connections {
+    target: stats ? stats.dataBase.filterSettings : null
+    onFilterChanged: clear()
+  }
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
@@ -83,14 +88,12 @@ BasePage {
   }
 
   function clear() {
-    if(contentSwipe.currentItem) {
-      contentSwipe.currentItem.clear()
-    }
+    replayListView.clear()
+    punishListView.clear()
   }
 
   function refresh() {
-    if(contentSwipe.currentItem) {
-      contentSwipe.currentItem.refresh()
-    }
+    clear()
+    loadInitial()
   }
 }
