@@ -83,6 +83,7 @@ Item {
       toolTipText: "Match case sensitive"
       Layout.alignment: Qt.AlignVCenter
       visible: showOptions
+      checkable: true
     }
 
     AppToolButton {
@@ -91,6 +92,7 @@ Item {
       toolTipText: "Match partial text"
       Layout.alignment: Qt.AlignVCenter
       visible: showOptions
+      checkable: true
     }
   }
 

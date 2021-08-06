@@ -11,9 +11,6 @@ ToolButton {
 
   flat: true
 
-  checkable: true
-  checked: true
-
   RippleMouseArea {
     anchors.fill: parent
     onPressed: mouse.accepted = false
@@ -36,6 +33,7 @@ ToolButton {
       icon: toolBtn.iconType
       visible: !!icon
       anchors.centerIn: parent
+      color: toolBtn.checked ? Theme.tintColor : Theme.textColor
     }
 
     AppText {
