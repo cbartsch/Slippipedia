@@ -253,9 +253,9 @@ Item {
   }
 
   function playersText(replay) {
-    return qsTr("%1 (%2) vs %3 (%4)")
-        .arg(replay.name1).arg(replay.code1)
-        .arg(replay.name2).arg(replay.code2)
+    return qsTr("%1/%2 (%3) P%4 vs %5/%6 (%7) P%8")
+        .arg(replay.name1).arg(replay.tag1).arg(replay.code1).arg(replay.port1)
+        .arg(replay.name2).arg(replay.tag2).arg(replay.code2).arg(replay.port2)
   }
 
   function damageColor(damage) {
