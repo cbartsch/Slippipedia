@@ -15,12 +15,16 @@ AppListItem {
 
   property bool showPercent: showOptions
 
-  readonly property bool showOptions: mouseArea.containsMouse || toolBtnFolder.hovered || toolBtnOpen.hovered || toolBtnSetup.hovered
-  readonly property bool useShortStageName: replayListItem.width > dp(510)
+  readonly property bool showOptions: mouseArea.containsMouse ||
+                                      toolBtnFolder.hovered || toolBtnOpen.hovered ||
+                                      toolBtnSetup.hovered || toolBtnFavorite.hovered
+
+  readonly property bool useShortStageName: replayListItem.width > dp(520)
   readonly property string stageNameProperty: useShortStageName  ? "name" : "shortName"
   readonly property var emptyStage: ({ name: "Unknown stage", shortName: "?" })
   readonly property var stageData: replayModel.stageId && replayModel.stageId >= 0 && MeleeData.stageMap[replayModel.stageId] || emptyStage
   readonly property string stageName: stageData[stageNameProperty]
+  readonly property bool isFavorite: toolBtnFavorite.checked
 
   width: parent ? parent.width : 0
 
@@ -39,6 +43,21 @@ AppListItem {
     width: replayListItem.width > dp(412)
            ? implicitWidth
            : (replayListItem.width - dp(412) + implicitWidth)
+  }
+
+  Item {
+    visible: isFavorite && !showOptions
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.right: parent.right
+    anchors.rightMargin: dp(Theme.contentPadding + 3) / 2
+    width: dp(48)
+    height: dp(48)
+
+    Icon {
+      anchors.centerIn: parent
+      icon: IconType.star
+      color: Theme.tintColor
+    }
   }
 
   rightItem: Row {
@@ -75,6 +94,18 @@ AppListItem {
 
       visible: !dataModel.hasDesktopApp
       onClicked: showSetup()
+    }
+
+    AppToolButton {
+      id: toolBtnFavorite
+      iconType: IconType.star
+      toolTipText: "Mark as favorite"
+      checkable: true
+      height: width
+      anchors.verticalCenter: parent.verticalCenter
+
+      checked: dataModel.hasFlag(replayModel.userFlag, dataModel.flagFavorite)
+      onClicked: dataModel.setReplayFlag(replayModel.id, dataModel.flagFavorite, checked)
     }
   }
 }

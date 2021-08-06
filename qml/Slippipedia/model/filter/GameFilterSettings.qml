@@ -13,6 +13,7 @@ Item {
   property int gameEndType: -1
   property int lossType: 0
   property int winnerPlayerIndex: -3 // -3 = any. TODO: make constants for the special values
+  property int userFlagMask: 0
   property int sessionSplitIntervalMs: sessionSplitIntervalMsDefault // split sessions after 15 minutes
 
   readonly property int sessionSplitIntervalMsDefault: 15 * 60 * 1000
@@ -63,6 +64,7 @@ Item {
   onWinnerPlayerIndexChanged:      filterChanged()
   onGameEndTypeChanged:            filterChanged()
   onLossTypeChanged:               filterChanged()
+  onUserFlagMaskChanged:           filterChanged()
   onStageIdsChanged:               filterChanged()
   onSessionSplitIntervalMsChanged: filterChanged()
 
@@ -96,7 +98,7 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasSessionSplitInterval
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasSessionSplitInterval || hasUserFlagFilter
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
@@ -104,6 +106,7 @@ Item {
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || gameEndType > -1 ||
                                           endStocksWinner.hasFilter || endStocksLoser.hasFilter
   readonly property bool hasSessionSplitInterval: sessionSplitIntervalMs != sessionSplitIntervalMsDefault
+  readonly property bool hasUserFlagFilter: userFlagMask > 0
 
   readonly property string displayText: {
     var sText = null
@@ -142,8 +145,12 @@ Item {
     var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""
     var stockText2 = endStocksLoser.displayText ? "Stocks left (winner): " + endStocksLoser.displayText : ""
 
+    var flagsText = userFlagMask > 0
+        ? "Game flags: " + userFlagNames.filter((f, id) => hasFlag(userFlagMask, id + 1)).join(", ")
+        : ""
+
     return [
-          sText, etText, wText, dText, durText, stockText
+          sText, etText, wText, dText, durText, stockText, flagsText
         ].filter(_ => _).join("\n") || ""
   }
 
@@ -160,6 +167,7 @@ Item {
       onWinnerPlayerIndexChanged:      settingsLoader.item.winnerPlayerIndex = winnerPlayerIndex
       onLossTypeChanged:               settingsLoader.item.lossType = lossType
       onGameEndTypeChanged:            settingsLoader.item.gameEndType = gameEndType
+      onUserFlagMaskChanged:           settingsLoader.item.userFlagMask = userFlagMask
       onStageIdsChanged:               settingsLoader.item.stageIds = stageIds
       onSessionSplitIntervalMsChanged: settingsLoader.item.sessionSplitIntervalMs = sessionSplitIntervalMs
     }
@@ -178,6 +186,9 @@ Item {
 
       // match SlippiReplay enum
       property int gameEndType: gameFilterSettings.gameEndType
+
+      // bitwise match Replay.userFlag
+      property int userFlagMask: gameFilterSettings.userFlagMask
 
       // split sessions against the same opponent after:
       property int sessionSplitIntervalMs: gameFilterSettings.sessionSplitIntervalMs
@@ -217,6 +228,7 @@ Item {
         gameFilterSettings.winnerPlayerIndex = winnerPlayerIndex
         gameFilterSettings.lossType = lossType
         gameFilterSettings.gameEndType = gameEndType
+        gameFilterSettings.userFlagMask = userFlagMask
         gameFilterSettings.sessionSplitIntervalMs = sessionSplitIntervalMs
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
@@ -231,6 +243,7 @@ Item {
 
     resetWinnerFilter()
 
+    userFlagMask = 0
     sessionSplitIntervalMs = sessionSplitIntervalMsDefault
   }
 
@@ -253,6 +266,7 @@ Item {
     winnerPlayerIndex = other.winnerPlayerIndex
     lossType = other.lossType
     gameEndType = other.gameEndType
+    userFlagMask = other.userFlagMask
     sessionSplitIntervalMs = other.sessionSplitIntervalMs
   }
 
@@ -323,12 +337,13 @@ Item {
     var endStocks2Condition = endStocksLoser.getFilterCondition("min(p.s_endStocks, p2.s_endStocks)")
 
     var endTypeCondition = gameEndType === -1 ? "" : "r.endType = ?"
+    var userFlagCondition = userFlagMask === 0 ? "" : "(r.userFlag & ?) > 0"
 
     var condition = [
           winnerCondition, stageCondition,
           dateCondition, durationCondition,
           endStocksCondition, endStocks2Condition,
-          endTypeCondition
+          endTypeCondition, userFlagCondition
         ]
     .map(c => ("(" + (c || true) + ")" ))
     .join(" and ")
@@ -346,6 +361,7 @@ Item {
     var endStocksParams = endStocksWinner.getFilterParams()
     var endStocks2Params = endStocksLoser.getFilterParams()
     var endTypeParams = gameEndType === -1 ? [] : [gameEndType]
+    var userFlagParams = userFlagMask === 0 ? [] : [userFlagMask]
 
     return stageIdParams
     .concat(dateParams)
@@ -353,6 +369,7 @@ Item {
     .concat(endStocksParams)
     .concat(endStocks2Params)
     .concat(endTypeParams)
+    .concat(userFlagParams)
   }
 
   // note: the winnerPort is always set to the player who had fewer stocks or more percent

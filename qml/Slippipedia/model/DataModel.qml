@@ -10,6 +10,10 @@ import Slippipedia 1.0
 Item {
   id: dataModel
 
+  readonly property int flagFavorite: 1
+
+  readonly property var userFlagNames: ["Favorite"]
+
   property int dbUpdater: 0
 
   // settings
@@ -47,26 +51,41 @@ Item {
 
   // db
   property alias globalDataBase: globalDataBase
+
+  // TODO move database related properties to DataBase
   property var dataBaseConnection
 
-  readonly property string dbLatestVersion: "2.1"
+  // history:
+  // 2.1 - Slippipedia 1.0
+  // 2.2 - Slippipedia 1.1 - add Replays.userFlag
+  readonly property string dbLatestVersion: "2.2"
   readonly property string dbCurrentVersion: dataBaseConnection.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
   signal initialized
 
-  Component.onCompleted: {
+  function initDb() {
     dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
 
-    if(dataBaseConnection.version === "") {
-      dataBaseConnection.changeVersion("", dbLatestVersion, function(tx) {
-        console.log("DB initialized at version", dbCurrentVersion, dbLatestVersion)
+    if(dbCurrentVersion !== dbLatestVersion) {
+      dataBaseConnection.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
+        console.log("Update DB version from", dbCurrentVersion, "to", dbLatestVersion)
+
+        if(dbCurrentVersion === "2.1") {
+          tx.executeSql("alter table Replays add column userFlag integer default 0")
+        }
       })
+
       // reload object to update version property:
-      dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
+      initDb()
+      return
     }
 
-    console.log("DB open", dataBaseConnection, dataBaseConnection.version)
+    console.log("DB open at version", dbCurrentVersion)
+  }
+
+  Component.onCompleted: {
+    initDb()
 
     initialized()
   }
@@ -92,6 +111,7 @@ Item {
     id: globalDataBase
 
     filterSettings: filterSettings
+    db: dataBaseConnection
   }
 
   FilterSettings {
@@ -375,5 +395,34 @@ Item {
 
     // start > Slippi Dolphin -i punish.json
     Utils.startCommand(desktopDolphinPath, options)
+  }
+
+  function hasFlag(flagMask, flagId) {
+    return (flagMask & (1 << flagId)) > 0
+  }
+
+  function setFlag(flagMask, flagId, flagValue) {
+    if(flagValue) {
+      return flagMask | (1 << flagId)
+    }
+    else {
+      return flagMask & ~(1 << flagId)
+    }
+  }
+
+  function hasReplayFlag(replayId, flagId) {
+    var flagMask = globalDataBase.getUserFlag(replayId)
+
+    return hasFlag(flagMask, flagId)
+  }
+
+  function setReplayFlag(replayId, flagId, flagValue) {
+    var flagMask = globalDataBase.getUserFlag(replayId)
+
+    flagMask = setFlag(flagMask, flagId, flagValue)
+
+    globalDataBase.setUserFlag(replayId, flagMask)
+
+    return flagMask
   }
 }

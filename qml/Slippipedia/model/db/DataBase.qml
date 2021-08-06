@@ -10,7 +10,7 @@ Item {
   property var debugLogSql: false
 
   // db
-  property var db: dataModel.dataBaseConnection
+  property var db: null
 
   property FilterSettings filterSettings: null
 
@@ -30,7 +30,8 @@ winnerPort integer,
 lrasPort integer,
 endType integer,
 duration integer,
-filePath text
+filePath text,
+userFlag integer
       )")
 
       // create a column named s_<stat> for each stat in the replay
@@ -616,7 +617,7 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
 
       var sql = qsTr(
             "select
-r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.lrasPort lrasPort,
+r.id id, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.lrasPort lrasPort, r.userFlag userFlag,
  p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
 (case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
@@ -645,6 +646,26 @@ limit ? offset ?"
 
       return result
     }, [])
+  }
+
+  function getUserFlag(replayId) {
+    log("get user flag for", replayId)
+
+    return readFromDb(function(tx) {
+      var result = tx.executeSql("select userFlag from replays where id = ?", [replayId])
+
+      return result.rows.length > 0 ? result.rows.item(0).userFlag : null
+    }, null)
+  }
+
+  function setUserFlag(replayId, flagMask) {
+    log("set user flag for", replayId, flagMask)
+
+    db.transaction(function(tx) {
+      var result = tx.executeSql("update replays set userFlag = ? where id = ?", [flagMask, replayId])
+
+      log("result", result, result.rows.length)
+    })
   }
 
   function getPunishList(max, start) {

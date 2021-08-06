@@ -125,6 +125,84 @@ Column {
     }
   }
 
+  SimpleSection {
+    title: "Game properties"
+  }
+
+  CustomListItem {
+    text: "Game flags"
+    detailText: "Match only games with specific user flags."
+
+    checked: filter ? filter.hasUserFlagFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Remove game flag filter"
+      visible: filter ? filter.hasUserFlagFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: filter.userFlagMask = 0
+    }
+  }
+
+  Item {
+    width: parent.width
+    height: userFlagFlow.height
+
+    Flow {
+      id: userFlagFlow
+      width: parent.width
+      spacing: dp(1)
+
+      Item {
+        height: dp(48)
+        width: userFlagText.width + dp(Theme.contentPadding) * 2
+
+        AppText {
+          id: userFlagText
+          text: "Game flags:"
+          anchors.centerIn: parent
+        }
+      }
+
+      Repeater {
+        model: dataModel.userFlagNames
+
+        Rectangle {
+          readonly property int flagId: index + 1
+          readonly property string flagName: modelData
+
+          height: dp(48)
+          width: flagCheckBox.width + dp(Theme.contentPadding) * 2
+
+          color: Theme.controlBackgroundColor
+
+          AppCheckBox {
+            id: flagCheckBox
+            text: flagName
+            anchors.centerIn: parent
+            checked: filter ? dataModel.hasFlag(filter.userFlagMask, flagId) : false
+
+            onCheckedChanged: {
+              console.log("set flag mask", filter.userFlagMask)
+              filter.userFlagMask = dataModel.setFlag(filter.userFlagMask, flagId, checked)
+              console.log("did set flag mask", filter.userFlagMask)
+            }
+          }
+
+          RippleMouseArea {
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+            onClicked: flagCheckBox.checked = !flagCheckBox.checked
+          }
+        }
+      }
+    }
+  }
 
   SimpleSection {
     title: "Other options"
