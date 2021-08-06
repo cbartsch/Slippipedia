@@ -22,7 +22,7 @@ Flow {
     maximumLineCount: 1
     elide: Text.ElideRight
 
-    text: dataModel.playerFilter.hasPlayerFilter ? "Win rate:" : "Configure name filter to see win rate"
+    text: dataModel.playerFilter.hasPlayerFilter ? "Win rate:" : "Configure player filter to see win rate"
 
     RippleMouseArea {
       anchors.fill: parent

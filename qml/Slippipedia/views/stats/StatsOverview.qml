@@ -51,8 +51,8 @@ Column {
   }
 
   AppListItem {
-    text: "No name filter configured."
-    detailText: "Filter by Slippi code and/or name to see win rate."
+    text: "No player filter configured."
+    detailText: "Filter by player code, name or port to see win rate."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
     onSelected: showFilteringPage(0)
@@ -89,8 +89,8 @@ Column {
   }
 
   AppListItem {
-    text: "No name filter configured."
-    detailText: "Filter by Slippi code and/or name to see opposing characters."
+    text: "No player filter configured."
+    detailText: "Filter by player code, name or port to see opposing characters."
 
     visible: !dataModel.playerFilter.hasPlayerFilter
     onSelected: showFilteringPage(0)
