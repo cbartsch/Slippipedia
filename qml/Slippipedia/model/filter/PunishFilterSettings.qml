@@ -10,7 +10,7 @@ Item {
   property bool persistenceEnabled: false
   property string settingsCategory: ""
 
-  property bool didKill: false
+  property bool didKill: true
 
   property var killDirections: []
   property var openingMoveIds: []
@@ -27,6 +27,8 @@ Item {
 
   property RangeSettings damage: RangeSettings {
     id: damage
+
+    from: 50
 
     onFromChanged: if(settingsLoader.item) settingsLoader.item.minDamage = from
     onToChanged:   if(settingsLoader.item) settingsLoader.item.maxDamage = to
@@ -224,7 +226,7 @@ Item {
   }
 
   function removeAllOpeningMoves() {
-    lastMoveIds = []
+    openingMoveIds = []
   }
 
   function setLastMove(lastMoveIds) {
