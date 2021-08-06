@@ -34,10 +34,7 @@ Column {
       visible: filter ? filter.hasPlayerFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
-      onClicked: {
-        filter.slippiCode.reset()
-        filter.slippiName.reset()
-      }
+      onClicked: filter.resetPlayerFilter()
     }
   }
 
@@ -111,6 +108,62 @@ Column {
 
     Divider { }
   }
+
+  Item {
+    width: parent.width
+    height: radioRowPort.height
+
+    Flow {
+      id: radioRowPort
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: dp(Theme.contentPadding)
+      spacing: dp(1)
+
+      AppText {
+        width: dp(120)
+        height: dp(48)
+        verticalAlignment: Text.AlignVCenter
+        text: "Controller port:"
+      }
+
+      ButtonGroup {
+        id: rbgPort
+
+        onCheckedButtonChanged: filter.port = checkedButton.value
+      }
+
+      CustomRadio {
+        id: radioPortAny
+        text: "Any port"
+        checked: filter ? filter.port === -1 : false
+        height: dp(48)
+        padding: dp(Theme.contentPadding)
+        ButtonGroup.group: rbgPort
+
+        readonly property int value: -1
+      }
+
+      Repeater {
+        model: 4
+
+        CustomRadio {
+          id: radioPort
+          text: "Port " + (index + 1)
+          checked: filter ? filter.port === index : false
+          height: dp(48)
+          padding: dp(Theme.contentPadding)
+          ButtonGroup.group: rbgPort
+
+          readonly property int value: index
+        }
+      }
+
+    }
+
+    Divider { }
+  }
+
 
   SimpleSection {
     title: "Character"

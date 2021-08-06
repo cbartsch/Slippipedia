@@ -30,6 +30,7 @@ Item {
   }
 
   property bool filterCodeAndName: true
+  property int port: -1
 
   property var charIds: []
 
@@ -44,15 +45,21 @@ Item {
     filterChanged()
     if(settingsLoader.item) settingsLoader.item.charIds = charIds
   }
+  onPortChanged: {
+    filterChanged()
+    if(settingsLoader.item) settingsLoader.item.port = port
+  }
 
   readonly property bool hasFilter: hasPlayerFilter || hasCharFilter
-  readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != ""
+  readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != "" || port >= 0
   readonly property bool hasCharFilter: charIds && charIds.length > 0
 
   readonly property string nameFilterText: {
     var codeText = slippiCode.filterText
     var nameText = slippiName.filterText
     var pText
+
+    var portText = port >= 0 ? "Port " + (port + 1) : ""
 
     if(codeText && nameText) {
       pText = qsTr("%1%2%3")
@@ -68,7 +75,7 @@ Item {
       pText = "\"" + pText + "\""
     }
 
-    return pText
+    return [pText, portText].filter(s => s).join(", ")
   }
 
   readonly property string displayText: {
@@ -104,6 +111,7 @@ Item {
 
       property bool filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
 
+      property int port: playerFilterSettings.port
       property var charIds: playerFilterSettings.charIds
 
       function apply() {
@@ -115,6 +123,7 @@ Item {
         playerFilterSettings.slippiName.matchCase = slippiNameCase
         playerFilterSettings.slippiName.matchPartial = slippiNamePartial
         playerFilterSettings.filterCodeAndName = filterCodeAndName
+        playerFilterSettings.port = port
         playerFilterSettings.charIds = charIds.map(id => ~~id) // settings stores as list of string, convert to int
       }
     }
@@ -122,6 +131,11 @@ Item {
 
   function reset() {
     charIds = []
+    resetPlayerFilter()
+  }
+
+  function resetPlayerFilter() {
+    port = -1
     slippiCode.reset()
     slippiName.reset()
   }
@@ -137,6 +151,7 @@ Item {
     slippiName.matchCase = other.slippiName.matchCase
     slippiName.matchPartial = other.slippiName.matchPartial
 
+    port = other.port
     filterCodeAndName = other.filterCodeAndName
   }
 
@@ -162,6 +177,28 @@ Item {
 
   // DB filtering functions
 
+  function getFilterCondition(tableName) {
+    var playerCon = getPlayerFilterCondition(tableName)
+
+    var charCon = getCharFilterCondition(tableName + ".charId")
+
+    var portCon = port >= 0 ? tableName + ".port = ?" : ""
+
+    var condition = [ playerCon, charCon, portCon ]
+      .map(c => ("(" + (c || true) + ")" ))
+      .join(" and ")
+
+    return "(" + condition + ")"
+  }
+
+  function getFilterParams() {
+    var playerParams = getPlayerFilterParams()
+    var charParams = getCharFilterParams()
+    var portParams = port >= 0 ? [port] : []
+
+    return playerParams.concat(charParams, portParams)
+  }
+
   function getPlayerFilterCondition(tableName) {
     var cf = slippiCode.makeFilterCondition(tableName + ".slippiCode")
     var nf = slippiName.makeFilterCondition(tableName + ".slippiName")
@@ -179,7 +216,7 @@ Item {
       return qsTr("(%1)").arg(nf)
     }
     else {
-      return "true"
+      return ""
     }
   }
 
@@ -188,7 +225,7 @@ Item {
       return "(" + colName + " in " + dataModel.globalDataBase.makeSqlWildcards(charIds) + ")"
     }
     else {
-      return "true"
+      return ""
     }
   }
 
