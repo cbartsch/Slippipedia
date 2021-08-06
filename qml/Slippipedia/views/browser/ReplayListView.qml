@@ -117,9 +117,13 @@ Item {
                                if(!(section in sectionData)) {
                                  sectionData[section] = {
                                    name1: item.name1,
+                                   tag1: item.tag1,
                                    code1: item.code1,
+                                   port1: item.port1,
                                    name2: item.name2,
+                                   tag2: item.tag2,
                                    code2: item.code2,
+                                   port2: item.port2,
                                    chars1: {},
                                    chars2: {},
                                    dateLast: item.date,
