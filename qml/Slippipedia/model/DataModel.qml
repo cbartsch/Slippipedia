@@ -1,7 +1,9 @@
 import QtQuick 2.0
-import Qt.labs.settings 1.1
 
 import Felgo 3.0
+
+// note: must be below Felgo import
+import Qt.labs.settings 1.1
 
 import Slippipedia 1.0
 
@@ -19,7 +21,8 @@ Item {
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
-  property string desktopAppFolder: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Desktop App")
+  property string desktopAppFolder: desktopAppFolderDefault
+  readonly property string desktopAppFolderDefault: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Desktop App")
   readonly property string desktopDolphinPath: desktopAppFolder + "/dolphin/Slippi Dolphin.exe"
   readonly property bool hasDesktopApp: fileUtils.existsFile(desktopDolphinPath)
 

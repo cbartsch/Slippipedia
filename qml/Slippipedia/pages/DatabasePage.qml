@@ -156,6 +156,14 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
         onAccepted: dataModel.desktopAppFolder = fileUtils.stripSchemeFromUrl(fileUrl)
       }
+
+      rightItem: AppToolButton {
+        iconType: IconType.trash
+        toolTipText: qsTr("Reset Desktop App folder to default: %1").arg(dataModel.desktopAppFolderDefault)
+        anchors.verticalCenter: parent.verticalCenter
+
+        onClicked: dataModel.desktopAppFolder = dataModel.desktopAppFolderDefault
+      }
     }
 
     AppListItem {
