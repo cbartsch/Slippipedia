@@ -174,14 +174,16 @@ Column {
           readonly property string flagName: modelData
 
           height: dp(48)
-          width: flagCheckBox.width + dp(Theme.contentPadding) * 2
+          width: flagCheckBox.width + dp(Theme.contentPadding) * 3 + flagIcon.width
 
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: flagCheckBox
             text: flagName
-            anchors.centerIn: parent
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
             checked: filter ? dataModel.hasFlag(filter.userFlagMask, flagId) : false
 
             onCheckedChanged: {
@@ -189,6 +191,15 @@ Column {
               filter.userFlagMask = dataModel.setFlag(filter.userFlagMask, flagId, checked)
               console.log("did set flag mask", filter.userFlagMask)
             }
+          }
+
+          Icon {
+            id: flagIcon
+            anchors.right: parent.right
+            anchors.rightMargin: dp(Theme.contentPadding)
+            anchors.verticalCenter: parent.verticalCenter
+            icon: IconType.star
+            color: Theme.tintColor
           }
 
           RippleMouseArea {
