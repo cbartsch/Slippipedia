@@ -259,4 +259,7 @@ Item {
                                                               return acc
                                                             }, {})
 
+  readonly property var portColors: [
+    "red", "blue", "yellow", "green"
+  ]
 }
