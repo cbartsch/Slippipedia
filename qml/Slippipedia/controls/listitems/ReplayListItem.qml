@@ -77,7 +77,7 @@ AppListItem {
     AppToolButton {
       id: toolBtnOpen
       iconType: IconType.play
-      toolTipText: "Open replay file"
+      toolTipText: "Start replay with Dolphin"
       height: width
       anchors.verticalCenter: parent.verticalCenter
 
@@ -99,13 +99,13 @@ AppListItem {
     AppToolButton {
       id: toolBtnFavorite
       iconType: IconType.star
-      toolTipText: "Mark as favorite"
+      toolTipText: isFavorite ? "Unmark as favorite" : "Mark as favorite"
       checkable: true
       height: width
       anchors.verticalCenter: parent.verticalCenter
 
       checked: dataModel.hasFlag(replayModel.userFlag, dataModel.flagFavorite)
-      onClicked: dataModel.setReplayFlag(replayModel.id, dataModel.flagFavorite, checked)
+      onClicked: dataModel.setReplayFlag(replayModel.replayId, dataModel.flagFavorite, checked)
     }
   }
 }
