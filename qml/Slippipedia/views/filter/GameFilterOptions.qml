@@ -180,7 +180,7 @@ Column {
           readonly property string flagName: modelData
 
           height: dp(48)
-          width: flagCheckBox.width + dp(Theme.contentPadding) * 3 + flagIcon.width
+          width: flagCheckBox.width + dp(Theme.contentPadding) * 2.5 + flagIcon.width
 
           color: Theme.controlBackgroundColor
 
@@ -199,7 +199,7 @@ Column {
             anchors.right: parent.right
             anchors.rightMargin: dp(Theme.contentPadding)
             anchors.verticalCenter: parent.verticalCenter
-            icon: IconType.star
+            icon: dataModel.userFlagIcons[index]
             color: flagCheckBox.checked ? Theme.tintColor : Theme.textColor
 
             Behavior on color { UiAnimation { } }
@@ -252,7 +252,7 @@ Column {
 
     readonly property var value: text ? dataModel.parseTime(text) : null
 
-    validationError: value >= 0
+    validationError: !(value >= 0)
     validationText: qsTr("Enter time in format \"%1\"").arg("mm:ss")
 
     onTextChanged: {

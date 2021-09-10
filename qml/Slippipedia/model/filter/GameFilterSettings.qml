@@ -146,12 +146,8 @@ Item {
     var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""
     var stockText2 = endStocksLoser.displayText ? "Stocks left (winner): " + endStocksLoser.displayText : ""
 
-    var flagsText = userFlagMask > 0
-        ? "Game flags: " + userFlagNames.filter((f, id) => hasFlag(userFlagMask, id + 1)).join(", ")
-        : ""
-
     return [
-          sText, etText, wText, dText, durText, stockText, flagsText
+          sText, etText, wText, dText, durText, stockText
         ].filter(_ => _).join("\n") || ""
   }
 

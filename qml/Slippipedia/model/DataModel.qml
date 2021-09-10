@@ -13,6 +13,7 @@ Item {
   readonly property int flagFavorite: 1
 
   readonly property var userFlagNames: ["Favorite"]
+  readonly property var userFlagIcons: [IconType.star]
 
   property int dbUpdater: 0
 
@@ -163,12 +164,13 @@ Item {
   function parseTime(text) {
     // convert text "hh:mm:ss" to time in ms
 
-    var elems = text.split(":")
+    var inElems = text.split(":")
+    var elems = inElems
 
     if(elems.length === 2) {
       elems = ["00"].concat(elems)
     }
-    if(elems.length === 3 && elems.every(a => a.match("^[0-9]{2}$"))) {
+    if(elems.length === 3 && inElems.every((a, index) => a.match(index === 0 ? "^[0-9]{1,2}$" : "^[0-9]{2}$"))) {
       var hours = parseInt(elems[0])
       var minutes = parseInt(elems[1])
       var seconds = parseInt(elems[2])

@@ -35,6 +35,44 @@ Column {
     color: Theme.secondaryTextColor
   }
 
+  Row {
+    visible: filter && filter.gameFilter.hasUserFlagFilter || false
+    spacing: dp(4)
+
+    AppText {
+      text: "Game flags:"
+      color: Theme.secondaryTextColor
+      anchors.bottom: parent.bottom
+    }
+
+    Repeater {
+      model: filter
+             && dataModel.userFlagNames.filter(
+               (f, id) => dataModel.hasFlag(filter.gameFilter.userFlagMask, id + 1))
+             || []
+
+      Row {
+        anchors.bottom: parent.bottom
+        spacing: dp(4)
+        height: flagText.height
+
+        Icon {
+          anchors.bottom: flagText.baseline
+          anchors.bottomMargin: -dp(1)
+          icon: dataModel.userFlagIcons[index]
+          color: Theme.tintColor
+          size: flagText.font.pixelSize * 0.8
+        }
+        AppText {
+          id: flagText
+          anchors.bottom: parent.bottom
+          text: modelData
+          color: Theme.secondaryTextColor
+        }
+      }
+    }
+  }
+
   AppText {
     visible: showPunishFilter && filter.punishFilter.hasFilter
     text: filter && "Punish: " + filter.punishFilter.displayText || ""
