@@ -67,7 +67,7 @@ App {
 
     onClicked: {
       if(mouse.button === Qt.BackButton) {
-        var stack = navigation.currentNavigationItem.navigationStack
+        var stack = navigation.currentNavigationItem && navigation.currentNavigationItem.navigationStack || null
         if(stack && stack.depth > 1) {
           stack.pop()
           mouse.accepted = true
