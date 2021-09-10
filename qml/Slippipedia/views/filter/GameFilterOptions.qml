@@ -221,11 +221,12 @@ Column {
     text: "Session split interval"
     detailText: "Split sessions against the same opponent after certain amount of time."
 
-    checked: filter ? filter.hasSessionSplitInterval : false
+    // not technically a filter, so do not show it as "enabled"
+    checked: false // filter ? filter.hasSessionSplitInterval : false
     mouseArea.enabled: false
 
     rightItem: AppToolButton {
-      iconType: IconType.trash
+      iconType: IconType.refresh
       toolTipText: qsTr("Reset session split interval to default (%1)")
                    .arg(dataModel.formatTimeMs(filter ? filter.sessionSplitIntervalMsDefault : 0))
       visible: filter ? filter.hasSessionSplitInterval : false

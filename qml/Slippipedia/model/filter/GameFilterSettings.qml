@@ -98,7 +98,8 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasSessionSplitInterval || hasUserFlagFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter
+                                        // || hasSessionSplitInterval // not technically a filter
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
