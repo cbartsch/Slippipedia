@@ -33,13 +33,17 @@ Column {
   }
 
   RangeOptions {
-    label.text: "Game duration (in seconds):"
+    label.text: "Game duration (mm:ss):"
     labelWidth: dp(200)
 
     range: filter && filter.duration
 
-    textFunc: v => v / 60
-    valueFunc: v => v * 60
+    textFunc: v => dataModel.formatTimeMs(v / 60 * 1000)
+    valueFunc: v => {
+                 var t = dataModel.parseTime(v)
+                 return t && t >= 0 ? t / 1000 * 60 : undefined
+               }
+    validationText: qsTr("Enter time in format \"%1\"").arg("mm:ss")
   }
 
   SimpleSection {

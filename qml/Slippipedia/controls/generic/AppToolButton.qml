@@ -8,12 +8,17 @@ ToolButton {
   id: toolBtn
 
   property string iconType: ""
+  property alias iconItem: iconItem
   property real size: dp(36)
   property string toolTipText
+
+  property alias mouseArea: mouseArea
 
   flat: true
 
   RippleMouseArea {
+    id: mouseArea
+
     anchors.fill: parent
     onPressed: mouse.accepted = false
 
@@ -32,6 +37,7 @@ ToolButton {
     anchors.fill: parent
 
     Icon {
+      id: iconItem
       icon: toolBtn.iconType
       visible: !!icon
       anchors.centerIn: parent

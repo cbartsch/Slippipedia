@@ -106,9 +106,6 @@ Item {
     property alias replayFolder: dataModel.replayFolder
     property alias desktopAppFolder: dataModel.desktopAppFolder
     property alias meleeIsoPath: dataModel.meleeIsoPath
-
-    onReplayFolderChanged: console.log("rf is", replayFolder)
-    onDesktopAppFolderChanged: console.log("daf is", desktopAppFolder)
   }
 
   SlippiParser {
@@ -171,7 +168,7 @@ Item {
     if(elems.length === 2) {
       elems = ["00"].concat(elems)
     }
-    if(elems.length === 3 && elems.every(a => a.match("[0-9]{2}"))) {
+    if(elems.length === 3 && elems.every(a => a.match("^[0-9]{2}$"))) {
       var hours = parseInt(elems[0])
       var minutes = parseInt(elems[1])
       var seconds = parseInt(elems[2])

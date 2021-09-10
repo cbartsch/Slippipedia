@@ -27,6 +27,9 @@ Item {
   property alias matchCaseSensitive: toolBtnCase.checked
   property alias matchPartialText: toolBtnPartial.checked
 
+  property bool validationError: false
+  property string validationText: "Check input"
+
   signal accepted
   signal editingFinished
 
@@ -94,6 +97,21 @@ Item {
       visible: showOptions
       checkable: true
     }
+  }
+
+  AppToolButton {
+    id: validationIcon
+
+    visible: validationError
+    toolTipText: validationText
+
+    mouseArea.hoverEffectEnabled: false
+    anchors.right: parent.right
+    anchors.verticalCenter: parent.verticalCenter
+    anchors.margins: dp(Theme.contentPadding)
+
+    iconType: IconType.warning
+    iconItem.color: "yellow"
   }
 
   Divider { id: divider }

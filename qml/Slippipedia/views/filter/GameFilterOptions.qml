@@ -10,6 +10,11 @@ Column {
   property ReplayStats stats: null
   readonly property GameFilterSettings filter: stats ? stats.dataBase.filterSettings.gameFilter : null
 
+  readonly property var dateFormats: [
+    "dd/MM/yyyy hh:mm", "dd/MM/yyyy",
+    "dd.MM.yyyy hh:mm", "dd.MM.yyyy",
+  ]
+
   SimpleSection {
     title: "Date range"
   }
@@ -78,6 +83,7 @@ Column {
 
     textFunc: dateText
     valueFunc: dateValue
+    validationText: qsTr("Enter date in format \"%1\"").arg(dateFormats[0])
   }
 
   SimpleSection {
@@ -244,6 +250,11 @@ Column {
     text: filter && filter.sessionSplitIntervalMs > 0 ? dataModel.formatTimeMs(filter.sessionSplitIntervalMs, false) : ""
     placeholderText: "Never split sessions"
 
+    readonly property var value: text ? dataModel.parseTime(text) : null
+
+    validationError: value >= 0
+    validationText: qsTr("Enter time in format \"%1\"").arg("mm:ss")
+
     onTextChanged: {
       if(!filter) {
         return
@@ -254,10 +265,8 @@ Column {
         return
       }
 
-      var intervalMs = dataModel.parseTime(text)
-
-      if(intervalMs >= 0) {
-        filter.sessionSplitIntervalMs = intervalMs
+      if(value >= 0) {
+        filter.sessionSplitIntervalMs = value
       }
     }
   }
@@ -294,14 +303,9 @@ Column {
       return -1
     }
 
-    var formats = [
-          "dd/MM/yyyy hh:mm", "dd/MM/yyyy",
-          "dd.MM.yyyy hh:mm", "dd.MM.yyyy",
-        ]
-
     var date
-    for(var i = 0; i < formats.length && !isDateValid(date); i++) {
-      date = Date.fromLocaleString(Qt.locale(), text, formats[i])
+    for(var i = 0; i < dateFormats.length && !isDateValid(date); i++) {
+      date = Date.fromLocaleString(Qt.locale(), text, dateFormats[i])
     }
 
     if(!isDateValid(date)) {

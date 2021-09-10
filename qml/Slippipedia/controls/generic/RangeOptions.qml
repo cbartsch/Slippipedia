@@ -5,6 +5,8 @@ import Felgo 3.0
 import Slippipedia 1.0
 
 Column {
+  id: rangeOptions
+
   property RangeSettings range: null
 
   property real labelWidth: -1
@@ -15,6 +17,7 @@ Column {
 
   property var textFunc: (v => v)
   property var valueFunc: (v => v)
+  property string validationText: ""
 
   anchors.left: parent.left
   anchors.right: parent.right
@@ -50,11 +53,18 @@ Column {
         divider.visible: false
 
         text: range && range.from >= 0 ? textFunc(range.from, inputFrom) : ""
-        onTextChanged: {
+
+        validationError: typeof value === "undefined"
+        validationText: rangeOptions.validationText
+
+        readonly property var value: text ? valueFunc(text, inputFrom) : null
+
+        onValueChanged: {
+          if(!range) return
+
           if(text) {
-            var newValue = valueFunc(text, inputFrom)
-            if(typeof newValue !== "undefined") {
-              range.from = newValue
+            if(typeof value !== "undefined") {
+              range.from = value
             }
           }
           else {
@@ -81,11 +91,18 @@ Column {
         divider.visible: false
 
         text: range && range.to >= 0 ? textFunc(range.to, inputTo) : ""
-        onTextChanged: {
+
+        validationError: typeof value === "undefined"
+        validationText: rangeOptions.validationText
+
+        readonly property var value: text ? valueFunc(text, inputTo) : null
+
+        onValueChanged: {
+          if(!range) return
+
           if(text) {
-            var newValue = valueFunc(text, inputTo)
-            if(typeof newValue !== "undefined") {
-              range.to = newValue
+            if(typeof value !== "undefined") {
+              range.to = value
             }
           }
           else {
