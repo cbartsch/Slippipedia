@@ -25,7 +25,7 @@ Item {
 
   property string desktopAppFolder: ""
   readonly property string desktopAppFolderDefault: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Launcher")
-  readonly property string desktopDolphinPath: desktopAppFolder + "/playback/Slippi Dolphin.exe"
+  readonly property string desktopDolphinPath: desktopAppFolder + "/playback/Slippi Dolphin." + (Qt.platform.os === "osx" ? "app" : "exe")
   readonly property bool hasDesktopApp: fileUtils.existsFile(desktopDolphinPath)
 
   property string meleeIsoPath: ""
