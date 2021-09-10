@@ -17,17 +17,24 @@ Item {
   property int dbUpdater: 0
 
   // settings
-  property string replayFolder: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
+  property string replayFolder: ""
+  readonly property string replayFolderDefault: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
   readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
-  property string desktopAppFolder: desktopAppFolderDefault
-  readonly property string desktopAppFolderDefault: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Desktop App")
-  readonly property string desktopDolphinPath: desktopAppFolder + "/dolphin/Slippi Dolphin.exe"
+  property string desktopAppFolder: ""
+  readonly property string desktopAppFolderDefault: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Launcher")
+  readonly property string desktopDolphinPath: desktopAppFolder + "/playback/Slippi Dolphin.exe"
   readonly property bool hasDesktopApp: fileUtils.existsFile(desktopDolphinPath)
 
   property string meleeIsoPath: ""
   readonly property bool hasMeleeIso: !!meleeIsoPath && fileUtils.existsFile(meleeIsoPath)
+
+  Component.onCompleted: {
+    if(!replayFolder) replayFolder = replayFolderDefault
+    if(!desktopAppFolder) desktopAppFolder = desktopAppFolderDefault
+    // no default path for melee iso
+  }
 
   // analyze progress
   property bool progressCancelled: false
@@ -99,6 +106,9 @@ Item {
     property alias replayFolder: dataModel.replayFolder
     property alias desktopAppFolder: dataModel.desktopAppFolder
     property alias meleeIsoPath: dataModel.meleeIsoPath
+
+    onReplayFolderChanged: console.log("rf is", replayFolder)
+    onDesktopAppFolderChanged: console.log("daf is", desktopAppFolder)
   }
 
   SlippiParser {
