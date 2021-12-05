@@ -25,7 +25,7 @@ Item {
   // history:
   // 2.1 - Slippipedia 1.0
   // 2.2 - Slippipedia 1.1 - add Replays.userFlag
-  readonly property string dbLatestVersion: "2.2"
+  readonly property string dbLatestVersion: "2.3"
   readonly property string dbCurrentVersion: db.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -37,7 +37,13 @@ Item {
         console.log("Update DB version from", dbCurrentVersion, "to", dbLatestVersion)
 
         if(dbCurrentVersion === "2.1") {
+          // 2.2 - add user flag column to replay
           tx.executeSql("alter table Replays add column userFlag integer default 0")
+        }
+        if(dbCurrentVersion === "2.2") {
+          // 2.3 - indexes updated
+          tx.executeSql("drop index player_index")
+          tx.executeSql("drop index punish_index")
         }
       })
 
@@ -120,14 +126,9 @@ foreign key(replayId) references replays(id)
       )")
 
       tx.executeSql("create index if not exists replay_index on replays(stageId)")
-
-//      tx.executeSql("create index if not exists char_index on players(charId)")
-//      tx.executeSql("create index if not exists player_replay_index on players(replayId)")
-      tx.executeSql("create index if not exists player_index on players(replayId, port, charId)")
-
-//      tx.executeSql("create index if not exists punish_replay_index on punishes(replayId)")
-//      tx.executeSql("create index if not exists punish_port_index on punishes(port)")
-      tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill)")
+      tx.executeSql("create index if not exists player_index on players(replayId, port, charId, slippiCode, slippiName,
+                     slippiCode collate nocase, slippiName collate nocase)")
+      tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill, openingDynamic, openingMoveId)")
 
       // can only configure this globally, set like to be case sensitive:
       tx.executeSql("pragma case_sensitive_like = true")
