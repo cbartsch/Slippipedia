@@ -54,6 +54,7 @@ StatsGrid 1.0               views/grids/StatsGrid.qml
 StatsInfoItem 1.0           views/stats/StatsInfoItem.qml
 StatsOverview 1.0           views/stats/StatsOverview.qml
 StatsList 1.0               views/stats/StatsList.qml
+StatsNeutral 1.0            views/stats/StatsNeutral.qml
 StatsTags 1.0               views/stats/StatsTags.qml
 
 # ---- Controls

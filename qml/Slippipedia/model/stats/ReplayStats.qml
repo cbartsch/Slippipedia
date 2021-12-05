@@ -105,8 +105,9 @@ Item {
   // compute all data - no bindings as this can be slow
   // instead call after a delay so the UI is more responsive
   // (bg thread would be better!)
-  function refresh(numPlayerTags) {
+  function refresh(numPlayerTags = 0, refreshOpenings = false) {
     refreshTimer.numPlayerTags = numPlayerTags || 1
+    refreshTimer.refreshOpenings = refreshOpenings
     refreshTimer.start()
   }
 
@@ -114,11 +115,18 @@ Item {
     id: refreshTimer
 
     property int numPlayerTags
+    property bool refreshOpenings: false
 
     running: false
     repeat: false
     interval: 250
-    onTriggered: doRefresh(numPlayerTags)
+    onTriggered: {
+      if(refreshOpenings) {
+        doRefreshOpenings()
+      }
+
+      doRefresh(numPlayerTags)
+    }
   }
 
   function doRefresh(numPlayerTags) {
@@ -134,5 +142,10 @@ Item {
 
     statsPlayer.refresh(numPlayerTags)
     statsOpponent.refresh(numPlayerTags)
+  }
+
+  function doRefreshOpenings() {
+    statsPlayer.refreshOpenings()
+    statsOpponent.refreshOpenings()
   }
 }

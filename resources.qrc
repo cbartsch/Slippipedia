@@ -70,5 +70,6 @@
         <file>qml/Slippipedia/controls/generic/CustomRadio.qml</file>
         <file>assets/img/patreon-logo.png</file>
         <file>qml/Slippipedia/controls/generic/GameCountRow.qml</file>
+        <file>qml/Slippipedia/views/stats/StatsNeutral.qml</file>
     </qresource>
 </RCC>

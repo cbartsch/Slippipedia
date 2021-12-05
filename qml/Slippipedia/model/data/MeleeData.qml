@@ -143,9 +143,11 @@ Item {
     "Offensive", "Pressuring", "Sharking", "Punishing", "Techchasing", "Edgeguarding"
   ]
 
+  // Attack IDs: https://docs.google.com/spreadsheets/d/1spibzWaitiA22s7db1AEw1hqQXzPDNFZHYjc4czv2dc/preview#gid=1743381614
+
   // move id -> name
   readonly property var moveNames: [
-    "0",
+    "(none)",
     "Miscellaneous", //Fizzi: "This includes all thrown items, zair, luigi's taunt, samus bombs, etc"
     "Jab 1", "Jab 2", "Jab 3", "Rapid Jab", "Dash Attack",
     "Forward Tilt", "Up Tilt", "Down Tilt",
@@ -155,13 +157,18 @@ Item {
     "22","23","24","25","26","27","28","29","30","31",
     "32","33","34","35","36","37","38","39","40","41",
     "42","43","44","45","46","47","48","49",
-    "Fast Getup", "Slow Getup", "Pummel",
+    "Getup Attack (Back)", "Getup Attack (Front)", "Pummel",
     "Forward Throw", "Back Throw", "Up Throw", "Down Throw",
-    "57","58","59","60",
-    "Slow Edge", "Fast Edge",
-    "63","64","65","6","67","68","69","70",
-    "71","72","73","74","75","76","77","78","79","80",
-    "81","82","83","84","85","86","87","88","89","90",
+    "Cargo Forward Throw","Cargo Back Throw", "Cargo Up Throw", "Cargo Down Throw",
+    "Edge Getup", "Edge Getup (100%+)",
+    "Beam Sword Jab", "Beam Sword Tilt Swing", "Beam Sword Smash Swing", "Beam Sword Dash Swing",
+    "Homerun Bat Jab", "Homerun Bat Tilt Swing", "Homerun Bat Smash Swing", "Homerun Bat Dash Swing",
+    "Parasol Jab","Parasol Tilt Swing","Parasol Smash Swing","Parasol Dash Swing",
+    "Fan Jab","Fan Tilt Swing","Fan Smash Swing","Fan Dash Swing",
+    "Star Rod Jab","Star Rod Tilt Swing","Star Rod Smash Swing","Star Rod Dash Swing",
+    "Lip's Stick Jab","Lip's Stick Tilt Swing","Lip's Stick Smash Swing","Lip's Stick Dash Swing",
+    "Open parasol",
+    "88","89","90",
     "91","92","93","94","95","96","97","98","99","100",
     "101","102","103","104","105","106","107","108","109","110",
     "111","112","113","114","115","116","117","118","119","120",
@@ -190,14 +197,15 @@ Item {
     "Forward Smash", "Up Smash", "Down Smash",
     "Neutral Air", "Forward Air", "Back Air", "Up Air", "Down Air",
     "Neutral Special", "Side Special", "Up Special", "Down Special",
-    "Fast Getup", "Slow Getup", "Pummel",
+    "Getup Attack (Back)", "Getup Attack (Front)", "Pummel",
     "Forward Throw", "Back Throw", "Up Throw", "Down Throw",
-    "Slow Edge", "Fast Edge",
+    "Edge Getup", "Edge Getup (100%+)",
+    "Open parasol",
   ]
 
   // move id -> name
   readonly property var moveNamesShort: [
-    "0",
+    "(none)",
     "Misc",
     "Jab1", "Jab2", "Jab3", "Jabs", "DashAtk",
     "FTilt", "UpTilt", "DTilt",
@@ -207,13 +215,18 @@ Item {
     "22","23","24","25","26","27","28","29","30","31",
     "32","33","34","35","36","37","38","39","40","41",
     "42","43","44","45","46","47","48","49",
-    "FastGetup", "SlowGetup", "Pummel",
+    "GetupBack", "GetupFront", "Pummel",
     "FThrow", "BThrow", "UpThrow", "DThrow",
-    "57","58","59","60",
+    "CFThrow","CBThrow", "CUThrow", "CDThrow",
     "SlowEdge", "FastEdge",
-    "63","64","65","6","67","68","69","70",
-    "71","72","73","74","75","76","77","78","79","80",
-    "81","82","83","84","85","86","87","88","89","90",
+    "BS Jab", "BS TSwing", "BS SSwing", "BS DSwing",
+    "HRB Jab", "HRB TSwing", "HRB SSwing", "HRB DSwing",
+    "Prs Jab","Prs TSwing","Prs SSwing","Prs DSwing",
+    "Fan Jab","Fan TSwing","Fan SSwing","Fan DSwing",
+    "SR Jab","SR TSwing","SR SSwing","SR DSwing",
+    "LS Jab","LS TSwing","LS SSwing","LS DSwing",
+    "Parasol",
+    "88","89","90",
     "91","92","93","94","95","96","97","98","99","100",
     "101","102","103","104","105","106","107","108","109","110",
     "111","112","113","114","115","116","117","118","119","120",
@@ -242,9 +255,10 @@ Item {
     "FSmash", "UpSmash", "DSmash",
     "NAir", "FAir", "BAir", "UpAir", "DAir",
     "Neutral B", "Side B", "Up B", "Down B",
-    "FastGetup", "SlowGetup", "Pummel",
+    "GetupBack", "GetupFront", "Pummel",
     "FThrow", "BThrow", "UpThrow", "DThrow",
     "SlowEdge", "FastEdge",
+    "Parasol",
   ]
 
   // move name -> id

@@ -10,6 +10,8 @@ Item {
   property bool isOpponent: false
   property DataBase dataBase: null
 
+  property var openingMoves: ({ totalCount: 0, openingMoves: [] })
+
   readonly property Stat stocksLost: Stat { name: "stocksLost" }
   readonly property Stat selfDestructs: Stat { name: "selfDestructs" }
   readonly property Stat stocksTaken: Stat { name: "stocksTaken" }
@@ -109,5 +111,9 @@ Item {
     charData = dataBase.getCharacterStats(isOpponent)
     topPlayerTags = dataBase.getTopPlayerTags(isOpponent, limit)
     topSlippiCodes = dataBase.getTopSlippiCodes(isOpponent, limit)
+  }
+
+  function refreshOpenings() {
+    openingMoves = dataBase.getOpeningMoveSummary(isOpponent)
   }
 }

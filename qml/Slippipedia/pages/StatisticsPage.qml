@@ -13,8 +13,13 @@ BasePage {
   property bool filterChangeable: true
   readonly property int nameColumns: Math.round(content.width / dp(200))
 
-  onAppeared: stats.refresh(nameColumns * 5)
-  filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5)
+  readonly property bool openingsVisible: contentSwipe.currentIndex === 3
+
+  onOpeningsVisibleChanged: if(openingsVisible) stats.refresh(nameColumns * 5, openingsVisible)
+
+  onAppeared: stats.refresh(nameColumns * 5, openingsVisible)
+  filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5, openingsVisible)
+  filterModal.showPunishOptions: openingsVisible
 
   flickable.interactive: false
 
@@ -54,6 +59,9 @@ BasePage {
       AppTabButton {
         text: "Players"
       }
+      AppTabButton {
+        text: "Neutral"
+      }
     }
   }
 
@@ -77,6 +85,8 @@ BasePage {
         StatsList { }
 
         StatsTags { }
+
+        StatsNeutral { }
       }
     }
   }

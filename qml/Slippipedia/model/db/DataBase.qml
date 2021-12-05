@@ -740,6 +740,48 @@ limit ? offset ?"
     }, [])
   }
 
+  function getOpeningMoveSummary(isOpponent) {
+    log("get punish list")
+
+    return readFromDb(function(tx) {
+      var playerCol = isOpponent ? "p2" : "p"
+
+      var sql = qsTr("select
+pu.openingMoveId openingMoveId, count(*) count
+from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
+join punishes pu on pu.replayId = r.id and pu.port = %1.port
+where %2
+group by pu.openingMoveId
+order by count desc").arg(playerCol).arg(getFilterCondition(true))
+
+      var params = getFilterParams(true)
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+
+      var totalCount = 0
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+
+        totalCount += item.count
+
+        item.moveName = MeleeData.moveNames[item.openingMoveId]
+
+        result.push(item)
+      }
+
+      return {
+        totalCount: totalCount,
+        openingMoves: result
+      }
+    }, [])
+  }
+
+
   // utils
 
   // make SQL wildcards "(?, ? , ... ?)" with one ? for each item in the input list
