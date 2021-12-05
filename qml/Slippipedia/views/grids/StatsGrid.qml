@@ -69,7 +69,9 @@ Column {
         AppText {
           readonly property var stats: modelData
           readonly property var value: stats[rowModel.property]
-          readonly property var displayText: {
+          readonly property string displayText: {
+            if(typeof value === "undefined" || value === null) return ""
+
             switch(rowModel.type) {
             case "stat": return value.format()
             case "percentage": return dataModel.formatPercentage(value)
