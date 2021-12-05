@@ -20,7 +20,6 @@ BasePage {
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
-      visible: dataModel.isProcessing || !stats.summaryData
     }
 
     IconButtonBarItem {
