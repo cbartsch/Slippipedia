@@ -25,9 +25,9 @@ Stat 1.0                    model/stats/Stat.qml
 
 AboutPage 1.0               pages/AboutPage.qml
 AnalyticsPage 1.0           pages/AnalyticsPage.qml
-DatabasePage 1.0            pages/DatabasePage.qml
 FilterPage 1.0              pages/FilterPage.qml
 BrowserPage 1.0             pages/BrowserPage.qml
+SetupPage 1.0               pages/SetupPage.qml
 StatisticsPage 1.0          pages/StatisticsPage.qml
 
 # ---- Views

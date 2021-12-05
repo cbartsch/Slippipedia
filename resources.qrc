@@ -23,7 +23,7 @@
         <file>qml/Slippipedia/model/stats/Stat.qml</file>
         <file>qml/Slippipedia/pages/AboutPage.qml</file>
         <file>qml/Slippipedia/pages/AnalyticsPage.qml</file>
-        <file>qml/Slippipedia/pages/DatabasePage.qml</file>
+        <file>qml/Slippipedia/pages/SetupPage.qml</file>
         <file>qml/Slippipedia/pages/FilterPage.qml</file>
         <file>qml/Slippipedia/pages/BrowserPage.qml</file>
         <file>qml/Slippipedia/pages/StatisticsPage.qml</file>

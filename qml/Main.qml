@@ -96,7 +96,7 @@ App {
       }
 
       BaseNavigationStack {
-        DatabasePage {
+        SetupPage {
         }
       }
     }
