@@ -16,11 +16,12 @@ Item {
   readonly property var userFlagIcons: [IconType.star]
 
   property int dbUpdater: 0
+  property int fileUpdater: 0
 
   // settings
   property string replayFolder: ""
   readonly property string replayFolderDefault: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
-  readonly property var allFiles: Utils.listFiles(replayFolder, ["*.slp"], true)
+  readonly property var allFiles: fileUpdater, Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
 
   property string desktopAppFolder: ""
@@ -77,6 +78,15 @@ Item {
     if(!isProcessing) {
       dbUpdaterChanged() // refresh bindings
       stats.refresh()
+    }
+  }
+
+  Connections {
+    target: Qt.application
+
+    onActiveChanged: {
+       // refresh file list e.g. if new replays exist when app comes to foreground
+      if(active) fileUpdaterChanged()
     }
   }
 
