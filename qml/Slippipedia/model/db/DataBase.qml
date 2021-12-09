@@ -128,7 +128,7 @@ foreign key(replayId) references replays(id)
       tx.executeSql("create index if not exists replay_index on replays(stageId)")
       tx.executeSql("create index if not exists player_index on players(replayId, port, charId, slippiCode, slippiName,
                      slippiCode collate nocase, slippiName collate nocase)")
-      tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill, openingDynamic, openingMoveId)")
+      tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill, openingDynamic, openingMoveId, numMoves, damage)")
 
       // can only configure this globally, set like to be case sensitive:
       tx.executeSql("pragma case_sensitive_like = true")
@@ -742,13 +742,14 @@ limit ? offset ?"
   }
 
   function getOpeningMoveSummary(isOpponent) {
-    log("get punish list")
+    log("get opening move summary")
 
     return readFromDb(function(tx) {
       var playerCol = isOpponent ? "p2" : "p"
 
       var sql = qsTr("select
-pu.openingMoveId openingMoveId, count(*) count
+pu.openingMoveId openingMoveId, count(*) count,
+sum(damage) damage, sum(numMoves) numMoves, sum(didKill) kills
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
@@ -763,20 +764,58 @@ order by count desc").arg(playerCol).arg(getFilterCondition(true))
 
       var result = []
 
-      var totalCount = 0
+      var totalCount = 0, totalDamage = 0, totalNumMoves = 0, totalKills = 0
+
+      // group all grab related attacks:
+      var grabItem = {
+        count: 0, moveName: "Grab", moveNameShort: "Grab",
+        damage: 0, numMoves: 0, kills: 0
+      }
 
       for (var i = 0; i < results.rows.length; i++) {
         var item = results.rows.item(i)
 
         totalCount += item.count
+        totalDamage += item.damage
+        totalNumMoves += item.numMoves
+        totalKills += item.kills
 
+        // attack IDs pummel, throws, cargo throws:
+        item.isGrab = item.openingMoveId >= 52 && item.openingMoveId <= 60
+
+        if(item.isGrab) {
+          grabItem.count += item.count
+          grabItem.damage += item.damage
+          grabItem.numMoves += item.numMoves
+          grabItem.kills += item.kills
+        }
+
+        item.avgDamage = item.damage / item.count
+        item.avgNumMoves = item.numMoves / item.count
+        item.killRate = item.kills / item.count
         item.moveName = MeleeData.moveNames[item.openingMoveId]
+        item.moveNameShort = MeleeData.moveNamesShort[item.openingMoveId]
 
         result.push(item)
       }
 
+      grabItem.avgDamage = grabItem.damage / grabItem.count
+      grabItem.avgNumMoves = grabItem.numMoves / grabItem.count
+      grabItem.killRate = grabItem.kills / grabItem.count
+
+      // ordered insert for grab item
+      for (var j = 0; j < result.length; j++) {
+        if(result[j].count <= grabItem.count) {
+          result.splice(j, 0, grabItem)
+          break
+        }
+      }
+
       return {
         totalCount: totalCount,
+        avgDamage: totalDamage / totalCount,
+        avgNumMoves: totalNumMoves / totalCount,
+        killRate: totalKills / totalCount,
         openingMoves: result
       }
     }, [])

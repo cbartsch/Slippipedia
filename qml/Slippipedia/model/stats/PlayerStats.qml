@@ -10,7 +10,7 @@ Item {
   property bool isOpponent: false
   property DataBase dataBase: null
 
-  property var openingMoves: ({ totalCount: 0, openingMoves: [] })
+  property var openingMoves: null
 
   readonly property Stat stocksLost: Stat { name: "stocksLost" }
   readonly property Stat selfDestructs: Stat { name: "selfDestructs" }
@@ -115,5 +115,9 @@ Item {
 
   function refreshOpenings() {
     openingMoves = dataBase.getOpeningMoveSummary(isOpponent)
+  }
+
+  function clearOpenings() {
+    openingMoves = null
   }
 }

@@ -15,7 +15,7 @@ BasePage {
 
   readonly property bool openingsVisible: contentSwipe.currentIndex === 3
 
-  onOpeningsVisibleChanged: if(openingsVisible) stats.refresh(nameColumns * 5, openingsVisible)
+  onOpeningsVisibleChanged: if(openingsVisible && !stats.hasOpenings) stats.refresh(nameColumns * 5, openingsVisible)
 
   onAppeared: stats.refresh(nameColumns * 5, openingsVisible)
   filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5, openingsVisible)
@@ -41,6 +41,7 @@ BasePage {
     FilterInfoItem {
       stats: statisticsPage.stats
       clickable: filterChangeable
+      showPunishFilter: filterModal.showPunishOptions
 
       showListButton: statisticsPage.navigationStack.depth > 1
       onShowList: app.showList({ sourceFilter: statisticsPage.stats.dataBase.filterSettings })

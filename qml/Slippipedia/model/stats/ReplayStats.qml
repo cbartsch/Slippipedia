@@ -36,6 +36,8 @@ Item {
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
   readonly property real winRate: totalReplaysFilteredWon / totalReplaysFilteredWithResult
 
+  readonly property bool hasOpenings: !!statsPlayer.openingMoves
+
   Connections {
     target: dataBase ? dataBase.filterSettings : null
 
@@ -119,10 +121,15 @@ Item {
 
     running: false
     repeat: false
-    interval: 250
+    interval: 500 // let UI animations finish before loading
     onTriggered: {
       if(refreshOpenings) {
-        doRefreshOpenings()
+        statsPlayer.refreshOpenings()
+        statsOpponent.refreshOpenings()
+      }
+      else {
+        statsPlayer.clearOpenings()
+        statsOpponent.clearOpenings()
       }
 
       doRefresh(numPlayerTags)
@@ -142,10 +149,5 @@ Item {
 
     statsPlayer.refresh(numPlayerTags)
     statsOpponent.refresh(numPlayerTags)
-  }
-
-  function doRefreshOpenings() {
-    statsPlayer.refreshOpenings()
-    statsOpponent.refreshOpenings()
   }
 }
