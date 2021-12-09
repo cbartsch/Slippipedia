@@ -233,6 +233,7 @@ Column {
         Rectangle {
           readonly property int moveId: MeleeData.moveIdsShort[moveName]
           readonly property string moveName: modelData
+          readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
           width: moveCheckBox.width + dp(Theme.contentPadding) * 2
@@ -245,9 +246,13 @@ Column {
             anchors.centerIn: parent
 
             checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
+
+            QQ.ToolTip.text: moveNameFull
+            QQ.ToolTip.visible: mouseArea.containsMouse
           }
 
           RippleMouseArea {
+            id: mouseArea
             anchors.fill: parent
             hoverEffectEnabled: true
             backgroundColor: Theme.listItem.selectedBackgroundColor
@@ -318,6 +323,7 @@ Column {
         Rectangle {
           readonly property int moveId: MeleeData.moveIdsShort[moveName]
           readonly property string moveName: modelData
+          readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
           width: lmoveCheckBox.width + dp(Theme.contentPadding) * 2
@@ -329,9 +335,13 @@ Column {
             anchors.centerIn: parent
 
             checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
+
+            QQ.ToolTip.text: moveNameFull
+            QQ.ToolTip.visible: mouseArea.containsMouse
           }
 
           RippleMouseArea {
+            id: mouseArea
             anchors.fill: parent
             hoverEffectEnabled: true
             backgroundColor: Theme.listItem.selectedBackgroundColor
