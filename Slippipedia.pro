@@ -80,6 +80,3 @@ include(slippi/slippi.pri)
 
 # always show qml files in Qt Creator
 OTHER_FILES += $$files(qml/**, true)
-
-DISTFILES += \
-  qml/Slippipedia/views/stats/StatsNeutral.qml
