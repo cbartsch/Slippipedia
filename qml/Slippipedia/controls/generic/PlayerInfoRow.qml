@@ -54,7 +54,7 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: model.chars1 && model.chars1[modelData] || 0
+        skinId: playerInfoRow.model.chars1 && playerInfoRow.model.chars1[modelData] || 0
       }
     }
 
@@ -72,7 +72,7 @@ AppFlickable {
       StockIcon {
         anchors.verticalCenter: parent.verticalCenter
         charId: modelData
-        skinId: model.chars2 && model.chars2[modelData] || 0
+        skinId: playerInfoRow.model.chars2 && playerInfoRow.model.chars2[modelData] || 0
       }
     }
 
