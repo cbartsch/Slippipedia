@@ -78,6 +78,9 @@ int main(int argc, char *argv[])
   qmlRegisterUncreatableType<PlayerData>(QML_MODULE_NAME, 1, 0, "PlayerData", "Returned by SlippiParser");
   qmlRegisterUncreatableType<PunishData>(QML_MODULE_NAME, 1, 0, "PunishData", "Returned by SlippiParser");
 
+  // bring back Felgo 3 / Qt 5 default font (Ms Shell Dlg 2 which defaults to Tahoma)
+  QGuiApplication::setFont(QFont("Tahoma"));
+
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);
 
