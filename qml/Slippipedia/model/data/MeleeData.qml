@@ -6,6 +6,10 @@ Item {
 
   // data structs
 
+  // all IDs:
+  // https://github.com/project-slippi/slippi-wiki/blob/master/SPEC.md#melee-ids
+  // https://docs.google.com/spreadsheets/d/1JX2w-r2fuvWuNgGb6D3Cs4wHQKLFegZe2jhbBuIhCG8/preview#gid=20
+
   // stages. sssIndex = index on a 9x3 grid on stage select screen
   readonly property var stageMap: {
     0: { id: 0,   name: "Other stages",       shortName: "Other", sssIndex: -1 },
