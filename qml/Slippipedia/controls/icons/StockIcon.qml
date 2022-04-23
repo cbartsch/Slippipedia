@@ -24,10 +24,14 @@ Item {
   Image {
     id: sprite
 
+    // for ICs (ID 14) the skin IDs 1 and 3 are switched on the spritesheet for some reason
+    // thus switch the index here:
+    readonly property int skinIndex: charId === 14 && skinId > 0 ? (4 - skinId) : skinId
+
     source: "../../../../assets/img/stock_icon_sheet.png"
 
-    sourceClipRect: Qt.rect(sheetPos.x + skinId * sheetDist.x,
-                            sheetPos.y + skinId * sheetDist.y,
+    sourceClipRect: Qt.rect(sheetPos.x + skinIndex * sheetDist.x,
+                            sheetPos.y + skinIndex * sheetDist.y,
                             24, 24)
 
     anchors.fill: parent
