@@ -21,7 +21,7 @@ AppModal {
       id: filterPage
 
       stats: filterModal.stats
-      height: modal.modalHeight
+      height: filterModal.modalHeight
 
       showPunishOptions: filterModal.showPunishOptions
 
