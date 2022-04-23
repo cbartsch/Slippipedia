@@ -1,7 +1,6 @@
 import Felgo 3.0
 
 import QtQuick 2.0
-import QtQuick.Controls.Styles 1.4
 
 import Slippipedia 1.0
 
@@ -82,7 +81,7 @@ App {
     id: navigation
     navigationMode: navigationModeTabs
 
-    onCurrentNavigationItemChanged: if(currentNavigationItem) currentNavigationItem.page.appeared()
+    onCurrentNavigationItemChanged: if(currentNavigationItem && currentNavigationItem.page) currentNavigationItem.page.appeared()
 
     NavigationItem {
       title: "Setup"
@@ -103,7 +102,7 @@ App {
 
     NavigationItem {
       title: "Statistics"
-      icon: IconType.barchart
+      iconType: IconType.barchart
 
       onSelected: if(page) page.selected()
 
@@ -116,7 +115,7 @@ App {
 
     NavigationItem {
       title: "Analytics"
-      icon: IconType.lightbulbo
+      iconType: IconType.lightbulbo
 
       onSelected: if(page) page.selected()
 
@@ -129,7 +128,7 @@ App {
 
     NavigationItem {
       title: "Browser"
-      icon: IconType.list
+      iconType: IconType.list
 
       onSelected: if(page) page.selected()
 
@@ -142,7 +141,7 @@ App {
 
     NavigationItem {
       title: "About"
-      icon: IconType.exclamationcircle
+      iconType: IconType.exclamationcircle
 
       onSelected: if(page) page.selected()
 

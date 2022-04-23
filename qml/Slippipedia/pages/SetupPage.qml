@@ -2,12 +2,13 @@ import Felgo 3.0
 
 import QtQuick 2.0
 import QtQuick.Controls 2.12
-import QtQuick.Dialogs 1.2
-import QtGraphicalEffects 1.0
+import QtQuick.Dialogs
+import Qt5Compat.GraphicalEffects
 
 import Slippipedia 1.0
 
 BasePage {
+  id: setupPage
   title: qsTr("Setup")
 
   flickable.contentHeight: content.height
@@ -26,14 +27,12 @@ BasePage {
 
       onSelected: fileDialogReplays.open()
 
-      FileDialog {
+      FolderDialog {
         id: fileDialogReplays
         title: "Select replay folder"
-        selectMultiple: false
-        selectFolder: true
-        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
+        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
 
-        onAccepted: dataModel.replayFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+        onAccepted: dataModel.replayFolder = uriToFilename(selectedFolder)
       }
     }
 
@@ -147,14 +146,12 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
       onSelected: fileDialogDesktop.open()
 
-      FileDialog {
+      FolderDialog {
         id: fileDialogDesktop
         title: "Select Slippi Desktop App folder"
-        selectMultiple: false
-        selectFolder: true
-        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
+        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
 
-        onAccepted: dataModel.desktopAppFolder = fileUtils.stripSchemeFromUrl(fileUrl)
+        onAccepted: dataModel.desktopAppFolder = uriToFilename(selectedFolder)
       }
 
       rightItem: AppToolButton {
@@ -232,12 +229,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       FileDialog {
         id: fileDialogIso
         title: "Select Melee ISO file"
-        selectMultiple: false
-        selectFolder: false
+        fileMode: FileDialog.OpenFile
         nameFilters: ["ISO files (*.iso)"]
-        folder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.meleeIsoPath)
+        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.meleeIsoPath)
 
-        onAccepted: dataModel.meleeIsoPath = fileUtils.stripSchemeFromUrl(fileUrl)
+        onAccepted: dataModel.meleeIsoPath = uriToFilename(selectedFile)
       }
 
       rightItem: AppToolButton {
@@ -278,5 +274,10 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         dataModel.clearDatabase()
       }
     })
+  }
+
+  function uriToFilename(fileUri) {
+    // remove scheme, then remove percent-encoding from file URI
+    return decodeURIComponent(fileUtils.stripSchemeFromUrl(fileUri))
   }
 }
