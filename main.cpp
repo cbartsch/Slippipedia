@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <FelgoApplication>
 
+#include <QGuiApplication>
+#include <QFont>
+
 #include <QQmlApplicationEngine>
 
 #include "slippiparser.h"
@@ -19,12 +22,36 @@
 #include <FelgoLiveClient>
 #endif
 
+// use this to create separate test DBs
+const QString DB_TEST_ID = "1";
+
 // cannot configure DB pragmas in QML (error:
 // so do it here:
 QSqlDatabase setupDatabase(QQmlEngine& engine) {
   auto dbName = engine.offlineStorageDatabaseFilePath("SlippiStatsDB");
+  auto dbFileName = dbName + ".sqlite";
+
+  if(!DB_TEST_ID.isEmpty()) {
+    dbFileName = dbName + "_test" + DB_TEST_ID + ".sqlite";
+  }
+
+#ifdef Q_OS_WINDOWS
+  // Felgo 3 / Qt 5 had the database in AppData/Local, Felgo 4 / Qt 6 has it in AppData/Roaming
+  // -> check if local exists from an older version, if yes, use that one:
+  QFileInfo dbFile(dbFileName);
+
+  if(!dbFile.exists()) {
+    QString localName(dbName.replace("Roaming", "Local"));
+    QFileInfo localFile(localName + ".sqlite");
+
+    if(localFile.exists()) {
+      dbName = localName;
+    }
+  }
+#endif
+
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QFileInfo(dbName).fileName());
-  db.setDatabaseName(dbName + ".sqlite");
+  db.setDatabaseName(dbFileName);
 
   if(db.open()) {
     // use write-ahead-logging and normal sync mode for optimized performance
@@ -38,7 +65,7 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
     qWarning() << "Could not set up database:" << db.lastError();
   }
   else {
-    qDebug() << "Successfully configured database."; // << dbName << QFileInfo(dbName).fileName();
+    qDebug().nospace().noquote() << "Successfully configured database. Name: " << QFileInfo(dbName).fileName() << ", full path:" << dbFileName;
   }
 
   return db;
