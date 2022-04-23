@@ -1,6 +1,9 @@
 
 SLIPPC_SRC = $$PWD/slippc/src
 
+# assume little endian since <endian.h> doesn't exist
+DEFINES += __LITTLE_ENDIAN__
+
 INCLUDEPATH += \
     $$PWD \
     $$SLIPPC_SRC
@@ -14,6 +17,7 @@ HEADERS += \
     $$SLIPPC_SRC/enums.h \
     $$SLIPPC_SRC/lzma.h \
     $$SLIPPC_SRC/parser.h \
+    $$SLIPPC_SRC/picohash.h \
     $$SLIPPC_SRC/replay.h \
     $$SLIPPC_SRC/schema.h \
     $$SLIPPC_SRC/util.h
