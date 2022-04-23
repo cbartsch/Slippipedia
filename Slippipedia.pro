@@ -1,6 +1,6 @@
 # allows to add DEPLOYMENTFOLDERS and links to the Felgo library and QtCreator auto-completion
 CONFIG += felgo
-CONFIG += c++11
+CONFIG += c++17
 
 QT += core gui widgets qml
 
