@@ -18,6 +18,7 @@ Page {
     width: parent.width
 
     FilterInfoItem {
+      titleSection.visible: false
       stats: filterPage.stats
       showResetButton: true
       showPunishFilter: filterPage.showPunishOptions && filterTabs.currentIndex === 4
@@ -60,8 +61,10 @@ Page {
   }
 
   AppFlickable {
-    anchors.fill: parent
-    anchors.topMargin: header.height
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: header.bottom
+    anchors.bottom: parent.bottom
 
     // somehow the list doesn't scroll all the way to the bottom so add extra spacing
     contentHeight: content.height + dp(18)

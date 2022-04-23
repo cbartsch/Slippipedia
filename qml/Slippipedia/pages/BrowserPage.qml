@@ -66,8 +66,10 @@ BasePage {
 
   SwipeView {
     id: contentSwipe
-    anchors.fill: parent
-    anchors.topMargin: header.height
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: header.bottom
+    anchors.bottom: parent.bottom
 
     onCurrentItemChanged: loadInitial()
 

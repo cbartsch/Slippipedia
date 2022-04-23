@@ -26,7 +26,10 @@ Column {
   Behavior on numReplaysFiltered { UiAnimation { } }
   Behavior on amountFiltered { UiAnimation { } }
 
+  property alias titleSection: titleSection
+
   SimpleSection {
+    id: titleSection
     title: "Filtering"
   }
 
