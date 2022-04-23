@@ -1,2 +1,9 @@
 *.user**
 /builds
+.qtc_*/
+.qmake.stash
+Makefile*
+debug/
+release/
+/*.dll
+/*.rc
