@@ -28,9 +28,21 @@ SOURCES += \
     $$SLIPPC_SRC/parser.cpp \
     $$SLIPPC_SRC/replay.cpp
 
+# Note: built from the lzma repository
+# https://github.com/kobolabs/liblzma
 win32 {
-  message(Load libzma windows)
-  LIBS += -L $$PWD/slippc/lib-win -static -llzma-x86
+  # Build with windows/build.bash
+
+  LIBS += -L $$PWD/slippc/lib-win -static
+
+  contains(QT_ARCH, i386) {
+    message(Load libzma windows 32 bit)
+    LIBS += -llzma-x86
+  }
+  else {
+    message(Load libzma windows 64 bit)
+    LIBS += -llzma
+  }
 }
 osx {
   message(Load libzma mac)
