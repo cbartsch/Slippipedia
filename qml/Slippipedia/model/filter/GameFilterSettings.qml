@@ -304,6 +304,20 @@ Item {
     date.from += ms
   }
 
+  // set date range for all days in a specific year
+  function setYear(year) {
+    date.from = new Date(year, 0).getTime()
+    date.to = new Date(year + 1, 0).getTime()
+  }
+
+  // set date range for all days in a specific month of current year
+  function setMonth(month) {
+    var current = new Date()
+
+    date.from = new Date(current.getFullYear(), month).getTime()
+    date.to = new Date(current.getFullYear(), month + 1).getTime()
+  }
+
   // DB filtering functions
   function getGameFilterCondition() {
     var winnerCondition = ""

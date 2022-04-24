@@ -38,6 +38,58 @@ Column {
 
   Item {
     width: parent.width
+    height: timeOptionsRow.height
+
+    Flow {
+      id: timeOptionsRow
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: spacing
+      spacing: dp(Theme.contentPadding)
+
+      // month options
+      Repeater {
+        model: dataModel.monthNames.slice(0, new Date().getMonth() + 1)
+
+        OptionButton {
+          text: modelData
+          onClicked: setMonth(index)
+
+          toolTipText: "All replays in " + modelData + " " + new Date().getFullYear()
+        }
+      }
+
+      // space
+      Item {
+        height: dp(48)
+        width: dp(6)
+
+        Rectangle {
+          anchors.centerIn: parent
+          height: dp(6)
+          width: dp(6)
+          radius: width / 2
+          color: Theme.controlBackgroundColor
+        }
+      }
+
+      // year options
+      Repeater {
+        model: stats ? stats.dataBase.getReplayYears() : []
+
+        OptionButton {
+          text: modelData + ""
+          onClicked: setYear(modelData)
+
+          toolTipText: "All replays in " + modelData
+        }
+      }
+    }
+  }
+
+
+  Item {
+    width: parent.width
     height: dateOptionsRow.height
 
     Flow {
@@ -279,6 +331,18 @@ Column {
 
   function addDateRange(numDays) {
     filter.addDateRange(numDays)
+
+    updateTexts()
+  }
+
+  function setYear(year) {
+    filter.setYear(year)
+
+    updateTexts()
+  }
+
+  function setMonth(year) {
+    filter.setMonth(year)
 
     updateTexts()
   }
