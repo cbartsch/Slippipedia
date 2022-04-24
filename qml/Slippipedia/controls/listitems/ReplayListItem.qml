@@ -19,7 +19,7 @@ AppListItem {
                                       toolBtnFolder.hovered || toolBtnOpen.hovered ||
                                       toolBtnSetup.hovered || toolBtnFavorite.hovered
 
-  readonly property bool useShortStageName: replayListItem.width < dp(510 + (isFavorite ? 48 : 0))
+  readonly property bool useShortStageName: replayListItem.width < dp(580 + (isFavorite ? 48 : 0))
   readonly property string stageNameProperty: useShortStageName ? "shortName" : "name"
   readonly property var emptyStage: ({ name: "Unknown stage", shortName: "?" })
   readonly property var stageData: replayModel.stageId && replayModel.stageId >= 0 && MeleeData.stageMap[replayModel.stageId] || emptyStage
