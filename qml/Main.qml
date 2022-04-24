@@ -16,6 +16,8 @@ App {
 
   storeWindowGeometry: true
 
+  title: "Slippipedia " + Constants.versionName
+
   onInitTheme: {
     Theme.colors.tintColor = "#21BA45" // slippi green
 

@@ -3,6 +3,7 @@ module SlippiQml
 
 # ---- Model
 
+singleton Constants 1.0     model/Constants.qml
 DataModel 1.0               model/DataModel.qml
 
 singleton MeleeData 1.0     model/data/MeleeData.qml

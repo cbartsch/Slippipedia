@@ -72,5 +72,6 @@
         <file>qml/Slippipedia/controls/generic/GameCountRow.qml</file>
         <file>qml/Slippipedia/views/stats/StatsNeutral.qml</file>
         <file>qml/Slippipedia/controls/generic/AppToolText.qml</file>
+        <file>qml/Slippipedia/model/Constants.qml</file>
     </qresource>
 </RCC>

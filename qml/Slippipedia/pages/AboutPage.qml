@@ -10,20 +10,6 @@ BasePage {
 
   flickable.contentHeight: content.height
 
-  readonly property string versionCode: system.appVersionCode
-  readonly property string versionName: system.appVersionName
-  readonly property string buildName: system.publishBuild ? "Release" : "Debug"
-
-  readonly property string twitterUrl: "https://twitter.com/ChrisuSSBMtG"
-  readonly property string patreonUrl: "https://www.patreon.com/chrisu"
-  readonly property string githubUrl: "https://github.com/cbartsch/Slippipedia"
-  readonly property string homeUrl: "https://cbartsch.github.io"
-  readonly property string discordUrl: "https://discord.gg/jKf9XQE"
-
-  readonly property string slippiUrl: "https://slippi.gg"
-  readonly property string slippcUrl: "https://github.com/pcrain/slippc"
-  readonly property string felgoUrl: "https://felgo.com"
-
   readonly property real iconSize: dp(40)
   readonly property color pinkColor: "#FF51AD"
 
@@ -33,8 +19,8 @@ BasePage {
     width: parent.width
 
     AppListItem {
-      text: "Slippipedia " + versionName
-      detailText: qsTr("%1 build (v%2)").arg(buildName).arg(versionCode)
+      text: "Slippipedia " + Constants.versionName
+      detailText: qsTr("%1 build (v%2)").arg(Constants.buildName).arg(Constants.versionCode)
       textFontSize: sp(24)
       height: iconSize * 2.5
       textVerticalSpacing: dp(Theme.contentPadding) / 2
@@ -70,7 +56,7 @@ BasePage {
 
     CustomListItem {
       text: "Follow me on Twitter"
-      detailText: twitterUrl
+      detailText: Constants.twitterUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -88,12 +74,12 @@ BasePage {
         }
       }
 
-      onSelected: nativeUtils.openUrl(twitterUrl)
+      onSelected: nativeUtils.openUrl(Constants.twitterUrl)
     }
 
     CustomListItem {
       text: "Source code at GitHub"
-      detailText: githubUrl
+      detailText: Constants.githubUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -110,12 +96,12 @@ BasePage {
           anchors.centerIn: parent
         }
       }
-      onSelected: nativeUtils.openUrl(githubUrl)
+      onSelected: nativeUtils.openUrl(Constants.githubUrl)
     }
 
     CustomListItem {
       text: "Support me on Patreon"
-      detailText: patreonUrl
+      detailText: Constants.patreonUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -140,12 +126,12 @@ BasePage {
         }
       }
 
-      onSelected: nativeUtils.openUrl(patreonUrl)
+      onSelected: nativeUtils.openUrl(Constants.patreonUrl)
     }
 
     CustomListItem {
       text: "More of my Stuff"
-      detailText: homeUrl
+      detailText: Constants.homeUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -162,7 +148,7 @@ BasePage {
           anchors.centerIn: parent
         }
       }
-      onSelected: nativeUtils.openUrl(homeUrl)
+      onSelected: nativeUtils.openUrl(Constants.homeUrl)
     }
 
     SimpleSection {
@@ -171,7 +157,7 @@ BasePage {
 
     CustomListItem {
       text: "Using Slippc replay parser library"
-      detailText: slippcUrl
+      detailText: Constants.slippcUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -189,12 +175,12 @@ BasePage {
         }
       }
 
-      onSelected: nativeUtils.openUrl(slippcUrl)
+      onSelected: nativeUtils.openUrl(Constants.slippcUrl)
     }
 
     CustomListItem {
       text: "Made for use with Project Slippi"
-      detailText: slippiUrl
+      detailText: Constants.slippiUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -219,12 +205,12 @@ BasePage {
         }
       }
 
-      onSelected: nativeUtils.openUrl(slippiUrl)
+      onSelected: nativeUtils.openUrl(Constants.slippiUrl)
     }
 
     CustomListItem {
-      text: "Built with Felgo"
-      detailText: felgoUrl
+      text: qsTr("Built with Felgo %1 (based on Qt %2)").arg(Constants.felgoVersion).arg(Constants.qtVersion)
+      detailText: Constants.felgoUrl
 
       hasExternalLink: true
       backgroundColor: Theme.controlBackgroundColor
@@ -238,7 +224,7 @@ BasePage {
         fillMode: Image.PreserveAspectFit
       }
 
-      onSelected: nativeUtils.openUrl(felgoUrl)
+      onSelected: nativeUtils.openUrl(Constants.felgoUrl)
     }
 
     CustomListItem {
@@ -257,7 +243,7 @@ BasePage {
         fillMode: Image.PreserveAspectFit
       }
 
-      onSelected: nativeUtils.openUrl(discordUrl)
+      onSelected: nativeUtils.openUrl(Constants.discordUrl)
     }
   }
 }
