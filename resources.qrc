@@ -73,5 +73,6 @@
         <file>qml/Slippipedia/views/stats/StatsNeutral.qml</file>
         <file>qml/Slippipedia/controls/generic/AppToolText.qml</file>
         <file>qml/Slippipedia/model/Constants.qml</file>
+        <file>qml/Slippipedia/controls/generic/OptionButton.qml</file>
     </qresource>
 </RCC>

@@ -68,6 +68,7 @@ CustomTabIcon 1.0           controls/generic/CustomTabIcon.qml
 CustomRadio 1.0             controls/generic/CustomRadio.qml
 DateRangeRow 1.0            controls/generic/DateRangeRow.qml
 GameCountRow 1.0            controls/generic/GameCountRow.qml
+OptionButton 1.0            controls/generic/OptionButton.qml
 PlayerInfoRow 1.0           controls/generic/PlayerInfoRow.qml
 RangeOptions 1.0            controls/generic/RangeOptions.qml
 TextInputField 1.0          controls/generic/TextInputField.qml
