@@ -23,9 +23,10 @@ Item {
   signal initialized
 
   // history:
-  // 2.1 - Slippipedia 1.0
-  // 2.2 - Slippipedia 1.1 - add Replays.userFlag
-  readonly property string dbLatestVersion: "2.3"
+  // 2.0 - Slippipedia 1.0
+  // 2.1 - Slippipedia 1.1 - add Replays.userFlag
+  // 2.2 - Slippipedis 1.2 - add Replays.platform, Replays.slippiVersion, drop unused indices
+  readonly property string dbLatestVersion: "2.2"
   readonly property string dbCurrentVersion: db.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -36,12 +37,16 @@ Item {
       db.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
         console.log("Update DB version from", dbCurrentVersion, "to", dbLatestVersion)
 
-        if(dbCurrentVersion === "2.1") {
+        if(dbCurrentVersion < "2.1") {
+          console.log("Update DB to 2.1")
           // 2.2 - add user flag column to replay
           tx.executeSql("alter table Replays add column userFlag integer default 0")
         }
-        if(dbCurrentVersion === "2.2") {
+        if(dbCurrentVersion < "2.2") {
+          console.log("Update DB to 2.2")
           // 2.3 - indexes updated
+          tx.executeSql("alter table Replays add column slippiVersion string default ''")
+          tx.executeSql("alter table Replays add column platform string default 'dolphin'")
           tx.executeSql("drop index player_index")
           tx.executeSql("drop index punish_index")
         }
@@ -73,7 +78,9 @@ lrasPort integer,
 endType integer,
 duration integer,
 filePath text,
-userFlag integer
+userFlag integer,
+platform text,
+slippiVersion text
       )")
 
       // create a column named s_<stat> for each stat in the replay
@@ -155,12 +162,12 @@ foreign key(replayId) references replays(id)
 
       tx.executeSql("insert or replace into Replays (hasData, id, date, stageId,
                                                      winnerPort, lrasPort, endType,
-                                                     duration, filePath)
-                     values (true, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                     duration, filePath, platform, slippiVersion)
+                     values (true, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId, replay.date, replay.stageId,
                       replay.winningPlayerPort, replay.lrasPlayerIndex, replay.gameEndType,
-                      replay.gameDuration, replay.filePath
+                      replay.gameDuration, replay.filePath, replay.platform, replay.slippiVersion
                     ])
 
       replay.players.forEach(function(player) {
@@ -655,7 +662,8 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
 
       var sql = qsTr(
             "select
-r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.lrasPort lrasPort, r.userFlag userFlag,
+r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
+r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
  p.slippiName name1,  p.cssTag tag1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
 (case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
@@ -836,6 +844,22 @@ order by count desc").arg(playerCol).arg(getFilterCondition(true))
       for (var i = 0; i < results.rows.length; i++) {
         var item = results.rows.item(i)
         result[i] = item.year
+      }
+
+      return result
+    }, [])
+  }
+
+  function getReplayPlatforms() {
+    log("get replay platforms")
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select distinct platform from replays where platform is not null and platform != ''")
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+        result[i] = item.platform
       }
 
       return result
