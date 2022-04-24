@@ -272,6 +272,10 @@ Item {
     return str + (number ? number : "")
   }
 
+  function capitalize(string) {
+    return string ? string[0].toUpperCase() + string.substring(1) : ""
+  }
+
   function formatDate(date) {
     return date && date.toLocaleString(Qt.locale("en_GB"), "dd/MM/yyyy HH:mm") || ""
   }
@@ -280,6 +284,28 @@ Item {
     return qsTr("%1/%2 (%3) P%4 vs %5/%6 (%7) P%8")
         .arg(replay.name1).arg(replay.tag1).arg(replay.code1).arg(replay.port1)
         .arg(replay.name2).arg(replay.tag2).arg(replay.code2).arg(replay.port2)
+  }
+
+  function platformDescription(platform) {
+    return {
+      dolphin: "Slippi dolphin (netplay)",
+      network: "Slippi broadcast (streamed from console or netplay)",
+      nintendont: "Nintendont (local recording from console)"
+    }[platform] || platformText(platform)
+  }
+
+  function platformText(platform) {
+    return capitalize(platform)
+  }
+
+  function platformIcon(platform) {
+    switch(platform) {
+    case "console":
+    case "nintendont": return Qt.resolvedUrl("../../../assets/img/gamecube.png")
+    case "network":     return Qt.resolvedUrl("../../../assets/img/broadcast.svg")
+    case "slippi":
+    default:           return Qt.resolvedUrl("../../../assets/img/slippi.svg")
+    }
   }
 
   function damageColor(damage) {
