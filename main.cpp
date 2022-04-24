@@ -23,7 +23,7 @@
 #endif
 
 // use this to create separate test DBs
-const QString DB_TEST_ID = "1";
+const QString DB_TEST_ID = "";
 
 // cannot configure DB pragmas in QML (error:
 // so do it here:
@@ -45,7 +45,7 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
     QFileInfo localFile(localName + ".sqlite");
 
     if(localFile.exists()) {
-      dbName = localName;
+      dbFileName = localFile.absoluteFilePath();
     }
   }
 #endif
