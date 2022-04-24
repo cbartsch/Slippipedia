@@ -818,6 +818,22 @@ order by count desc").arg(playerCol).arg(getFilterCondition(true))
     }, [])
   }
 
+  function getReplayYears() {
+    log("get replay years")
+
+    return readFromDb(function(tx) {
+      var results = tx.executeSql("select distinct cast(strftime('%Y', date) as int) year from replays where date is not null")
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+        result[i] = item.year
+      }
+
+      return result
+    }, [])
+  }
+
 
   // utils
 
