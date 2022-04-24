@@ -7,8 +7,8 @@ import Slippipedia 1.0
 Item {
   id: dataBase
 
-  property var debugLog: false
-  property var debugLogSql: false
+  property bool debugLog: false
+  property bool debugLogSql: false
 
   // db connection from LocalStorage
   property var db: null
