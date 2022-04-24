@@ -6,6 +6,7 @@
 #include <QVariant>
 
 #include "analysis.h"
+#include "replay.h"
 
 struct PunishData : public QObject {
   Q_OBJECT
@@ -112,6 +113,8 @@ class SlippiReplay : public QObject
   Q_PROPERTY(int stageId MEMBER m_stageId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int gameDuration MEMBER m_gameDuration NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QString filePath MEMBER m_filePath NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(QString platform MEMBER m_platform NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(QString slippiVersion MEMBER m_slippiVersion NOTIFY parsedFromAnalysis)
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerPort MEMBER m_winningPlayerPort NOTIFY parsedFromAnalysis)
@@ -129,7 +132,7 @@ public:
   explicit SlippiReplay(QObject *parent = nullptr);
   ~SlippiReplay();
 
-  void fromAnalysis(const QString &filePath, slip::Analysis *analysis);
+  void fromAnalysis(const QString &filePath, slip::Analysis *analysis, const slip::SlippiReplay *replay);
 
 signals:
   void parsedFromAnalysis();
@@ -142,6 +145,8 @@ private:
   QDateTime m_date;
   qint64 m_uniqueId;
   QString m_filePath;
+  QString m_platform; // Platform the game was played on (values include dolphin, console, and network)
+  QString m_slippiVersion; // Slippi version as string e.g. "3.7.0"
 
   QVariantList m_players;
   int m_winningPlayerPort, m_lrasPlayerIndex;

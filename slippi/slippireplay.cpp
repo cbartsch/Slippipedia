@@ -10,7 +10,7 @@ SlippiReplay::SlippiReplay(QObject *parent) : QObject(parent)
 SlippiReplay::~SlippiReplay() {
 }
 
-void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysis) {
+void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysis, const slip::SlippiReplay *replay) {
   if(analysis == nullptr) {
     return;
   }
@@ -22,6 +22,8 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   m_lrasPlayerIndex = analysis->lras_player;
   m_endType = EndType(analysis->end_type);
   m_filePath = filePath;
+  m_platform = QString::fromStdString(replay->played_on);
+  m_slippiVersion = QString::fromStdString(replay->slippi_version);
 
   // compute pseudo-unique hash for game
   qint64 uniqueId = 0;

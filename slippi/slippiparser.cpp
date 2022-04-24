@@ -85,7 +85,7 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
       return;
     }
 
-    replay->fromAnalysis(filePath, analysis.data());
+    replay->fromAnalysis(filePath, analysis.data(), parser.replay());
 
     emit m_item->replayParsed(filePath, replay);
   }
