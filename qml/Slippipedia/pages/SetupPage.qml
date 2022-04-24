@@ -30,7 +30,7 @@ BasePage {
       FolderDialog {
         id: fileDialogReplays
         title: "Select replay folder"
-        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.replayFolder)
+        currentFolder: filenameToUri(dataModel.replayFolder)
 
         onAccepted: dataModel.replayFolder = uriToFilename(selectedFolder)
       }
@@ -149,7 +149,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       FolderDialog {
         id: fileDialogDesktop
         title: "Select Slippi Desktop App folder"
-        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.desktopAppFolder)
+        currentFolder: filenameToUri(dataModel.desktopAppFolder)
 
         onAccepted: dataModel.desktopAppFolder = uriToFilename(selectedFolder)
       }
@@ -231,7 +231,7 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         title: "Select Melee ISO file"
         fileMode: FileDialog.OpenFile
         nameFilters: ["ISO files (*.iso)"]
-        currentFolder: fileUtils.getUrlByAddingSchemeToFilename(dataModel.meleeIsoPath)
+        currentFolder: filenameToUri(fileUtils.getAbsolutePathFromUrlString(dataModel.meleeIsoPath))
 
         onAccepted: dataModel.meleeIsoPath = uriToFilename(selectedFile)
       }
@@ -279,5 +279,9 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
   function uriToFilename(fileUri) {
     // remove scheme, then remove percent-encoding from file URI
     return decodeURIComponent(fileUtils.stripSchemeFromUrl(fileUri))
+  }
+
+  function filenameToUri(fileName) {
+    return fileUtils.getUrlByAddingSchemeToFilename(encodeURIComponent(fileName))
   }
 }
