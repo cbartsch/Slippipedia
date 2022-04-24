@@ -57,6 +57,7 @@ Item {
   }
 
   property var stageIds: []
+  property var platforms: []
 
   signal filterChanged
 
@@ -66,6 +67,7 @@ Item {
   onLossTypeChanged:               filterChanged()
   onUserFlagMaskChanged:           filterChanged()
   onStageIdsChanged:               filterChanged()
+  onPlatformsChanged:              filterChanged()
   onSessionSplitIntervalMsChanged: filterChanged()
 
   // match slippi constants
@@ -98,12 +100,14 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter || hasPlatformFilter
                                         // || hasSessionSplitInterval // not technically a filter
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
+  readonly property bool hasPlatformFilter: platforms && platforms.length > 0
+
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || gameEndType > -1 ||
                                           endStocksWinner.hasFilter || endStocksLoser.hasFilter
   readonly property bool hasSessionSplitInterval: sessionSplitIntervalMs != sessionSplitIntervalMsDefault
@@ -146,8 +150,10 @@ Item {
     var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""
     var stockText2 = endStocksLoser.displayText ? "Stocks left (winner): " + endStocksLoser.displayText : ""
 
+    var platformText = platforms && platforms.length > 0 ? "Platforms: " + platforms.map(dataModel.platformText).join(", ") : ""
+
     return [
-          sText, etText, wText, dText, durText, stockText
+          sText, etText, wText, dText, durText, stockText, platformText
         ].filter(_ => _).join("\n") || ""
   }
 
@@ -166,6 +172,7 @@ Item {
       onGameEndTypeChanged:            settingsLoader.item.gameEndType = gameEndType
       onUserFlagMaskChanged:           settingsLoader.item.userFlagMask = userFlagMask
       onStageIdsChanged:               settingsLoader.item.stageIds = stageIds
+      onPlatformsChanged:              settingsLoader.item.platforms = platforms
       onSessionSplitIntervalMsChanged: settingsLoader.item.sessionSplitIntervalMs = sessionSplitIntervalMs
     }
 
@@ -190,7 +197,11 @@ Item {
       // split sessions against the same opponent after:
       property int sessionSplitIntervalMs: gameFilterSettings.sessionSplitIntervalMs
 
+      // match Replay.stageId
       property var stageIds: gameFilterSettings.stageIds
+
+      // match Replay.platform
+      property var platforms: gameFilterSettings.platforms
 
       // start and end date as Date.getTime() ms values
       property double startDateMs: gameFilterSettings.date.from
@@ -228,6 +239,7 @@ Item {
         gameFilterSettings.userFlagMask = userFlagMask
         gameFilterSettings.sessionSplitIntervalMs = sessionSplitIntervalMs
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
+        gameFilterSettings.platforms = platforms
       }
     }
   }
@@ -237,6 +249,7 @@ Item {
     date.reset()
 
     stageIds = []
+    platforms = []
 
     resetWinnerFilter()
 
@@ -254,6 +267,7 @@ Item {
 
   function copyFrom(other) {
     setStage(other.stageIds)
+    setPlatforms(other.platforms)
 
     duration.copyFrom(other.duration)
     date.copyFrom(other.date)
@@ -283,6 +297,24 @@ Item {
 
   function removeAllStages() {
     gameFilterSettings.stageIds = []
+  }
+
+  function setPlatforms(platforms) {
+    gameFilterSettings.platforms = platforms
+  }
+
+  function addPlatform(platform) {
+    gameFilterSettings.platforms = platforms.concat(platform)
+  }
+
+  function removePlatform(platform) {
+    var list = platforms
+    list.splice(list.indexOf(platform), 1)
+    gameFilterSettings.platforms = list
+  }
+
+  function removeAllPlatforms() {
+    gameFilterSettings.platforms = []
   }
 
   // set date range from now to numDays before now
@@ -342,6 +374,11 @@ Item {
       stageCondition = "r.stageId in " + dataModel.globalDataBase.makeSqlWildcards(stageIds)
     }
 
+    var platformCondition = ""
+    if(platforms && platforms.length > 0) {
+      platformCondition = "r.platform in " + dataModel.globalDataBase.makeSqlWildcards(platforms)
+    }
+
     var dateCondition = date.getFilterCondition("r.date")
     var durationCondition = duration.getFilterCondition("r.duration")
     var endStocksCondition = endStocksWinner.getFilterCondition("max(p.s_endStocks, p2.s_endStocks)")
@@ -354,7 +391,7 @@ Item {
           winnerCondition, stageCondition,
           dateCondition, durationCondition,
           endStocksCondition, endStocks2Condition,
-          endTypeCondition, userFlagCondition
+          endTypeCondition, userFlagCondition, platformCondition
         ]
     .map(c => ("(" + (c || true) + ")" ))
     .join(" and ")
@@ -373,6 +410,7 @@ Item {
     var endStocks2Params = endStocksLoser.getFilterParams()
     var endTypeParams = gameEndType === -1 ? [] : [gameEndType]
     var userFlagParams = userFlagMask === 0 ? [] : [userFlagMask]
+    var platformParams = platforms && platforms.length > 0 ? platforms : []
 
     return stageIdParams
     .concat(dateParams)
@@ -381,6 +419,7 @@ Item {
     .concat(endStocks2Params)
     .concat(endTypeParams)
     .concat(userFlagParams)
+    .concat(platformParams)
   }
 
   // note: the winnerPort is always set to the player who had fewer stocks or more percent

@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12 as QQ
 import Felgo 3.0
+import Qt5Compat.GraphicalEffects
 
 import Slippipedia 1.0
 
@@ -188,6 +189,106 @@ Column {
   }
 
   CustomListItem {
+    text: "Platform"
+    detailText: "Match only games played on a specific platform."
+
+    checked: filter ? filter.hasPlatformFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Remove platform filter"
+      visible: filter ? filter.hasPlatformFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: filter.removeAllPlatforms()
+    }
+  }
+
+  Item {
+    width: parent.width
+    height: platformFlow.height
+
+    Flow {
+      id: platformFlow
+      width: parent.width
+      spacing: dp(1)
+
+      Item {
+        height: dp(48)
+        width: platformText.width + dp(Theme.contentPadding) * 2
+
+        AppText {
+          id: platformText
+          text: "Platform:"
+          anchors.centerIn: parent
+        }
+      }
+
+      Repeater {
+        model: stats ? stats.dataBase.getReplayPlatforms() : []
+
+        Rectangle {
+          height: dp(48)
+          width: platformCheckBox.width + dp(Theme.contentPadding) + platformIcon.width
+
+          color: Theme.controlBackgroundColor
+
+          AppCheckBox {
+            id: platformCheckBox
+            text: dataModel.platformText(modelData)
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
+
+            checked: filter ? filter.platforms.indexOf(modelData) >= 0 : false
+          }
+
+          AppImage {
+            id: platformIcon
+            anchors.right: parent.right
+            anchors.rightMargin: dp(Theme.contentPadding)
+            anchors.verticalCenter: parent.verticalCenter
+            source: dataModel.platformIcon(modelData)
+            width: dp(16)
+            height: width
+            fillMode: Image.PreserveAspectFit
+            visible: false
+            mipmap: true
+          }
+
+          ColorOverlay {
+            anchors.fill: platformIcon
+            source: platformIcon
+            color: platformCheckBox.checked ? Theme.tintColor : Theme.textColor
+
+            Behavior on color { UiAnimation { } }
+          }
+
+          RippleMouseArea {
+            id: platformMouse
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+
+            onClicked: {
+              if(platformCheckBox.checked) filter.removePlatform(modelData)
+              else                         filter.addPlatform(modelData)
+            }
+          }
+
+          QQ.ToolTip {
+            visible: platformMouse.containsMouse
+            text: dataModel.platformDescription(modelData)
+          }
+        }
+      }
+    }
+  }
+
+  CustomListItem {
     text: "Game flags"
     detailText: "Match only games with specific user flags."
 
@@ -232,7 +333,7 @@ Column {
           readonly property string flagName: modelData
 
           height: dp(48)
-          width: flagCheckBox.width + dp(Theme.contentPadding) * 2.5 + flagIcon.width
+          width: flagCheckBox.width + dp(Theme.contentPadding) + flagIcon.width
 
           color: Theme.controlBackgroundColor
 
