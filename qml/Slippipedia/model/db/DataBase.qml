@@ -454,15 +454,19 @@ limit ?").arg(playerCol).arg(getFilterCondition())
 
       var results = tx.executeSql(sql, params)
 
+      var maxCount = 0
       var result = []
       for (var i = 0; i < results.rows.length; i++) {
+        var count = results.rows.item(i).c
+        maxCount = Math.max(maxCount, count)
+
         result.push({
                       text: results.rows.item(i).slippiName,
-                      count: results.rows.item(i).c
+                      count: count
                     })
       }
 
-      return result
+      return { list: result, maxCount: maxCount }
     }, [])
   }
 
@@ -485,15 +489,19 @@ limit ?").arg(playerCol).arg(getFilterCondition())
 
       var results = tx.executeSql(sql, params)
 
+      var maxCount = 0
       var result = []
       for (var i = 0; i < results.rows.length; i++) {
+        var count = results.rows.item(i).c
+        maxCount = Math.max(maxCount, count)
+
         result.push({
                       text: results.rows.item(i).slippiCode,
-                      count: results.rows.item(i).c
+                      count: count
                     })
       }
 
-      return result
+      return { list: result, maxCount: maxCount }
     }, [])
   }
 

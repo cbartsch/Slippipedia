@@ -1,10 +1,12 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.0
 import Felgo 3.0
 
 Grid {
-  id: nameGridOpponent
+  id: nameGrid
 
-  property alias model: repeater.model
+  // an object like { list: [...], maxCount: 1000 }
+  property var model: ({})
 
   property bool namesClickable: false
   signal nameClicked(string name)
@@ -12,8 +14,12 @@ Grid {
   anchors.left: parent.left
   anchors.right: parent.right
 
+  property bool isOpponent: false
+  readonly property string slotText: isOpponent ? "vs" : "as"
+
   Repeater {
     id: repeater
+    model: nameGrid.model.list
 
     Item {
       width: parent.width / parent.columns
@@ -25,14 +31,20 @@ Grid {
         visible: namesClickable
 
         RippleMouseArea {
+          id: mouseArea
           anchors.fill: parent
           enabled: namesClickable
-          onClicked: nameGridOpponent.nameClicked(modelData.text)
+          onClicked: nameGrid.nameClicked(modelData.text)
 
           hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor
           opacity: 0.5
+        }
+
+        ToolTip {
+          visible: mouseArea.containsMouse
+          text: qsTr("List all %1 games %2 %3").arg(modelData.count).arg(slotText).arg(modelData.text)
         }
       }
 
@@ -58,6 +70,8 @@ Grid {
           .arg(dataModel.formatPercentage(modelData.count / stats.totalReplaysFiltered))
           maximumLineCount: 1
           elide: Text.ElideRight
+
+          opacity: (modelData.count / nameGrid.model.maxCount) * 0.5 + 0.5
         }
       }
     }

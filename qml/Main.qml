@@ -237,4 +237,9 @@ App {
 
     analytics.logScreen(title)
   }
+
+  // case insensitive equal for 2 strings
+  function ciEqual(a, b) {
+    return a.toLowerCase() === b.toLowerCase()
+  }
 }

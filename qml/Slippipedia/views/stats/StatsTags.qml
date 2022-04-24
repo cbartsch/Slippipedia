@@ -20,7 +20,21 @@ Column {
     columns: nameColumns
 
     namesClickable: true
-    onNameClicked: showList({ name1: name, code1: "", name2: "", code2: "", exact: true })
+    onNameClicked: name => showList({ name1: name, code1: ciEqual(name, stats.dataBase.filterSettings.playerFilter.slippiName.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
+  }
+
+  SimpleSection {
+    title: "Top slippi codes"
+  }
+
+  NameGrid {
+    model: stats.statsPlayer.topSlippiCodes
+    columns: nameColumns
+
+    namesClickable: true
+    onNameClicked: name => showList({ code1: name, name1: ciEqual(name, stats.dataBase.filterSettings.playerFilter.slippiCode.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
   SimpleSection {
@@ -39,9 +53,11 @@ Column {
     visible: dataModel.playerFilter.hasPlayerFilter
     model: stats.statsOpponent.topPlayerTags
     columns: nameColumns
+    isOpponent: true
 
     namesClickable: true
-    onNameClicked: showList({ name1: "", code1: "", name2: name, code2: "", exact: true })
+    onNameClicked: name => showList({ name2: name, code2: ciEqual(name, stats.dataBase.filterSettings.opponentFilter.slippiName.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
   SimpleSection {
@@ -60,9 +76,11 @@ Column {
     visible: dataModel.playerFilter.hasPlayerFilter
     model: stats.statsOpponent.topSlippiCodes
     columns: nameColumns
+    isOpponent: true
 
     namesClickable: true
-    onNameClicked: showList({ name1: "", code1: "", name2: "", code2: name, exact: true })
+    onNameClicked: name => showList({ code2: name, name2: ciEqual(name, stats.dataBase.filterSettings.opponentFilter.slippiCode.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
   Item {

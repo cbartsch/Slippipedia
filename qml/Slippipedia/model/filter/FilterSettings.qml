@@ -97,20 +97,32 @@ Item {
       gameFilter.date.to = date.getTime()
     }
 
-    if("code1" in data) playerFilter.slippiCode.filterText = data.code1
-    if("name1" in data) playerFilter.slippiName.filterText = data.name1
-    if(data.code1 && data.name1) playerFilter.filterCodeAndName = true
-
-    if("code2" in data) opponentFilter.slippiCode.filterText = data.code2
-    if("name2" in data) opponentFilter.slippiName.filterText = data.name2
-    if(data.code2 && data.name2) opponentFilter.filterCodeAndName = true
-
     if(data.exact) {
-      playerFilter.slippiName.matchCase = true
-      playerFilter.slippiName.matchPartial = false
-      opponentFilter.slippiName.matchCase = true
-      opponentFilter.slippiName.matchPartial = false
+      if(typeof data.code1 !== "undefined") {
+        playerFilter.slippiCode.matchPartial = false
+        playerFilter.slippiCode.matchCase = true
+      }
+      if(typeof data.name1 !== "undefined") {
+        playerFilter.slippiName.matchPartial = false
+        playerFilter.slippiName.matchCase = true
+      }
+      if(typeof data.code2 !== "undefined") {
+        opponentFilter.slippiCode.matchPartial = false
+        opponentFilter.slippiCode.matchCase = true
+      }
+      if(typeof data.name2 !== "undefined") {
+        opponentFilter.slippiName.matchPartial = false
+        opponentFilter.slippiName.matchCase = true
+      }
     }
+
+    if(typeof data.code1 !== "undefined") playerFilter.slippiCode.filterText = data.code1
+    if(typeof data.name1 !== "undefined") playerFilter.slippiName.filterText = data.name1
+    if(typeof data.code1 !== "undefined" || typeof data.name1 !== "undefined") playerFilter.filterCodeAndName = true
+
+    if(typeof data.code2 !== "undefined") opponentFilter.slippiCode.filterText = data.code2
+    if(typeof data.name2 !== "undefined") opponentFilter.slippiName.filterText = data.name2
+    if(typeof data.code2 !== "undefined" || typeof data.name2 !== "undefined") opponentFilter.filterCodeAndName = true
 
     if(data.startMs) gameFilter.date.from = data.startMs
     if(data.endMs)   gameFilter.date.to = data.endMs
