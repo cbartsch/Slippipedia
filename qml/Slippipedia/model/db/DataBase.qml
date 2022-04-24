@@ -626,10 +626,7 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
         var obj = row
         obj.id = row.yearMonth
 
-        var months = [
-              "January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"
-            ]
+        var months = dataModel.monthNames
 
         obj.section = row.year
         obj.name = months[parseInt(row.month) - 1]

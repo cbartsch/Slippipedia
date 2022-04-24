@@ -15,6 +15,11 @@ Item {
   readonly property var userFlagNames: ["Favorite"]
   readonly property var userFlagIcons: [IconType.star]
 
+  readonly property var monthNames: [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ]
+
   property int dbUpdater: 0
   property int fileUpdater: 0
 
