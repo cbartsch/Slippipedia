@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12 as QQ
-import Felgo 3.0
+import Felgo 4.0
 
 import Slippipedia 1.0
 
@@ -77,13 +77,14 @@ Column {
           readonly property int killDirection: index
 
           height: dp(48)
-          width: directionCheckBox.width + dp(Theme.contentPadding) * 2
+          width: directionCheckBox.width
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: directionCheckBox
             text: modelData
             anchors.centerIn: parent
+            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
 
             checked: filter ? filter.killDirections.indexOf(killDirection) >= 0 : false
           }
@@ -236,7 +237,7 @@ Column {
           readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
-          width: moveCheckBox.width + dp(Theme.contentPadding) * 2
+          width: moveCheckBox.width
 
           color: Theme.controlBackgroundColor
 
@@ -244,11 +245,14 @@ Column {
             id: moveCheckBox
             text: moveName
             anchors.centerIn: parent
+            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
 
             checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
 
-            QQ.ToolTip.text: moveNameFull
-            QQ.ToolTip.visible: mouseArea.containsMouse
+            CustomToolTip {
+              text: moveNameFull
+              visible: mouseArea.containsMouse
+            }
           }
 
           RippleMouseArea {
@@ -326,18 +330,21 @@ Column {
           readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
-          width: lmoveCheckBox.width + dp(Theme.contentPadding) * 2
+          width: lmoveCheckBox.width
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: lmoveCheckBox
             text: moveName
             anchors.centerIn: parent
+            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
 
             checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
 
-            QQ.ToolTip.text: moveNameFull
-            QQ.ToolTip.visible: mouseArea.containsMouse
+            CustomToolTip {
+              text: moveNameFull
+              visible: mouseArea.containsMouse
+            }
           }
 
           RippleMouseArea {
