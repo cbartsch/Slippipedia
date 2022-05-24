@@ -2,6 +2,9 @@
 #include <QApplication>
 #include <FelgoApplication>
 
+#include <QGuiApplication>
+#include <QFont>
+
 #include <QQmlApplicationEngine>
 
 #include "slippiparser.h"
@@ -19,12 +22,45 @@
 #include <FelgoLiveClient>
 #endif
 
+// use this to create separate test DBs
+const QString DB_TEST_ID = "";
+
 // cannot configure DB pragmas in QML (error:
 // so do it here:
 QSqlDatabase setupDatabase(QQmlEngine& engine) {
   auto dbName = engine.offlineStorageDatabaseFilePath("SlippiStatsDB");
+  auto dbFileName = dbName + ".sqlite";
+  auto dbConfigName = dbName + ".ini";
+
+  if(!DB_TEST_ID.isEmpty()) {
+    dbFileName = dbName + "_test" + DB_TEST_ID + ".sqlite";
+  }
+
+#ifdef Q_OS_WINDOWS
+  // Felgo 3 / Qt 5 had the database in AppData/Local, Felgo 4 / Qt 6 has it in AppData/Roaming
+  // -> check if local exists from an older version, if yes, use that one:
+  QFileInfo dbFile(dbFileName);
+  QFileInfo dbConfigFile(dbConfigName);
+  QString localName(dbName.replace("Roaming", "Local"));
+
+  if(!dbFile.exists()) {
+    // use old DB file
+    QFileInfo localFile(localName + ".sqlite");
+    if(localFile.exists()) {
+      dbFileName = localFile.absoluteFilePath();
+    }
+  }
+  if(!dbConfigFile.exists()) {
+    // copy config from old to new location (cannot override config file location)
+    QFile localConfig(localName + ".ini");
+    if(localConfig.exists()) {
+      localConfig.copy(dbConfigName);
+    }
+  }
+#endif
+
   QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", QFileInfo(dbName).fileName());
-  db.setDatabaseName(dbName + ".sqlite");
+  db.setDatabaseName(dbFileName);
 
   if(db.open()) {
     // use write-ahead-logging and normal sync mode for optimized performance
@@ -38,7 +74,7 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
     qWarning() << "Could not set up database:" << db.lastError();
   }
   else {
-    qDebug() << "Successfully configured database."; // << dbName << QFileInfo(dbName).fileName();
+    qDebug().nospace().noquote() << "Successfully configured database. Name: " << QFileInfo(dbName).fileName() << ", full path:" << dbFileName;
   }
 
   return db;
@@ -77,6 +113,9 @@ int main(int argc, char *argv[])
   qmlRegisterUncreatableType<SlippiReplay>(QML_MODULE_NAME, 1, 0, "SlippiReplay", "Returned by SlippiParser");
   qmlRegisterUncreatableType<PlayerData>(QML_MODULE_NAME, 1, 0, "PlayerData", "Returned by SlippiParser");
   qmlRegisterUncreatableType<PunishData>(QML_MODULE_NAME, 1, 0, "PunishData", "Returned by SlippiParser");
+
+  // bring back Felgo 3 / Qt 5 default font (Ms Shell Dlg 2 which defaults to Tahoma)
+  QGuiApplication::setFont(QFont("Tahoma"));
 
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);

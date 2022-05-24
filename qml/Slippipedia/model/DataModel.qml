@@ -127,7 +127,7 @@ Item {
   SlippiParser {
     id: parser
 
-    onReplayParsed: {
+    onReplayParsed: (filePath, replay) => {
       if(numFilesSucceeded === 0) {
         globalDataBase.createTables(replay)
       }

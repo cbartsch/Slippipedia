@@ -102,26 +102,26 @@ Column {
 
       DateRangeRow {
         numDays: 1
-        onSetPastRange: gameFilterOptions.setPastRange(numDays)
-        onAddDateRange: gameFilterOptions.addDateRange(numDays)
+        onSetPastRange: numDays => gameFilterOptions.setPastRange(numDays)
+        onAddDateRange: numDays => gameFilterOptions.addDateRange(numDays)
       }
 
       DateRangeRow {
         numDays: 7
-        onSetPastRange: gameFilterOptions.setPastRange(numDays)
-        onAddDateRange: gameFilterOptions.addDateRange(numDays)
+        onSetPastRange: numDays => gameFilterOptions.setPastRange(numDays)
+        onAddDateRange: numDays => gameFilterOptions.addDateRange(numDays)
       }
 
       DateRangeRow {
         numDays: 30
-        onSetPastRange: gameFilterOptions.setPastRange(numDays)
-        onAddDateRange: gameFilterOptions.addDateRange(numDays)
+        onSetPastRange: numDays => gameFilterOptions.setPastRange(numDays)
+        onAddDateRange: numDays => gameFilterOptions.addDateRange(numDays)
       }
 
       DateRangeRow {
         numDays: 365
-        onSetPastRange: gameFilterOptions.setPastRange(numDays)
-        onAddDateRange: gameFilterOptions.addDateRange(numDays)
+        onSetPastRange: numDays => gameFilterOptions.setPastRange(numDays)
+        onAddDateRange: numDays => gameFilterOptions.addDateRange(numDays)
       }
     }
   }
@@ -387,7 +387,7 @@ Column {
     rightItem: AppToolButton {
       iconType: IconType.refresh
       toolTipText: qsTr("Reset session split interval to default (%1)")
-                   .arg(dataModel.formatTimeMs(filter ? filter.sessionSplitIntervalMsDefault : 0))
+      .arg(dataModel.formatTimeMs(filter ? filter.sessionSplitIntervalMsDefault : 0))
       visible: filter ? filter.hasSessionSplitInterval : false
       anchors.verticalCenter: parent.verticalCenter
 
@@ -460,7 +460,7 @@ Column {
   }
 
   function dateText(dateMs) {
-     return dateMs < 0 ? "" : dataModel.formatDate(new Date(dateMs))
+    return dateMs < 0 ? "" : dataModel.formatDate(new Date(dateMs))
   }
 
   function dateValue(text, input) {

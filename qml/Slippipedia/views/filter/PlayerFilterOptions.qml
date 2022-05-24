@@ -194,7 +194,7 @@ Column {
     stats: filterPage.stats
 
     charIds: filter ? filter.charIds : []
-    onCharSelected: {
+    onCharSelected: (charId, isSelected) => {
       if(isSelected) {
         // char is selected -> unselect
         filter.removeCharFilter(charId)
