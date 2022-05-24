@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import Felgo 3.0
+import Felgo 4.0
 import Qt5Compat.GraphicalEffects
 
 import Slippipedia 1.0
@@ -164,7 +164,7 @@ Item {
         visible: !platformIcon.visible
       }
 
-      ToolTip {
+      CustomToolTip {
         visible: platformMouse.containsMouse
         text: qsTr("Played on %1, Slippi version %2").arg(dataModel.platformDescription(replayModel.platform)).arg(replayModel.slippiVersion || "Unknown")
       }

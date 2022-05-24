@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import Felgo 3.0
+import Felgo 4.0
+import Slippipedia 1.0
 
 AppButton {
   id: optionButton
@@ -10,8 +11,10 @@ AppButton {
   property alias mouseArea: ripple
   property string toolTipText: ""
 
-  ToolTip.visible: toolTipText && hovered
-  ToolTip.text: toolTipText
+  CustomToolTip {
+    visible: toolTipText && hovered
+    text: toolTipText
+  }
 
   Rectangle {
     anchors.fill: parent

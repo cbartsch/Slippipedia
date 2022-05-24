@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.15
-import Felgo 3.0
+import Felgo 4.0
 
 AppText {
   id: customText
@@ -14,7 +14,7 @@ AppText {
     enabled: !!customText.toolTipText
   }
 
-  ToolTip {
+  CustomToolTip {
     parent: customText
     visible: mouseArea.containsMouse && !!text
     text: customText.toolTipText

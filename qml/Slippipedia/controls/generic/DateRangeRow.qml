@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import Felgo 3.0
+import Felgo 4.0
 
 Row {
   id: dateRangeRow
@@ -45,7 +45,7 @@ Row {
       onClicked: btnMinus.clicked()
     }
 
-    ToolTip {
+    CustomToolTip {
       visible: ripple2.containsMouse && !!text
       text: timeText + " earlier"
     }
@@ -75,7 +75,7 @@ Row {
       onClicked: btnPlus.clicked()
     }
 
-    ToolTip {
+    CustomToolTip {
       visible: ripple3.containsMouse && !!text
       text: timeText + " later"
     }

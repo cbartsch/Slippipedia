@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.0
-import Felgo 3.0
+import Felgo 4.0
+import Slippipedia 1.0
 
 Grid {
   id: nameGrid
@@ -42,7 +43,7 @@ Grid {
           opacity: 0.5
         }
 
-        ToolTip {
+        CustomToolTip {
           visible: mouseArea.containsMouse
           text: qsTr("List all %1 games %2 %3").arg(modelData.count).arg(slotText).arg(modelData.text)
         }

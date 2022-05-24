@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
-import Felgo 3.0
+import Felgo 4.0
 
 AppRadio {
   id: customRadio
@@ -10,8 +10,10 @@ AppRadio {
   leftPadding: dp(Theme.contentPadding)
   rightPadding: dp(Theme.contentPadding)
 
-  ToolTip.visible: toolTipText && (hovered || mouseArea.containsMouse)
-  ToolTip.text: toolTipText
+  CustomToolTip {
+    visible: toolTipText && (hovered || mouseArea.containsMouse)
+    text: toolTipText
+  }
 
   Rectangle {
     anchors.fill: parent
