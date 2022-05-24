@@ -203,7 +203,7 @@ Item {
         readonly property string oText: "P" + ((isP1 ? replayModel.port2 : replayModel.port1) + 1)
 
         height: parent.height
-        width: dp(24)
+        width: dp(32)
         anchors.verticalCenter: parent.verticalCenter
 
         visible: modelData.killed
@@ -228,21 +228,33 @@ Item {
 
           contentItem: Column {
             AppText {
-              text: qsTr("%1 lost stock %2 at %3")
-              .arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
+              text: qsTr("%1 lost stock %2 at %3").arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
             }
             AppText {
-              text: qsTr("%6 punishes from %7, %8% damage")
-              .arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
+              text: qsTr("%6 punishes from %7, %8% damage").arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
             }
           }
         }
 
-        StockIcon {
+        Column {
           anchors.centerIn: parent
 
-          charId: replayModel && isP1 ? replayModel.char1 : replayModel.char2 || 0
-          skinId: replayModel && isP1 ? replayModel.skin1 : replayModel.skin2 || 0
+          StockIcon {
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            charId: replayModel && isP1 ? replayModel.char1 : replayModel.char2 || 0
+            skinId: replayModel && isP1 ? replayModel.skin1 : replayModel.skin2 || 0
+          }
+
+          AppText {
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            font.pixelSize: sp(10)
+            style: Text.Outline
+            styleColor: "black"
+            color: dataModel.damageColor(modelData.totalDamage)
+            text: Math.floor(modelData.endPercent) + "%"
+          }
         }
       }
     }

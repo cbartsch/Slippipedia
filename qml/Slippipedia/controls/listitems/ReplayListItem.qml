@@ -19,7 +19,9 @@ AppListItem {
                                       toolBtnFolder.hovered || toolBtnOpen.hovered ||
                                       toolBtnSetup.hovered || toolBtnFavorite.hovered
 
-  readonly property var stockSummary: showOptions ? dataModel.globalDataBase.getStockSummary(replayId, [port1, port2]) : null
+  readonly property var stockSummary: showOptions
+                                      ? dataModel.globalDataBase.getStockSummary(replayModel.replayId, [replayModel.port1, replayModel.port2])
+                                      : null
 
   readonly property bool useShortStageName: replayListItem.width < dp(580 + (isFavorite ? 48 : 0))
   readonly property string stageNameProperty: useShortStageName ? "shortName" : "name"
