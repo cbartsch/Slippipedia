@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import Qt5Compat.GraphicalEffects
-import Felgo 3.0
+import Felgo 4.0
 
 import Slippipedia 1.0
 

@@ -1,6 +1,6 @@
 pragma Singleton
 import QtQuick 2.0
-import Felgo 3.0
+import Felgo 4.0
 
 Item {
 

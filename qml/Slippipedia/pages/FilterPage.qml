@@ -1,7 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Controls 2.12
 
-import Felgo 3.0
+import Felgo 4.0
 
 import Slippipedia 1.0
 

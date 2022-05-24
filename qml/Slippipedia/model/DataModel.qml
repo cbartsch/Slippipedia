@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-import Felgo 3.0
+import Felgo 4.0
 
 // note: must be below Felgo import
 import Qt.labs.settings 1.1
