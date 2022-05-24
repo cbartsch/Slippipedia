@@ -66,6 +66,7 @@ BaseNavigationStack 1.0     controls/generic/BaseNavigationStack.qml
 BasePage 1.0                controls/generic/BasePage.qml
 CustomTabIcon 1.0           controls/generic/CustomTabIcon.qml
 CustomRadio 1.0             controls/generic/CustomRadio.qml
+CustomToolTip 1.0           controls/generic/CustomToolTip.qml
 DateRangeRow 1.0            controls/generic/DateRangeRow.qml
 GameCountRow 1.0            controls/generic/GameCountRow.qml
 OptionButton 1.0            controls/generic/OptionButton.qml

@@ -74,5 +74,7 @@
         <file>qml/Slippipedia/controls/generic/AppToolText.qml</file>
         <file>qml/Slippipedia/model/Constants.qml</file>
         <file>qml/Slippipedia/controls/generic/OptionButton.qml</file>
+        <file>assets/img/gamecube.png</file>
+        <file>qml/Slippipedia/controls/generic/CustomToolTip.qml</file>
     </qresource>
 </RCC>
