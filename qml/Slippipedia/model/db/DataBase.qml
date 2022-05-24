@@ -664,6 +664,7 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
             "select
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
 r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
+ p.s_startStocks startStocks,
  p.slippiName name1,  p.cssTag tag1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
 (case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
@@ -831,6 +832,35 @@ order by count desc").arg(playerCol).arg(getFilterCondition(true))
         killRate: totalKills / totalCount,
         openingMoves: result
       }
+    }, [])
+  }
+
+  function getStockSummary(gameId, ports) {
+    log("get stock summary", gameId, ports)
+
+    return readFromDb(function(tx) {
+      var select = "select
+count(*) numPunishes, sum(damage) totalDamage, stocks stock, port,
+max(didKill) killed, max(endFrame) endFrame, max(endPercent) endPercent
+from punishes
+where replayId = ? and port = ?
+group by stocks"
+
+      // union the select twice and then order by stocks to have a "chronological" summary of the game's stocks
+      var sql = qsTr("%1 union %2 order by endFrame").arg(select).arg(select)
+
+      var params = [gameId, ports[0], gameId, ports[1]]
+
+      var results = tx.executeSql(sql, params)
+
+      var result = []
+
+      for (var i = 0; i < results.rows.length; i++) {
+        var item = results.rows.item(i)
+        result[i] = item
+      }
+
+      return result
     }, [])
   }
 

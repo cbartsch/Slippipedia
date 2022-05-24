@@ -15,9 +15,11 @@ AppListItem {
 
   property bool showPercent: showOptions
 
-  readonly property bool showOptions: mouseArea.containsMouse ||
+  readonly property bool showOptions: mouseArea.containsMouse || icons.stockHovered ||
                                       toolBtnFolder.hovered || toolBtnOpen.hovered ||
                                       toolBtnSetup.hovered || toolBtnFavorite.hovered
+
+  readonly property var stockSummary: showOptions ? dataModel.globalDataBase.getStockSummary(replayId, [port1, port2]) : null
 
   readonly property bool useShortStageName: replayListItem.width < dp(580 + (isFavorite ? 48 : 0))
   readonly property string stageNameProperty: useShortStageName ? "shortName" : "name"
@@ -30,13 +32,16 @@ AppListItem {
 
   backgroundColor: Theme.backgroundColor
 
-  text: showOptions ? fileUtils.cropPathAndKeepFilename(replayModel.filePath) : stageName
+  text: showOptions ? ""/*fileUtils.cropPathAndKeepFilename(replayModel.filePath)*/ : stageName
 
   Binding { target: textItem; property: "maximumLineCount"; value: 1 }
 
   leftItem: ReplayIcons {
-    replayModel: replayListItem.replayModel
+    id: icons
     anchors.verticalCenter: parent.verticalCenter
+
+    replayModel: replayListItem.replayModel
+    stockSummary: replayListItem.stockSummary
 
     showPercent: replayListItem.showPercent
 

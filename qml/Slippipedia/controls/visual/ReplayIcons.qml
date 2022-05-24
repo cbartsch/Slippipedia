@@ -10,10 +10,13 @@ Item {
   implicitHeight: content.height
 
   property var replayModel: ({})
+  property var stockSummary: []
 
   property bool showPercent: false
 
   property real stockIconColumnWidth: dp(90)
+
+  property bool stockHovered: false
 
   Row {
     id: content
@@ -120,18 +123,6 @@ Item {
       height: 1
     }
 
-    StageIcon {
-      anchors.verticalCenter: parent.verticalCenter
-      stageId: replayModel && replayModel.stageId || 0
-      width: dp(62 * 0.8)
-      height: dp(54 * 0.8)
-    }
-
-    Item {
-      width: dp(Theme.contentPadding)
-      height: 1
-    }
-
     Item {
       anchors.verticalCenter: parent.verticalCenter
       width: dp(32)
@@ -181,6 +172,79 @@ Item {
       width: dp(40)
 
       text: dataModel.formatTime(replayModel.duration)
+    }
+
+    Item {
+      width: dp(Theme.contentPadding)
+      height: 1
+    }
+
+    StageIcon {
+      anchors.verticalCenter: parent.verticalCenter
+      stageId: replayModel && replayModel.stageId || 0
+      width: dp(62 * 0.8)
+      height: dp(54 * 0.8)
+    }
+
+    Item {
+      visible: !!stockSummary
+      width: dp(Theme.contentPadding)
+      height: 1
+    }
+
+    Repeater {
+      model: stockSummary
+
+      Item {
+        // if it's P1's punish, P2 lost the stock
+        readonly property bool isP1: modelData.port !== replayModel.port1
+
+        readonly property string pText: "P" + ((isP1 ? replayModel.port1 : replayModel.port2) + 1)
+        readonly property string oText: "P" + ((isP1 ? replayModel.port2 : replayModel.port1) + 1)
+
+        height: parent.height
+        width: dp(24)
+        anchors.verticalCenter: parent.verticalCenter
+
+        visible: modelData.killed
+
+        RippleMouseArea {
+          id: stockMouse
+
+          anchors.fill: parent
+          onPressed: mouse => mouse.accepted = false
+
+          hoverEffectEnabled: true
+          backgroundColor: Theme.listItem.selectedBackgroundColor
+          fillColor: backgroundColor
+          opacity: 0.5
+
+          onEntered: stockHovered = true
+          onExited: stockHovered = false
+        }
+
+        CustomToolTip {
+          visible: stockMouse.containsMouse
+
+          contentItem: Column {
+            AppText {
+              text: qsTr("%1 lost stock %2 at %3")
+              .arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
+            }
+            AppText {
+              text: qsTr("%6 punishes from %7, %8% damage")
+              .arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
+            }
+          }
+        }
+
+        StockIcon {
+          anchors.centerIn: parent
+
+          charId: replayModel && isP1 ? replayModel.char1 : replayModel.char2 || 0
+          skinId: replayModel && isP1 ? replayModel.skin1 : replayModel.skin2 || 0
+        }
+      }
     }
   }
 }
