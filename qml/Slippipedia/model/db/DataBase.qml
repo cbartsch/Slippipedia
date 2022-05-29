@@ -841,7 +841,9 @@ order by count desc").arg(playerCol).arg(getFilterCondition(true))
     return readFromDb(function(tx) {
       var select = "select
 count(*) numPunishes, sum(damage) totalDamage, stocks stock, port,
-max(didKill) killed, max(endFrame) endFrame, max(endPercent) endPercent
+max(didKill) killed,
+min(startFrame) startFrame,     max(endFrame) endFrame,
+min(startPercent) startPercent, max(endPercent) endPercent
 from punishes
 where replayId = ? and port = ?
 group by stocks"
