@@ -251,7 +251,7 @@ Column {
 
             CustomToolTip {
               text: moveNameFull
-              visible: mouseArea.containsMouse
+              shown: mouseArea.containsMouse
             }
           }
 
@@ -343,7 +343,7 @@ Column {
 
             CustomToolTip {
               text: moveNameFull
-              visible: mouseArea.containsMouse
+              shown: mouseArea.containsMouse
             }
           }
 

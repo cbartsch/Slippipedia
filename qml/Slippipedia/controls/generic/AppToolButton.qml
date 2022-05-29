@@ -31,7 +31,7 @@ ToolButton {
   hoverEnabled: true
 
   CustomToolTip {
-    visible: toolTipText && hovered
+    shown: toolTipText && hovered
     text: toolTipText
   }
 

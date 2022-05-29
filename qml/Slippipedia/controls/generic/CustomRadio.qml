@@ -11,7 +11,7 @@ AppRadio {
   rightPadding: dp(Theme.contentPadding)
 
   CustomToolTip {
-    visible: toolTipText && (hovered || mouseArea.containsMouse)
+    shown: toolTipText && (hovered || mouseArea.containsMouse)
     text: toolTipText
   }
 

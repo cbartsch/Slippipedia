@@ -12,7 +12,7 @@ AppButton {
   property string toolTipText: ""
 
   CustomToolTip {
-    visible: toolTipText && hovered
+    shown: toolTipText && hovered
     text: toolTipText
   }
 

@@ -44,7 +44,7 @@ Grid {
         }
 
         CustomToolTip {
-          visible: mouseArea.containsMouse
+          shown: mouseArea.containsMouse
           text: qsTr("List all %1 games %2 %3").arg(modelData.count).arg(slotText).arg(modelData.text)
         }
       }

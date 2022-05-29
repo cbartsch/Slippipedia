@@ -46,7 +46,7 @@ Row {
     }
 
     CustomToolTip {
-      visible: ripple2.containsMouse && !!text
+      shown: ripple2.containsMouse && !!text
       text: timeText + " earlier"
     }
   }
@@ -76,7 +76,7 @@ Row {
     }
 
     CustomToolTip {
-      visible: ripple3.containsMouse && !!text
+      shown: ripple3.containsMouse && !!text
       text: timeText + " later"
     }
   }

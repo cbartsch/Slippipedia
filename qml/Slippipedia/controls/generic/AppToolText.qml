@@ -16,7 +16,7 @@ AppText {
 
   CustomToolTip {
     parent: customText
-    visible: mouseArea.containsMouse && !!text
+    shown: mouseArea.containsMouse && !!text
     text: customText.toolTipText
   }
 }

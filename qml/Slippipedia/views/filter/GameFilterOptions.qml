@@ -280,7 +280,7 @@ Column {
           }
 
           CustomToolTip {
-            visible: platformMouse.containsMouse
+            shown: platformMouse.containsMouse
             text: dataModel.platformDescription(modelData)
           }
         }
