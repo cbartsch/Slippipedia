@@ -411,7 +411,39 @@ Item {
     }
 
     // start > Slippi Dolphin -i punish.json
-    Utils.startCommand(desktopDolphinPath, options)
+    Utils.startCommand(desktopDolphinPath, options, _saveFrameDump)
+  }
+
+  function _saveFrameDump(dolphinPath) {
+    console.log("_saveFrameDump", desktopDolphinPath)
+
+    var dumpFolder = qsTr("%1/playback/User/Dump").arg(desktopAppFolder)
+
+    var videoPath = qsTr("%1/Frames/framedump1.avi").arg(dumpFolder)
+    var audioDspPath = qsTr("%1/Audio/dspdump.wav").arg(dumpFolder)
+    var audioDtkPath = qsTr("%1/Audio/dtkdump.wav").arg(dumpFolder)
+
+    var outputPath = fileUtils.storageLocation(FileUtils.DesktopLocation, "out.mp4")
+
+    var bitrate = 6000
+    var filter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
+
+ //-i %1 -i %2 -i %3 -c:v libx264 -b:v %4k -filter:v \"%5\" %6
+
+    console.log("start ffmpeg")
+
+    Utils.startCommand("ffmpeg", [
+                         "-y", // always overwrite output file
+                         "-i", videoPath,
+                         "-i", audioDspPath,
+                         "-i", audioDtkPath,
+                         "-c:v", "libx264",
+                         "-b:v", bitrate + "k",
+                         "-filter:v", filter,
+                         outputPath
+                       ])
+
+    console.log("started ffmpeg")
   }
 
   function hasFlag(flagMask, flagId) {
