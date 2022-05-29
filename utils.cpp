@@ -44,11 +44,29 @@ bool Utils::exploreToFile(const QString &filePath)
 }
 #endif
 
-void Utils::startCommand(const QString &command, const QStringList &arguments)
+void Utils::startCommand(const QString &command, const QStringList &arguments, const QJSValue &callback)
 {
   QProcess *p = new QProcess(this);
 
   p->start(command, arguments);
+
+  connect(p, &QProcess::readyReadStandardOutput, this, [p]() {
+    qDebug().noquote() << p->readAllStandardOutput();
+  });
+
+  connect(p, &QProcess::readyReadStandardError, this, [p]() {
+    qWarning().noquote() << p->readAllStandardError();
+  });
+
+  connect(p, &QProcess::finished, this, [p, callback, command]() {
+    qDebug() << "Process" << command << "finished";
+
+    if(callback.isCallable()) {
+      callback.call({ command });
+    }
+
+    delete p;
+  });
 }
 
 QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilters, bool recursive)
