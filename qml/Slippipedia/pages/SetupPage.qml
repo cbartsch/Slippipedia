@@ -110,10 +110,10 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
     SimpleRow {
       text: qsTr("Analyzed %1/%2 replays%3%4")
-        .arg(dataModel.numFilesSucceeded)
-        .arg(dataModel.numFilesProcessing)
-        .arg(dataModel.numFilesFailed > 0 ? " (" + dataModel.numFilesFailed + " failed)" : "")
-        .arg(dataModel.isProcessing? "..." : ".")
+      .arg(dataModel.numFilesSucceeded)
+      .arg(dataModel.numFilesProcessing)
+      .arg(dataModel.numFilesFailed > 0 ? " (" + dataModel.numFilesFailed + " failed)" : "")
+      .arg(dataModel.isProcessing? "..." : ".")
 
       textItem.color: Theme.textColor
 
@@ -178,6 +178,15 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
           color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
           icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
         }
+      }
+
+      rightItem: AppToolButton {
+        iconType: IconType.folderopen
+        toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
+        anchors.verticalCenter: parent.verticalCenter
+
+        visible: dataModel.hasDesktopApp
+        onClicked: Utils.exploreToFile(dataModel.desktopAppFolder)
       }
 
       enabled: false
