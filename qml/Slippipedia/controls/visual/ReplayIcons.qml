@@ -156,7 +156,7 @@ Item {
       }
 
       CustomToolTip {
-        visible: platformMouse.containsMouse
+        shown: platformMouse.containsMouse
         text: qsTr("Played on %1, Slippi version %2").arg(dataModel.platformDescription(replayModel.platform)).arg(replayModel.slippiVersion || "Unknown")
       }
     }
@@ -196,11 +196,17 @@ Item {
       model: stockSummary
 
       Item {
+        id: stockInfo
+
         // if it's P1's punish, P2 lost the stock
         readonly property bool isP1: modelData.port !== replayModel.port1
 
         readonly property string pText: "P" + ((isP1 ? replayModel.port1 : replayModel.port2) + 1)
         readonly property string oText: "P" + ((isP1 ? replayModel.port2 : replayModel.port1) + 1)
+
+        readonly property bool hovered: stockMouse.containsMouse || toolTipMouse.containsMouse || toolBtnOpen.hovered
+
+        onHoveredChanged: stockHovered = hovered
 
         height: parent.height
         width: dp(32)
@@ -218,20 +224,45 @@ Item {
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor
           opacity: 0.5
-
-          onEntered: stockHovered = true
-          onExited: stockHovered = false
         }
 
         CustomToolTip {
-          visible: stockMouse.containsMouse
+          id: stockToolTip
+          shown: stockInfo.hovered
 
-          contentItem: Column {
-            AppText {
-              text: qsTr("%1 lost stock %2 at %3").arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
+          MouseArea {
+            id: toolTipMouse
+            hoverEnabled: true
+            anchors.fill: parent
+            parent: stockToolTip.background
+            anchors.margins: -dp(3)
+          }
+
+          contentItem: Row {
+            spacing: dp(Theme.contentPadding)
+
+            Column {
+              AppText {
+                text: qsTr("%1 lost stock %2 at %3").arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
+              }
+              AppText {
+                text: qsTr("%6 punishes from %7, %8% damage").arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
+              }
             }
-            AppText {
-              text: qsTr("%6 punishes from %7, %8% damage").arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
+
+            AppToolButton {
+              id: toolBtnOpen
+              iconType: IconType.play
+              toolTipText: qsTr("Replay stock (%1 - %2)").arg(dataModel.formatTime(modelData.startFrame)).arg(dataModel.formatTime(modelData.endFrame))
+              height: width
+              anchors.verticalCenter: parent.verticalCenter
+
+              visible: dataModel.hasDesktopApp
+              onClicked: dataModel.replayPunishes([{
+                                                     startFrame: modelData.startFrame,
+                                                     endFrame: modelData.endFrame,
+                                                     filePath: replayModel.filePath
+                                                  }])
             }
           }
         }
