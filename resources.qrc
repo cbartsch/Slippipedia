@@ -76,5 +76,6 @@
         <file>qml/Slippipedia/controls/generic/OptionButton.qml</file>
         <file>assets/img/gamecube.png</file>
         <file>qml/Slippipedia/controls/generic/CustomToolTip.qml</file>
+        <file>assets/img/broadcast.svg</file>
     </qresource>
 </RCC>
