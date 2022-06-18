@@ -37,10 +37,33 @@ Item {
   property string meleeIsoPath: ""
   readonly property bool hasMeleeIso: !!meleeIsoPath && fileUtils.existsFile(meleeIsoPath)
 
+  property bool videoOutputEnabled: false
+  property bool autoDeleteFrameDumps: true
+
+  property string videoOutputPath: ""
+  readonly property string videoOutputPathDefault: fileUtils.storageLocation(FileUtils.MoviesLocation, "/Replays")
+  readonly property bool hasVideoOutputPath: fileUtils.existsFile(videoOutputPath)
+
+  property int videoBitrate: 5000
+  property string videoCodec: "libx264"
+  property real punishPaddingFrames: 60 * 2 // 2 seconds
+
+  property var createdVideos: []
+
   Component.onCompleted: {
     if(!replayFolder) replayFolder = replayFolderDefault
     if(!desktopAppFolder) desktopAppFolder = desktopAppFolderDefault
+    if(!videoOutputPath) videoOutputPath = videoOutputPathDefault
     // no default path for melee iso
+
+    ensureVideoOutputPath()
+  }
+
+  function ensureVideoOutputPath() {
+    if(!hasVideoOutputPath) {
+      Utils.mkdirs(videoOutputPath)
+      videoOutputPathChanged()
+    }
   }
 
   // analyze progress
@@ -49,8 +72,10 @@ Item {
   property int numFilesFailed: 0
   property int numFilesProcessing: 0
   readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
-  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
+  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing || numDumpsProcessing > 0
   readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
+
+  property int numDumpsProcessing: 0
 
   // filter settings
   property alias filterSettings: filterSettings
@@ -122,6 +147,14 @@ Item {
     property alias replayFolder: dataModel.replayFolder
     property alias desktopAppFolder: dataModel.desktopAppFolder
     property alias meleeIsoPath: dataModel.meleeIsoPath
+    property alias videoOutputPath: dataModel.meleeIsoPath
+
+    property alias videoOutputEnabled: dataModel.videoOutputEnabled
+    property alias autoDeleteFrameDumps: dataModel.autoDeleteFrameDumps
+
+    property alias videoBitrate: dataModel.videoBitrate
+    property alias videoCodec: dataModel.videoCodec
+    property alias punishPaddingFrames: dataModel.punishPaddingFrames
   }
 
   SlippiParser {
@@ -276,8 +309,8 @@ Item {
     return string ? string[0].toUpperCase() + string.substring(1) : ""
   }
 
-  function formatDate(date) {
-    return date && date.toLocaleString(Qt.locale("en_GB"), "dd/MM/yyyy HH:mm") || ""
+  function formatDate(date, format="dd/MM/yyyy HH:mm") {
+    return date && date.toLocaleString(Qt.locale("en_GB"), format) || ""
   }
 
   function playersText(replay) {
@@ -376,13 +409,12 @@ Item {
     }
 
     var startFrames = 60 * 5
-    var paddingFrames = 60 * 2 // 2 seconds
 
     // convert to playback dolphin input format:
     var punishQueue = punishList.map(pu => ({
                                          path: pu.filePath,
-                                         startFrame: pu.startFrame - paddingFrames - startFrames,
-                                         endFrame: pu.endFrame + paddingFrames
+                                         startFrame: pu.startFrame - punishPaddingFrames - startFrames,
+                                         endFrame: pu.endFrame + punishPaddingFrames
                                        }))
 
     var slippiInput = {
@@ -411,37 +443,101 @@ Item {
     }
 
     // start > Slippi Dolphin -i punish.json
-    Utils.startCommand(desktopDolphinPath, options, _saveFrameDump)
+    Utils.startCommand(desktopDolphinPath, options, _saveFrameDump, function(msg) {
+      console.log("[Playback Dolphin]", msg)
+    })
   }
 
   function _saveFrameDump(dolphinPath) {
+    if(!videoOutputEnabled) {
+      return
+    }
+
     console.log("_saveFrameDump", desktopDolphinPath)
 
     var dumpFolder = qsTr("%1/playback/User/Dump").arg(desktopAppFolder)
 
-    var videoPath = qsTr("%1/Frames/framedump1.avi").arg(dumpFolder)
+    var videoPath = qsTr("%1/Frames/").arg(dumpFolder)
     var audioDspPath = qsTr("%1/Audio/dspdump.wav").arg(dumpFolder)
     var audioDtkPath = qsTr("%1/Audio/dtkdump.wav").arg(dumpFolder)
 
-    var outputPath = fileUtils.storageLocation(FileUtils.DesktopLocation, "out.mp4")
+    // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
+    var videoFiles = fileUtils.listFiles(videoPath, "*.avi")
+    var videoPaths = videoFiles.map(f => videoPath + f)
+    var videoInput = "concat:" + videoPaths.join("|")
 
-    var bitrate = 6000
+    if(videoFiles.length === 0) {
+      console.log("No frame dumps from Dolphin detected.")
+      return
+    }
+
+    var outputName = qsTr("Replay %1.mp4").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
+    var outputPath = videoOutputPath + "/" + outputName
+
+    // use padding to even size
     var filter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
 
- //-i %1 -i %2 -i %3 -c:v libx264 -b:v %4k -filter:v \"%5\" %6
+    console.log("start ffmpeg", videoFiles)
 
-    console.log("start ffmpeg")
+    var videoIndex = createdVideos.length
+
+    createdVideos.push({
+                         fileName: outputName,
+                         filePath: outputPath,
+                         folder: videoOutputPath,
+                         progress: 0
+                       })
+    createdVideosChanged()
 
     Utils.startCommand("ffmpeg", [
                          "-y", // always overwrite output file
-                         "-i", videoPath,
+                         "-i", videoInput,
                          "-i", audioDspPath,
                          "-i", audioDtkPath,
-                         "-c:v", "libx264",
-                         "-b:v", bitrate + "k",
+                         "-c:v", videoCodec,
+                         "-b:v", videoBitrate + "k",
                          "-filter:v", filter,
                          outputPath
-                       ])
+                       ], function() {
+                         console.log("Replay saved. Clear", videoPaths.length, "video dumps + audio dumps.")
+
+                         numDumpsProcessing--
+
+                         createdVideos[videoIndex].progress = 1
+                         createdVideosChanged()
+
+                         if(autoDeleteFrameDumps) {
+                           // cleanup dolphin dump
+                           videoPaths.forEach(path => fileUtils.removeFile(path))
+                           fileUtils.removeFile(audioDspPath)
+                           fileUtils.removeFile(audioDtkPath)
+                         }
+                       }, function(msg) {
+                          // find out length of input audio file from the log output:
+                          var match = msg.match(/Input #1, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
+                          if(match) {
+                            console.log("duration input:", match[1], match[2], match[3], match[4])
+
+                            var seconds = parseInt(match[4]) / 100 + parseInt(match[3]) + parseInt(match[2]) * 60 + parseInt(match[1]) * 60 * 60
+                            var frames = seconds * 60
+
+                            console.log("num frames is", seconds, frames, match)
+                            createdVideos[videoIndex].numFrames = frames
+                          }
+
+                          // find out current encoded frame from the log output:
+                          match = msg.match(/frame= *([0-9]+) /)
+                          if(match) {
+                            var currentFrame = match[1]
+                            createdVideos[videoIndex].progress = currentFrame / createdVideos[videoIndex].numFrames
+                            createdVideosChanged()
+                          }
+
+                          // show output on console / log file:
+                          console.log("[ffmpeg]", msg)
+                       })
+
+    numDumpsProcessing++
 
     console.log("started ffmpeg")
   }

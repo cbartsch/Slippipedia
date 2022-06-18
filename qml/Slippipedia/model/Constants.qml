@@ -18,4 +18,7 @@ Item {
   readonly property string slippiUrl: "https://slippi.gg"
   readonly property string slippcUrl: "https://github.com/pcrain/slippc"
   readonly property string felgoUrl: "https://felgo.com"
+
+  readonly property string ffmpegUrl: "https://ffmpeg.org/download.html"
+  readonly property url desktopAppDownloadUrl: "https://slippi.gg/downloads"
 }

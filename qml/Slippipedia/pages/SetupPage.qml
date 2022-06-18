@@ -142,7 +142,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
     AppListItem {
       text: "Click to select Slippi Desktop App folder..."
-      detailText: "Used to play replays & combos."
+      detailText: "Used to play replays & punishes."
 
       onSelected: fileDialogDesktop.open()
 
@@ -186,17 +186,16 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
         anchors.verticalCenter: parent.verticalCenter
 
         visible: dataModel.hasDesktopApp
-        onClicked: Utils.exploreToFile(dataModel.desktopAppFolder)
+        onClicked: console.log("clk"), console.log("explore to", dataModel.desktopAppFolder), Utils.exploreToFile(dataModel.desktopAppFolder)
       }
 
-      enabled: false
+      mouseArea.hoverEnabled: false
+      mouseArea.cursorShape: Qt.ArrowCursor
       backgroundColor: Theme.backgroundColor
     }
 
     AppListItem {
       visible: !dataModel.hasDesktopApp
-
-      property url desktopAppDownloadUrl: "https://slippi.gg/downloads"
 
       leftItem: Item {
         height: dp(24)
@@ -219,9 +218,9 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       }
 
       text: "Download Desktop App (Launcher)"
-      detailText: desktopAppDownloadUrl
+      detailText: Constants.desktopAppDownloadUrl
 
-      onSelected: nativeUtils.openUrl(desktopAppDownloadUrl)
+      onSelected: nativeUtils.openUrl(Constants.desktopAppDownloadUrl)
     }
 
     SimpleSection {
@@ -275,6 +274,245 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       enabled: false
       backgroundColor: Theme.backgroundColor
     }
+
+    SimpleSection {
+      title: "Video output"
+    }
+
+    AppListItem {
+      id: videoInfoItem
+      text: "Slippipedia can automatically save playback as video files."
+      detailTextItem: AppText {
+        text: "To use this, make sure to enable 'Dump Frames' and 'Dump Audio' under the 'Movie' menu in the Replay Dolphin (not the normal Netplay Dolphin).
+
+Slippipedia needs ffmpeg installed to create the video files. Make sure the ``ffmpeg`` executable is in the path environment."
+
+        width: videoInfoItem.textItemAvailableWidth
+        textFormat: Text.MarkdownText
+        color: Theme.secondaryTextColor
+      }
+
+      mouseArea.hoverEnabled: false
+      mouseArea.cursorShape: Qt.ArrowCursor
+      backgroundColor: Theme.backgroundColor
+
+      rightItem: AppToolButton {
+        iconType: IconType.download
+        toolTipText: qsTr("Download ffmpeg from %1").arg(Constants.ffmpegUrl)
+
+        anchors.verticalCenter: parent.verticalCenter
+
+        onClicked: nativeUtils.openUrl(Constants.ffmpegUrl)
+      }
+    }
+
+    AppListItem {
+      text: "Save dolphin frame dumps"
+      detailText: dataModel.videoOutputEnabled
+                  ? "Frame dumps from Dolphin will be saved to the below folder after playing a replay or punish."
+                  : "Enable to save Dolphin frame dumps to the below folder after playing a replay or punish."
+
+      onSelected: dataModel.videoOutputEnabled = !dataModel.videoOutputEnabled
+
+      leftItem: Item {
+        height: dp(24)
+        width: height
+        anchors.verticalCenter: parent.verticalCenter
+
+        Icon {
+          anchors.centerIn: parent
+          size: dp(24)
+          color: dataModel.videoOutputEnabled ? Theme.tintColor : "red"
+          icon: dataModel.videoOutputEnabled ? IconType.check : IconType.times
+        }
+      }
+    }
+
+
+    AppListItem {
+      text: "Auto-delete original frame dumps"
+      detailText: dataModel.autoDeleteFrameDumps
+                  ? "Original frame dumps from Dolphin will automatically be deleted after saving a replay."
+                  : "Original frame dumps will remain in the Dolphin/User folder after saving a replay."
+
+      onSelected: dataModel.autoDeleteFrameDumps = !dataModel.autoDeleteFrameDumps
+
+      leftItem: Item {
+        height: dp(24)
+        width: height
+        anchors.verticalCenter: parent.verticalCenter
+
+        Icon {
+          anchors.centerIn: parent
+          size: dp(24)
+          color: dataModel.autoDeleteFrameDumps ? Theme.tintColor : "red"
+          icon: dataModel.autoDeleteFrameDumps ? IconType.check : IconType.times
+        }
+      }
+    }
+
+    AppListItem {
+      text: "Replay videos saved to: (click to select new folder)"
+      detailText: dataModel.videoOutputPath
+
+      rightItem: Row {
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: dp(Theme.contentPadding)
+
+        AppToolButton {
+          iconType: IconType.trash
+          toolTipText: qsTr("Reset Video output folder to default: %1").arg(dataModel.videoOutputPathDefault)
+          anchors.verticalCenter: parent.verticalCenter
+
+          onClicked: dataModel.videoOutputPath = dataModel.videoOutputPathDefault
+        }
+
+        AppToolButton {
+          iconType: dataModel.hasVideoOutputPath ? IconType.folderopen : IconType.times
+          toolTipText: dataModel.hasVideoOutputPath
+                       ? Qt.platform.os === "osx"
+                         ? "Show in finder"
+                         : "Show in file explorer"
+          : "Path does not exist."
+
+          enabled: dataModel.hasVideoOutputPath
+
+          onClicked: Utils.exploreToFile(dataModel.videoOutputPath)
+        }
+      }
+
+      onSelected: fileDialogVideoOputput.open()
+
+      FolderDialog {
+        id: fileDialogVideoOputput
+        title: "Select Video output folder"
+        currentFolder: filenameToUri(dataModel.videoOutputPath)
+
+        onAccepted: dataModel.videoOutputPath = uriToFilename(selectedFolder)
+      }
+    }
+
+    SimpleSection {
+      title: "Punish & video settings"
+    }
+
+    TextInputField {
+      labelWidth: dp(200)
+
+      text: dataModel.punishPaddingFrames + ""
+
+      labelText: "Padding frames for punish:"
+      placeholderText: "Enter frames"
+
+      showOptions: false
+
+      textInput.inputMethodHints: Qt.ImhDigitsOnly
+      divider.visible: false
+
+      textInput.validator: IntValidator { bottom: 0; top: 6000 }
+
+      validationError: !textInput.acceptableInput
+      validationText: "Enter bitrate in range 0 - 6000"
+
+      onTextChanged: {
+        if(textInput.acceptableInput) {
+          dataModel.punishPaddingFrames = parseInt(text)
+        }
+      }
+    }
+
+    TextInputField {
+      labelWidth: dp(200)
+
+      text: dataModel.videoBitrate + ""
+
+      labelText: "Video bitrate (kbps):"
+      placeholderText: "Enter bitrate"
+
+      showOptions: false
+
+      textInput.inputMethodHints: Qt.ImhDigitsOnly
+      divider.visible: false
+
+      textInput.validator: IntValidator { bottom: 1000; top: 50000 }
+
+      validationError: !textInput.acceptableInput
+      validationText: "Enter bitrate in range 1000 - 50000"
+
+      onTextChanged: {
+        if(textInput.acceptableInput) {
+          dataModel.videoBitrate = parseInt(text)
+        }
+      }
+    }
+
+    TextInputField {
+      labelWidth: dp(200)
+
+      text: dataModel.videoCodec
+
+      labelText: "Video codec name:"
+      placeholderText: "Enter codec name"
+
+      showOptions: false
+
+      divider.visible: false
+
+      onTextChanged: {
+        if(textInput.acceptableInput) {
+          dataModel.videoCodec = text
+        }
+      }
+    }
+
+    SimpleSection {
+      title: "Created videos"
+      visible: dataModel.createdVideos.length > 0
+    }
+
+    Repeater {
+      model: dataModel.createdVideos
+
+      AppListItem {
+        text: modelData.progress < 1 ? qsTr("Currently encoding... (%1)").arg(dataModel.formatPercentage(modelData.progress)) : ""
+        detailText: modelData.filePath
+
+        mouseArea.hoverEnabled: false
+        mouseArea.cursorShape: Qt.ArrowCursor
+        backgroundColor: Theme.backgroundColor
+
+        rightItem: Row {
+          anchors.verticalCenter: parent.verticalCenter
+          spacing: dp(Theme.contentPadding)
+
+          LoadingIcon {
+            visible: !fileUtils.existsFile(modelData.filePath)
+            width: dp(48)
+            height: dp(48)
+          }
+
+          AppToolButton {
+            iconType: IconType.play
+            toolTipText: "Open file"
+            anchors.verticalCenter: parent.verticalCenter
+
+            visible: fileUtils.existsFile(modelData.filePath)
+            onClicked: fileUtils.openFile(modelData.filePath)
+          }
+
+          AppToolButton {
+            iconType: IconType.folderopen
+            toolTipText: Qt.platform.os === "osx"
+                           ? "Show in finder"
+                           : "Show in file explorer"
+
+            visible: fileUtils.existsFile(modelData.filePath)
+            onClicked: Utils.exploreToFile(modelData.filePath)
+          }
+        }
+      }
+    }
+
   }
 
   function clearDb() {
