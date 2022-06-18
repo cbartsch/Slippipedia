@@ -22,7 +22,7 @@ ToolButton {
     anchors.fill: parent
     onPressed: mouse => mouse.accepted = false
 
-    hoverEffectEnabled: true
+    hoverEffectEnabled: enabled
     backgroundColor: Theme.listItem.selectedBackgroundColor
     fillColor: backgroundColor
     opacity: 0.5
