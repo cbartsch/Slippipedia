@@ -44,28 +44,49 @@ bool Utils::exploreToFile(const QString &filePath)
 }
 #endif
 
-void Utils::startCommand(const QString &command, const QStringList &arguments, const QJSValue &callback)
+void Utils::startCommand(const QString &command, const QStringList &arguments,
+                         const QJSValue &finishCallback, const QJSValue &logCallback)
 {
   QProcess *p = new QProcess(this);
 
   p->start(command, arguments);
 
-  connect(p, &QProcess::readyReadStandardOutput, this, [p]() {
-    qDebug().noquote() << p->readAllStandardOutput();
+  connect(p, &QProcess::readyReadStandardOutput, this, [p, logCallback]() {
+    if(logCallback.isCallable()) {
+      logCallback.call({ QString(p->readAllStandardError()) });
+    }
+    else {
+      qDebug().noquote() << p->readAllStandardError();
+    }
   });
 
-  connect(p, &QProcess::readyReadStandardError, this, [p]() {
-    qWarning().noquote() << p->readAllStandardError();
+  connect(p, &QProcess::readyReadStandardError, this, [p, logCallback]() {
+    if(logCallback.isCallable()) {
+      logCallback.call({ QString(p->readAllStandardError()) });
+    }
+    else {
+      qWarning().noquote() << p->readAllStandardError();
+    }
   });
 
-  connect(p, &QProcess::finished, this, [p, callback, command]() {
+  connect(p, &QProcess::finished, this, [p, finishCallback, command]() {
     qDebug() << "Process" << command << "finished";
 
-    if(callback.isCallable()) {
-      callback.call({ command });
+    if(finishCallback.isCallable()) {
+      finishCallback.call({ command });
     }
 
     delete p;
+  });
+
+  connect(p, &QProcess::errorOccurred, this, [p, finishCallback, command]() {
+    qWarning() << "Process" << command << "error:" << p->errorString();
+
+//    if(finishCallback.isCallable()) {
+//      finishCallback.call({ command });
+//    }
+
+//    delete p;
   });
 }
 
@@ -97,4 +118,11 @@ QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilte
   }
 
   return files;
+}
+
+bool Utils::mkdirs(const QString &path)
+{
+  QDir info(path);
+
+  return info.exists() || info.mkpath(path);
 }
