@@ -50,6 +50,10 @@ Item {
 
   property var createdVideos: []
 
+  property bool hasFfmpeg: false
+  property string ffmpegVersion: ""
+  property int ffmpegYear: 0
+
   Component.onCompleted: {
     if(!replayFolder) replayFolder = replayFolderDefault
     if(!desktopAppFolder) desktopAppFolder = desktopAppFolderDefault
@@ -57,6 +61,23 @@ Item {
     // no default path for melee iso
 
     ensureVideoOutputPath()
+
+    Utils.startCommand("ffmpeg", ["-version"], function(success, command, error) {
+      if(!success) {
+        console.warn("Could not find ffmpeg:", error)
+      }
+      hasFfmpeg = success
+    }, function(msg) {
+      var match = msg.match(/ffmpeg version (.*) Copyright.*[0-9]+-([0-9]+) /)
+      if(match) {
+        console.log("ffmpeg version:", match[1], "year:", match[2])
+        ffmpegVersion = match[1]
+        ffmpegYear = parseInt(match[2])
+      }
+      else {
+        console.log("ffmpeg log", msg, match)
+      }
+    })
   }
 
   function ensureVideoOutputPath() {
@@ -491,7 +512,9 @@ Item {
                          filePath: outputPath,
                          folder: videoOutputPath,
                          progress: 0,
-                         numFrames: 1
+                         numFrames: 1,
+                         success: false,
+                         errorMessage: ""
                        })
     createdVideosChanged()
 
@@ -509,12 +532,19 @@ Item {
 
     console.log("starting ffmpeg command: ffmpeg", ffmpegParams.map(p => "\"" + p + "\"").join(" "))
 
-    Utils.startCommand("ffmpeg", ffmpegParams, function() {
-                         console.log("Replay saved. Clear", videoPaths.length, "video dumps + audio dumps.")
+    Utils.startCommand("ffmpeg", ffmpegParams, function(success, command, errorMessage) {
+                         if(success) {
+                          console.log("Replay saved. Clear", videoPaths.length, "video dumps + audio dumps.")
+                         }
+                         else {
+                           console.warn("Could not save replay:", errorMessage)
+                         }
 
                          numDumpsProcessing--
 
                          createdVideos[videoIndex].progress = 1
+                         createdVideos[videoIndex].success = success
+                         createdVideos[videoIndex].errorMessage = errorMessage
                          createdVideosChanged()
 
                          if(autoDeleteFrameDumps) {
@@ -549,8 +579,6 @@ Item {
                        })
 
     numDumpsProcessing++
-
-    console.log("started ffmpeg")
   }
 
   function hasFlag(flagMask, flagId) {

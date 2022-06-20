@@ -205,6 +205,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
             height: width
             source: "../../../assets/img/slippi.svg"
             fillMode: Image.PreserveAspectFit
+            mipmap: true
           }
         }
       }
@@ -302,14 +303,40 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
     AppListItem {
       id: videoInfoItem
       text: "Slippipedia can automatically save playback as video files."
-      detailTextItem: AppText {
-        text: "To use this, make sure to enable 'Dump Frames' and 'Dump Audio' under the 'Movie' menu in the Replay Dolphin (not the normal Netplay Dolphin).
+      detailText: "To use this, make sure to enable 'Dump Frames' and 'Dump Audio' under the 'Movie' menu in the Replay Dolphin (not the normal Netplay Dolphin)."
 
-Slippipedia needs ffmpeg installed to create the video files. Make sure the ``ffmpeg`` executable is in the path environment."
+      mouseArea.hoverEnabled: false
+      mouseArea.cursorShape: Qt.ArrowCursor
+      backgroundColor: Theme.backgroundColor
 
-        width: videoInfoItem.textItemAvailableWidth
-        textFormat: Text.MarkdownText
-        color: Theme.secondaryTextColor
+      rightItem: AppToolButton {
+        iconItem.visible: false
+        toolTipText: "Configure playback Dolphin"
+
+        visible: fileUtils.existsFile(dataModel.desktopDolphinPath)
+        onClicked: Utils.startCommand(dataModel.desktopDolphinPath, [])
+
+        AppImage {
+          anchors.centerIn: parent
+          width: parent.iconItem.size
+          height: width
+          source: "../../../assets/img/slippi.svg"
+          fillMode: Image.PreserveAspectFit
+          mipmap: true
+        }
+      }
+    }
+
+    AppListItem {
+      text: "ffmpeg not found."
+      detailText: "Slippipedia needs ffmpeg installed to create video files from replays. Make sure the ffmpeg executable is in the path environment."
+      visible: !dataModel.hasFfmpeg
+
+      leftItem: Icon {
+        icon: IconType.warning
+        color: "yellow"
+        anchors.verticalCenter: parent.verticalCenter
+        size: dp(24)
       }
 
       mouseArea.hoverEnabled: false
@@ -324,6 +351,23 @@ Slippipedia needs ffmpeg installed to create the video files. Make sure the ``ff
 
         onClicked: nativeUtils.openUrl(Constants.ffmpegUrl)
       }
+    }
+
+    AppListItem {
+      text: "ffmpeg found (" + dataModel.ffmpegYear + ")"
+      detailText: "Detected version: " + dataModel.ffmpegVersion
+      visible: dataModel.hasFfmpeg
+
+      leftItem: Icon {
+        icon: IconType.check
+        color: Theme.tintColor
+        anchors.verticalCenter: parent.verticalCenter
+        size: dp(24)
+      }
+
+      mouseArea.hoverEnabled: false
+      mouseArea.cursorShape: Qt.ArrowCursor
+      backgroundColor: Theme.backgroundColor
     }
 
     AppListItem {
@@ -347,7 +391,6 @@ Slippipedia needs ffmpeg installed to create the video files. Make sure the ``ff
         }
       }
     }
-
 
     AppListItem {
       text: "Auto-delete original frame dumps"
@@ -494,22 +537,28 @@ Slippipedia needs ffmpeg installed to create the video files. Make sure the ``ff
       model: dataModel.createdVideos
 
       AppListItem {
-        text: modelData.progress < 1 ? qsTr("Currently encoding... (%1)").arg(dataModel.formatPercentage(modelData.progress)) : ""
+        text: modelData.success
+              ? "Video successfully saved."
+              : modelData.progress < 1
+                ? qsTr("Currently encoding... (%1)").arg(dataModel.formatPercentage(modelData.progress))
+                : ("Could not save video: " + modelData.errorMessage)
         detailText: modelData.filePath
 
         mouseArea.hoverEnabled: false
         mouseArea.cursorShape: Qt.ArrowCursor
         backgroundColor: Theme.backgroundColor
 
+        leftItem: Icon {
+          size: dp(24)
+          anchors.verticalCenter: parent.verticalCenter
+
+          icon: modelData.success ? IconType.check : modelData.progress < 1 ? IconType.recycle : IconType.times
+          color: modelData.success ? Theme.tintColor : modelData.progress < 1 ? Theme.textColor : "red"
+        }
+
         rightItem: Row {
           anchors.verticalCenter: parent.verticalCenter
           spacing: dp(Theme.contentPadding)
-
-          LoadingIcon {
-            visible: !fileUtils.existsFile(modelData.filePath)
-            width: dp(48)
-            height: dp(48)
-          }
 
           AppToolButton {
             iconType: IconType.play
