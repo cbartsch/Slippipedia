@@ -49,14 +49,12 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
 {
   QProcess *p = new QProcess(this);
 
-  p->start(command, arguments);
-
   connect(p, &QProcess::readyReadStandardOutput, this, [p, logCallback]() {
     if(logCallback.isCallable()) {
-      logCallback.call({ QString(p->readAllStandardError()) });
+      logCallback.call({ QString(p->readAllStandardOutput()) });
     }
     else {
-      qDebug().noquote() << p->readAllStandardError();
+      qDebug().noquote() << p->readAllStandardOutput();
     }
   });
 
@@ -70,24 +68,30 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
   });
 
   connect(p, &QProcess::finished, this, [p, finishCallback, command]() {
-    qDebug() << "Process" << command << "finished";
 
     if(finishCallback.isCallable()) {
-      finishCallback.call({ command });
+      finishCallback.call({ true, command });
+    }
+    else {
+      qDebug() << "Process" << command << "finished";
     }
 
     delete p;
   });
 
   connect(p, &QProcess::errorOccurred, this, [p, finishCallback, command]() {
-    qWarning() << "Process" << command << "error:" << p->errorString();
 
-//    if(finishCallback.isCallable()) {
-//      finishCallback.call({ command });
-//    }
+    if(finishCallback.isCallable()) {
+      finishCallback.call({ false, command, p->errorString() });
+    }
+    else {
+      qWarning() << "Process" << command << "error:" << p->errorString();
+    }
 
-//    delete p;
+    delete p;
   });
+
+  p->start(command, arguments);
 }
 
 QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilters, bool recursive)
