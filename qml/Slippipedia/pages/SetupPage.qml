@@ -180,13 +180,33 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
         }
       }
 
-      rightItem: AppToolButton {
-        iconType: IconType.folderopen
-        toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
+      rightItem: Row {
         anchors.verticalCenter: parent.verticalCenter
+        spacing: dp(Theme.contentPadding)
 
-        visible: dataModel.hasDesktopApp
-        onClicked: console.log("clk"), console.log("explore to", dataModel.desktopAppFolder), Utils.exploreToFile(dataModel.desktopAppFolder)
+        AppToolButton {
+          iconType: IconType.folderopen
+          toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
+
+          visible: dataModel.hasDesktopApp
+          onClicked: Utils.exploreToFile(dataModel.desktopAppFolder)
+        }
+
+        AppToolButton {
+          iconItem.visible: false
+          toolTipText: "Configure playback Dolphin"
+
+          visible: fileUtils.existsFile(dataModel.desktopDolphinPath)
+          onClicked: Utils.startCommand(dataModel.desktopDolphinPath, [])
+
+          AppImage {
+            anchors.centerIn: parent
+            width: parent.iconItem.size
+            height: width
+            source: "../../../assets/img/slippi.svg"
+            fillMode: Image.PreserveAspectFit
+          }
+        }
       }
 
       mouseArea.hoverEnabled: false
@@ -203,7 +223,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
         anchors.verticalCenter: parent.verticalCenter
 
         AppImage {
-          id: slippiImg
+          id: slippiImg2
           anchors.fill: parent
           visible: false
           source: "../../../assets/img/slippi.svg"
@@ -212,7 +232,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
         ColorOverlay {
           anchors.fill: parent
-          source: slippiImg
+          source: slippiImg2
           color: Theme.tintColor
         }
       }
