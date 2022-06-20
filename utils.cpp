@@ -130,3 +130,9 @@ bool Utils::mkdirs(const QString &path)
 
   return info.exists() || info.mkpath(path);
 }
+
+qint64 Utils::fileSize(const QString &path)
+{
+  QFile file(path);
+  return file.exists() ? file.size() : -1;
+}

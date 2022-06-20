@@ -22,6 +22,7 @@ public:
   Q_INVOKABLE QStringList listFiles(const QString &folder, const QStringList &nameFilters, bool recursive);
 
   Q_INVOKABLE bool mkdirs(const QString &path);
+  Q_INVOKABLE qint64 fileSize(const QString &path);
 };
 
 #endif // UTILS_H
