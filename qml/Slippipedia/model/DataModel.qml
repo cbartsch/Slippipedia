@@ -461,6 +461,8 @@ Item {
     var audioDspPath = qsTr("%1/Audio/dspdump.wav").arg(dumpFolder)
     var audioDtkPath = qsTr("%1/Audio/dtkdump.wav").arg(dumpFolder)
 
+    var iconImgPath = fileUtils.stripSchemeFromUrl(Qt.resolvedUrl("../../../resfiles/icon.png"))
+
     // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
     var videoFiles = fileUtils.listFiles(videoPath, "*.avi")
     var videoPaths = videoFiles.map(f => videoPath + f)
@@ -471,13 +473,16 @@ Item {
       return
     }
 
-    var outputName = qsTr("Replay %1.mp4").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
+    var outputName = qsTr("Replay %1.avi").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
     var outputPath = videoOutputPath + "/" + outputName
 
     // use padding to even size
-    var filter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
+    var padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
 
-    console.log("start ffmpeg", videoFiles)
+    // show watermark in bottom right
+    var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
+
+    var filter=qsTr("[0:v] %1 [vid]; [3:v] scale=48x48:flags=lanczos [img]; [vid][img] %2").arg(padFilter).arg(overlayFilter)
 
     var videoIndex = createdVideos.length
 
@@ -485,20 +490,26 @@ Item {
                          fileName: outputName,
                          filePath: outputPath,
                          folder: videoOutputPath,
-                         progress: 0
+                         progress: 0,
+                         numFrames: 1
                        })
     createdVideosChanged()
 
-    Utils.startCommand("ffmpeg", [
-                         "-y", // always overwrite output file
-                         "-i", videoInput,
-                         "-i", audioDspPath,
-                         "-i", audioDtkPath,
-                         "-c:v", videoCodec,
-                         "-b:v", videoBitrate + "k",
-                         "-filter:v", filter,
-                         outputPath
-                       ], function() {
+    var ffmpegParams = [
+          "-y", // always overwrite output file
+          "-i", videoInput,
+          "-i", audioDspPath,
+          "-i", audioDtkPath,
+          "-i", iconImgPath,
+          "-filter_complex", filter,
+          "-c:v", videoCodec,
+          "-b:v", videoBitrate + "k",
+          outputPath
+        ]
+
+    console.log("starting ffmpeg command: ffmpeg", ffmpegParams.map(p => "\"" + p + "\"").join(" "))
+
+    Utils.startCommand("ffmpeg", ffmpegParams, function() {
                          console.log("Replay saved. Clear", videoPaths.length, "video dumps + audio dumps.")
 
                          numDumpsProcessing--
