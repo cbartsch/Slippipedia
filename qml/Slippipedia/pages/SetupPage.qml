@@ -552,7 +552,7 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
           size: dp(24)
           anchors.verticalCenter: parent.verticalCenter
 
-          icon: modelData.success ? IconType.check : modelData.progress < 1 ? IconType.recycle : IconType.times
+          icon: modelData.success ? IconType.check : modelData.progress < 1 ? IconType.spinner : IconType.times
           color: modelData.success ? Theme.tintColor : modelData.progress < 1 ? Theme.textColor : "red"
         }
 

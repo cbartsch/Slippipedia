@@ -494,7 +494,7 @@ Item {
       return
     }
 
-    var outputName = qsTr("Replay %1.avi").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
+    var outputName = qsTr("Replay %1.mp4").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
     var outputPath = videoOutputPath + "/" + outputName
 
     // use padding to even size
@@ -503,7 +503,11 @@ Item {
     // show watermark in bottom right
     var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
 
+    // overlay watermark onto video
     var filter=qsTr("[0:v] %1 [vid]; [3:v] scale=48x48:flags=lanczos [img]; [vid][img] %2").arg(padFilter).arg(overlayFilter)
+
+    // no watermark
+    //var filter=qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
 
     var videoIndex = createdVideos.length
 
@@ -557,12 +561,9 @@ Item {
                           // find out length of input audio file from the log output:
                           var match = msg.match(/Input #1, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
                           if(match) {
-                            console.log("duration input:", match[1], match[2], match[3], match[4])
-
                             var seconds = parseInt(match[4]) / 100 + parseInt(match[3]) + parseInt(match[2]) * 60 + parseInt(match[1]) * 60 * 60
                             var frames = seconds * 60
 
-                            console.log("num frames is", seconds, frames, match)
                             createdVideos[videoIndex].numFrames = frames
                           }
 
