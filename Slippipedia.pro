@@ -1,5 +1,5 @@
 # allows to add DEPLOYMENTFOLDERS and links to the Felgo library and QtCreator auto-completion
-CONFIG += felgo
+CONFIG += felgo felgo_bluetooth
 CONFIG += c++17
 
 QT += core gui widgets qml
@@ -23,6 +23,10 @@ live_client {
   DEFINES += FELGO_LIVE
 }
 
+# resource files that are always deployed because they are used by external tools
+resFolder.source = resfiles
+DEPLOYMENTFOLDERS += resFolder
+
 use_resources {
   RESOURCES += resources.qrc
 }
@@ -40,7 +44,7 @@ FELGO_PLUGINS += googleanalytics
 # Project identifier and version
 # More information: https://felgo.com/doc/felgo-publishing/#project-configuration
 PRODUCT_IDENTIFIER = at.cb.Slippipedia
-PRODUCT_VERSION_NAME = 1.2
+PRODUCT_VERSION_NAME = 2.0
 PRODUCT_VERSION_CODE = 6
 
 # license for at.cb.Slippipedia, version 5, plugins: Google Analytics
