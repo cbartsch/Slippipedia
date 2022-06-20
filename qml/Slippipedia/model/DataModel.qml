@@ -54,6 +54,35 @@ Item {
   property string ffmpegVersion: ""
   property int ffmpegYear: 0
 
+  // analyze progress
+  property bool progressCancelled: false
+  property int numFilesSucceeded: 0
+  property int numFilesFailed: 0
+  property int numFilesProcessing: 0
+  readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
+  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing
+  readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
+
+  property int numVideosEncoding: 0
+  readonly property bool isEncoding: numVideosEncoding > 0
+
+  // filter settings
+  property alias filterSettings: filterSettings
+  property alias gameFilter: filterSettings.gameFilter
+  property alias playerFilter: filterSettings.playerFilter
+  property alias opponentFilter: filterSettings.opponentFilter
+
+  // global data
+  property int totalReplays: globalDataBase.getNumReplays(dbUpdater)
+
+  // stats
+  property alias stats: stats
+
+  // db
+  property alias globalDataBase: globalDataBase
+
+  signal initialized
+
   Component.onCompleted: {
     if(!replayFolder) replayFolder = replayFolderDefault
     if(!desktopAppFolder) desktopAppFolder = desktopAppFolderDefault
@@ -86,34 +115,6 @@ Item {
       videoOutputPathChanged()
     }
   }
-
-  // analyze progress
-  property bool progressCancelled: false
-  property int numFilesSucceeded: 0
-  property int numFilesFailed: 0
-  property int numFilesProcessing: 0
-  readonly property int numFilesProcessed: numFilesSucceeded + numFilesFailed
-  readonly property bool isProcessing: !progressCancelled && numFilesProcessed < numFilesProcessing || numDumpsProcessing > 0
-  readonly property real processProgress: isProcessing ? numFilesProcessed / numFilesProcessing : 0
-
-  property int numDumpsProcessing: 0
-
-  // filter settings
-  property alias filterSettings: filterSettings
-  property alias gameFilter: filterSettings.gameFilter
-  property alias playerFilter: filterSettings.playerFilter
-  property alias opponentFilter: filterSettings.opponentFilter
-
-  // global data
-  property int totalReplays: globalDataBase.getNumReplays(dbUpdater)
-
-  // stats
-  property alias stats: stats
-
-  // db
-  property alias globalDataBase: globalDataBase
-
-  signal initialized
 
   onNumFilesSucceededChanged: {
     // refresh after n items
@@ -485,9 +486,11 @@ Item {
     var iconImgPath = fileUtils.stripSchemeFromUrl(Qt.resolvedUrl("../../../resfiles/icon.png"))
 
     // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
-    var videoFiles = fileUtils.listFiles(videoPath, "*.avi")
+    var videoFiles = fileUtils.listFiles(videoPath, "*.avi").sort()
     var videoPaths = videoFiles.map(f => videoPath + f)
-    var videoInput = "concat:" + videoPaths.join("|")
+
+    // skip small frame dumps, those are often empty/corrupted and cause problems with ffmpeg
+    var inputVideos = videoPaths.filter(p => Utils.fileSize(p) > 10000)
 
     if(videoFiles.length === 0) {
       console.log("No frame dumps from Dolphin detected.")
@@ -503,11 +506,17 @@ Item {
     // show watermark in bottom right
     var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
 
+    // concat all input videos
+    var concatFilter = qsTr("concat=n=%1:v=1:a=0:unsafe=1").arg(inputVideos.length)
+
+    // create input tags for concat filter e.g. [3:v][4:v]...
+    var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
+
     // overlay watermark onto video
-    var filter=qsTr("[0:v] %1 [vid]; [3:v] scale=48x48:flags=lanczos [img]; [vid][img] %2").arg(padFilter).arg(overlayFilter)
+    var filter = qsTr("%1 %4 [vid]; [vid] %2 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %3").arg(videoInputTags).arg(padFilter).arg(overlayFilter).arg(concatFilter)
 
     // no watermark
-    //var filter=qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
+    //var filter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
 
     var videoIndex = createdVideos.length
 
@@ -517,14 +526,13 @@ Item {
                          folder: videoOutputPath,
                          progress: 0,
                          numFrames: 1,
-                         success: false,
+                         success: true,
                          errorMessage: ""
                        })
     createdVideosChanged()
 
     var ffmpegParams = [
           "-y", // always overwrite output file
-          "-i", videoInput,
           "-i", audioDspPath,
           "-i", audioDtkPath,
           "-i", iconImgPath,
@@ -534,17 +542,20 @@ Item {
           outputPath
         ]
 
+    // add every input video as input like "-i filename"
+    inputVideos.forEach((p, index) => ffmpegParams.splice(7 + index * 2, 0, "-i", p))
+
     console.log("starting ffmpeg command: ffmpeg", ffmpegParams.map(p => "\"" + p + "\"").join(" "))
 
     Utils.startCommand("ffmpeg", ffmpegParams, function(success, command, errorMessage) {
                          if(success) {
-                          console.log("Replay saved. Clear", videoPaths.length, "video dumps + audio dumps.")
+                          console.log("Replay saved.")
                          }
                          else {
-                           console.warn("Could not save replay:", errorMessage)
+                           console.warn("ffmpeg process crashed at", formatPercentage(createdVideos[videoIndex].progress), ":", errorMessage)
                          }
 
-                         numDumpsProcessing--
+                         numVideosEncoding--
 
                          createdVideos[videoIndex].progress = 1
                          createdVideos[videoIndex].success = success
@@ -552,6 +563,7 @@ Item {
                          createdVideosChanged()
 
                          if(autoDeleteFrameDumps) {
+                           console.log("Clear", videoPaths.length, "video dumps + audio dumps.")
                            // cleanup dolphin dump
                            videoPaths.forEach(path => fileUtils.removeFile(path))
                            fileUtils.removeFile(audioDspPath)
@@ -559,7 +571,7 @@ Item {
                          }
                        }, function(msg) {
                           // find out length of input audio file from the log output:
-                          var match = msg.match(/Input #1, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
+                          var match = msg.match(/Input #0, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
                           if(match) {
                             var seconds = parseInt(match[4]) / 100 + parseInt(match[3]) + parseInt(match[2]) * 60 + parseInt(match[1]) * 60 * 60
                             var frames = seconds * 60
@@ -579,7 +591,7 @@ Item {
                           console.log("[ffmpeg]", msg)
                        })
 
-    numDumpsProcessing++
+    numVideosEncoding++
   }
 
   function hasFlag(flagMask, flagId) {

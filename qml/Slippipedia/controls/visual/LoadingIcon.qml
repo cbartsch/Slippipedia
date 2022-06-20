@@ -3,7 +3,7 @@ import Felgo 4.0
 
 IconButtonBarItem {
   icon: IconType.spinner
-  visible: dataModel.isProcessing
+  visible: dataModel.isProcessing || dataModel.isEncoding
   enabled: false
   mouseArea.hoverEnabled: false
 

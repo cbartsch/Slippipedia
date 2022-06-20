@@ -537,11 +537,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       model: dataModel.createdVideos
 
       AppListItem {
-        text: modelData.success
+        text: modelData.progress >= 1
               ? "Video successfully saved."
-              : modelData.progress < 1
-                ? qsTr("Currently encoding... (%1)").arg(dataModel.formatPercentage(modelData.progress))
-                : ("Could not save video: " + modelData.errorMessage)
+              : !modelData.success
+                ? qsTr("Could not save video: %1 (%2%)").arg(modelData.errorMessage).arg(dataModel.formatPercentage(modelData.progress))
+                : qsTr("Currently encoding... (%1)").arg(dataModel.formatPercentage(modelData.progress))
         detailText: modelData.filePath
 
         mouseArea.hoverEnabled: false
@@ -552,8 +552,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
           size: dp(24)
           anchors.verticalCenter: parent.verticalCenter
 
-          icon: modelData.success ? IconType.check : modelData.progress < 1 ? IconType.spinner : IconType.times
-          color: modelData.success ? Theme.tintColor : modelData.progress < 1 ? Theme.textColor : "red"
+          icon: modelData.progress >= 1 ? IconType.check : modelData.progress < 1 ? IconType.spinner : IconType.times
+          color: modelData.progress >= 1 ? Theme.tintColor : modelData.progress < 1 ? Theme.textColor : "red"
         }
 
         rightItem: Row {
