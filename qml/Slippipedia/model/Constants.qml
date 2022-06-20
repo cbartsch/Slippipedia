@@ -6,7 +6,7 @@ Item {
   readonly property string versionName: system.appVersionName
   readonly property string buildName: system.publishBuild ? "Release" : "Debug"
 
-  readonly property string felgoVersion: system.vplayVersion
+  readonly property string felgoVersion: system.felgoVersion
   readonly property string qtVersion: system.qtVersion
 
   readonly property string twitterUrl: "https://twitter.com/ChrisuSSBMtG"
