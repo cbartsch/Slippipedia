@@ -80,6 +80,23 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
   return db;
 }
 
+static QtMessageHandler origMessageHandler;
+
+void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+  static QMutex mutex;
+  QMutexLocker lock(&mutex);
+
+  QFile logFile("log.txt");
+
+  if (logFile.open(QIODevice::Append | QIODevice::Text)) {
+    logFile.write(qFormatLogMessage(type, context, msg).toUtf8() + '\n');
+    logFile.flush();
+  }
+
+  origMessageHandler(type, context, msg);
+}
+
 int main(int argc, char *argv[])
 {
   QApplication app(argc, argv);
@@ -91,6 +108,11 @@ int main(int argc, char *argv[])
 
   QQmlApplicationEngine engine;
   felgo.initialize(&engine);
+
+  origMessageHandler = qInstallMessageHandler(logMessageHandler);
+
+  qDebug().noquote() << "\n\nSlippipedia started at" << QDateTime::currentDateTime().toString(Qt::DateFormat::ISODate);
+  qDebug() << "------------------------------------------\n";
 
   // the database connection exists for the lifetime of the app:
   QSqlDatabase db(setupDatabase(engine));
