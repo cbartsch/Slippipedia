@@ -201,8 +201,8 @@ Item {
         // if it's P1's punish, P2 lost the stock
         readonly property bool isP1: modelData.port !== replayModel.port1
 
-        readonly property string pText: "P" + ((isP1 ? replayModel.port1 : replayModel.port2) + 1)
-        readonly property string oText: "P" + ((isP1 ? replayModel.port2 : replayModel.port1) + 1)
+        readonly property string pText: isP1 ? replayModel.name1 : replayModel.name2
+        readonly property string oText: isP1 ? replayModel.name2 : replayModel.name1
 
         readonly property bool hovered: stockMouse.containsMouse || toolTipMouse.containsMouse || toolBtnOpen.hovered
 
