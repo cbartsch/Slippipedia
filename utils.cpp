@@ -51,7 +51,11 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
 
   connect(p, &QProcess::readyReadStandardOutput, this, [p, logCallback]() {
     if(logCallback.isCallable()) {
-      logCallback.call({ QString(p->readAllStandardOutput()) });
+      auto ret = logCallback.call({ QString(p->readAllStandardOutput()) });
+
+      if(ret.isError()) {
+        qWarning().noquote() << ret.toString();
+      }
     }
     else {
       qDebug().noquote() << p->readAllStandardOutput();
@@ -60,7 +64,11 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
 
   connect(p, &QProcess::readyReadStandardError, this, [p, logCallback]() {
     if(logCallback.isCallable()) {
-      logCallback.call({ QString(p->readAllStandardError()) });
+      auto ret = logCallback.call({ QString(p->readAllStandardError()) });
+
+      if(ret.isError()) {
+        qWarning().noquote() << ret.toString();
+      }
     }
     else {
       qWarning().noquote() << p->readAllStandardError();
@@ -68,9 +76,12 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
   });
 
   connect(p, &QProcess::finished, this, [p, finishCallback, command]() {
-
     if(finishCallback.isCallable()) {
-      finishCallback.call({ true, command });
+      auto ret = finishCallback.call({ true, command });
+
+      if(ret.isError()) {
+        qWarning().noquote() << ret.toString();
+      }
     }
     else {
       qDebug() << "Process" << command << "finished";
@@ -82,7 +93,11 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
   connect(p, &QProcess::errorOccurred, this, [p, finishCallback, command]() {
 
     if(finishCallback.isCallable()) {
-      finishCallback.call({ false, command, p->errorString() });
+      auto ret = finishCallback.call({ false, command, p->errorString() });
+
+      if(ret.isError()) {
+        qWarning().nospace() << ret.toString();
+      }
     }
     else {
       qWarning() << "Process" << command << "error:" << p->errorString();
