@@ -25,8 +25,8 @@ Item {
   // history:
   // 2.0 - Slippipedia 1.0
   // 2.1 - Slippipedia 1.1 - add Replays.userFlag
-  // 2.2 - Slippipedis 1.2 - add Replays.platform, Replays.slippiVersion, drop unused indices
-  readonly property string dbLatestVersion: "2.2"
+  // 3.0 - Slippipedis 2.0 - add Replays.platform, Replays.slippiVersion, drop unused indices
+  readonly property string dbLatestVersion: "3.0"
   readonly property string dbCurrentVersion: db.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -39,14 +39,21 @@ Item {
 
         if(dbCurrentVersion < "2.1") {
           console.log("Update DB to 2.1")
-          // 2.2 - add user flag column to replay
+          // 2.1 - add user flag column to replay
           tx.executeSql("alter table Replays add column userFlag integer default 0")
         }
-        if(dbCurrentVersion < "2.2") {
-          console.log("Update DB to 2.2")
-          // 2.3 - indexes updated
-          tx.executeSql("alter table Replays add column slippiVersion string default ''")
-          tx.executeSql("alter table Replays add column platform string default 'dolphin'")
+        if(dbCurrentVersion < "3.0") {
+          console.log("Update DB to 3.0")
+          // 3.0 - indexes updated + added platform and slippiVersion
+          try {
+            tx.executeSql("alter table Replays add column slippiVersion string default ''")
+            tx.executeSql("alter table Replays add column platform string default 'dolphin'")
+          }
+          catch(ex) {
+            // will fail if you had used an intermediate version
+            console.log("Could not add columns:", ex)
+          }
+
           tx.executeSql("drop index player_index")
           tx.executeSql("drop index punish_index")
         }
