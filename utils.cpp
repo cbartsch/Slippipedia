@@ -127,8 +127,13 @@ QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilte
 bool Utils::mkdirs(const QString &path)
 {
   QDir info(path);
-
   return info.exists() || info.mkpath(path);
+}
+
+bool Utils::moveFile(const QString &from, const QString &to)
+{
+  QFile file(from);
+  return file.exists() && file.rename(to);
 }
 
 qint64 Utils::fileSize(const QString &path)

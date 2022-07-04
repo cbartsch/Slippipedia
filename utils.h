@@ -22,6 +22,7 @@ public:
   Q_INVOKABLE QStringList listFiles(const QString &folder, const QStringList &nameFilters, bool recursive);
 
   Q_INVOKABLE bool mkdirs(const QString &path);
+  Q_INVOKABLE bool moveFile(const QString &from, const QString &to);
   Q_INVOKABLE qint64 fileSize(const QString &path);
 };
 
