@@ -137,7 +137,7 @@ Item {
     target: Qt.application
 
     onActiveChanged: {
-       // refresh file list e.g. if new replays exist when app comes to foreground
+      // refresh file list e.g. if new replays exist when app comes to foreground
       if(active) fileUpdaterChanged()
     }
   }
@@ -434,10 +434,10 @@ Item {
 
     // convert to playback dolphin input format:
     var punishQueue = punishList.map(pu => ({
-                                         path: pu.filePath,
-                                         startFrame: pu.startFrame - punishPaddingFrames - startFrames,
-                                         endFrame: pu.endFrame + punishPaddingFrames
-                                       }))
+                                              path: pu.filePath,
+                                              startFrame: pu.startFrame - punishPaddingFrames - startFrames,
+                                              endFrame: pu.endFrame + punishPaddingFrames
+                                            }))
 
     var slippiInput = {
       mode: "queue",
@@ -505,104 +505,123 @@ Item {
     // skip small frame dumps, those are often empty/corrupted and cause problems with ffmpeg
     var inputVideos = videoPaths.filter(p => Utils.fileSize(p) > 10000)
 
-    if(videoFiles.length === 0) {
-      console.log("No frame dumps from Dolphin detected.")
-      return
-    }
-
     var outputName = qsTr("Replay %1.mp4").arg(dateTimeText);
     var outputPath = videoOutputPath + "/" + outputName
 
-    // use padding to even size
-    var padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
+    var cleanup = function() {
+      if(autoDeleteFrameDumps) {
+        console.log("Clear", videoPaths.length, "video dumps + audio dumps + temp folder.")
+        // cleanup dolphin dump
+        fileUtils.removeDir(tempPath)
+      }
+    }
 
-    // show watermark in bottom right
-    var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
+    var doEncode = function() {
+      // use padding to even size
+      var padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
 
-    // concat all input videos
-    var concatFilter = qsTr("concat=n=%1:v=1:a=0:unsafe=1").arg(inputVideos.length)
+      // show watermark in bottom right
+      var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
 
-    // create input tags for concat filter e.g. [3:v][4:v]...
-    var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
+      // concat all input videos
+      var concatFilter = qsTr("concat=n=%1:v=1:a=0:unsafe=1").arg(inputVideos.length)
 
-    // overlay watermark onto video
-    var filter = qsTr("%1 %4 [vid]; [vid] %2 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %3").arg(videoInputTags).arg(padFilter).arg(overlayFilter).arg(concatFilter)
+      // create input tags for concat filter e.g. [3:v][4:v]...
+      var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
 
-    // no watermark
-    //var filter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
+      // overlay watermark onto video
+      var filter = qsTr("%1 %4 [vid]; [vid] %2 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %3").arg(videoInputTags).arg(padFilter).arg(overlayFilter).arg(concatFilter)
 
-    var videoIndex = createdVideos.length
+      // no watermark
+      //var filter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
 
-    createdVideos.push({
-                         fileName: outputName,
-                         filePath: outputPath,
-                         folder: videoOutputPath,
-                         progress: 0,
-                         numFrames: 1,
-                         success: true,
-                         errorMessage: ""
-                       })
-    createdVideosChanged()
+      var videoIndex = createdVideos.length
 
-    var ffmpegParams = [
-          "-y", // always overwrite output file
-          "-i", audioDspPath,
-          "-i", audioDtkPath,
-          "-i", iconImgPath,
-          "-filter_complex", filter,
-          "-c:v", videoCodec,
-          "-b:v", videoBitrate + "k",
-          outputPath
-        ]
+      createdVideos.push({
+                           fileName: outputName,
+                           filePath: outputPath,
+                           folder: videoOutputPath,
+                           progress: 0,
+                           numFrames: 1,
+                           success: true,
+                           errorMessage: ""
+                         })
+      createdVideosChanged()
 
-    // add every input video as input like "-i filename"
-    inputVideos.forEach((p, index) => ffmpegParams.splice(7 + index * 2, 0, "-i", p))
+      var ffmpegParams = [
+            "-y", // always overwrite output file
+            "-i", audioDspPath,
+            "-i", audioDtkPath,
+            "-i", iconImgPath,
+            "-filter_complex", filter,
+            "-c:v", videoCodec,
+            "-b:v", videoBitrate + "k",
+            outputPath
+          ]
 
-    console.log("starting ffmpeg command: ffmpeg", ffmpegParams.map(p => "\"" + p + "\"").join(" "))
+      // add every input video as input like "-i filename"
+      inputVideos.forEach((p, index) => ffmpegParams.splice(7 + index * 2, 0, "-i", p))
 
-    Utils.startCommand("ffmpeg", ffmpegParams, function(success, command, errorMessage) {
-                         if(success) {
-                          console.log("Replay saved.")
-                         }
-                         else {
-                           console.warn("ffmpeg process crashed at", formatPercentage(createdVideos[videoIndex].progress), ":", errorMessage)
-                         }
+      console.log("starting ffmpeg command: ffmpeg", ffmpegParams.map(p => "\"" + p + "\"").join(" "))
 
-                         numVideosEncoding--
+      Utils.startCommand("ffmpeg", ffmpegParams, function(success, command, errorMessage) {
+        if(success) {
+          console.log("Replay saved.")
+        }
+        else {
+          console.warn("ffmpeg process crashed at", formatPercentage(createdVideos[videoIndex].progress), ":", errorMessage)
+        }
 
-                         createdVideos[videoIndex].progress = 1
-                         createdVideos[videoIndex].success = success
-                         createdVideos[videoIndex].errorMessage = errorMessage
-                         createdVideosChanged()
+        numVideosEncoding--
 
-                         if(autoDeleteFrameDumps) {
-                           console.log("Clear", videoPaths.length, "video dumps + audio dumps + temp folder.")
-                           // cleanup dolphin dump
-                           fileUtils.removeDir(tempPath)
-                         }
-                       }, function(msg) {
-                          // find out length of input audio file from the log output:
-                          var match = msg.match(/Input #0, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
-                          if(match) {
-                            var seconds = parseInt(match[4]) / 100 + parseInt(match[3]) + parseInt(match[2]) * 60 + parseInt(match[1]) * 60 * 60
-                            var frames = seconds * 60
+        createdVideos[videoIndex].progress = 1
+        createdVideos[videoIndex].success = success
+        createdVideos[videoIndex].errorMessage = errorMessage
+        createdVideosChanged()
 
-                            createdVideos[videoIndex].numFrames = frames
-                          }
+        cleanup()
+      }, function(msg) {
+        // find out length of input audio file from the log output:
+        var match = msg.match(/Input #0, wav.*[\r\n]+ +Duration: ([0-9]+):([0-9]+):([0-9]+).([0-9]+),/m)
+        if(match) {
+          var seconds = parseInt(match[4]) / 100 + parseInt(match[3]) + parseInt(match[2]) * 60 + parseInt(match[1]) * 60 * 60
+          var frames = seconds * 60
 
-                          // find out current encoded frame from the log output:
-                          match = msg.match(/frame= *([0-9]+) /)
-                          if(match) {
-                            var currentFrame = match[1]
-                            createdVideos[videoIndex].progress = currentFrame / createdVideos[videoIndex].numFrames
-                            createdVideosChanged()
-                          }
+          createdVideos[videoIndex].numFrames = frames
+        }
 
-                          // show output on console / log file:
-                          console.log("[ffmpeg]", msg)
-                       })
+        // find out current encoded frame from the log output:
+        match = msg.match(/frame= *([0-9]+) /)
+        if(match) {
+          var currentFrame = match[1]
+          createdVideos[videoIndex].progress = currentFrame / createdVideos[videoIndex].numFrames
+          createdVideosChanged()
+        }
 
-    numVideosEncoding++
+        // show output on console / log file:
+        console.log("[ffmpeg]", msg)
+      })
+
+      numVideosEncoding++
+    }
+
+    if(videoFiles.length === 0) {
+      console.log("No frame dumps from Dolphin detected.")
+      cleanup()
+      return
+    }
+
+    var dialog = app.confirm(
+          "Save video file for last played replay?",
+          qsTr("Video file will be saved to '%1'.").arg(outputPath),
+          function(accepted) {
+            if(accepted) {
+              doEncode()
+            }
+            else {
+              cleanup()
+            }
+          })
   }
 
   function hasFlag(flagMask, flagId) {
