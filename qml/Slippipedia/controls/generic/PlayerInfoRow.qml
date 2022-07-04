@@ -28,7 +28,7 @@ AppFlickable {
       color: Theme.tintColor
 
       visible: !!text
-      text: model.name1 || model.tag1 || ""
+      text: model.name1
     }
 
     AppText {
@@ -90,7 +90,7 @@ AppFlickable {
       color: Theme.tintColor
 
       visible: !!text
-      text: model.name2 || model.tag2 || ""
+      text: model.name2
     }
 
     AppText {

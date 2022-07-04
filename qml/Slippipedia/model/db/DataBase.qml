@@ -694,6 +694,8 @@ limit ? offset ?"
         var item = results.rows.item(i)
 
         item.date = new Date(item.date)
+        item.name1 = item.name1 || item.tag1 || ("Player " + (item.port1 + 1))
+        item.name2 = item.name2 || item.tag2 || ("Player " + (item.port2 + 1))
 
         result.push(item)
       }
@@ -734,6 +736,7 @@ pu.didKill didKill, pu.killDirection killDirection,
 pu.startFrame startFrame, pu.endFrame endFrame, pu.duration punishDuration,
 pu.startPercent startPercent, pu.endPercent endPercent, pu.stocks stocks, pu.damage damage,
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort, r.userFlag userFlag,
+ p.s_startStocks startStocks,
  p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
 from replays r
@@ -754,6 +757,8 @@ limit ? offset ?"
         var item = results.rows.item(i)
 
         item.date = new Date(item.date)
+        item.name1 = item.name1 || item.tag1 || ("Player " + (item.port1 + 1))
+        item.name2 = item.name2 || item.tag2 || ("Player " + (item.port2 + 1))
 
         result.push(item)
       }
