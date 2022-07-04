@@ -29,7 +29,7 @@ Column {
 
     rightItem: AppToolButton {
       iconType: IconType.trash
-      toolTipText: "Reset stage filter"
+      toolTipText: "Reset date filter"
       visible: filter ? filter.hasDateFilter : false
       anchors.verticalCenter: parent.verticalCenter
 
