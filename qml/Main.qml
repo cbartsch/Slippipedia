@@ -201,6 +201,71 @@ App {
     }
   }
 
+  Dialog {
+    id: confirmDialog
+
+    property var callback: null
+    property alias text: dialogText.text
+
+    property bool wasAccepted: false
+
+    mainWindow: app
+    outsideTouchable: true
+    titleDividerVisible: true
+
+    autoSize: true
+    anchors.centerIn: parent
+
+    title: "Do you think this is awesome?"
+    positiveActionLabel: "Yes"
+    negativeActionLabel: "No"
+
+    onAccepted: {
+      wasAccepted = true
+      close()
+    }
+    onCanceled: close()
+
+    // also emit cancellation when app is closed
+    Component.onDestruction: finish()
+    onClosed: finish()
+
+    function finish() {
+      if(callback) {
+        callback(wasAccepted)
+      }
+      close()
+    }
+
+    backgroundItem: MouseArea {
+      anchors.fill: parent
+      hoverEnabled: true
+
+      Rectangle {
+        anchors.fill: parent
+        color: "#80000000"
+      }
+    }
+
+    AppText {
+      id: dialogText
+
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.margins: dp(Theme.contentPadding)
+      textFormat: Text.RichText
+      wrapMode: Text.WrapAtWordBoundaryOrAnywhere
+    }
+  }
+
+  function confirm(title, text, callback) {
+    confirmDialog.title = title
+    confirmDialog.text = text
+    confirmDialog.callback = callback
+    confirmDialog.wasAccepted = false
+    confirmDialog.open()
+  }
+
   function showSetup() {
     navigation.currentIndex = 0
   }
