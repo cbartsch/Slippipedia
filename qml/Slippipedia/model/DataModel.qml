@@ -475,19 +475,32 @@ Item {
       return
     }
 
-    console.log("_saveFrameDump", desktopDolphinPath)
+    var dateTimeText = formatDate(new Date(), "yyyy-MM-dd HH-mm-ss")
 
     var dumpFolder = qsTr("%1/playback/User/Dump").arg(desktopAppFolder)
 
     var videoPath = qsTr("%1/Frames/").arg(dumpFolder)
-    var audioDspPath = qsTr("%1/Audio/dspdump.wav").arg(dumpFolder)
-    var audioDtkPath = qsTr("%1/Audio/dtkdump.wav").arg(dumpFolder)
+    var audioDspPathOrig = qsTr("%1/Audio/dspdump.wav").arg(dumpFolder)
+    var audioDtkPathOrig = qsTr("%1/Audio/dtkdump.wav").arg(dumpFolder)
+
+    // move all input files to a temp folder, this way dolphin can save new dumps already while ffmpeg is encoding this one
+    var tempPath = qsTr("%1/dump-%2/").arg(dumpFolder).arg(dateTimeText)
+    Utils.mkdirs(tempPath)
+
+    var audioDspPath = qsTr("%1/dspdump.wav").arg(tempPath)
+    var audioDtkPath = qsTr("%1/dtkdump.wav").arg(tempPath)
+
+    Utils.moveFile(audioDspPathOrig, audioDspPath)
+    Utils.moveFile(audioDtkPathOrig, audioDtkPath)
 
     var iconImgPath = fileUtils.stripSchemeFromUrl(Qt.resolvedUrl("../../../resfiles/icon.png"))
 
     // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
     var videoFiles = fileUtils.listFiles(videoPath, "*.avi").sort()
-    var videoPaths = videoFiles.map(f => videoPath + f)
+    var videoPathsOrig = videoFiles.map(f => videoPath + f)
+    var videoPaths = videoFiles.map(f => tempPath + f)
+
+    videoPathsOrig.forEach((path, index) => Utils.moveFile(path, videoPaths[index]))
 
     // skip small frame dumps, those are often empty/corrupted and cause problems with ffmpeg
     var inputVideos = videoPaths.filter(p => Utils.fileSize(p) > 10000)
@@ -497,7 +510,7 @@ Item {
       return
     }
 
-    var outputName = qsTr("Replay %1.mp4").arg(formatDate(new Date(), "yyyy-MM-dd HH-mm-ss"));
+    var outputName = qsTr("Replay %1.mp4").arg(dateTimeText);
     var outputPath = videoOutputPath + "/" + outputName
 
     // use padding to even size
@@ -563,11 +576,9 @@ Item {
                          createdVideosChanged()
 
                          if(autoDeleteFrameDumps) {
-                           console.log("Clear", videoPaths.length, "video dumps + audio dumps.")
+                           console.log("Clear", videoPaths.length, "video dumps + audio dumps + temp folder.")
                            // cleanup dolphin dump
-                           videoPaths.forEach(path => fileUtils.removeFile(path))
-                           fileUtils.removeFile(audioDspPath)
-                           fileUtils.removeFile(audioDtkPath)
+                           fileUtils.removeDir(tempPath)
                          }
                        }, function(msg) {
                           // find out length of input audio file from the log output:
