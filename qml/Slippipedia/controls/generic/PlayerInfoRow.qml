@@ -21,23 +21,21 @@ AppFlickable {
 
     spacing: dp(Theme.contentPadding) / 2
 
-    AppText {
+    NameText {
       id: nameText
       anchors.verticalCenter: parent.verticalCenter
       font.pixelSize: sp(20)
       color: Theme.tintColor
 
-      visible: !!text
-      text: model.name1 || ""
+      name: model.name1 || ""
     }
 
-    AppText {
+    NameText {
       anchors.baseline: nameText.baseline
       font.pixelSize: sp(12)
       color: Theme.secondaryTextColor
 
-      visible: !!text
-      text: qsTr("%1").arg(model.code1)
+      code: model.code1 || ""
     }
 
     AppText {
@@ -84,22 +82,53 @@ AppFlickable {
       text: qsTr("P%1").arg(model.port2 + 1)
     }
 
-    AppText {
+    NameText {
       anchors.verticalCenter: parent.verticalCenter
       font.pixelSize: sp(20)
       color: Theme.tintColor
 
-      visible: !!text
-      text: model.name2 || ""
+      name: model.name2 || ""
+      isOpponent: true
     }
 
-    AppText {
+    NameText {
       anchors.baseline: nameText.baseline
       font.pixelSize: sp(12)
       color: Theme.secondaryTextColor
 
-      visible: !!text
-      text: qsTr("%1").arg(model.code2)
+      code: model.code2 || ""
+      isOpponent: true
+    }
+  }
+
+  component NameText: AppText {
+    id: nameTextC
+
+    property string name: ""
+    property string code: ""
+
+    property bool isOpponent: false
+    readonly property string slotText: isOpponent ? "vs" : "as"
+    readonly property int slotNum: isOpponent ? "2" : "1"
+
+    text: name || code || ""
+    visible: !!text
+
+    RippleMouseArea {
+      anchors.fill: parent
+
+      hoverEffectEnabled: true
+      backgroundColor: Theme.listItem.selectedBackgroundColor
+      fillColor: backgroundColor
+      opacity: 0.5
+
+      onClicked: showList({ ["code" + slotNum]: nameTextC.code, ["name" + slotNum]: nameTextC.name,
+                            exact: true, sourceFilter: stats.dataBase.filterSettings })
+
+      CustomToolTip {
+        shown: parent.containsMouse
+        text: qsTr("Show all games %1 %2").arg(slotText).arg(nameTextC.text)
+      }
     }
   }
 }
