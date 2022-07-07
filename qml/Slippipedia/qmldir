@@ -64,6 +64,8 @@ AppToolButton 1.0           controls/generic/AppToolButton.qml
 AppToolText 1.0             controls/generic/AppToolText.qml
 BaseNavigationStack 1.0     controls/generic/BaseNavigationStack.qml
 BasePage 1.0                controls/generic/BasePage.qml
+CustomListView 1.0          controls/generic/CustomListView.qml
+CustomTabButton 1.0         controls/generic/CustomTabButton.qml
 CustomTabIcon 1.0           controls/generic/CustomTabIcon.qml
 CustomRadio 1.0             controls/generic/CustomRadio.qml
 CustomToolTip 1.0           controls/generic/CustomToolTip.qml

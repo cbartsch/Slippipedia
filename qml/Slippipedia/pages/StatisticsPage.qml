@@ -51,16 +51,16 @@ BasePage {
       id: filterTabs
       contentContainer: contentSwipe
 
-      AppTabButton {
+      CustomTabButton {
         text: "Overview"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Stats"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Players"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Neutral"
       }
     }

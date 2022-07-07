@@ -28,22 +28,22 @@ Page {
       id: filterTabs
       contentContainer: filterSwipe
 
-      AppTabButton {
+      CustomTabButton {
         text: "Me"
         showIcon: stats ? stats.dataBase.playerFilter.hasFilter : false
         tabIcon: IconType.check
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Opponent"
         showIcon: stats ? stats.dataBase.opponentFilter.hasFilter : false
         tabIcon: IconType.check
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Results"
         showIcon: stats ? stats.dataBase.gameFilter.hasResultFilter : false
         tabIcon: IconType.check
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Game"
         showIcon: stats ? stats.dataBase.gameFilter.hasGameFilter : false
         tabIcon: IconType.check
@@ -51,7 +51,7 @@ Page {
       Repeater {
         model: showPunishOptions ? 1 : 0
 
-        AppTabButton {
+        CustomTabButton {
           text: "Punishes"
           showIcon: stats ? stats.dataBase.punishFilter.hasFilter : false
           tabIcon: IconType.check

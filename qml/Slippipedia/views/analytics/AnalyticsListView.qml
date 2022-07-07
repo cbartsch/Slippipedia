@@ -56,7 +56,7 @@ Item {
     anchors.fill: parent
     anchors.topMargin: header.height + dp(Theme.contentPadding)
 
-    AppListView {
+    CustomListView {
       id: listView
 
       emptyText.text: "No replays found."

@@ -55,10 +55,10 @@ BasePage {
       id: listTabs
       contentContainer: contentSwipe
 
-      AppTabButton {
+      CustomTabButton {
         text: "Games"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Punishes"
       }
     }

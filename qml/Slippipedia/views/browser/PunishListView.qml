@@ -71,7 +71,7 @@ Item {
     }
   }
 
-  AppListView {
+  CustomListView {
     id: listView
     anchors.fill: parent
     anchors.topMargin: header.height

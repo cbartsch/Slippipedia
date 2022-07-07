@@ -36,16 +36,16 @@ BasePage {
       id: filterTabs
       contentContainer: contentSwipe
 
-      AppTabButton {
+      CustomTabButton {
         text: "Characters"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Matchups"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Stages"
       }
-      AppTabButton {
+      CustomTabButton {
         text: "Time"
       }
     }

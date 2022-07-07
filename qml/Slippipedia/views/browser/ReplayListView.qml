@@ -23,7 +23,7 @@ Item {
     onIsProcessingChanged: refresh()
   }
 
-  AppListView {
+  CustomListView {
     id: listView
     anchors.fill: parent
 

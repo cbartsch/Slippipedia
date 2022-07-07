@@ -132,6 +132,7 @@ Item {
         id: platformMouse
         anchors.fill: parent
         hoverEffectEnabled: true
+        cursorShape: Qt.ArrowCursor
         backgroundColor: Theme.listItem.selectedBackgroundColor
         fillColor: backgroundColor
         opacity: 0.5
@@ -221,6 +222,7 @@ Item {
           onPressed: mouse => mouse.accepted = false
 
           hoverEffectEnabled: true
+          cursorShape: Qt.ArrowCursor
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor
           opacity: 0.5

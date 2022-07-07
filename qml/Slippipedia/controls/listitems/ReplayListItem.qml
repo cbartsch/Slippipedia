@@ -33,6 +33,7 @@ AppListItem {
   width: parent ? parent.width : 0
 
   backgroundColor: Theme.backgroundColor
+  mouseArea.cursorShape: Qt.ArrowCursor
 
   text: showOptions ? ""/*fileUtils.cropPathAndKeepFilename(replayModel.filePath)*/ : stageName
 
