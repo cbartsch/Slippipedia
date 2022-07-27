@@ -23,7 +23,7 @@ AppTabButton {
       anchors.fill: rect
       z: -1
 
-      onClicked: mouse.accepted = false
+      onPressed: mouse => mouse.accepted = false
 
       hoverEffectEnabled: true
       backgroundColor: Theme.listItem.selectedBackgroundColor
