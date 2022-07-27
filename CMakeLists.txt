@@ -5,8 +5,6 @@ project(Slippipedia VERSION 2.0 LANGUAGES CXX)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Project identifier and version
-# More information: https://felgo.com/doc/felgo-publishing/#project-configuration
 set(PRODUCT_IDENTIFIER "at.cb.Slippipedia")
 set(PRODUCT_VERSION_NAME "2.0")
 set(PRODUCT_VERSION_CODE 6)
@@ -26,13 +24,16 @@ find_package(Qt6 6.3.0 COMPONENTS Quick Qml REQUIRED)
 file(GLOB_RECURSE QmlFolder RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} qml/*.qml)
 file(GLOB_RECURSE AssetsFolder RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} assets/* qml/config.json qml/*/qmldir)
 file(GLOB Sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h)
-# Add more folders to ship with the application here
+
+# resource files that are always deployed because they are used by external tools
+file(GLOB_RECURSE ResFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resfiles/*)
 
 # Executable should have same name as project
 qt_add_executable(${CMAKE_PROJECT_NAME}
     ${Sources}
     ${QmlFolder}
     ${AssetsFolder}
+    ${ResFiles}
 )
 
 include_directories(slippi)
@@ -44,12 +45,14 @@ find_package(Felgo REQUIRED)
 
 deploy_resources("${QmlFolder};${AssetsFolder}")
 
+deploy_resources("${ResFiles}")
+
 qt_add_qml_module(${CMAKE_PROJECT_NAME}
     URI EmptyFelgoTest
     VERSION 1.0
 # uncomment for publishing:
-#    QML_FILES ${QmlFolder}
-#    RESOURCES ${AssetsFolder}
+    #QML_FILES ${QmlFolder}
+    #RESOURCES ${AssetsFolder}
     NO_RESOURCE_TARGET_PATH
 )
 
