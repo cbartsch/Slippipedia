@@ -17,6 +17,7 @@ Grid {
 
   property bool showIcon: true
   property bool showData: false
+  property bool enableEmpty: true
 
   property alias sourceModel: jsonModel.source
 
@@ -24,6 +25,8 @@ Grid {
                                                 .map(item => item.count)
                                                 .reduce((a, v) => Math.max(a, v), 0)
                                               : 1
+
+  property string toolTipText: ""
 
   columns: {
     if(showIcon) {
@@ -80,7 +83,7 @@ Grid {
 
       width: parent.width / parent.columns
       height: showIcon ? charIcon.height : dp(72)
-      enabled: hasChar
+      enabled: hasChar && (enableEmpty || count > 0)
       visible: true
       onClicked: charSelected(id, isSelected)
 
@@ -88,11 +91,16 @@ Grid {
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
 
+      CustomToolTip {
+        shown: !!toolTipText && charItem.containsMouse
+        text: toolTipText ? qsTr(toolTipText).arg(model.count).arg(model.name) : ""
+      }
+
       Rectangle {
         anchors.fill: parent
 
         z: -1
-        color: !enabled
+        color: !charItem.enabled
                ? Theme.backgroundColor
                : isSelected
                  ? Qt.darker(Theme.selectedBackgroundColor, 1.5)
@@ -124,17 +132,6 @@ Grid {
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -height * 0.18
         visible: showData && hasChar && count > 0
-
-//          AppText {
-//            width: parent.width
-//            text: name
-//            maximumLineCount: 1
-//            elide: Text.ElideRight
-//            font.pixelSize: sp(20)
-//            horizontalAlignment: Text.AlignHCenter
-//            style: Text.Outline
-//            styleColor: Theme.backgroundColor
-//          }
 
         AppText {
           width: parent.width

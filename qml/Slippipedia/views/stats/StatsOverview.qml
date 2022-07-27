@@ -76,12 +76,16 @@ Column {
     stats: statisticsPage.stats
     sourceModel: stats.statsPlayer.charDataCss
 
-    enabled: false
     highlightFilteredChar: false
     showData: true
     showIcon: true
+    enableEmpty: false
     sortByCssPosition: true
     hideCharsWithNoReplays: false
+
+    toolTipText: "List all %1 games as %2"
+
+    onCharSelected: (charId, isSelected) => showList({ charId: charId, exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
   SimpleSection {
@@ -102,12 +106,16 @@ Column {
     stats: statisticsPage.stats
     sourceModel: stats.statsOpponent.charDataCss
 
-    enabled: false
     highlightFilteredChar: false
     showData: true
     showIcon: true
+    enableEmpty: false
     sortByCssPosition: true
     hideCharsWithNoReplays: false
+
+    toolTipText: "List all %1 games vs %2"
+
+    onCharSelected: (charId, isSelected) => showList({ opponentCharId: charId, exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
 
@@ -125,7 +133,10 @@ Column {
     sortByCount: true
     showIcon: true
 
-    enabled: false
     highlightFilteredStage: false
+
+    toolTipText: "List all %1 games on %2"
+
+    onStageSelected: (stageId, isSelected) => showList({ stageId: stageId, exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 }

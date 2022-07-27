@@ -20,6 +20,9 @@ Column {
   property bool showIcon: false
   property bool showData: true
   property bool showOtherItem: true
+  property bool enableEmpty: true
+
+  property string toolTipText: ""
 
   property Filter emptyFilter: ExpressionFilter {
     expression: count > 0
@@ -71,12 +74,19 @@ Column {
                  : Theme.controlBackgroundColor
 
         RippleMouseArea {
+          id: stageMouse
           anchors.fill: parent
           onClicked: stageSelected(id, stageItem.isSelected)
 
+          enabled: enableEmpty || model.count > 0
           hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor
+
+          CustomToolTip {
+            shown: !!toolTipText && stageMouse.containsMouse
+            text: toolTipText ? qsTr(toolTipText).arg(model.count).arg(model.name) : ""
+          }
 
           StageIcon {
             anchors.centerIn: parent
@@ -131,32 +141,45 @@ Column {
     visible: showOtherItem
     width: parent.width
     height: dp(48)
-    color: !enabled
+
+    color: !otherStageMouse.enabled
            ? Theme.backgroundColor
            : isSelected
              ? Theme.selectedBackgroundColor
              : Theme.controlBackgroundColor
 
     RippleMouseArea {
+      id: otherStageMouse
       anchors.fill: parent
 
-      onClicked: stageSelected(0, otherItem.isSelected)
+      // filtering for "other stages" is not currently supported
+      enabled: false// enableEmpty || stats.otherStageAmount > 0
 
       hoverEffectEnabled: true
+
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
 
-      AppText {
-        anchors.fill: parent
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        text: qsTr("Other (%2)")
-        .arg(dataModel.formatPercentage(stats && stats.totalReplays > 0
-        ? stats.otherStageAmount / stats.totalReplays
-        : 0))
-        style: Text.Outline
-        styleColor: Theme.backgroundColor
+
+      onClicked: stageSelected(0, otherItem.isSelected)
+
+      CustomToolTip {
+        shown: !!toolTipText && otherStageMouse.containsMouse
+        text: toolTipText ? qsTr(toolTipText).arg(stats.otherStageAmount).arg("other stages") : ""
       }
+    }
+
+    AppText {
+      anchors.fill: parent
+      verticalAlignment: Text.AlignVCenter
+      horizontalAlignment: Text.AlignHCenter
+      text: qsTr("Other stages (%1 games, %2)")
+      .arg(stats ? stats.otherStageAmount : 0)
+      .arg(dataModel.formatPercentage(stats && stats.totalReplays > 0
+      ? stats.otherStageAmount / stats.totalReplays
+      : 0))
+      style: Text.Outline
+      styleColor: Theme.backgroundColor
     }
 
     Divider { }
