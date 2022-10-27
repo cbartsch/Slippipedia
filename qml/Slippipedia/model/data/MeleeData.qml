@@ -128,6 +128,36 @@ Item {
     Qt.point(29, 0) // ganon
   ]
 
+  // number of skins per character
+  readonly property var numSkins: [
+    6, // cf
+    5, // dk
+    4, // fox
+    4, // gnw
+    6, // kirby
+    4, // bowser
+    5, // link
+    4, // luigi
+    5, // mario
+    5, // marth
+    4, // mewtwo
+    4, // ness
+    5, // peach
+    4, // pikachu
+    4, // ics
+    5, // jigglypuff
+    5, // samus
+    6, // yoshi
+    5, // zelda
+    5, // sheik
+    4, // falco
+    5, // yl
+    5, // doc
+    5, // roy
+    4, // pichu
+    5 // ganon
+  ]
+
   // kill direction index -> text
   readonly property var killDirectionNames: [
     "None",

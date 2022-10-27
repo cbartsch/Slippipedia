@@ -24,9 +24,12 @@ Item {
   Image {
     id: sprite
 
+    // sometimes the skinId wraps around, e.g. 6 for yoshi's first skin
+    readonly property int skinIndexMod: skinId % MeleeData.numSkins[charId]
+
     // for ICs (ID 14) the skin IDs 1 and 3 are switched on the spritesheet for some reason
     // thus switch the index here:
-    readonly property int skinIndex: charId === 14 && skinId > 0 ? (4 - skinId) : skinId
+    readonly property int skinIndex: charId === 14 && skinIndexMod > 0 ? (4 - skinIndexMod) : skinIndexMod
 
     source: "../../../../assets/img/stock_icon_sheet.png"
 
