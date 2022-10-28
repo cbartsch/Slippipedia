@@ -47,9 +47,9 @@ bool Utils::exploreToFile(const QString &filePath)
 void Utils::startCommand(const QString &command, const QStringList &arguments,
                          const QJSValue &finishCallback, const QJSValue &logCallback)
 {
-  QProcess *p = new QProcess(this);
+  QSharedPointer<QProcess> p(new QProcess(this));
 
-  connect(p, &QProcess::readyReadStandardOutput, this, [p, logCallback]() {
+  connect(p.data(), &QProcess::readyReadStandardOutput, this, [p, logCallback]() {
     if(logCallback.isCallable()) {
       auto ret = logCallback.call({ QString(p->readAllStandardOutput()) });
 
@@ -62,7 +62,7 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
     }
   });
 
-  connect(p, &QProcess::readyReadStandardError, this, [p, logCallback]() {
+  connect(p.data(), &QProcess::readyReadStandardError, this, [p, logCallback]() {
     if(logCallback.isCallable()) {
       auto ret = logCallback.call({ QString(p->readAllStandardError()) });
 
@@ -75,7 +75,7 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
     }
   });
 
-  connect(p, &QProcess::finished, this, [p, finishCallback, command]() {
+  connect(p.data(), &QProcess::finished, this, [p, finishCallback, command]() {
     if(finishCallback.isCallable()) {
       auto ret = finishCallback.call({ true, command });
 
@@ -87,11 +87,10 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
       qDebug() << "Process" << command << "finished";
     }
 
-    delete p;
+    p->disconnect();
   });
 
-  connect(p, &QProcess::errorOccurred, this, [p, finishCallback, command]() {
-
+  connect(p.data(), &QProcess::errorOccurred, this, [p, finishCallback, command]() {
     if(finishCallback.isCallable()) {
       auto ret = finishCallback.call({ false, command, p->errorString() });
 
@@ -103,7 +102,10 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
       qWarning() << "Process" << command << "error:" << p->errorString();
     }
 
-    delete p;
+    // deleting the object crashes on mac with Qt 6.4.0 - TODO check with later version
+#ifndef Q_OS_MAC
+    p->disconnect();
+#endif
   });
 
   p->start(command, arguments);

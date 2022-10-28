@@ -81,13 +81,14 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
 }
 
 static QtMessageHandler origMessageHandler;
+static QFileInfo logFileInfo;
 
 void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
 {
   static QMutex mutex;
   QMutexLocker lock(&mutex);
 
-  QFile logFile("log.txt");
+  QFile logFile(logFileInfo.absoluteFilePath());
 
   if (logFile.open(QIODevice::Append | QIODevice::Text)) {
     logFile.write(qFormatLogMessage(type, context, msg).toUtf8() + '\n');
@@ -108,6 +109,25 @@ int main(int argc, char *argv[])
 
   QQmlApplicationEngine engine;
   felgo.initialize(&engine);
+
+  // find applications in user path for Utils::startCommand()
+#ifdef Q_OS_MAC
+  const char *userPath = "/usr/local/bin";
+  QString path = qgetenv("PATH");
+  if(!path.contains(userPath)) {
+    path += QString(":") + userPath;
+    qputenv("PATH", path.toUtf8());
+  }
+#endif
+
+  QFileInfo logFileDir(qApp->applicationDirPath());
+#ifdef Q_OS_MAC
+  // on Mac the executable is at Slippipedia.app/Contents/Resources/ -> remove those paths for the log file:
+  logFileDir = QFileInfo(logFileDir.dir(), "../../..");
+#endif
+
+  logFileInfo = QFileInfo(logFileDir.dir(), "log.txt");
+  qDebug() << "Logging to external file:" << logFileInfo.absoluteFilePath();
 
   origMessageHandler = qInstallMessageHandler(logMessageHandler);
 

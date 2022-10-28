@@ -23,7 +23,14 @@ set(PRODUCT_LICENSE_KEY "85C054425F019B617ED6F718796D578E83BACDBFBDF66BC74F20E91
 
 file(GLOB_RECURSE QmlFolder RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} qml/*.qml)
 file(GLOB_RECURSE AssetsFolder RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} assets/* qml/config.json qml/*/qmldir)
-file(GLOB Sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp src/*.h)
+
+set(SrcPattern src/*.cpp src/*.h)
+
+if(APPLE)
+    list(APPEND SrcPattern src/*.mm)
+endif()
+
+file(GLOB Sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${SrcPattern})
 
 # resource files that are always deployed because they are used by external tools
 file(GLOB_RECURSE ResFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resfiles/*)
@@ -55,7 +62,9 @@ qt_add_qml_module(Slippipedia
     NO_RESOURCE_TARGET_PATH
 )
 
-target_compile_definitions(${CMAKE_PROJECT_NAME}
+target_compile_definitions(Slippipedia
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE Felgo Slippi)
+target_link_libraries(Slippipedia PRIVATE Felgo Slippi)
+
+target_compile_features(Slippipedia PRIVATE cxx_std_17)

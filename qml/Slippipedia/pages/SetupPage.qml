@@ -330,6 +330,7 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
     AppListItem {
       text: "ffmpeg not found."
       detailText: "Slippipedia needs ffmpeg installed to create video files from replays. Make sure the ffmpeg executable is in the path environment."
+                  + (Qt.platform.os === "osx" ? " You can install ffmpeg via homebrew (brew install ffmpeg)." : "")
       visible: !dataModel.hasFfmpeg
 
       leftItem: Icon {
