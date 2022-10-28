@@ -209,6 +209,12 @@ Item {
 
         onHoveredChanged: stockHovered = hovered
 
+        // cancel the options when the list view starts dragging
+        Connections {
+          target: replayListView
+          onMovementStarted: stockHovered = false
+        }
+
         height: parent.height
         width: dp(32)
         anchors.verticalCenter: parent.verticalCenter
@@ -238,6 +244,8 @@ Item {
             anchors.fill: parent
             parent: stockToolTip.background
             anchors.margins: -dp(3)
+
+            onPressed: mouse => mouse.accepted = false
           }
 
           contentItem: Row {
