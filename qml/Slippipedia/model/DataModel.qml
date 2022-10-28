@@ -400,6 +400,10 @@ Item {
     return yuva(luminance, u, v, 1)
   }
 
+  function colorWithAlpha(col, alpha) {
+    return Qt.rgba(col.r, col.g, col.b, alpha)
+  }
+
   function lerp(a, b, ratio) {
     return a * (1 - ratio) + b * ratio
   }

@@ -10,9 +10,11 @@ ToolButton {
   property string iconType: ""
   property alias iconItem: iconItem
   property real size: dp(36)
+  property real radius: dp(6)
   property string toolTipText
 
   property alias mouseArea: mouseArea
+
 
   flat: true
 
@@ -26,6 +28,9 @@ ToolButton {
     backgroundColor: Theme.listItem.selectedBackgroundColor
     fillColor: backgroundColor
     opacity: 0.5
+
+    radius: toolBtn.radius
+    hoverEffectRadius: toolBtn.radius
   }
 
   hoverEnabled: true
@@ -65,5 +70,6 @@ ToolButton {
     color: toolBtn.pressed
            ? Theme.selectedBackgroundColor
            : Theme.controlBackgroundColor
+    radius: toolBtn.radius
   }
 }

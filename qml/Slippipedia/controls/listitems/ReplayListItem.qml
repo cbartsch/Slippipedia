@@ -68,52 +68,65 @@ AppListItem {
     }
   }
 
-  rightItem: Row {
+  rightItem: Rectangle {
+    id: optionsItem
     visible: showOptions
-    height: dp(48)
-    spacing: dp(Theme.contentPadding) / 2
+    height: dp(44)
+    width: optionsRow.width + dp(Theme.contentPadding) * 2/3
+    color: Theme.backgroundColor
+    border.width: dp(1)
+    border.color: Theme.controlBackgroundColor
+    radius: toolBtnFolder.radius
+    anchors.verticalCenter: parent.verticalCenter
 
-    AppToolButton {
-      id: toolBtnFolder
-      iconType: IconType.folder
-      onClicked: openReplayFolder(replayModel.filePath)
-      toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
-      height: width
-      anchors.verticalCenter: parent.verticalCenter
-    }
+    Row {
+      id: optionsRow
+      spacing: dp(Theme.contentPadding) / 3
+      anchors.centerIn: parent
 
-    AppToolButton {
-      id: toolBtnOpen
-      iconType: IconType.play
-      toolTipText: "Start replay with Dolphin"
-      height: width
-      anchors.verticalCenter: parent.verticalCenter
+      AppToolButton {
+        id: toolBtnFolder
+        iconType: IconType.folder
+        toolTipText: Qt.platform.os === "osx" ? "Show in finder" : "Show in file explorer"
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
 
-      visible: dataModel.hasDesktopApp
-      onClicked: openReplayFile(replayModel.filePath)
-    }
+        onClicked: openReplayFolder(replayModel.filePath)
+      }
 
-    AppToolButton {
-      id: toolBtnSetup
-      iconType: IconType.gear
-      toolTipText: "Set Slippi Desktop App folder to play replays."
-      height: width
-      anchors.verticalCenter: parent.verticalCenter
+      AppToolButton {
+        id: toolBtnOpen
+        iconType: IconType.play
+        toolTipText: "Start replay with Dolphin"
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
 
-      visible: !dataModel.hasDesktopApp
-      onClicked: showSetup()
-    }
+        visible: dataModel.hasDesktopApp
+        onClicked: openReplayFile(replayModel.filePath)
+      }
 
-    AppToolButton {
-      id: toolBtnFavorite
-      iconType: IconType.star
-      toolTipText: isFavorite ? "Unmark as favorite" : "Mark as favorite"
-      checkable: true
-      height: width
-      anchors.verticalCenter: parent.verticalCenter
+      AppToolButton {
+        id: toolBtnSetup
+        iconType: IconType.gear
+        toolTipText: "Set Slippi Desktop App folder to play replays."
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
 
-      checked: dataModel.hasFlag(replayModel.userFlag, dataModel.flagFavorite)
-      onClicked: dataModel.setReplayFlag(replayModel.replayId, dataModel.flagFavorite, checked)
+        visible: !dataModel.hasDesktopApp
+        onClicked: showSetup()
+      }
+
+      AppToolButton {
+        id: toolBtnFavorite
+        iconType: IconType.star
+        toolTipText: isFavorite ? "Unmark as favorite" : "Mark as favorite"
+        checkable: true
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
+
+        checked: dataModel.hasFlag(replayModel.userFlag, dataModel.flagFavorite)
+        onClicked: dataModel.setReplayFlag(replayModel.replayId, dataModel.flagFavorite, checked)
+      }
     }
   }
 }
