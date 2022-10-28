@@ -30,6 +30,8 @@ Item {
   property bool validationError: false
   property string validationText: "Check input"
 
+  property string toolTipText: ""
+
   signal accepted
   signal editingFinished
 
@@ -49,6 +51,11 @@ Item {
     backgroundColor: Theme.listItem.selectedBackgroundColor
     fillColor: backgroundColor
     opacity: 0.5
+  }
+
+  CustomToolTip {
+    shown: ripple.containsMouse && !!text
+    text: textInputField.toolTipText
   }
 
   RowLayout {

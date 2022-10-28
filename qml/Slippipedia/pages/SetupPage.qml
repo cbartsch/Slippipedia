@@ -467,6 +467,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       labelText: "Padding frames for punish:"
       placeholderText: "Enter frames"
 
+      toolTipText: "Replay additional frames at start and end of the punish."
+
       showOptions: false
 
       textInput.inputMethodHints: Qt.ImhDigitsOnly
@@ -491,6 +493,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
 
       labelText: "Video bitrate (kbps):"
       placeholderText: "Enter bitrate"
+
+      toolTipText: "Bitrate for the converted video file.\nNote: the bitrate Dolphin exports at can be changed\nseparately in the User/Config/GFX.ini file (BitrateKbps)."
 
       showOptions: false
 
@@ -517,6 +521,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       labelText: "Video codec name:"
       placeholderText: "Enter codec name"
 
+      toolTipText: "Name of codec to use for converting the video file.\nOnly change for advanced uses."
+
       showOptions: false
 
       divider.visible: false
@@ -525,6 +531,18 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         if(textInput.acceptableInput) {
           dataModel.videoCodec = text
         }
+      }
+
+      AppToolButton {
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.margins: dp(Theme.contentPadding)
+
+        iconType: IconType.trash
+        toolTipText: qsTr("Reset Video codec folder to default: %1").arg(dataModel.videoCodecDefault)
+
+        visible: dataModel.videoCodec !== dataModel.videoCodecDefault
+        onClicked: dataModel.videoCodec = dataModel.videoCodecDefault
       }
     }
 

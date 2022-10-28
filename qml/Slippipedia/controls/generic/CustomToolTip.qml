@@ -22,8 +22,8 @@ ToolTip {
 
   contentItem: AppText {
     text: toolTip.text
+    wrapMode: Text.NoWrap
   }
-
 
   enter: Transition {
     UiAnimation { property: "opacity"; from: 0; to: 1 }

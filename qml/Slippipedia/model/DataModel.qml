@@ -45,7 +45,8 @@ Item {
   readonly property bool hasVideoOutputPath: fileUtils.existsFile(videoOutputPath)
 
   property int videoBitrate: 5000
-  property string videoCodec: "libx264"
+  property string videoCodec: videoCodecDefault
+  property string videoCodecDefault: "libx264"
   property real punishPaddingFrames: 60 * 2 // 2 seconds
 
   property var createdVideos: []
