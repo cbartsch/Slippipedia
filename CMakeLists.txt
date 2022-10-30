@@ -51,7 +51,7 @@ include_directories(slippi)
 
 add_compile_definitions(QML_MODULE_NAME=\"Slippipedia\")
 
-deploy_resources("${QmlFolder};${AssetsFolder}")
+#deploy_resources("${QmlFolder};${AssetsFolder}")
 
 deploy_resources("${ResFiles}")
 
@@ -59,8 +59,8 @@ qt_add_qml_module(Slippipedia
     URI at.cb.Slippipedia
     VERSION 1.0
 # uncomment for publishing:
-#    QML_FILES ${QmlFolder}
-#    RESOURCES ${AssetsFolder}
+    QML_FILES ${QmlFolder}
+    RESOURCES ${AssetsFolder}
     NO_RESOURCE_TARGET_PATH
 )
 
