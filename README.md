@@ -29,6 +29,8 @@ Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the is
 * [How to Use](#how-to-use)
   * [Select replay folder](#select-replay-folder)
   * [Analyze replays](#analyze-replays)
+  * [Slippi settings](#slippi-settings)
+  * [Video output](#video-output)
   * [Set player filter](#set-player-filter)
   * [Explore stats](#explore-stats)
     * [Statistics](#statistics)
@@ -47,7 +49,6 @@ Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the is
     * [Windows](#windows)
 
 
-
 # How to Use
 
 Download the latest release for your operating system. Start the included `.app` or the `.exe` file.
@@ -57,18 +58,6 @@ Download the latest release for your operating system. Start the included `.app`
 Select your Slippi replay directory. Per default, this should be in `(documents)/Slippi`. In this case, the folder should be pre-selected automatically.
 
 ![replay folder](media/replay-folder.png)
-
-## Other settings
-
-To start replays and punishes directly from Slippipedia, set your Slippi Desktop App folder.
-You can download the app from [slippi.gg](https://slippi.gg/downloads).
-If you installed it in the default path, Slippipedia can probably auto-detect it.
-
-Also set the path to your Melee ISO file to auto-start replays/punishes.
-You can also leave this empty and start Melee from the replay Dolphin manually.
-
-![settings](media/settings.png)
-
 
 ## Analyze replays
 
@@ -80,12 +69,88 @@ When you have new replays or change the folder, you can choose to only analyze n
 
 ![analyzing](media/analyzing.png)
 
+## Slippi settings
+
+To start replays and punishes directly from Slippipedia, set your Slippi Desktop App folder.
+You can download the app from [slippi.gg](https://slippi.gg/downloads).
+If you installed it in the default path, Slippipedia can probably auto-detect it.
+
+Also set the path to your Melee ISO file to auto-start replays/punishes.
+You can also leave this empty and start Melee from the replay Dolphin manually.
+
+![settings](media/settings.png)
+
+## Video output
+
+Slippipedia can automatically convert playback to MP4 video files.
+It can convert any replay that is started through Slippipedia.
+
+### How to save video files
+
+There is some setup required for this:
+
+1. Enable frame dumps in the playback Dolphin.
+   
+   You can open the playback dolphin by clicking the Slippi icon on the setup page.
+   Then open the "Movie" menu and enable "Dump frames" and "Dump audio".
+
+![video-dolphin](media/video-dolphin.png)
+
+![dump-frames](media/dump-frames-settings.png)
+
+2. Install `ffmpeg`. 
+   
+   These are the command line tools required for video conversion.
+   On Windows, a build is shipped with Slippipedia directly.
+   On macOS/Unix, you can install it with homebrew (`brew install ffmpeg`).
+
+3. Enable saving frame dumps
+   
+   On the setup page, check the "Save Dolphin frame dumps" option.
+   It is recommended to also check the "Auto-delete original frame dumps" option.
+   Otherwise, Dolphin will ask to overwrite the frame and audio dumps every time.
+
+   Below you can also change the folder for video export.
+
+![setup-video](media/setup-video.png)
+
+4. Start playback through Slippipedia
+
+   Play back any replay, stock or punish from the browser page.
+
+5. Save the frame dump
+
+   After closing Dolphin (make sure all Dolphin windows are closed),
+   Slippipedia will ask to save the frame dumps.
+
+![video-confirm](media/video-confirm.png)
+
+6. Video is converted
+
+  Slippipedia will now combine Dolphin's frame and audio dumps into one MP4 file.
+  Check the bottom of the setup page for progress and to find the output file.
+
+![video-saved](media/video-saved.png)
+
+### Video quality
+
+The video quality depends on the Dolphin frame dump settings.
+Per default, the video resolution is the same as the playback resolution.
+
+You can also save it at the internal resolution set in the graphics settings.
+To enable this, open playback Dolphin and enable `Graphics -> Advanced -> Full Resolution Frame Dumps`.
+
+The original bitrate is configured in the file `User/Config/GFX.ini` as `BitrateKbps`.
+
+Slippipedia then converts it with the encoder settings from the bottom of setup page.
+
+![settings-video](media/settings-video.png)
+
 ## Set player filter
 
 For more detailed output, like win rate and opponent stats, set your Slippi name and/or tag in the filter configuration.
 
 ![player filter](media/filter-player.png)
-
 
 
 ## Explore stats
