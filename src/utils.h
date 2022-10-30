@@ -8,6 +8,7 @@
 class Utils : public QObject
 {
   Q_OBJECT
+  Q_PROPERTY(QString offlineStoragePath READ offlineStoragePath CONSTANT)
 
   Utils();
 public:
@@ -24,6 +25,8 @@ public:
   Q_INVOKABLE bool mkdirs(const QString &path);
   Q_INVOKABLE bool moveFile(const QString &from, const QString &to);
   Q_INVOKABLE qint64 fileSize(const QString &path);
+
+  QString offlineStoragePath() const;
 };
 
 #endif // UTILS_H

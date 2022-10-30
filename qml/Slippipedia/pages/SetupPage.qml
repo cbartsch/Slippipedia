@@ -67,8 +67,16 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
     AppListItem {
       text: qsTr("%1 total replays stored.").arg(dataModel.stats.totalReplays)
 
+      mouseArea.hoverEnabled: false
+      mouseArea.cursorShape: Qt.ArrowCursor
       backgroundColor: Theme.backgroundColor
-      enabled: false
+
+      rightItem: AppToolButton {
+        anchors.verticalCenter: parent.verticalCenter
+        iconType: IconType.folder
+        toolTipText: qsTr("Open database folder:\n%1").arg(Utils.offlineStoragePath)
+        onClicked: Utils.exploreToFile(Utils.offlineStoragePath)
+      }
     }
 
     AppListItem {

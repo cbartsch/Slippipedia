@@ -2,6 +2,7 @@
 
 #include <QQmlEngine>
 
+#include <QApplication>
 #include <QDir>
 #include <QProcess>
 #include <QtDebug>
@@ -128,12 +129,12 @@ QStringList Utils::listFiles(const QString &folder, const QStringList &nameFilte
   dir.setNameFilters(nameFilters);
   auto fileList = dir.entryInfoList(QDir::Filter::Files);
 
-  for(auto subFile : fileList) {
+  for(auto &subFile : fileList) {
     files << subFile.filePath();
   }
 
   if(recursive) {
-    for(auto subDir : dir.entryInfoList(QDir::Filter::AllDirs | QDir::Filter::NoDotAndDotDot)) {
+    for(auto &subDir : dir.entryInfoList(QDir::Filter::AllDirs | QDir::Filter::NoDotAndDotDot)) {
       files << listFiles(subDir.filePath(), nameFilters, recursive);
     }
   }
@@ -157,4 +158,9 @@ qint64 Utils::fileSize(const QString &path)
 {
   QFile file(path);
   return file.exists() ? file.size() : -1;
+}
+
+QString Utils::offlineStoragePath() const
+{
+  return qmlEngine(this)->offlineStoragePath();
 }
