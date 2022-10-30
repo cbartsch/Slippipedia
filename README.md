@@ -17,7 +17,7 @@ Made by me (Chrisu). For feedback, bug reports, feature requests etc. use the is
 * DAFT Home Community Discord - https://discord.gg/jKf9XQE
 
 # Credits
-
+https://twitter.com/ChrisuSSBMtG/status/1586861084161581056
 * Slippi ([slippi.gg](https://slippi.gg))
 * Slippc ([GitHub](https://github.com/pcrain/slippc)) - Slippi replay parser in C++
 * Built with Felgo SDK ([felgo.com](https://felgo.com))
@@ -92,7 +92,7 @@ There is some setup required for this:
 1. Enable frame dumps in the playback Dolphin.
    
    You can open the playback dolphin by clicking the Slippi icon on the setup page.
-   Then open the "Movie" menu and enable "Dump frames" and "Dump audio".
+   Then open the `"Movie"` menu and enable `"Dump frames"` and `"Dump audio"`.
 
 ![video-dolphin](media/video-dolphin.png)
 
@@ -106,8 +106,8 @@ There is some setup required for this:
 
 3. Enable saving frame dumps
    
-   On the setup page, check the "Save Dolphin frame dumps" option.
-   It is recommended to also check the "Auto-delete original frame dumps" option.
+   On the setup page, check the `"Save Dolphin frame dumps"` option.
+   It is recommended to also check the `"Auto-delete original frame dumps"` option.
    Otherwise, Dolphin will ask to overwrite the frame and audio dumps every time.
 
    Below you can also change the folder for video export.
@@ -132,7 +132,7 @@ There is some setup required for this:
 
 ![video-saved](media/video-saved.png)
 
-### Video quality
+### Video quality & performance
 
 The video quality depends on the Dolphin frame dump settings.
 Per default, the video resolution is the same as the playback resolution.
@@ -140,7 +140,16 @@ Per default, the video resolution is the same as the playback resolution.
 You can also save it at the internal resolution set in the graphics settings.
 To enable this, open playback Dolphin and enable `Graphics -> Advanced -> Full Resolution Frame Dumps`.
 
+![video-resolution](media/video-resolution.png)
+
 The original bitrate is configured in the file `User/Config/GFX.ini` as `BitrateKbps`.
+
+If you just want to export a video, you can set Dolphin to run at an aribtrary frame rate.
+To do so, go to `Config -> General` and set `Speed Limit` to `"Unlimited"`.
+Thus the game can run as fast as your setup allows.
+The resulting video file will still run at normal 60 fps.
+
+![video-speed-limit](media/video-speed-limit.png)
 
 Slippipedia then converts it with the encoder settings from the bottom of setup page.
 
