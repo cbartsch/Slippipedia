@@ -23,6 +23,8 @@ ToolTip {
   contentItem: AppText {
     text: toolTip.text
     wrapMode: Text.NoWrap
+    elide: Text.ElideMiddle
+    clip: true
   }
 
   enter: Transition {
