@@ -74,7 +74,7 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       rightItem: AppToolButton {
         anchors.verticalCenter: parent.verticalCenter
         iconType: IconType.folder
-        toolTipText: qsTr("Open database folder:\n%1").arg(Utils.offlineStoragePath)
+        toolTipText: qsTr("Show database file:\n%1").arg(Utils.offlineStoragePath)
         onClicked: Utils.exploreToFile(Utils.offlineStoragePath)
       }
     }

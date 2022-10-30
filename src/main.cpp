@@ -88,8 +88,9 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
   static QMutex mutex;
   QMutexLocker lock(&mutex);
 
-  if(msg.startsWith("qrc:/qt-project.org/imports/QtQuick/Controls/macOS/")) {
-    // skip useless logs from QQC2 on mac
+  // skip useless logs from Qt bugs
+  if(msg.startsWith("qrc:/qt-project.org/imports/QtQuick/Controls/macOS/") ||
+      msg.contains("MeleeData is not defined")) {
     return;
   }
 
@@ -145,16 +146,9 @@ int main(int argc, char *argv[])
   // Set an optional license key from project file
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
   felgo.setLicenseKey(PRODUCT_LICENSE_KEY);
-
-  // use this during development
-  // for PUBLISHING, use the entry point below
-#ifdef USE_RESOURCES
-  felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
-#else
   felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
-#endif
 
-  Utils::registerQml(QML_MODULE_NAME);
+  Utils::registerQml(QML_MODULE_NAME, db.databaseName());
 
   qmlRegisterType<SlippiParser>(QML_MODULE_NAME, 1, 0, "SlippiParser");
   qmlRegisterUncreatableType<SlippiReplay>(QML_MODULE_NAME, 1, 0, "SlippiReplay", "Returned by SlippiParser");
@@ -170,7 +164,7 @@ int main(int argc, char *argv[])
   // load QML module:
   engine.addImportPath(client.cacheDirectory() + "/Slippipedia/qml");
 #else
-  engine.load(QUrl(felgo.mainQmlFileName()));
+  engine.load(felgo.mainQmlFileName());
 #endif
 
   return app.exec();

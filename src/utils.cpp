@@ -2,7 +2,6 @@
 
 #include <QQmlEngine>
 
-#include <QApplication>
 #include <QDir>
 #include <QProcess>
 #include <QtDebug>
@@ -11,14 +10,13 @@
 #include <shlobj.h>
 #endif
 
-Utils::Utils()
+Utils::Utils(const QString &dbFileName) : m_dbFileName(dbFileName)
 {
-
 }
 
-void Utils::registerQml(const char *qmlModuleName) {
-  qmlRegisterSingletonType<Utils>(qmlModuleName, 1, 0, "Utils", [](QQmlEngine*, QJSEngine*) -> QObject* {
-    return new Utils();
+void Utils::registerQml(const char *qmlModuleName, const QString &dbFileName) {
+  qmlRegisterSingletonType<Utils>(qmlModuleName, 1, 0, "Utils", [=](QQmlEngine*, QJSEngine*) -> QObject* {
+    return new Utils(dbFileName);
   });
 }
 
@@ -162,5 +160,5 @@ qint64 Utils::fileSize(const QString &path)
 
 QString Utils::offlineStoragePath() const
 {
-  return qmlEngine(this)->offlineStoragePath();
+  return m_dbFileName;
 }
