@@ -40,8 +40,6 @@ Grid {
   anchors.left: parent.left
   anchors.right: parent.right
 
-  property var md: MeleeData
-
   property Sorter countSorter: RoleSorter {
     roleName: "count"
     ascendingOrder: false
@@ -49,8 +47,8 @@ Grid {
 
   property Sorter cssSorter: ExpressionSorter {
     expression: {
-      var cssIdLeft = md.charCssIndices[modelLeft.id]
-      var cssIdRight = md.charCssIndices[modelRight.id]
+      var cssIdLeft = MeleeData.charCssIndices[modelLeft.id]
+      var cssIdRight = MeleeData.charCssIndices[modelRight.id]
 
       return cssIdRight < cssIdLeft
     }
@@ -118,7 +116,7 @@ Grid {
         visible: showIcon && hasChar
 
         opacity: showData
-                 ? count == 0 ? 0.1 : (Math.pow(count / maxCount, 0.5) * 0.7 + 0.3)
+                 ? count === 0 ? 0.1 : (Math.pow(count / maxCount, 0.5) * 0.7 + 0.3)
                  : (!isSelected && charIds.length > 0 ? 0.5 : 1)
 
         width: Math.min(implicitWidth * 1.5, characterGrid.width / characterGrid.columns)
