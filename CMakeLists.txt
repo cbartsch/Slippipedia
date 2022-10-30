@@ -11,6 +11,8 @@ set(PRODUCT_IDENTIFIER "at.cb.Slippipedia")
 set(PRODUCT_VERSION_NAME "2.0")
 set(PRODUCT_VERSION_CODE 6)
 
+set(PRODUCT_STAGE "publish")
+
 add_subdirectory(slippi)
 
 set(QML_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qml" CACHE STRING "Qt Creator 4.1 extra qml import paths")
