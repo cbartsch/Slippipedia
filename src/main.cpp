@@ -88,6 +88,11 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
   static QMutex mutex;
   QMutexLocker lock(&mutex);
 
+  if(msg.startsWith("qrc:/qt-project.org/imports/QtQuick/Controls/macOS/")) {
+    // skip useless logs from QQC2 on mac
+    return;
+  }
+
   QFile logFile(logFileInfo.absoluteFilePath());
 
   if (logFile.open(QIODevice::Append | QIODevice::Text)) {
