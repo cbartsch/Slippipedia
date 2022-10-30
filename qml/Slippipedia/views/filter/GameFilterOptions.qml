@@ -1,5 +1,5 @@
 import QtQuick 2.0
-import QtQuick.Controls 2.12 as QQ
+import QtQuick.Controls 2.12
 import Felgo 4.0
 import Qt5Compat.GraphicalEffects
 
@@ -454,9 +454,12 @@ Column {
     updateTexts()
   }
 
+  // workaround for a Qt bug, qml compiler fails on macOS otherwise
+  readonly property var dateOptionsAccessor: dateOptions
+
   function updateTexts() {
-    dateOptions.inputFrom.text = Qt.binding(() => dateText(filter.date.from))
-    dateOptions.inputTo.text = Qt.binding(() => dateText(filter.date.to))
+    dateOptionsAccessor.inputFrom.text = Qt.binding(() => dateText(filter.date.from))
+    dateOptionsAccessor.inputTo.text = Qt.binding(() => dateText(filter.date.to))
   }
 
   function dateText(dateMs) {
