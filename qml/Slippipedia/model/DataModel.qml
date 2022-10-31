@@ -498,7 +498,7 @@ Item {
     Utils.moveFile(audioDspPathOrig, audioDspPath)
     Utils.moveFile(audioDtkPathOrig, audioDtkPath)
 
-    var iconImgPath = fileUtils.stripSchemeFromUrl(Qt.resolvedUrl("../../../resfiles/icon.png"))
+    var iconImgPath = fileUtils.stripSchemeFromUrl(Utils.executablePath + "/resfiles/icon.png")
 
     // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
     var videoFiles = fileUtils.listFiles(videoPath, "*.avi").sort()

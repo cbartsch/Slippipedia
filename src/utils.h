@@ -9,6 +9,7 @@ class Utils : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString offlineStoragePath READ offlineStoragePath CONSTANT)
+  Q_PROPERTY(QString executablePath READ executablePath CONSTANT)
 
   Utils(const QString &dbFileName);
 public:
@@ -27,6 +28,7 @@ public:
   Q_INVOKABLE qint64 fileSize(const QString &path);
 
   QString offlineStoragePath() const;
+  QString executablePath() const;
 
 private:
   QString m_dbFileName;

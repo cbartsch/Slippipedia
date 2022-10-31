@@ -2,6 +2,7 @@
 
 #include <QQmlEngine>
 
+#include <QApplication>
 #include <QDir>
 #include <QProcess>
 #include <QtDebug>
@@ -161,4 +162,9 @@ qint64 Utils::fileSize(const QString &path)
 QString Utils::offlineStoragePath() const
 {
   return m_dbFileName;
+}
+
+QString Utils::executablePath() const
+{
+  return qApp->applicationDirPath();
 }
