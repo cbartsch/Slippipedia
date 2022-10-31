@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  QFileInfo logFileDir(qApp->applicationDirPath());
+  QFileInfo logFileDir(qApp->applicationFilePath());
 #ifdef Q_OS_MAC
   // on Mac the executable is at Slippipedia.app/Contents/Resources/ -> remove those paths for the log file:
   logFileDir = QFileInfo(logFileDir.dir(), "../../..");
