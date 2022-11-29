@@ -603,7 +603,9 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
                            : "Show in file explorer"
 
             visible: fileUtils.existsFile(modelData.filePath)
-            onClicked: Utils.exploreToFile(modelData.filePath)
+
+            // call async in case this Repeater delegate object is destroyed in the meantime
+            onClicked: Qt.callLater(() => Utils.exploreToFile(modelData.filePath))
           }
         }
       }
