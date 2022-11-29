@@ -525,6 +525,9 @@ Item {
       // use padding to even size
       var padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
 
+      // read input video at original frame rate (59.94) by setting presentation timestamp
+      var ptsFilter = "setpts=(PTS-STARTPTS)*60/59.94"
+
       // show watermark in bottom right
       var overlayFilter = "overlay=main_w-overlay_w-5:main_h-overlay_h-5:format=auto,format=yuv420p"
 
@@ -535,7 +538,8 @@ Item {
       var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
 
       // overlay watermark onto video
-      var filter = qsTr("%1 %4 [vid]; [vid] %2 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %3").arg(videoInputTags).arg(padFilter).arg(overlayFilter).arg(concatFilter)
+      var filter = qsTr("%1 %2 [vid]; [vid] %3, %4 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %5")
+        .arg(videoInputTags).arg(concatFilter).arg(padFilter).arg(ptsFilter).arg(overlayFilter)
 
       // no watermark
       //var filter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
