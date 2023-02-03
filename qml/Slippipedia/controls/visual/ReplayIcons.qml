@@ -119,7 +119,7 @@ Item {
     }
 
     Item {
-      width: dp(Theme.contentPadding)
+      width: dp(Theme.contentPadding) / 2
       height: 1
     }
 
