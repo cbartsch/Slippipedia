@@ -85,6 +85,10 @@ Item {
       opponentFilter.setCharFilter(data.opponentCharId >= 0 ? [data.opponentCharId] : [])
     }
 
+    if(data.replayId) {
+      gameFilter.setReplayIds(data.replayId >= 0 ? [data.replayId] : [])
+    }
+
     if(data.stageId) {
       gameFilter.setStage(data.stageId >= 0 ? [data.stageId] : [])
     }

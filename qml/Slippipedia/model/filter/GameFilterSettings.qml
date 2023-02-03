@@ -56,6 +56,7 @@ Item {
     onFilterChanged: gameFilterSettings.filterChanged()
   }
 
+  property var replayIds: []
   property var stageIds: []
   property var platforms: []
   property var gameModes: []
@@ -67,6 +68,7 @@ Item {
   onGameEndTypeChanged:            filterChanged()
   onLossTypeChanged:               filterChanged()
   onUserFlagMaskChanged:           filterChanged()
+  onReplayIdsChanged:              filterChanged()
   onStageIdsChanged:               filterChanged()
   onPlatformsChanged:              filterChanged()
   onGameModesChanged:              filterChanged()
@@ -102,11 +104,13 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter || hasPlatformFilter || hasGameModeFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasReplayFilter || hasStageFilter ||
+                                        hasUserFlagFilter || hasPlatformFilter || hasGameModeFilter
                                         // || hasSessionSplitInterval // not technically a filter
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
+  readonly property bool hasReplayFilter: replayIds && replayIds.length > 0
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
   readonly property bool hasPlatformFilter: platforms && platforms.length > 0
   readonly property bool hasGameModeFilter: gameModes && gameModes.length > 0
@@ -117,6 +121,11 @@ Item {
   readonly property bool hasUserFlagFilter: userFlagMask > 0
 
   readonly property string displayText: {
+    var rText = null
+    if(replayIds.length > 0) {
+      rText = "Specific replay(s): " + replayIds.map(id => "#" + id).join(", ")
+    }
+
     var sText = null
     if(stageIds.length > 0) {
       sText = "Stages: " + stageIds.map(id => MeleeData.stageMap[id].name).join(", ")
@@ -157,7 +166,7 @@ Item {
     var platformText = platforms && platforms.length > 0 ? "Platforms: " + platforms.map(dataModel.platformText).join(", ") : ""
 
     return [
-          sText, etText, wText, dText, durText, stockText, gameModeText, platformText
+          rText, sText, etText, wText, dText, durText, stockText, gameModeText, platformText
         ].filter(_ => _).join("\n") || ""
   }
 
@@ -175,6 +184,7 @@ Item {
       onLossTypeChanged:               settingsLoader.item.lossType = lossType
       onGameEndTypeChanged:            settingsLoader.item.gameEndType = gameEndType
       onUserFlagMaskChanged:           settingsLoader.item.userFlagMask = userFlagMask
+      onReplayIdsChanged:              settingsLoader.item.replayIds = replayIds
       onStageIdsChanged:               settingsLoader.item.stageIds = stageIds
       onPlatformsChanged:              settingsLoader.item.platforms = platforms
       onGameModesChanged:              settingsLoader.item.gameModes = gameModes
@@ -201,6 +211,9 @@ Item {
 
       // split sessions against the same opponent after:
       property int sessionSplitIntervalMs: gameFilterSettings.sessionSplitIntervalMs
+
+      // match Replay.id
+      property var replayIds: gameFilterSettings.replayIds
 
       // match Replay.stageId
       property var stageIds: gameFilterSettings.stageIds
@@ -246,7 +259,8 @@ Item {
         gameFilterSettings.gameEndType = gameEndType
         gameFilterSettings.userFlagMask = userFlagMask
         gameFilterSettings.sessionSplitIntervalMs = sessionSplitIntervalMs
-        gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
+        gameFilterSettings.replayIds = replayIds.map(id => ~~id) // settings stores as list of string, convert to int
+        gameFilterSettings.stageIds =  stageIds.map(id => ~~id)
         gameFilterSettings.gameModes = gameModes.map(id => ~~id)
         gameFilterSettings.platforms = platforms
       }
@@ -257,6 +271,7 @@ Item {
     duration.reset()
     date.reset()
 
+    replayIds = []
     stageIds = []
     platforms = []
     gameModes = []
@@ -276,6 +291,7 @@ Item {
   }
 
   function copyFrom(other) {
+    setReplayIds(other.replayIds)
     setStage(other.stageIds)
     setPlatforms(other.platforms)
     setGameModes(other.gameModes)
@@ -290,6 +306,24 @@ Item {
     gameEndType = other.gameEndType
     userFlagMask = other.userFlagMask
     sessionSplitIntervalMs = other.sessionSplitIntervalMs
+  }
+
+  function setReplayIds(replayIds) {
+    gameFilterSettings.replayIds = replayIds
+  }
+
+  function addReplayIds(replayId) {
+    gameFilterSettings.replayIds = replayIds.concat(replayId)
+  }
+
+  function removeReplayId(replayId) {
+    var list = replayIds
+    list.splice(list.indexOf(replayId), 1)
+    gameFilterSettings.replayIds = list
+  }
+
+  function removeAllReplayIds() {
+    gameFilterSettings.replayIds = []
   }
 
   function setStage(stageIds) {
@@ -398,6 +432,11 @@ Item {
       winnerCondition = getWinnerCondition("p2", "p")
     }
 
+    var replayCondition = ""
+    if(replayIds && replayIds.length > 0) {
+      replayCondition = "r.id in " + dataModel.globalDataBase.makeSqlWildcards(replayIds)
+    }
+
     var stageCondition = ""
     if(stageIds && stageIds.length > 0) {
       stageCondition = "r.stageId in " + dataModel.globalDataBase.makeSqlWildcards(stageIds)
@@ -422,7 +461,7 @@ Item {
     var userFlagCondition = userFlagMask === 0 ? "" : "(r.userFlag & ?) > 0"
 
     var condition = [
-          winnerCondition, stageCondition,
+          replayCondition, winnerCondition, stageCondition,
           dateCondition, durationCondition,
           endStocksCondition, endStocks2Condition,
           endTypeCondition, userFlagCondition,
@@ -437,6 +476,7 @@ Item {
   function getGameFilterParams() {
     var isoFormat = "yyyy-MM-ddTHH:mm:ss.zzz"
 
+    var replayIdParams = replayIds && replayIds.length > 0 ? replayIds : []
     var stageIdParams = stageIds && stageIds.length > 0 ? stageIds : []
 
     var dateParams = date.getFilterParams(v => new Date(v).toLocaleString(Qt.locale(), isoFormat))
@@ -448,7 +488,8 @@ Item {
     var platformParams = platforms && platforms.length > 0 ? platforms : []
     var gameModeParams = gameModes && gameModes.length > 0 ? gameModes : []
 
-    return stageIdParams
+    return replayIdParams
+    .concat(stageIdParams)
     .concat(dateParams)
     .concat(durationParams)
     .concat(endStocksParams)

@@ -19,8 +19,7 @@ AppListItem {
 
   readonly property bool showOptions: !replayListView.dragging &&
                                       mouseArea.containsMouse || icons.stockHovered ||
-                                      toolBtnFolder.hovered || toolBtnOpen.hovered ||
-                                      toolBtnSetup.hovered || toolBtnFavorite.hovered
+                                      [toolBtnStats, toolBtnFolder, toolBtnOpen, toolBtnSetup, toolBtnFavorite].some(btn => btn.hovered)
 
   readonly property var stockSummary: showOptions
                                       ? dataModel.globalDataBase.getStockSummary(replayModel.replayId, [replayModel.port1, replayModel.port2])
@@ -86,6 +85,16 @@ AppListItem {
       id: optionsRow
       spacing: dp(Theme.contentPadding) / 3
       anchors.centerIn: parent
+
+      AppToolButton {
+        id: toolBtnStats
+        iconType: IconType.barchart
+        toolTipText: "Show stats for single replay"
+        height: width
+        anchors.verticalCenter: parent.verticalCenter
+
+        onClicked: app.showStats({ replayId: replayModel.replayId })
+      }
 
       AppToolButton {
         id: toolBtnFolder
