@@ -350,6 +350,14 @@ Item {
     }[platform] || platformText(platform)
   }
 
+  function gameModeName(gameMode) {
+    return {
+      [SlippiReplay.Direct]: "Direct",
+      [SlippiReplay.Ranked]: "Ranked",
+      [SlippiReplay.Unranked]: "Unranked"
+    }[gameMode] || "Unknown"
+  }
+
   function platformText(platform) {
     return capitalize(platform)
   }
@@ -358,7 +366,7 @@ Item {
     switch(platform) {
     case "console":
     case "nintendont": return Qt.resolvedUrl("../../../assets/img/gamecube.png")
-    case "network":     return Qt.resolvedUrl("../../../assets/img/broadcast.svg")
+    case "network":    return Qt.resolvedUrl("../../../assets/img/broadcast.svg")
     case "slippi":
     default:           return Qt.resolvedUrl("../../../assets/img/slippi.svg")
     }

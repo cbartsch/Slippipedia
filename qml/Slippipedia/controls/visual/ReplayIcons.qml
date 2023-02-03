@@ -123,50 +123,6 @@ Item {
       height: 1
     }
 
-    Item {
-      anchors.verticalCenter: parent.verticalCenter
-      width: dp(32)
-      height: parent.height
-
-      RippleMouseArea {
-        id: platformMouse
-        anchors.fill: parent
-        hoverEffectEnabled: true
-        cursorShape: Qt.ArrowCursor
-        backgroundColor: Theme.listItem.selectedBackgroundColor
-        fillColor: backgroundColor
-        opacity: 0.5
-      }
-
-      AppImage {
-        id: platformIcon
-        anchors.centerIn: parent
-        source: dataModel.platformIcon(replayModel.platform)
-        width: dp(24)
-        height: dp(24)
-        fillMode: Image.PreserveAspectFit
-        visible: replayModel.platform !== "dolphin" && replayModel.platform !== "network"
-        mipmap: true
-      }
-
-      ColorOverlay {
-        anchors.fill: platformIcon
-        source: platformIcon
-        color: Theme.tintColor
-        visible: !platformIcon.visible
-      }
-
-      CustomToolTip {
-        shown: platformMouse.containsMouse
-        text: qsTr("Played on %1, Slippi version %2").arg(dataModel.platformDescription(replayModel.platform)).arg(replayModel.slippiVersion || "Unknown")
-      }
-    }
-
-    Item {
-      width: dp(Theme.contentPadding)
-      height: 1
-    }
-
     AppText {
       anchors.verticalCenter: parent.verticalCenter
       horizontalAlignment: Text.AlignHCenter

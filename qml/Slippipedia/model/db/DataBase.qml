@@ -25,8 +25,9 @@ Item {
   // history:
   // 2.0 - Slippipedia 1.0
   // 2.1 - Slippipedia 1.1 - add Replays.userFlag
-  // 3.0 - Slippipedis 2.0 - add Replays.platform, Replays.slippiVersion, drop unused indices
-  readonly property string dbLatestVersion: "3.0"
+  // 3.0 - Slippipedia 2.0 - add Replays.platform, Replays.slippiVersion, drop unused indices
+  // 3.1 - Slippipedia 2.1 - add Replays.matchId/gameNumber/tiebreakerNumber/gameMode
+  readonly property string dbLatestVersion: "3.1"
   readonly property string dbCurrentVersion: db.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -56,6 +57,14 @@ Item {
 
           tx.executeSql("drop index player_index")
           tx.executeSql("drop index punish_index")
+        }
+        if(dbCurrentVersion < "3.1") {
+          console.log("Update DB to 3.1")
+          // 3.1 - add slippi 3.14 data
+          tx.executeSql("alter table Replays add column matchId text default ''")
+          tx.executeSql("alter table Replays add column gameNumber integer default 0")
+          tx.executeSql("alter table Replays add column tiebreakerNumber integer default 0")
+          tx.executeSql("alter table Replays add column gameMode integer default 0")
         }
       })
 
@@ -87,7 +96,11 @@ duration integer,
 filePath text,
 userFlag integer,
 platform text,
-slippiVersion text
+slippiVersion text,
+matchId text,
+gameNumber integer,
+tiebreakerNumber integer,
+gameMode integer
       )")
 
       // create a column named s_<stat> for each stat in the replay
@@ -169,12 +182,14 @@ foreign key(replayId) references replays(id)
 
       tx.executeSql("insert or replace into Replays (hasData, id, date, stageId,
                                                      winnerPort, lrasPort, endType,
-                                                     duration, filePath, platform, slippiVersion)
-                     values (true, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                                                     duration, filePath, platform, slippiVersion,
+                                                     matchId, gameNumber, tiebreakerNumber, gameMode)
+                     values (true, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     [
                       replay.uniqueId, replay.date, replay.stageId,
                       replay.winningPlayerPort, replay.lrasPlayerIndex, replay.gameEndType,
-                      replay.gameDuration, replay.filePath, replay.platform, replay.slippiVersion
+                      replay.gameDuration, replay.filePath, replay.platform, replay.slippiVersion,
+                      replay.matchId, replay.gameNumber, replay.tiebreakerNumber, replay.gameMode
                     ])
 
       replay.players.forEach(function(player) {
@@ -671,6 +686,7 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
             "select
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
 r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
+r.matchId matchId, r.gameNumber gameNumber, r.tiebreakerNumber tiebreakerNumber, r.gameMode gameMode,
  p.s_startStocks startStocks,
  p.slippiName name1,  p.cssTag tag1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2,
@@ -737,6 +753,7 @@ pu.startFrame startFrame, pu.endFrame endFrame, pu.duration punishDuration,
 pu.startPercent startPercent, pu.endPercent endPercent, pu.stocks stocks, pu.damage damage,
 r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId, r.winnerPort winnerPort,
 r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
+r.matchId matchId, r.gameNumber gameNumber, r.tiebreakerNumber tiebreakerNumber, r.gameMode gameMode,
  p.s_startStocks startStocks,
  p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2

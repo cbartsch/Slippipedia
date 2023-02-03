@@ -93,15 +93,14 @@ Item {
 
       ReplaySectionHeader {
         sectionModel: sectionData[section] || {}
-        height: dp(64)
+        height: dp(80)
         statsButtonVisible: false
-
-      // sections having different heights is buggy...
-      //  visible: model.showNames
+        visible: sectionModel.showNames
       }
 
       ReplayListItem {
         replayModel: sectionData[section] || {}
+        replayListView: listView
 
         toolBtnOpen.toolTipText: "Replay all punishes"
 
@@ -178,7 +177,8 @@ Item {
 
     // adapt model with extra data for list view (sections, ...)
     var adapted = loaded.map(item => {
-                               var sessionSection = dataModel.playersText(item)
+                               // use new match ID from Slippi 3.14 to group sessions, or a combination of the player data:
+                               var sessionSection = item.matchId || dataModel.playersText(item)
                                var section = dataModel.formatDate(item.date) + " - " + sessionSection
 
                                var isNewSession = sessionSection !== prevSessionSection

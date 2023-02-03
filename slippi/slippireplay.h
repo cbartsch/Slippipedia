@@ -119,6 +119,7 @@ class SlippiReplay : public QObject
   Q_PROPERTY(QString matchId MEMBER m_matchId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int gameNumber MEMBER m_gameNumber NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int tiebreakerNumber MEMBER m_tiebreakerNumber NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(GameMode gameMode MEMBER m_gameMode NOTIFY parsedFromAnalysis)
 
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerPort MEMBER m_winningPlayerPort NOTIFY parsedFromAnalysis)
@@ -128,10 +129,16 @@ class SlippiReplay : public QObject
 public:
   // same values as slip::EndType
   enum EndType {
-      Unresolved = 0, Resolved= 3,
+      Unresolved = 0, Resolved = 3,
       Time = 1, Game = 2, NoContest= 7
   };
   Q_ENUM(EndType)
+
+  // determined by replay matchId. unknown before Slippi 3.14
+  enum GameMode {
+      Unknown = 0, Ranked, Unranked, Direct
+  };
+  Q_ENUM(GameMode)
 
   explicit SlippiReplay(QObject *parent = nullptr);
   ~SlippiReplay();
@@ -159,6 +166,7 @@ private:
   // added in v3.14.0:
   QString m_matchId; // Unique ID for the match. Can use it to group sessions / ranked matches
   int m_gameNumber, m_tiebreakerNumber; // # of game in a session, tiebreaker number for ranked
+  GameMode m_gameMode;
 };
 
 #endif // SLIPPIREPLAY_H

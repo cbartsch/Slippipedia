@@ -15,7 +15,7 @@ AppListItem {
 
   property bool showPercent: showOptions
 
-  readonly property ListView replayListView: ListView.view
+  property ListView replayListView: ListView.view
 
   readonly property bool showOptions: !replayListView.dragging &&
                                       mouseArea.containsMouse || icons.stockHovered ||

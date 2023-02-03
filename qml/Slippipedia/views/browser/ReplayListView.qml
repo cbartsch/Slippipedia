@@ -92,7 +92,8 @@ Item {
 
     // adapt model with extra data for list view (sections, ...)
     var adapted = loaded.map(item => {
-                               var section = dataModel.playersText(item)
+                               // use new match ID from Slippi 3.14 to group sessions, or a combination of the player data:
+                               var section = item.matchId || dataModel.playersText(item)
 
                                while(section in sectionData) {
                                  var sData = sectionData[section]
@@ -129,7 +130,11 @@ Item {
                                    dateLast: item.date,
                                    numGames: 0,
                                    gamesFinished: 0,
-                                   gamesWon: 0
+                                   gamesWon: 0,
+                                   gameMode: item.gameMode,
+                                   matchId: item.matchId,
+                                   slippiVersion: item.slippiVersion,
+                                   platform: item.platform
                                  }
                                }
 

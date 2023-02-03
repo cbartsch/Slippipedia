@@ -29,6 +29,20 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   m_gameNumber = replay->game_number;
   m_tiebreakerNumber = replay->tiebreaker_number;
 
+  if(m_matchId.startsWith("mode.ranked")) {
+    m_gameMode = Ranked;
+  }
+  else if(m_matchId.startsWith("mode.unranked")) {
+    m_gameMode = Unranked;
+  }
+  else if(m_matchId.startsWith("mode.direct")) {
+    m_gameMode = Direct;
+  }
+  else {
+    m_gameMode = Unknown;
+  }
+  // TODO spectate/mirror?
+
   // compute pseudo-unique hash for game
   qint64 uniqueId = 0;
   uniqueId = m_date.toSecsSinceEpoch();

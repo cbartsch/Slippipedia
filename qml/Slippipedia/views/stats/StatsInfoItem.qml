@@ -1,5 +1,6 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.0
+import Qt5Compat.GraphicalEffects 6.0
 import Felgo 4.0
 
 import Slippipedia 1.0
@@ -25,6 +26,7 @@ RowLayout {
     id: content
     Layout.fillWidth: true
     Layout.alignment: Qt.AlignVCenter
+    spacing: dp(2)
 
     AppText {
       id: dateText
@@ -39,14 +41,69 @@ RowLayout {
       : (dataModel.formatDate(stats.dateFirst) + " - " + dataModel.formatDate(stats.dateLast))
     }
 
-    AppText {
-      font.pixelSize: dp(16)
-      color: statsInfoItem.textColor
-
+    Row {
       width: parent.width
-      visible: "numGames" in stats
+      height: dp(24)
+      spacing: dp(Theme.contentPadding) / 2
 
-      text: qsTr("%1 game%2").arg(stats.numGames).arg(stats.numGames === 1 ? "" : "s")
+      AppText {
+        anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: dp(16)
+        color: statsInfoItem.textColor
+
+        visible: "numGames" in stats
+
+        text: qsTr("%1 game%2")
+          .arg(stats.numGames)
+          .arg(stats.numGames === 1 ? "" : "s")
+      }
+
+      AppText {
+        anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: dp(16)
+        color: statsInfoItem.textColor
+
+        visible: stats.gameMode && stats.gameMode !== SlippiReplay.Unknown
+
+        text: qsTr("- %1").arg(dataModel.gameModeName(stats.gameMode))
+      }
+
+      Item {
+        anchors.verticalCenter: parent.verticalCenter
+        width: dp(24)
+        height: dp(24)
+
+        RippleMouseArea {
+          id: platformMouse
+          anchors.fill: parent
+          hoverEffectEnabled: true
+          cursorShape: Qt.ArrowCursor
+          backgroundColor: Theme.listItem.selectedBackgroundColor
+          fillColor: backgroundColor
+          opacity: 0.5
+        }
+
+        AppImage {
+          id: platformIcon
+          anchors.fill: parent
+          source: dataModel.platformIcon(stats.platform)
+          fillMode: Image.PreserveAspectFit
+          visible: stats.platform !== "dolphin" && stats.platform !== "network"
+          mipmap: true
+        }
+
+        ColorOverlay {
+          anchors.fill: platformIcon
+          source: platformIcon
+          color: Theme.tintColor
+          visible: !platformIcon.visible
+        }
+
+        CustomToolTip {
+          shown: platformMouse.containsMouse
+          text: qsTr("Played on %1, Slippi version %2").arg(dataModel.platformDescription(stats.platform)).arg(stats.slippiVersion || "Unknown")
+        }
+      }
     }
 
     GameCountRow {
