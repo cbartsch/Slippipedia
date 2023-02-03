@@ -25,7 +25,8 @@ Item {
 
   // public accessors for summary data
   property int totalReplaysFiltered: summaryData && summaryData.count || 0
-  property int totalReplaysFilteredWithResult: summaryData && summaryData.gameEndedCount || 0
+  property int totalReplaysFilteredFinished: summaryData && summaryData.gameEndedCount || 0       // games that have ended (not LRAS'd)
+  property int totalReplaysFilteredWithResult: summaryData && summaryData.gameTiedCount || 0      // games that did not tie by the game end setting
   property int totalReplaysFilteredWon: summaryData && summaryData.winCount || 0
   property int totalReplaysFilteredWithTie: totalReplaysFiltered - totalReplaysFilteredWithResult
 
@@ -33,6 +34,7 @@ Item {
   readonly property real totalGameDuration: averageGameDuration * totalReplaysFiltered
   readonly property real totalGameDurationMinutes: averageGameDuration * totalReplaysFiltered / 60 / 60
 
+  readonly property real finishedRate: totalReplaysFilteredFinished / totalReplaysFiltered
   readonly property real tieRate: totalReplaysFilteredWithTie / totalReplaysFiltered
   readonly property real winRate: totalReplaysFilteredWon / totalReplaysFilteredWithResult
 

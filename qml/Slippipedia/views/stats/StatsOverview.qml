@@ -59,10 +59,29 @@ Column {
   }
 
   AppListItem {
-    text: qsTr("Games not finished: %1 (%2/%3)")
+    text: qsTr("Games finished: %1 (%2)")
+    .arg(dataModel.formatPercentage(stats.finishedRate))
+    .arg(dataModel.formatNumber(stats.totalReplaysFilteredFinished))
+
+    backgroundColor: Theme.backgroundColor
+    enabled: false
+  }
+
+  AppListItem {
+    text: qsTr("Games tied: %1 (%2)")
     .arg(dataModel.formatPercentage(stats.tieRate))
-    .arg(stats.totalReplaysFilteredWithTie)
-    .arg(stats.totalReplaysFiltered)
+    .arg(dataModel.formatNumber(stats.totalReplaysFilteredWithTie))
+
+    backgroundColor: Theme.backgroundColor
+    enabled: false
+  }
+
+  AppListItem {
+    text: qsTr("LRAS - Me: %1 (%2) / Opponent: %3 (%4)")
+    .arg(dataModel.formatPercentage(stats.statsPlayer.lrasCount.avg))
+    .arg(dataModel.formatNumber(stats.statsPlayer.lrasCount.value))
+    .arg(dataModel.formatPercentage(stats.statsOpponent.lrasCount.avg))
+    .arg(dataModel.formatNumber(stats.statsOpponent.lrasCount.value))
 
     backgroundColor: Theme.backgroundColor
     enabled: false

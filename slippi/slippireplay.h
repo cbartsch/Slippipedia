@@ -130,7 +130,7 @@ public:
   // same values as slip::EndType
   enum EndType {
       Unresolved = 0, Resolved = 3,
-      Time = 1, Game = 2, NoContest= 7
+      Time = 1, Game = 2, NoContest = 7
   };
   Q_ENUM(EndType)
 

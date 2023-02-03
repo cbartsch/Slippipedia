@@ -25,6 +25,8 @@ Item {
   readonly property real totalAerials: lCancels + lCancelsMissed
   readonly property real lCancelRate: totalAerials == 0 ? 0 : (lCancels / totalAerials)
 
+  readonly property Stat lrasCount: Stat { name: "lrasCount" }
+
   readonly property Stat taunts: Stat { name: "taunts" }
 
   readonly property Stat pivots: Stat { name: "pivots" }

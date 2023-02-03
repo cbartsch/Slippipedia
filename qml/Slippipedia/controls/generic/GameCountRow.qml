@@ -44,7 +44,7 @@ Flow {
   }
 
   AppText {
-    text:  qsTr("(%1 / %2)").arg(gamesWon).arg(gamesFinished)
+    text:  qsTr("(%1 / %2)").arg(dataModel.formatNumber(gamesWon)).arg(dataModel.formatNumber(gamesFinished))
     color: gameCountRow.textColor
     visible: dataModel.playerFilter.hasPlayerFilter
   }
