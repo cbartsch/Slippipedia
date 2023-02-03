@@ -116,6 +116,10 @@ class SlippiReplay : public QObject
   Q_PROPERTY(QString platform MEMBER m_platform NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QString slippiVersion MEMBER m_slippiVersion NOTIFY parsedFromAnalysis)
 
+  Q_PROPERTY(QString matchId MEMBER m_matchId NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(int gameNumber MEMBER m_gameNumber NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(int tiebreakerNumber MEMBER m_tiebreakerNumber NOTIFY parsedFromAnalysis)
+
   Q_PROPERTY(QVariantList players MEMBER m_players NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int winningPlayerPort MEMBER m_winningPlayerPort NOTIFY parsedFromAnalysis)
   Q_PROPERTY(EndType gameEndType MEMBER m_endType NOTIFY parsedFromAnalysis)
@@ -151,6 +155,10 @@ private:
   QVariantList m_players;
   int m_winningPlayerPort, m_lrasPlayerIndex;
   EndType m_endType;
+
+  // added in v3.14.0:
+  QString m_matchId; // Unique ID for the match. Can use it to group sessions / ranked matches
+  int m_gameNumber, m_tiebreakerNumber; // # of game in a session, tiebreaker number for ranked
 };
 
 #endif // SLIPPIREPLAY_H

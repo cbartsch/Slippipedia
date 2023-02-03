@@ -25,6 +25,10 @@ void SlippiReplay::fromAnalysis(const QString &filePath, slip::Analysis *analysi
   m_platform = QString::fromStdString(replay->played_on);
   m_slippiVersion = QString::fromStdString(replay->slippi_version);
 
+  m_matchId = QString::fromStdString(replay->match_id);
+  m_gameNumber = replay->game_number;
+  m_tiebreakerNumber = replay->tiebreaker_number;
+
   // compute pseudo-unique hash for game
   qint64 uniqueId = 0;
   uniqueId = m_date.toSecsSinceEpoch();
