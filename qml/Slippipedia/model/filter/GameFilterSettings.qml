@@ -58,6 +58,7 @@ Item {
 
   property var stageIds: []
   property var platforms: []
+  property var gameModes: []
 
   signal filterChanged
 
@@ -68,6 +69,7 @@ Item {
   onUserFlagMaskChanged:           filterChanged()
   onStageIdsChanged:               filterChanged()
   onPlatformsChanged:              filterChanged()
+  onGameModesChanged:              filterChanged()
   onSessionSplitIntervalMsChanged: filterChanged()
 
   // match slippi constants
@@ -100,13 +102,14 @@ Item {
   readonly property bool hasFilter: hasResultFilter || hasGameFilter
 
   readonly property bool hasResultFilter: hasWinnerFilter || hasDurationFilter
-  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter || hasPlatformFilter
+  readonly property bool hasGameFilter: hasDateFilter || hasStageFilter || hasUserFlagFilter || hasPlatformFilter || hasGameModeFilter
                                         // || hasSessionSplitInterval // not technically a filter
 
   readonly property bool hasDateFilter: date.hasFilter
   readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStageFilter: stageIds && stageIds.length > 0
   readonly property bool hasPlatformFilter: platforms && platforms.length > 0
+  readonly property bool hasGameModeFilter: gameModes && gameModes.length > 0
 
   readonly property bool hasWinnerFilter: winnerPlayerIndex > -3 || gameEndType > -1 ||
                                           endStocksWinner.hasFilter || endStocksLoser.hasFilter
@@ -150,10 +153,11 @@ Item {
     var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""
     var stockText2 = endStocksLoser.displayText ? "Stocks left (winner): " + endStocksLoser.displayText : ""
 
+    var gameModeText = gameModes && gameModes.length > 0 ? "Game modes: " + gameModes.map(dataModel.gameModeName).join(", ") : ""
     var platformText = platforms && platforms.length > 0 ? "Platforms: " + platforms.map(dataModel.platformText).join(", ") : ""
 
     return [
-          sText, etText, wText, dText, durText, stockText, platformText
+          sText, etText, wText, dText, durText, stockText, gameModeText, platformText
         ].filter(_ => _).join("\n") || ""
   }
 
@@ -173,6 +177,7 @@ Item {
       onUserFlagMaskChanged:           settingsLoader.item.userFlagMask = userFlagMask
       onStageIdsChanged:               settingsLoader.item.stageIds = stageIds
       onPlatformsChanged:              settingsLoader.item.platforms = platforms
+      onGameModesChanged:              settingsLoader.item.gameModes = gameModes
       onSessionSplitIntervalMsChanged: settingsLoader.item.sessionSplitIntervalMs = sessionSplitIntervalMs
     }
 
@@ -202,6 +207,9 @@ Item {
 
       // match Replay.platform
       property var platforms: gameFilterSettings.platforms
+
+      // match Replay.gameMode
+      property var gameModes: gameFilterSettings.gameModes
 
       // start and end date as Date.getTime() ms values
       property double startDateMs: gameFilterSettings.date.from
@@ -239,6 +247,7 @@ Item {
         gameFilterSettings.userFlagMask = userFlagMask
         gameFilterSettings.sessionSplitIntervalMs = sessionSplitIntervalMs
         gameFilterSettings.stageIds = stageIds.map(id => ~~id) // settings stores as list of string, convert to int
+        gameFilterSettings.gameModes = gameModes.map(id => ~~id)
         gameFilterSettings.platforms = platforms
       }
     }
@@ -250,6 +259,7 @@ Item {
 
     stageIds = []
     platforms = []
+    gameModes = []
 
     resetWinnerFilter()
 
@@ -268,6 +278,7 @@ Item {
   function copyFrom(other) {
     setStage(other.stageIds)
     setPlatforms(other.platforms)
+    setGameModes(other.gameModes)
 
     duration.copyFrom(other.duration)
     date.copyFrom(other.date)
@@ -315,6 +326,24 @@ Item {
 
   function removeAllPlatforms() {
     gameFilterSettings.platforms = []
+  }
+
+  function setGameModes(gameModes) {
+    gameFilterSettings.gameModes = gameModes
+  }
+
+  function addGameMode(gameMode) {
+    gameFilterSettings.gameModes = gameModes.concat(gameMode)
+  }
+
+  function removeGameMode(gameMode) {
+    var list = gameModes
+    list.splice(list.indexOf(gameMode), 1)
+    gameFilterSettings.gameModes = list
+  }
+
+  function removeAllGameModes() {
+    gameFilterSettings.gameModes = []
   }
 
   // set date range from now to numDays before now
@@ -379,6 +408,11 @@ Item {
       platformCondition = "r.platform in " + dataModel.globalDataBase.makeSqlWildcards(platforms)
     }
 
+    var gameModeCondition = ""
+    if(gameModes && gameModes.length > 0) {
+      gameModeCondition = "r.gameMode in " + dataModel.globalDataBase.makeSqlWildcards(gameModes)
+    }
+
     var dateCondition = date.getFilterCondition("r.date")
     var durationCondition = duration.getFilterCondition("r.duration")
     var endStocksCondition = endStocksWinner.getFilterCondition("max(p.s_endStocks, p2.s_endStocks)")
@@ -391,7 +425,8 @@ Item {
           winnerCondition, stageCondition,
           dateCondition, durationCondition,
           endStocksCondition, endStocks2Condition,
-          endTypeCondition, userFlagCondition, platformCondition
+          endTypeCondition, userFlagCondition,
+          platformCondition, gameModeCondition
         ]
     .map(c => ("(" + (c || true) + ")" ))
     .join(" and ")
@@ -411,6 +446,7 @@ Item {
     var endTypeParams = gameEndType === -1 ? [] : [gameEndType]
     var userFlagParams = userFlagMask === 0 ? [] : [userFlagMask]
     var platformParams = platforms && platforms.length > 0 ? platforms : []
+    var gameModeParams = gameModes && gameModes.length > 0 ? gameModes : []
 
     return stageIdParams
     .concat(dateParams)
@@ -420,6 +456,7 @@ Item {
     .concat(endTypeParams)
     .concat(userFlagParams)
     .concat(platformParams)
+    .concat(gameModeParams)
   }
 
   // note: the winnerPort is always set to the player who had fewer stocks or more percent

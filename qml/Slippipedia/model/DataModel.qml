@@ -15,6 +15,8 @@ Item {
   readonly property var userFlagNames: ["Favorite"]
   readonly property var userFlagIcons: [IconType.star]
 
+  readonly property var allGameModes: [SlippiReplay.Ranked, SlippiReplay.Unranked, SlippiReplay.Direct, SlippiReplay.Unknown]
+
   readonly property var monthNames: [
     "January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"

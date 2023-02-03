@@ -189,6 +189,81 @@ Column {
   }
 
   CustomListItem {
+    text: "Game mode"
+    detailText: "Match only games played on a specific game mode.
+Note: Game mode is always unknown for replays before Slippi 3.14 (when ranked came out)."
+
+    checked: filter ? filter.hasGameModeFilter : false
+    mouseArea.enabled: false
+
+    rightItem: AppToolButton {
+      iconType: IconType.trash
+      toolTipText: "Remove game mode filter"
+      visible: filter ? filter.hasGameModeFilter : false
+      anchors.verticalCenter: parent.verticalCenter
+
+      onClicked: filter.removeAllGameModes()
+    }
+  }
+
+  Item {
+    width: parent.width
+    height: gameModeFlow.height
+
+    Flow {
+      id: gameModeFlow
+      width: parent.width
+      spacing: dp(1)
+
+      Item {
+        height: dp(48)
+        width: gameModeText.width + dp(Theme.contentPadding) * 2
+
+        AppText {
+          id: gameModeText
+          text: "Game mode:"
+          anchors.centerIn: parent
+        }
+      }
+
+      Repeater {
+        model: dataModel.allGameModes
+
+        Rectangle {
+          height: dp(48)
+          width: gameModeCheckBox.width + dp(Theme.contentPadding) * 2
+
+          color: Theme.controlBackgroundColor
+
+          AppCheckBox {
+            id: gameModeCheckBox
+            text: dataModel.gameModeName(modelData)
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
+
+            checked: filter ? filter.gameModes.indexOf(modelData) >= 0 : false
+          }
+
+          RippleMouseArea {
+            id: gameModeMouse
+            anchors.fill: parent
+            hoverEffectEnabled: true
+            backgroundColor: Theme.listItem.selectedBackgroundColor
+            fillColor: backgroundColor
+            opacity: 0.5
+
+            onClicked: {
+              if(gameModeCheckBox.checked) filter.removeGameMode(modelData)
+              else                         filter.addGameMode(modelData)
+            }
+          }
+        }
+      }
+    }
+  }
+
+  CustomListItem {
     text: "Platform"
     detailText: "Match only games played on a specific platform."
 
@@ -230,7 +305,7 @@ Column {
 
         Rectangle {
           height: dp(48)
-          width: platformCheckBox.width + dp(Theme.contentPadding) + platformIcon.width
+          width: platformCheckBox.width + dp(Theme.contentPadding) * 2.5 + platformIcon.width
 
           color: Theme.controlBackgroundColor
 
@@ -333,7 +408,7 @@ Column {
           readonly property string flagName: modelData
 
           height: dp(48)
-          width: flagCheckBox.width + dp(Theme.contentPadding) + flagIcon.width
+          width: flagCheckBox.width + dp(Theme.contentPadding) * 2.5 + flagIcon.width
 
           color: Theme.controlBackgroundColor
 
