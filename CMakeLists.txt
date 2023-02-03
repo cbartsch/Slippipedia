@@ -11,7 +11,7 @@ set(PRODUCT_IDENTIFIER "at.cb.Slippipedia")
 set(PRODUCT_VERSION_NAME "2.0")
 set(PRODUCT_VERSION_CODE 6)
 
-set(PRODUCT_STAGE "publish")
+set(PRODUCT_STAGE "test")
 
 add_subdirectory(slippi)
 
