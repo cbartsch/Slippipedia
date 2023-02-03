@@ -180,11 +180,11 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
         height: width
         anchors.verticalCenter: parent.verticalCenter
 
-        Icon {
+        AppIcon {
           anchors.centerIn: parent
           size: dp(24)
           color: dataModel.hasDesktopApp ? Theme.tintColor : "red"
-          icon: dataModel.hasDesktopApp ? IconType.check : IconType.times
+          iconType: dataModel.hasDesktopApp ? IconType.check : IconType.times
         }
       }
 
@@ -292,11 +292,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         width: height
         anchors.verticalCenter: parent.verticalCenter
 
-        Icon {
+        AppIcon {
           anchors.centerIn: parent
           size: dp(24)
           color: dataModel.hasMeleeIso ? Theme.tintColor : "red"
-          icon: dataModel.hasMeleeIso ? IconType.check : IconType.times
+          iconType: dataModel.hasMeleeIso ? IconType.check : IconType.times
         }
       }
 
@@ -341,8 +341,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
                   + (Qt.platform.os === "osx" ? " You can install ffmpeg via homebrew (brew install ffmpeg)." : "")
       visible: !dataModel.hasFfmpeg
 
-      leftItem: Icon {
-        icon: IconType.warning
+      leftItem: AppIcon {
+        iconType: IconType.warning
         color: "yellow"
         anchors.verticalCenter: parent.verticalCenter
         size: dp(24)
@@ -367,8 +367,8 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       detailText: "Detected version: " + dataModel.ffmpegVersion
       visible: dataModel.hasFfmpeg
 
-      leftItem: Icon {
-        icon: IconType.check
+      leftItem: AppIcon {
+        iconType: IconType.check
         color: Theme.tintColor
         anchors.verticalCenter: parent.verticalCenter
         size: dp(24)
@@ -392,11 +392,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         width: height
         anchors.verticalCenter: parent.verticalCenter
 
-        Icon {
+        AppIcon {
           anchors.centerIn: parent
           size: dp(24)
           color: dataModel.videoOutputEnabled ? Theme.tintColor : "red"
-          icon: dataModel.videoOutputEnabled ? IconType.check : IconType.times
+          iconType: dataModel.videoOutputEnabled ? IconType.check : IconType.times
         }
       }
     }
@@ -414,11 +414,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         width: height
         anchors.verticalCenter: parent.verticalCenter
 
-        Icon {
+        AppIcon {
           anchors.centerIn: parent
           size: dp(24)
           color: dataModel.autoDeleteFrameDumps ? Theme.tintColor : "red"
-          icon: dataModel.autoDeleteFrameDumps ? IconType.check : IconType.times
+          iconType: dataModel.autoDeleteFrameDumps ? IconType.check : IconType.times
         }
       }
     }
@@ -575,11 +575,11 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         mouseArea.cursorShape: Qt.ArrowCursor
         backgroundColor: Theme.backgroundColor
 
-        leftItem: Icon {
+        leftItem: AppIcon {
           size: dp(24)
           anchors.verticalCenter: parent.verticalCenter
 
-          icon: modelData.progress >= 1 ? IconType.check : modelData.progress < 1 ? IconType.spinner : IconType.times
+          iconType: modelData.progress >= 1 ? IconType.check : modelData.progress < 1 ? IconType.spinner : IconType.times
           color: modelData.progress >= 1 ? Theme.tintColor : modelData.progress < 1 ? Theme.textColor : "red"
         }
 

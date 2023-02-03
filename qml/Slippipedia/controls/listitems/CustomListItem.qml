@@ -21,8 +21,8 @@ AppListItem {
 
     Behavior on opacity { UiAnimation { } }
 
-    Icon {
-      icon: IconType.externallink
+    AppIcon {
+      iconType: IconType.externallink
       anchors.verticalCenter: parent.verticalCenter
       anchors.right: parent.right
       anchors.margins: dp(Theme.contentPadding)

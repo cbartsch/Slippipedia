@@ -347,12 +347,12 @@ Column {
             checked: filter ? dataModel.hasFlag(filter.userFlagMask, flagId) : false
           }
 
-          Icon {
+          AppIcon {
             id: flagIcon
             anchors.right: parent.right
             anchors.rightMargin: dp(Theme.contentPadding)
             anchors.verticalCenter: parent.verticalCenter
-            icon: dataModel.userFlagIcons[index]
+            iconType: dataModel.userFlagIcons[index]
             color: flagCheckBox.checked ? Theme.tintColor : Theme.textColor
 
             Behavior on color { UiAnimation { } }

@@ -6,11 +6,11 @@ Item {
 
   property string badgeValue: ""
   property bool selected: false
-  property alias iconType: icon.icon
+  property alias iconType: icon.iconType
 
-  Icon {
+  AppIcon {
     id: icon
-    icon: IconType.database
+    iconType: IconType.database
     size: parent.height
     anchors.centerIn: parent
     color: selected ? Theme.navigationTabBar.titleColor : Theme.navigationTabBar.titleOffColor
@@ -32,8 +32,8 @@ Item {
       anchors.centerIn: parent
       spacing: dp(4)
 
-      Icon {
-        icon: IconType.plus
+      AppIcon {
+        iconType: IconType.plus
         anchors.verticalCenter: parent.verticalCenter
         size: dp(12)
         color: Theme.tintColor

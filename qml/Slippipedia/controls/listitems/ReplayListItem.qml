@@ -64,9 +64,9 @@ AppListItem {
     width: dp(48)
     height: dp(48)
 
-    Icon {
+    AppIcon {
       anchors.centerIn: parent
-      icon: IconType.star
+      iconType: IconType.star
       color: Theme.tintColor
     }
   }

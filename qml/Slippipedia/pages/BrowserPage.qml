@@ -28,12 +28,12 @@ BasePage {
     LoadingIcon {
     }
     IconButtonBarItem {
-      icon: IconType.filter
+      iconType: IconType.filter
       onClicked: showFilteringPage()
       visible: filterChangeable
     }
     IconButtonBarItem {
-      icon: IconType.refresh
+      iconType: IconType.refresh
       onClicked: refresh()
     }
   }

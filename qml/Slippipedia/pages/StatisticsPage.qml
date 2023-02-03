@@ -28,7 +28,7 @@ BasePage {
     }
 
     IconButtonBarItem {
-      icon: IconType.filter
+      iconType: IconType.filter
       onClicked: showFilteringPage()
       visible: filterChangeable
     }

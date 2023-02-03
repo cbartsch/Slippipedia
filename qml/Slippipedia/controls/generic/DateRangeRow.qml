@@ -23,7 +23,7 @@ Row {
 
   IconButton {
     id: btnMinus
-    icon: IconType.minus
+    iconType: IconType.minus
     size: dp(12)
     height: btnDay.height
     width: height / 2
@@ -53,7 +53,7 @@ Row {
 
   IconButton {
     id: btnPlus
-    icon: IconType.plus
+    iconType: IconType.plus
     size: dp(12)
     height: btnDay.height
     width: height / 2

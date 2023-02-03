@@ -43,9 +43,9 @@ ToolButton {
   contentItem: Item {
     anchors.fill: parent
 
-    Icon {
+    AppIcon {
       id: iconItem
-      icon: toolBtn.iconType
+      iconType: toolBtn.iconType
       visible: !!icon
       anchors.centerIn: parent
       color: toolBtn.checked ? Theme.tintColor : Theme.textColor

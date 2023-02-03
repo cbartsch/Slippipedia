@@ -56,10 +56,10 @@ Column {
         spacing: dp(4)
         height: flagText.height
 
-        Icon {
+        AppIcon {
           anchors.bottom: flagText.baseline
           anchors.bottomMargin: -dp(1)
-          icon: dataModel.userFlagIcons[index]
+          iconType: dataModel.userFlagIcons[index]
           color: Theme.tintColor
           size: flagText.font.pixelSize * 0.8
         }

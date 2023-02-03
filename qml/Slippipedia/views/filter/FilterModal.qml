@@ -6,7 +6,7 @@ import Slippipedia 1.0
 AppModal {
   id: filterModal
 
-  property Page page: null
+  property AppPage page: null
   property ReplayStats stats: null
 
   property bool showPunishOptions: false
@@ -26,7 +26,7 @@ AppModal {
       showPunishOptions: filterModal.showPunishOptions
 
       leftBarItem: IconButtonBarItem {
-        icon: IconType.angleleft
+        iconType: IconType.angleleft
         onClicked: filterModal.close()
       }
     }

@@ -2,7 +2,7 @@ import QtQuick 2.0
 import Felgo 4.0
 
 IconButtonBarItem {
-  icon: IconType.spinner
+  iconType: IconType.spinner
   visible: dataModel.isProcessing || dataModel.isEncoding
   enabled: false
   mouseArea.hoverEnabled: false

@@ -5,7 +5,7 @@ import Felgo 4.0
 
 import Slippipedia 1.0
 
-Page {
+AppPage {
   id: filterPage
   title: qsTr("Filtering")
 

@@ -66,8 +66,8 @@ BasePage {
         height: iconSize
         width: height
 
-        Icon {
-          icon: IconType.twitter
+        AppIcon {
+          iconType: IconType.twitter
           color: "#1DA1F2"
           size: parent.height
           anchors.centerIn: parent
@@ -89,8 +89,8 @@ BasePage {
         height: iconSize
         width: height
 
-        Icon {
-          icon: IconType.github
+        AppIcon {
+          iconType: IconType.github
           color: Theme.tintColor
           size: parent.height
           anchors.centerIn: parent
@@ -141,8 +141,8 @@ BasePage {
         height: iconSize
         width: height
 
-        Icon {
-          icon: IconType.home
+        AppIcon {
+          iconType: IconType.home
           color: pinkColor
           size: parent.height
           anchors.centerIn: parent
@@ -167,8 +167,8 @@ BasePage {
         height: iconSize
         width: height
 
-        Icon {
-          icon: IconType.github
+        AppIcon {
+          iconType: IconType.github
           color: "white"
           size: parent.height
           anchors.centerIn: parent
