@@ -63,7 +63,7 @@ RowLayout {
         font.pixelSize: dp(16)
         color: statsInfoItem.textColor
 
-        visible: stats.gameMode && stats.gameMode !== SlippiReplay.Unknown
+        visible: stats.gameMode && stats.gameMode !== SlippiReplay.Unknown || false
 
         text: qsTr("- %1").arg(dataModel.gameModeName(stats.gameMode))
       }
