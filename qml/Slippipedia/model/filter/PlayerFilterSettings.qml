@@ -54,6 +54,8 @@ Item {
   readonly property bool hasPlayerFilter: slippiCode.filterText != "" || slippiName.filterText != "" || port >= 0
   readonly property bool hasCharFilter: charIds && charIds.length > 0
 
+  onHasPlayerFilterChanged: filterChanged()
+
   readonly property string nameFilterText: {
     var codeText = slippiCode.filterText
     var nameText = slippiName.filterText
