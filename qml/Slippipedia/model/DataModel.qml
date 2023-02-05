@@ -369,6 +369,7 @@ Item {
     case "console":
     case "nintendont": return Qt.resolvedUrl("../../../assets/img/gamecube.png")
     case "network":    return Qt.resolvedUrl("../../../assets/img/broadcast.svg")
+    case "dolphin":
     case "slippi":
     default:           return Qt.resolvedUrl("../../../assets/img/slippi.svg")
     }

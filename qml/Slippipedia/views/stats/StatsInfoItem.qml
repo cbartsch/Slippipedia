@@ -51,21 +51,7 @@ RowLayout {
         font.pixelSize: dp(16)
         color: statsInfoItem.textColor
 
-        visible: "numGames" in stats
-
-        text: qsTr("%1 game%2")
-          .arg(stats.numGames)
-          .arg(stats.numGames === 1 ? "" : "s")
-      }
-
-      AppText {
-        anchors.verticalCenter: parent.verticalCenter
-        font.pixelSize: dp(16)
-        color: statsInfoItem.textColor
-
-        visible: stats.gameMode && stats.gameMode !== SlippiReplay.Unknown || false
-
-        text: qsTr("- %1").arg(dataModel.gameModeName(stats.gameMode))
+        text: stats.gameMode !== SlippiReplay.Unknown ? dataModel.gameModeName(stats.gameMode) : dataModel.platformText(stats.platform)
       }
 
       Item {
@@ -88,21 +74,35 @@ RowLayout {
           anchors.fill: parent
           source: dataModel.platformIcon(stats.platform)
           fillMode: Image.PreserveAspectFit
-          visible: stats.platform !== "dolphin" && stats.platform !== "network"
+          visible: !colorOverlay.visible
           mipmap: true
         }
 
+        // show dolphin icon in green
         ColorOverlay {
+          id: colorOverlay
           anchors.fill: platformIcon
           source: platformIcon
           color: Theme.tintColor
-          visible: !platformIcon.visible
+          visible: stats.platform === "dolphin" || stats.platform === "slippi" || stats.platform === "network"
         }
 
         CustomToolTip {
           shown: platformMouse.containsMouse
           text: qsTr("Played on %1, Slippi version %2").arg(dataModel.platformDescription(stats.platform)).arg(stats.slippiVersion || "Unknown")
         }
+      }
+
+      AppText {
+        anchors.verticalCenter: parent.verticalCenter
+        font.pixelSize: dp(16)
+        color: statsInfoItem.textColor
+
+        visible: "numGames" in stats
+
+        text: qsTr("%1 game%2")
+          .arg(stats.numGames)
+          .arg(stats.numGames === 1 ? "" : "s")
       }
     }
 
