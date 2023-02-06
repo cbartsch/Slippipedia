@@ -15,7 +15,6 @@ ToolButton {
 
   property alias mouseArea: mouseArea
 
-
   flat: true
 
   RippleMouseArea {

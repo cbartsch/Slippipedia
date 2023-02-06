@@ -224,11 +224,6 @@ Item {
 
   function clearDatabase() {
     globalDataBase.clearAllData()
-    dataBaseConnection.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
-    })
-    dataBaseConnection = LocalStorage.openDatabaseSync("SlippiStatsDB", "", "Slippi Stats DB", 50 * 1024 * 1024)
-    console.log("DB version updated.", dataBaseConnection.version, dbCurrentVersion)
-
     dbUpdaterChanged() // refresh bindings
   }
 

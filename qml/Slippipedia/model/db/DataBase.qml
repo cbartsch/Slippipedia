@@ -168,6 +168,14 @@ foreign key(replayId) references replays(id)
       tx.executeSql("drop table if exists Players")
       tx.executeSql("drop table if exists Punishes")
     })
+
+    // cleans storage space etc after dropping data. must be done outside of transaction
+    Utils.executeSql("vacuum")
+
+    db.changeVersion(dbCurrentVersion, dbLatestVersion, function(tx) {
+    })
+    initDb()
+    console.log("DB version updated.", db.version, dbCurrentVersion)
   }
 
   function analyzeReplay(fileName, replay) {
