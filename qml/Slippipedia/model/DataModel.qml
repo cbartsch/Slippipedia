@@ -301,7 +301,7 @@ Item {
     else if(number > 1000) {
       return (number / 1000).toFixed(2) + "K"
     }
-    else if((number > 1 || number === 0) && (number === (number % 1))) {
+    else if((number >= 1 || number === 0) && (number === Math.floor(number))) {
       return number.toFixed(0)
     }
     else if(number > 0.1) {
