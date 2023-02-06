@@ -144,6 +144,7 @@ Item {
         StatsInfoItem {
           Layout.preferredHeight: dp(48)
           Layout.fillWidth: true
+          showPlatform: false
 
           textColor: Theme.textColor
 

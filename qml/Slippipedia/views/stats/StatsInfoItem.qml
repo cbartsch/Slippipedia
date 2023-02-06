@@ -20,6 +20,8 @@ RowLayout {
 
   property color textColor: Theme.textColor
 
+  property bool showPlatform: true
+
   height: Math.max(content.height, dateText.height)
 
   Column {
@@ -50,6 +52,7 @@ RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         font.pixelSize: dp(16)
         color: statsInfoItem.textColor
+        visible: showPlatform
 
         text: stats.gameMode !== SlippiReplay.Unknown ? dataModel.gameModeName(stats.gameMode) : dataModel.platformText(stats.platform)
       }
@@ -58,6 +61,7 @@ RowLayout {
         anchors.verticalCenter: parent.verticalCenter
         width: dp(24)
         height: dp(24)
+        visible: showPlatform
 
         RippleMouseArea {
           id: platformMouse
