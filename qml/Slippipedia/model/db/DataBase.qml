@@ -895,11 +895,66 @@ group by stocks"
 
       var results = tx.executeSql(sql, params)
 
+      // get data for last stock as there is no "killed" punish if you did not lost the last stock
+      sql = qsTr(
+            "select
+r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
+r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
+r.matchId matchId, r.gameNumber gameNumber, r.tiebreakerNumber tiebreakerNumber, r.gameMode gameMode,
+ p.s_startStocks startStocks,
+ p.slippiName name1,  p.cssTag tag1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
+p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
+from replays r
+join players p on p.replayId = r.id
+join players p2 on p2.replayId = r.id
+where r.id = ? and p.port = ? and p2.port = ?")
+
+      params = [gameId, ports[0], ports[1]]
+
+      var gameResults = tx.executeSql(sql, params)
+      var gameData = gameResults.rows.length > 0 ? gameResults.rows.item(0) : {}
+
       var result = []
+
+      var lastStocks = {}
 
       for (var i = 0; i < results.rows.length; i++) {
         var item = results.rows.item(i)
-        result[i] = item
+        if(item.killed) {
+          result.push(item)
+        }
+        if(item.port === gameData.port2 && item.stock === gameData.endStocks1) lastStocks[item.port] = item
+        if(item.port === gameData.port1 && item.stock === gameData.endStocks2) lastStocks[item.port] = item
+      }
+
+      if(gameData.endStocks1 > 0) {
+        var lastStock = lastStocks[gameData.port2] || {
+          numPunishes: 0,
+          startFrame: gameData.duration,
+          startPercent: 0,
+          killed: false
+        }
+        lastStock.totalDamage = gameData.endPercent1
+        lastStock.stock = gameData.endStocks1
+        lastStock.port = gameData.port2   // port of who did the punishes, so other player
+        lastStock.endFrame = gameData.duration
+        lastStock.endPercent = gameData.endPercent1
+        result.push(lastStock)
+      }
+
+      if(gameData.endStocks2 > 0) {
+        lastStock = lastStocks[gameData.port1] || {
+          numPunishes: 0,
+          startFrame: gameData.duration,
+          startPercent: 0,
+          killed: false
+        }
+        lastStock.totalDamage = gameData.endPercent2
+        lastStock.stock = gameData.endStocks2
+        lastStock.port = gameData.port1   // port of who did the punishes, so other player
+        lastStock.endFrame = gameData.duration
+        lastStock.endPercent = gameData.endPercent2
+        result.push(lastStock)
       }
 
       return result

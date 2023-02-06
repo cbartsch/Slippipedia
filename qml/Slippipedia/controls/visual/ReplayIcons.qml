@@ -175,8 +175,6 @@ Item {
         width: dp(32)
         anchors.verticalCenter: parent.verticalCenter
 
-        visible: modelData.killed
-
         RippleMouseArea {
           id: stockMouse
 
@@ -209,7 +207,12 @@ Item {
 
             Column {
               AppText {
+                visible: modelData.killed
                 text: qsTr("%1 lost stock %2 at %3").arg(pText).arg(replayModel.startStocks - modelData.stock + 1).arg(dataModel.formatTime(modelData.endFrame))
+              }
+              AppText {
+                visible: !modelData.killed
+                text: qsTr("%1 survived at stock %2").arg(pText).arg(replayModel.startStocks - modelData.stock + 1)
               }
               AppText {
                 text: qsTr("%6 punishes from %7, %8% damage").arg(modelData.numPunishes).arg(oText).arg(Math.floor(modelData.totalDamage))
@@ -218,12 +221,17 @@ Item {
 
             AppToolButton {
               id: toolBtnOpen
+
+
               iconType: IconType.play
               toolTipText: qsTr("Replay stock (%1 - %2)").arg(dataModel.formatTime(modelData.startFrame)).arg(dataModel.formatTime(modelData.endFrame))
               height: width
               anchors.verticalCenter: parent.verticalCenter
 
-              visible: dataModel.hasDesktopApp
+              visible: dataModel.hasDesktopApp &&
+                       // no punishes means we don't have a time frame to replay
+                       modelData.numPunishes > 0
+
               onClicked: dataModel.replayPunishes([{
                                                      startFrame: modelData.startFrame,
                                                      endFrame: modelData.endFrame,
