@@ -27,6 +27,9 @@ public:
   Q_INVOKABLE bool moveFile(const QString &from, const QString &to);
   Q_INVOKABLE qint64 fileSize(const QString &path);
 
+  // execute SQL on the local DB without transaction (not possible in regular QML API)
+  Q_INVOKABLE void executeSql(const QString &sql);
+
   QString offlineStoragePath() const;
   QString executablePath() const;
 

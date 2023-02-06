@@ -7,6 +7,10 @@
 #include <QProcess>
 #include <QtDebug>
 
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+
 #ifdef Q_OS_WIN
 #include <shlobj.h>
 #endif
@@ -157,6 +161,18 @@ qint64 Utils::fileSize(const QString &path)
 {
   QFile file(path);
   return file.exists() ? file.size() : -1;
+}
+
+void Utils::executeSql(const QString &sql)
+{
+  auto path = qmlEngine(this)->offlineStorageDatabaseFilePath("SlippiStatsDB");
+  auto db = QSqlDatabase::database(QFileInfo(path).fileName());
+
+  auto query = db.exec(sql);
+  auto error = query.lastError();
+  if(error.isValid()) {
+    qWarning().noquote() << "SQL query error:" << error.text();
+  }
 }
 
 QString Utils::offlineStoragePath() const
