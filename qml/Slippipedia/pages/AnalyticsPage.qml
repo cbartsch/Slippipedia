@@ -65,8 +65,8 @@ BasePage {
       infoText: "Stats based on your characters"
       infoDetailText: "Calculated from all games where you used the specific character."
 
-      onShowList: app.showList(filterData(id, -1, -1, ""))
-      onShowStats: app.showStats(filterData(id, -1, -1, ""))
+      onShowList:  id => app.showList(filterData(id, -1, -1, ""))
+      onShowStats: id => app.showStats(filterData(id, -1, -1, ""))
     }
 
     AnalyticsListView {
@@ -76,8 +76,8 @@ BasePage {
       infoText: "Stats based on matchups"
       infoDetailText: "Calculated from all games where your opponents used the specific character."
 
-      onShowList: app.showList(filterData(-1, id, -1, ""))
-      onShowStats: app.showStats(filterData(-1, id, -1, ""))
+      onShowList:  id => app.showList(filterData(-1, id, -1, ""))
+      onShowStats: id => app.showStats(filterData(-1, id, -1, ""))
     }
 
     AnalyticsListView {
@@ -87,8 +87,8 @@ BasePage {
       infoText: "Stats based on stages"
       infoDetailText: "Calculated from all games played on the specific stage."
 
-      onShowList: app.showList(filterData(-1, -1, id, ""))
-      onShowStats: app.showStats(filterData(-1, -1, id, ""))
+      onShowList:  id => app.showList(filterData(-1, -1, id, ""))
+      onShowStats: id => app.showStats(filterData(-1, -1, id, ""))
     }
 
     AnalyticsListView {
@@ -98,8 +98,8 @@ BasePage {
       infoText: "Stats over time"
       infoDetailText: "Calculated from all games played in the specified time."
 
-      onShowList: app.showList(filterData(-1, -1, -1, id))
-      onShowStats: app.showStats(filterData(-1, -1, -1, id))
+      onShowList:  id => app.showList(filterData(-1, -1, -1, id))
+      onShowStats: id => app.showStats(filterData(-1, -1, -1, id))
     }
   }
 
