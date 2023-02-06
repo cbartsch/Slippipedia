@@ -7,7 +7,7 @@ import Slippipedia 1.0
 App {
   id: app
 
-  readonly property real splitPaneWidth: dp(500)
+  readonly property real splitPaneWidth: Math.max(dp(500), app.width / 2)
   readonly property bool useSplitMode: width > dp(1000)
 
   width: dp(1024)
