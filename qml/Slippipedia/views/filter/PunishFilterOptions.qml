@@ -77,14 +77,15 @@ Column {
           readonly property int killDirection: index
 
           height: dp(48)
-          width: directionCheckBox.width
+          width: directionCheckBox.width + dp(Theme.contentPadding) * 2
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: directionCheckBox
             text: modelData
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
 
             checked: filter ? filter.killDirections.indexOf(killDirection) >= 0 : false
           }
@@ -237,15 +238,16 @@ Column {
           readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
-          width: moveCheckBox.width
+          width: moveCheckBox.width + dp(Theme.contentPadding) * 2
 
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: moveCheckBox
             text: moveName
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
 
             checked: filter ? filter.openingMoveIds.indexOf(moveId) >= 0 : false
 
@@ -330,14 +332,15 @@ Column {
           readonly property string moveNameFull: MeleeData.moveNames[moveId]
 
           height: dp(48)
-          width: lmoveCheckBox.width
+          width: lmoveCheckBox.width + dp(Theme.contentPadding) * 2
           color: Theme.controlBackgroundColor
 
           AppCheckBox {
             id: lmoveCheckBox
             text: moveName
-            anchors.centerIn: parent
-            anchors.horizontalCenterOffset: dp(Theme.contentPadding)
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: parent.left
+            anchors.leftMargin: dp(Theme.contentPadding)
 
             checked: filter ? filter.lastMoveIds.indexOf(moveId) >= 0 : false
 
