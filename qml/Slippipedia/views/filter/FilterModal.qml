@@ -29,6 +29,13 @@ AppModal {
         iconType: IconType.angleleft
         onClicked: filterModal.close()
       }
+
+      // put a mouse area "behind" the page, to prevent hover effects for items underneath the modal (tooltips would show up)
+      MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        z: -1
+      }
     }
   }
 
