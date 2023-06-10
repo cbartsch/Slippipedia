@@ -43,9 +43,54 @@ App {
     Theme.appButton.horizontalPadding = dp(2)
   }
 
-  GoogleAnalytics {
+  Item {
     id: analytics
-    propertyId: "UA-163972040-2"
+
+    property string currentScreenName: ""
+
+    // prevent logging the same screen multiple times, or before the plugins are actually loaded.
+    onCurrentScreenNameChanged: {
+      console.log("[Analytics] Log screen:", currentScreenName)
+      googleAnalytics.logScreen(currentScreenName)
+      firebaseAnalytics.logScreen(currentScreenName)
+    }
+
+    GoogleAnalytics {
+      id: googleAnalytics
+      propertyId: "UA-163972040-2"
+
+      onPluginLoaded: {
+        console.log("GoogleAnalytics loaded. Current screen:", analytics.currentScreenName)
+        if(analytics.currentScreenName) {
+          logScreen(analytics.currentScreenName)
+        }
+      }
+    }
+
+    FirebaseAnalytics {
+      id: firebaseAnalytics
+      measurementId: "G-FTPS0GLPTR"
+
+      onPluginLoaded: {
+        console.log("FirebaseAnalytics loaded. Current screen:", analytics.currentScreenName)
+
+        logEvent("AppStart", {
+                   versionCode: Constants.versionCode,
+                   versionName: Constants.versionName,
+                   dbCurrentVersion: dataModel.globalDataBase.dbCurrentVersion,
+                   dbLatestVersion: dataModel.globalDataBase.dbLatestVersion,
+                   build: Constants.buildName
+                 })
+
+        if(analytics.currentScreenName) {
+          logScreen(analytics.currentScreenName)
+        }
+      }
+    }
+
+    function logScreen(screenName) {
+      analytics.currentScreenName = screenName
+    }
   }
 
   DataModel {
