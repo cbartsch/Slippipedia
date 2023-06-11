@@ -146,7 +146,12 @@ int main(int argc, char *argv[])
   // Set an optional license key from project file
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
   felgo.setLicenseKey(PRODUCT_LICENSE_KEY);
+
+#ifdef QT_QML_DEBUG
   felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
+#else
+  felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
+#endif
 
   Utils::registerQml(QML_MODULE_NAME, db.databaseName());
 
