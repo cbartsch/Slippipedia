@@ -22,6 +22,17 @@ Item {
 
   property string prevSessionSection: ""
 
+  // workaround: ListView sections are messed up when they have different heights
+  // is fixed after relayout, thus change the ListView size after the model changes.
+  Timer {
+    id: testTimer
+    interval: 300
+    onTriggered: {
+      listView.anchors.topMargin++
+      listView.anchors.topMargin--
+    }
+  }
+
   Connections {
     target: dataModel
 
@@ -76,12 +87,14 @@ Item {
     anchors.fill: parent
     anchors.topMargin: header.height
 
-    model: SortFilterProxyModel {
-      sourceModel: JsonListModel {
-        source: punishList
-        keyField: "id"
-      }
+    model: JsonListModel {
+      source: punishList
+      keyField: "id"
+
+      onRowsInserted: testTimer.start()
     }
+
+    reuseItems: true
 
     // labels at start are kinda bugged
     section.labelPositioning: ViewSection.InlineLabels// | ViewSection.CurrentLabelAtStart
@@ -95,7 +108,7 @@ Item {
         sectionModel: sectionData[section] || {}
         height: dp(80)
         statsButtonVisible: false
-        visible: sectionModel.showNames
+        visible: sectionModel.showNames || false
       }
 
       ReplayListItem {
