@@ -22,6 +22,8 @@ Item {
   property RangeSettings duration: RangeSettings {
     id: duration
 
+    type: RangeSettings.Type.Time
+
     onFromChanged: if(settingsLoader.item) settingsLoader.item.minFrames = from
     onToChanged:   if(settingsLoader.item) settingsLoader.item.maxFrames = to
 
@@ -150,13 +152,7 @@ Item {
 
     dText = dText ? "Date: " + dText : ""
 
-    var minText = duration.from >= 0 ? dataModel.formatTime(duration.from) : ""
-    var maxText = duration.to >= 0 ? dataModel.formatTime(duration.to) : ""
-
-    var durText = minText && maxText
-        ? qsTr("Between %1 and %2").arg(minText).arg(maxText)
-        : minText ? "Longer than " + minText
-                  : maxText ? "Shorter than " + maxText : ""
+    var durText = duration.displayText
     durText = durText ? "Duration: " + durText : ""
 
     var stockText = endStocksWinner.displayText ? "Stocks left (winner): " + endStocksWinner.displayText : ""

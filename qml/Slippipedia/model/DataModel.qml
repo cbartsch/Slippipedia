@@ -232,6 +232,10 @@ Item {
   function parseTime(text) {
     // convert text "hh:mm:ss" to time in ms
 
+    if(!text) {
+      return -1
+    }
+
     var inElems = text.split(":")
     var elems = inElems
 
@@ -247,6 +251,12 @@ Item {
     }
 
     return -1
+  }
+
+  function parseTimeFrames(text) {
+    var timeMs = parseTime(text)
+
+    return timeMs >= 0 ? timeMs * 60 / 1000 : undefined
   }
 
   function formatPercentage(amount, numDecimals = 2) {
