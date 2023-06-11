@@ -113,12 +113,12 @@ Column {
   Divider { anchors.bottom: undefined }
 
   SimpleSection {
-    title: "Moves / damage"
+    title: "Punish properties"
   }
 
   CustomListItem {
-    text: "Filter by attacks and damage"
-    detailText: "Select number of moves and damage for matching punishes."
+    text: "Filter by attacks, damage and duration"
+    detailText: "Select number of moves, damage and duration for matching punishes."
 
     checked: filter ? filter.hasNumMovesFilter || filter.hasDamageFilter : false
     mouseArea.enabled: false
@@ -132,6 +132,7 @@ Column {
       onClicked: {
         filter.numMoves.reset()
         filter.damage.reset()
+        filter.duration.reset()
       }
     }
   }
@@ -150,8 +151,19 @@ Column {
     range: filter && filter.damage
   }
 
+  RangeOptions {
+    label.text: "Duration (mm:ss):"
+    labelWidth: dp(150)
+
+    textFunc:  v => dataModel.formatTime(v)
+    valueFunc: v => dataModel.parseTimeFrames(v)
+    validationText: qsTr("Enter time in format \"%1\"").arg("mm:ss")
+
+    range: filter && filter.duration
+  }
+
   SimpleSection {
-    title: "Percent"
+    title: "Percenst"
   }
 
   CustomListItem {

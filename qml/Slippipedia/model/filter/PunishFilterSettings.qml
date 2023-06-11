@@ -36,6 +36,17 @@ Item {
     onFilterChanged: punishFilterSettings.filterChanged()
   }
 
+  property RangeSettings duration: RangeSettings {
+    id: duration
+
+    type: RangeSettings.Type.Time
+
+    onFromChanged: if(settingsLoader.item) settingsLoader.item.minDuration = from
+    onToChanged:   if(settingsLoader.item) settingsLoader.item.maxDuration = to
+
+    onFilterChanged: punishFilterSettings.filterChanged()
+  }
+
   property RangeSettings startPercent: RangeSettings {
     id: startPercent
 
@@ -62,13 +73,14 @@ Item {
   onOpeningMoveIdsChanged: filterChanged()
   onLastMoveIdsChanged:    filterChanged()
 
-  readonly property bool hasFilter: hasNumMovesFilter || hasDamageFilter ||
+  readonly property bool hasFilter: hasNumMovesFilter || hasDamageFilter || hasDurationFilter ||
                                     hasStartPercentFilter || hasEndPercentFilter ||
                                     hasDidKillFilter || hasKillDirectionFilter ||
                                     hasOpeningMoveFilter || hasLastMoveFilter
 
   readonly property bool hasNumMovesFilter: numMoves.hasFilter
   readonly property bool hasDamageFilter: damage.hasFilter
+  readonly property bool hasDurationFilter: duration.hasFilter
   readonly property bool hasStartPercentFilter: startPercent.hasFilter
   readonly property bool hasEndPercentFilter: endPercent.hasFilter
 
@@ -81,6 +93,7 @@ Item {
   readonly property string displayText: {
     var movesText = numMoves.hasFilter ? numMoves.displayText + " moves" : ""
     var damageText = damage.hasFilter ? damage.displayText + "%" : ""
+    var durationText = duration.hasFilter ? duration.displayText : ""
     var startPercentText = startPercent.hasFilter ? "Started at: " + startPercent.displayText + "%" : ""
     var endPercentText = endPercent.hasFilter ? "Ended at: " + endPercent.displayText + "%" : ""
 
@@ -96,8 +109,8 @@ Item {
         ? "" : ("Last move: " + lastMoveIds.map(d => MeleeData.moveNames[d]).join(", "))
 
     return [
-          movesText, damageText, startPercentText, endPercentText,
-          didKillText,
+          movesText, damageText, durationText,
+          startPercentText, endPercentText, didKillText,
           killDirectionsText, openingMovesText, lastMovesText
         ].filter(_ => _).join(", ") || ""
   }
@@ -129,6 +142,9 @@ Item {
       property real minDamage: punishFilterSettings.damage.from
       property real maxDamage: punishFilterSettings.damage.to
 
+      property real minDuration: punishFilterSettings.duration.from
+      property real maxDuration: punishFilterSettings.duration.to
+
       property int minStartPercent: punishFilterSettings.startPercent.from
       property int maxStartPercent: punishFilterSettings.startPercent.to
 
@@ -148,6 +164,9 @@ Item {
         punishFilterSettings.damage.from = minDamage
         punishFilterSettings.damage.to = maxDamage
 
+        punishFilterSettings.duration.from = minDuration
+        punishFilterSettings.duration.to = maxDuration
+
         punishFilterSettings.startPercent.from = minStartPercent
         punishFilterSettings.startPercent.to = maxStartPercent
 
@@ -166,6 +185,7 @@ Item {
   function reset() {
     numMoves.reset()
     damage.reset()
+    duration.reset()
     startPercent.reset()
     endPercent.reset()
 
@@ -179,6 +199,7 @@ Item {
   function copyFrom(other) {
     numMoves.copyFrom(other.numMoves)
     damage.copyFrom(other.damage)
+    duration.copyFrom(other.duration)
     startPercent.copyFrom(other.startPercent)
     endPercent.copyFrom(other.endPercent)
 
@@ -253,6 +274,7 @@ Item {
   function getPunishFilterCondition() {
     var numMovesCondition = numMoves.getFilterCondition("pu.numMoves")
     var damageCondition = damage.getFilterCondition("pu.damage")
+    var durationCondition = duration.getFilterCondition("pu.duration")
     var startPercentCondition = startPercent.getFilterCondition("pu.startPercent")
     var endPercentCondition = endPercent.getFilterCondition("pu.endPercent")
 
@@ -274,7 +296,7 @@ Item {
         : ""
 
     var condition = [
-          numMovesCondition, damageCondition,
+          numMovesCondition, damageCondition, durationCondition,
           startPercentCondition, endPercentCondition,
           didKillCondition,
           killDirectionCondition,
@@ -290,6 +312,7 @@ Item {
   function getPunishFilterParams() {
     var numMovesParams = numMoves.getFilterParams()
     var damageParams = damage.getFilterParams()
+    var durationParams = duration.getFilterParams()
     var startPercentParams = startPercent.getFilterParams()
     var endPercentParams = endPercent.getFilterParams()
 
@@ -299,6 +322,7 @@ Item {
 
     return numMovesParams
     .concat(damageParams)
+    .concat(durationParams)
     .concat(startPercentParams)
     .concat(endPercentParams)
     .concat(killDirectionParams)
