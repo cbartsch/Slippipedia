@@ -144,11 +144,7 @@ int main(int argc, char *argv[])
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
   felgo.setLicenseKey(PRODUCT_LICENSE_KEY);
 
-#ifdef QT_QML_DEBUG
   felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
-#else
-  felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
-#endif
 
   Utils utils(db.databaseName());
   qmlRegisterSingletonInstance(QML_MODULE_NAME, 1, 0, "Utils", &utils);
