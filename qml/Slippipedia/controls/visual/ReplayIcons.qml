@@ -168,7 +168,7 @@ Item {
         // cancel the options when the list view starts dragging
         Connections {
           target: replayListView
-          onMovementStarted: stockHovered = false
+          function onMovementStarted() { stockHovered = false }
         }
 
         height: parent.height

@@ -85,8 +85,9 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
   static QMutex mutex;
   QMutexLocker lock(&mutex);
 
-  // skip useless logs from Qt bugs
+  // skip useless logs from Qt bugs - TODO fix all that come from app code (some come from libraries)
   if(msg.startsWith("qrc:/qt-project.org/imports/QtQuick/Controls/macOS/") ||
+      msg.contains("QML Connections: Implicitly defined onFoo") ||
       msg.contains("MeleeData is not defined")) {
     return;
   }
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
   felgo.setLicenseKey(PRODUCT_LICENSE_KEY);
 
-  felgo.setMainQmlFileName(QStringLiteral("qml/Main.qml"));
+  felgo.setMainQmlFileName(QStringLiteral("qml/Slippipedia/Main.qml"));
 
   Utils utils(db.databaseName());
   qmlRegisterSingletonInstance(QML_MODULE_NAME, 1, 0, "Utils", &utils);
@@ -152,12 +153,12 @@ int main(int argc, char *argv[])
   // bring back Felgo 3 / Qt 5 default font (Ms Shell Dlg 2 which defaults to Tahoma)
   QGuiApplication::setFont(QFont("Tahoma"));
 
-  // import app's QML module from root resources:
-  engine.addImportPath("qrc:/");
-
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);
 #else
+  // import app's QML module from resources:
+  engine.addImportPath("qrc:/Slippipedia/");
+
   engine.load(felgo.mainQmlFileName());
 #endif
 
