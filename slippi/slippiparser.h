@@ -2,6 +2,7 @@
 #define SLIPPIPARSER_H
 
 #include <QObject>
+#include <QQmlEngine>
 #include <QThread>
 
 #include "slippireplay.h"
@@ -9,6 +10,7 @@
 class SlippiParser : public QObject
 {
   Q_OBJECT
+  QML_ELEMENT
 
 public:
   explicit SlippiParser(QObject *parent = nullptr);

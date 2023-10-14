@@ -2,6 +2,7 @@
 #define SLIPPIREPLAY_H
 
 #include <QObject>
+#include <QQmlEngine>
 #include <QDateTime>
 #include <QVariant>
 
@@ -10,6 +11,8 @@
 
 struct PunishData : public QObject {
   Q_OBJECT
+  QML_ELEMENT
+  QML_UNCREATABLE("Returned by SlippiParser")
 
   Q_PROPERTY(qint64 uniqueId MEMBER m_uniqueId)
 
@@ -20,14 +23,14 @@ struct PunishData : public QObject {
 
   Q_PROPERTY(int startFrame MEMBER m_startFrame)
   Q_PROPERTY(int endFrame MEMBER m_endFrame)
-  Q_PROPERTY(int durationFrames READ durationFrames)
+  Q_PROPERTY(int durationFrames READ durationFrames CONSTANT)
 
   Q_PROPERTY(qreal startPercent MEMBER m_startPercent)
   Q_PROPERTY(qreal endPercent MEMBER m_endPercent)
   Q_PROPERTY(qreal stocks MEMBER m_stocks)
-  Q_PROPERTY(qreal damage READ damage)
+  Q_PROPERTY(qreal damage READ damage CONSTANT)
 
-  Q_PROPERTY(bool didKill READ didKill)
+  Q_PROPERTY(bool didKill READ didKill CONSTANT)
   Q_PROPERTY(Direction killDirection MEMBER m_killDirection)
 
 public:
@@ -69,6 +72,8 @@ private:
 
 struct PlayerData : public QObject {
   Q_OBJECT
+  QML_ELEMENT
+  QML_UNCREATABLE("Returned by SlippiParser")
 
   // basic info
   Q_PROPERTY(int port MEMBER m_port)
@@ -107,6 +112,8 @@ private:
 class SlippiReplay : public QObject
 {
   Q_OBJECT
+  QML_ELEMENT
+  QML_UNCREATABLE("Returned by SlippiParser")
 
   Q_PROPERTY(qint64 uniqueId MEMBER m_uniqueId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QDateTime date MEMBER m_date NOTIFY parsedFromAnalysis)

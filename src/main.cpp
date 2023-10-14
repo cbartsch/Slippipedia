@@ -7,9 +7,6 @@
 
 #include <QQmlApplicationEngine>
 
-#include "slippiparser.h"
-#include "slippireplay.h"
-
 #include "utils.h"
 
 #include <QtDebug>
@@ -153,21 +150,17 @@ int main(int argc, char *argv[])
   felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
 #endif
 
-  Utils::registerQml(QML_MODULE_NAME, db.databaseName());
-
-  qmlRegisterType<SlippiParser>(QML_MODULE_NAME, 1, 0, "SlippiParser");
-  qmlRegisterUncreatableType<SlippiReplay>(QML_MODULE_NAME, 1, 0, "SlippiReplay", "Returned by SlippiParser");
-  qmlRegisterUncreatableType<PlayerData>(QML_MODULE_NAME, 1, 0, "PlayerData", "Returned by SlippiParser");
-  qmlRegisterUncreatableType<PunishData>(QML_MODULE_NAME, 1, 0, "PunishData", "Returned by SlippiParser");
+  Utils utils(db.databaseName());
+  qmlRegisterSingletonInstance(QML_MODULE_NAME, 1, 0, "Utils", &utils);
 
   // bring back Felgo 3 / Qt 5 default font (Ms Shell Dlg 2 which defaults to Tahoma)
   QGuiApplication::setFont(QFont("Tahoma"));
 
+  // import app's QML module from root resources:
+  engine.addImportPath("qrc:/");
+
 #ifdef FELGO_LIVE
   FelgoLiveClient client (&engine);
-
-  // load QML module:
-  engine.addImportPath(client.cacheDirectory() + "/Slippipedia/qml");
 #else
   engine.load(felgo.mainQmlFileName());
 #endif

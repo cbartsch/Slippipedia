@@ -2,18 +2,21 @@
 #define UTILS_H
 
 #include <QObject>
+#include <QQmlEngine>
 #include <QProcess>
 #include <QJSValue>
 
 class Utils : public QObject
 {
   Q_OBJECT
+  QML_ELEMENT
+  QML_SINGLETON
+
   Q_PROPERTY(QString offlineStoragePath READ offlineStoragePath CONSTANT)
   Q_PROPERTY(QString executablePath READ executablePath CONSTANT)
 
-  Utils(const QString &dbFileName);
 public:
-  static void registerQml(const char *qmlModuleName, const QString &dbFileName);
+  Utils(const QString &dbFileName);
 
   Q_INVOKABLE bool exploreToFile(const QString &filePath);
 

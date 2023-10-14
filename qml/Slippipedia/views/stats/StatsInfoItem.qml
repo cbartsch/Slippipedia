@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.0
 import Qt5Compat.GraphicalEffects 6.0
 import Felgo 4.0
 
+import Slippi 1.0
 import Slippipedia 1.0
 
 RowLayout {

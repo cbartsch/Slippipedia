@@ -51,7 +51,7 @@ qt_add_executable(Slippipedia
 
 felgo_configure_executable(Slippipedia)
 
-include_directories(slippi)
+include_directories(src slippi)
 
 add_compile_definitions(QML_MODULE_NAME=\"Slippipedia\")
 
@@ -59,8 +59,15 @@ add_compile_definitions(QML_MODULE_NAME=\"Slippipedia\")
 
 deploy_resources("${ResFiles}")
 
+# Define singleton QML files before adding the QML module
+set_source_files_properties(
+  qml/Slippipedia/model/data/MeleeData.qml
+  qml/Slippipedia/model/Constants.qml
+  PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
 qt_add_qml_module(Slippipedia
-    URI at.cb.Slippipedia
+    URI Slippipedia
+    OUTPUT_DIRECTORY "qml/Slippipedia"
     VERSION 1.0
 # uncomment for publishing:
     QML_FILES ${QmlFolder}
@@ -71,6 +78,6 @@ qt_add_qml_module(Slippipedia
 target_compile_definitions(Slippipedia
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-target_link_libraries(Slippipedia PRIVATE Felgo Slippi)
+target_link_libraries(Slippipedia PRIVATE Felgo)
 
 target_compile_features(Slippipedia PRIVATE cxx_std_17)

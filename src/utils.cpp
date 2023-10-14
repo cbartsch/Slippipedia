@@ -19,12 +19,6 @@ Utils::Utils(const QString &dbFileName) : m_dbFileName(dbFileName)
 {
 }
 
-void Utils::registerQml(const char *qmlModuleName, const QString &dbFileName) {
-  qmlRegisterSingletonType<Utils>(qmlModuleName, 1, 0, "Utils", [=](QQmlEngine*, QJSEngine*) -> QObject* {
-    return new Utils(dbFileName);
-  });
-}
-
 #ifdef Q_OS_WIN
 bool Utils::exploreToFile(const QString &filePath)
 {

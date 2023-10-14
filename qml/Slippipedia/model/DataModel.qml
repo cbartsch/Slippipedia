@@ -5,6 +5,7 @@ import Felgo 4.0
 // note: must be below Felgo import
 import Qt.labs.settings 1.1
 
+import Slippi 1.0
 import Slippipedia 1.0
 
 Item {
