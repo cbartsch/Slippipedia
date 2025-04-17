@@ -518,7 +518,15 @@ Item {
     var iconImgPath = fileUtils.stripSchemeFromUrl(Utils.executablePath + "/resfiles/icon.png")
 
     // dolphin can save multiple "framedumpN.avi" files - list all of them and concatenate
-    var videoFiles = fileUtils.listFiles(videoPath, "*.avi").sort()
+    // sort by number suffix instead of lexicographically
+    var videoFiles = fileUtils.listFiles(videoPath, "*.avi").sort((a, b) => {
+                                                                    const idA = parseInt(a.substring(9))
+                                                                    const idB = parseInt(b.substring(9))
+                                                                    return idA - idB
+                                                                  })
+
+    console.log("videoFiles =", videoFiles)
+
     var videoPathsOrig = videoFiles.map(f => videoPath + f)
     var videoPaths = videoFiles.map(f => tempPath + f)
 
