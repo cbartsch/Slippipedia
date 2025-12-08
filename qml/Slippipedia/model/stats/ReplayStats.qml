@@ -98,12 +98,17 @@ Item {
     }
   })
 
-  Component.onCompleted: {
-    refresh()
+  function refreshSummary() {
+    // prevent refreshing multiple times on startup
+    summaryTimer.restart()
   }
 
-  function refreshSummary() {
-    summaryData = dataBase.getReplaySummary(false)
+  Timer {
+    id: summaryTimer
+    interval: 1
+    onTriggered: {
+      summaryData = dataBase.getReplaySummary(false)
+    }
   }
 
   // compute all data - no bindings as this can be slow
