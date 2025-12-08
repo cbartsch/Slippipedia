@@ -23,6 +23,8 @@ AppTabButton {
       anchors.fill: rect
       z: -1
 
+      cursorShape: Qt.PointingHandCursor
+
       onPressed: mouse => mouse.accepted = false
 
       hoverEffectEnabled: true

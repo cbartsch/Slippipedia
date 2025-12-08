@@ -121,6 +121,7 @@ AppFlickable {
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
       opacity: 0.5
+      cursorShape: Qt.PointingHandCursor
 
       onClicked: showList({ ["code" + slotNum]: nameTextC.code, ["name" + slotNum]: nameTextC.name,
                             exact: true, sourceFilter: stats.dataBase.filterSettings })

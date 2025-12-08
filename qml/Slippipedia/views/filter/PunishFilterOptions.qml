@@ -96,6 +96,7 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
               if(!directionCheckBox.checked) {
                 filter.addKillDirection(killDirection)
@@ -276,6 +277,7 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
               if(!moveCheckBox.checked) {
                 filter.addOpeningMove(moveId)
@@ -369,6 +371,7 @@ Column {
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
             onClicked: {
               if(!lmoveCheckBox.checked) {
                 filter.addLastMove(moveId)

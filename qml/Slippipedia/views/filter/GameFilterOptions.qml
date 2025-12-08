@@ -252,6 +252,7 @@ Note: Game mode is always unknown for replays before Slippi 3.14 (when ranked ca
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
 
             onClicked: {
               if(gameModeCheckBox.checked) filter.removeGameMode(modelData)
@@ -347,6 +348,7 @@ Note: Game mode is always unknown for replays before Slippi 3.14 (when ranked ca
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
 
             onClicked: {
               if(platformCheckBox.checked) filter.removePlatform(modelData)
@@ -439,6 +441,7 @@ Note: Game mode is always unknown for replays before Slippi 3.14 (when ranked ca
             backgroundColor: Theme.listItem.selectedBackgroundColor
             fillColor: backgroundColor
             opacity: 0.5
+            cursorShape: Qt.PointingHandCursor
 
             onClicked: filter.userFlagMask = dataModel.setFlag(filter.userFlagMask, flagId, !flagCheckBox.checked)
           }

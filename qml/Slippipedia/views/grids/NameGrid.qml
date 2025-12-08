@@ -37,6 +37,7 @@ Grid {
           enabled: namesClickable
           onClicked: nameGrid.nameClicked(modelData.text)
 
+          cursorShape: Qt.PointingHandCursor
           hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
           fillColor: backgroundColor

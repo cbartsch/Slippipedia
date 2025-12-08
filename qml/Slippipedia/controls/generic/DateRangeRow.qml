@@ -42,6 +42,8 @@ Row {
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
       opacity: 0.5
+      cursorShape: Qt.PointingHandCursor
+
       onClicked: btnMinus.clicked()
     }
 
@@ -72,6 +74,8 @@ Row {
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
       opacity: 0.5
+      cursorShape: Qt.PointingHandCursor
+
       onClicked: btnPlus.clicked()
     }
 

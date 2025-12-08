@@ -79,6 +79,7 @@ Grid {
       readonly property bool isSelected: highlightFilteredChar && charIds.indexOf(id) >= 0 // TODO probably use faster lookup
       readonly property bool hasChar: id >= 0 && id < 26 // ids 0-25 are the useable characters
 
+      cursorShape: Qt.PointingHandCursor
       width: parent.width / parent.columns
       height: showIcon ? charIcon.height : dp(72)
       enabled: hasChar && (enableEmpty || count > 0)

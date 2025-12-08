@@ -45,10 +45,12 @@ Column {
     text:               filter ? filter.slippiCode.filterText : ""
     matchCaseSensitive: filter ? filter.slippiCode.matchCase : false
     matchPartialText:   filter ? filter.slippiCode.matchPartial : false
+    splitText:          filter ? filter.slippiCode.splitText : false
 
     onTextChanged:               if(filter) filter.slippiCode.filterText = text
     onMatchCaseSensitiveChanged: if(filter) filter.slippiCode.matchCase = matchCaseSensitive
     onMatchPartialTextChanged:   if(filter) filter.slippiCode.matchPartial = matchPartialText
+    onSplitTextChanged:          if(filter) filter.slippiCode.splitText = splitText
   }
 
   TextInputField {
@@ -58,10 +60,12 @@ Column {
     text:               filter ? filter.slippiName.filterText : ""
     matchCaseSensitive: filter ? filter.slippiName.matchCase : false
     matchPartialText:   filter ? filter.slippiName.matchPartial : false
+    splitText:          filter ? filter.slippiName.splitText : false
 
     onTextChanged:               if(filter) filter.slippiName.filterText = text
     onMatchCaseSensitiveChanged: if(filter) filter.slippiName.matchCase = matchCaseSensitive
     onMatchPartialTextChanged:   if(filter) filter.slippiName.matchPartial = matchPartialText
+    onSplitTextChanged:          if(filter) filter.slippiName.splitText = splitText
   }
 
   Item {

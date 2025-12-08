@@ -20,6 +20,8 @@ ToolButton {
   RippleMouseArea {
     id: mouseArea
 
+    cursorShape: Qt.PointingHandCursor
+
     anchors.fill: parent
     onPressed: mouse => mouse.accepted = false
 

@@ -33,6 +33,7 @@ Flow {
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
       opacity: 0.5
+      cursorShape: Qt.PointingHandCursor
     }
   }
 

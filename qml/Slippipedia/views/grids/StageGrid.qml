@@ -78,6 +78,7 @@ Column {
           anchors.fill: parent
           onClicked: stageSelected(id, stageItem.isSelected)
 
+          cursorShape: Qt.PointingHandCursor
           enabled: enableEmpty || model.count > 0
           hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
@@ -155,6 +156,7 @@ Column {
       // filtering for "other stages" is not currently supported
       enabled: false// enableEmpty || stats.otherStageAmount > 0
 
+      cursorShape: Qt.PointingHandCursor
       hoverEffectEnabled: true
 
       backgroundColor: Theme.listItem.selectedBackgroundColor

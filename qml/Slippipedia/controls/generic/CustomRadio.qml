@@ -28,7 +28,9 @@ AppRadio {
     backgroundColor: Theme.listItem.selectedBackgroundColor
     fillColor: backgroundColor
     opacity: 0.5
-    onClicked: customRadio.checked = !customRadio.checked
     z: -1
+    cursorShape: Qt.PointingHandCursor
+
+    onClicked: customRadio.checked = !customRadio.checked
   }
 }
