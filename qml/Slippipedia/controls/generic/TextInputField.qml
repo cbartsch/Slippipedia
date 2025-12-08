@@ -109,6 +109,7 @@ Item {
       Layout.alignment: Qt.AlignVCenter
       visible: showOptions
       checkable: true
+      onClicked: input.forceActiveFocus()
     }
 
     AppToolButton {
@@ -118,6 +119,7 @@ Item {
       Layout.alignment: Qt.AlignVCenter
       visible: showOptions
       checkable: true
+      onClicked: input.forceActiveFocus()
     }
 
     AppToolButton {
@@ -127,6 +129,7 @@ Item {
       Layout.alignment: Qt.AlignVCenter
       visible: showOptions
       checkable: true
+      onClicked: input.forceActiveFocus()
     }
   }
 
