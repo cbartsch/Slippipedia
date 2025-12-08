@@ -17,6 +17,10 @@ App {
 
   title: "Slippipedia " + Constants.versionName
 
+  Component.onCompleted: {
+    console.log("Main.qml loaded from:", Qt.resolvedUrl("."))
+  }
+
   onInitTheme: {
     Theme.colors.tintColor = "#21BA45" // slippi green
 

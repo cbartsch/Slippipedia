@@ -37,6 +37,7 @@ target_include_directories(Slippi PUBLIC
 
 qt_add_qml_module(Slippi
   URI Slippi
+  RESOURCE_PREFIX "qml"
   PLUGIN_TARGET Slippi
   OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/Slippi"
   VERSION 1.0
@@ -63,4 +64,8 @@ target_link_libraries(Slippi PUBLIC lzma)
 set_property(
   TARGET Slippi PROPERTY INTERFACE_LINK_LIBRARIES
   Qt6::Core Qt6::Qml
+)
+
+install(DIRECTORY ${CMAKE_BINARY_DIR}/qml/Slippi
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/qml
 )
