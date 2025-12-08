@@ -162,7 +162,8 @@ void Utils::executeSql(const QString &sql)
   auto path = qmlEngine(this)->offlineStorageDatabaseFilePath("SlippiStatsDB");
   auto db = QSqlDatabase::database(QFileInfo(path).fileName());
 
-  auto query = db.exec(sql);
+  QSqlQuery query(db);
+  query.exec(sql);
   auto error = query.lastError();
   if(error.isValid()) {
     qWarning().noquote() << "SQL query error:" << error.text();
