@@ -264,9 +264,9 @@ killDirection, didKill
       try {
         var modifiedTx = debugLogSql
             ? {
-                executeSql: function() {
-                  log("Execute SQL:", arguments[0], arguments[1])
-                  return tx.executeSql(...arguments)
+                executeSql: function(...a) {
+                  dataBase.log("Execute SQL:", a[0], a[1])
+                  return tx.executeSql(...a)
                 }
               }
         : tx
@@ -1001,9 +1001,9 @@ where r.id = ? and p.port = ? and p2.port = ?")
     return "(" + list.map(_ => "?").join(",") + ")"
   }
 
-  function log() {
-    if(debugLog) {
-      console.log(...arguments)
+  function log(...a) {
+    if(dataBase.debugLog) {
+      console.log(...a)
     }
   }
 }
