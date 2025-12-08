@@ -16,7 +16,7 @@
 #include <QSqlError>
 
 #ifdef FELGO_LIVE
-#include <FelgoLiveClient>
+#include <FelgoHotReload>
 #endif
 
 // use this to create separate test DBs
@@ -63,8 +63,9 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
     // use write-ahead-logging and normal sync mode for optimized performance
     // https://www.sqlite.org/wal.html
     // https://www.sqlite.org/pragma.html#pragma_synchronous
-    db.exec("pragma journal_mode = wal");
-    db.exec("pragma synchronous = off");
+    QSqlQuery query(db);
+    query.exec("pragma journal_mode = wal");
+    query.exec("pragma synchronous = off");
   }
 
   if(db.lastError().isValid()) {
@@ -145,8 +146,6 @@ int main(int argc, char *argv[])
   // This does not work if using Felgo Live, only for Felgo Cloud Builds and local builds
   felgo.setLicenseKey(PRODUCT_LICENSE_KEY);
 
-  felgo.setMainQmlFileName(QStringLiteral("qml/Slippipedia/Main.qml"));
-
   Utils utils(db.databaseName());
   qmlRegisterSingletonInstance(QML_MODULE_NAME, 1, 0, "Utils", &utils);
 
@@ -154,8 +153,10 @@ int main(int argc, char *argv[])
   QGuiApplication::setFont(QFont("Tahoma"));
 
 #ifdef FELGO_LIVE
-  FelgoLiveClient client (&engine);
+  FelgoHotReload fhr(&engine);
 #else
+  felgo.setMainQmlFileName(QStringLiteral("qml/Slippipedia/Main.qml"));
+
   // import app's QML module from resources:
   engine.addImportPath("qrc:/Slippipedia/");
 

@@ -51,20 +51,7 @@ App {
     // prevent logging the same screen multiple times, or before the plugins are actually loaded.
     onCurrentScreenNameChanged: {
       console.log("[Analytics] Log screen:", currentScreenName)
-      googleAnalytics.logScreen(currentScreenName)
       firebaseAnalytics.logScreen(currentScreenName)
-    }
-
-    GoogleAnalytics {
-      id: googleAnalytics
-      propertyId: "UA-163972040-2"
-
-      onPluginLoaded: {
-        console.log("GoogleAnalytics loaded. Current screen:", analytics.currentScreenName)
-        if(analytics.currentScreenName) {
-          logScreen(analytics.currentScreenName)
-        }
-      }
     }
 
     FirebaseAnalytics {
@@ -261,7 +248,6 @@ App {
     autoSize: true
     anchors.centerIn: parent
 
-    title: "Do you think this is awesome?"
     positiveActionLabel: "Yes"
     negativeActionLabel: "No"
 

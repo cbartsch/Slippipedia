@@ -4,6 +4,7 @@ project(Slippipedia VERSION 2.0 LANGUAGES CXX)
 
 option(SLIPPIPEDIA_FELGO_LIVE "Use live client module" OFF)
 
+set(QT_NO_FIND_QMLSC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_STANDARD 17)
@@ -16,7 +17,7 @@ set(PRODUCT_VERSION_NAME "2.1")
 set(PRODUCT_VERSION_CODE 7)
 
 set(PRODUCT_STAGE "publish")
-#set(PRODUCT_STAGE "test")
+# set(PRODUCT_STAGE "test")
 
 add_subdirectory(slippi)
 
@@ -64,29 +65,32 @@ add_compile_definitions(QML_MODULE_NAME=\"Slippipedia\")
 deploy_resources("${ResFiles}")
 
 if(SLIPPIPEDIA_FELGO_LIVE)
+  set(FelgoHotReload_DIR "D:/Programme/FelgoHotReload/client/6.8.3/mingw_64/lib/cmake/FelgoHotReload")
   add_compile_definitions(FELGO_LIVE=1)
-  find_package(FelgoLive)
-  target_link_libraries(Slippipedia PRIVATE FelgoLive Qt6::WebView)
-else()
-  # Define singleton QML files before adding the QML module
-  set_source_files_properties(
-    qml/Slippipedia/model/data/MeleeData.qml
-    qml/Slippipedia/model/Constants.qml
-    PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+  find_package(FelgoHotReload)
+  target_link_libraries(Slippipedia PRIVATE FelgoHotReload Qt6::WebView)
 
-  # Note: the QML module is not defined for Felgo Live build, the module is instead loaded from the live cache folder.
-  #       the qmldir folder is copied from the regular build, with adaptions for paths.
-  qt_add_qml_module(Slippipedia
-      URI Slippipedia
-      VERSION 1.0
-      OUTPUT_DIRECTORY "qml/Slippipedia"
-      QML_FILES ${QmlFolder}
-      RESOURCES ${AssetsFolder}
-      NO_RESOURCE_TARGET_PATH
-      # use this to disable QML compiler (faster development)
-      # NO_CACHEGEN
-  )
+  set(NO_CACHEGEN_OPTION "NO_CACHEGEN") # disable QML compiler (faster builds)
+else ()
+  set(NO_CACHEGEN_OPTION "")
 endif()
+
+# Define singleton QML files before adding the QML module
+set_source_files_properties(
+  qml/Slippipedia/model/data/MeleeData.qml
+  qml/Slippipedia/model/Constants.qml
+  PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+
+qt_add_qml_module(Slippipedia
+    URI Slippipedia
+    VERSION 1.0
+    OUTPUT_DIRECTORY "qml/Slippipedia"
+    QML_FILES ${QmlFolder}
+    RESOURCES ${AssetsFolder}
+    NO_RESOURCE_TARGET_PATH
+    # use this to disable QML compiler (faster development)
+    ${NO_CACHEGEN_OPTION}
+)
 
 
 target_compile_definitions(Slippipedia
