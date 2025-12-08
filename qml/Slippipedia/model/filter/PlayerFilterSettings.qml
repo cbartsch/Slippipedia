@@ -106,10 +106,12 @@ Item {
       property string slippiCodeText: slippiCode.filterText
       property bool slippiCodeCase: slippiCode.matchCase
       property bool slippiCodePartial: slippiCode.matchPartial
+      property bool slippiCodeSplit: slippiCode.splitText
 
       property string slippiNameText: slippiName.filterText
       property bool slippiNameCase: slippiName.matchCase
       property bool slippiNamePartial: slippiName.matchPartial
+      property bool slippiNameSplit: slippiName.splitText
 
       property bool filterCodeAndName: playerFilterSettings.filterCodeAndName // true: and, false: or
 
@@ -121,9 +123,13 @@ Item {
         playerFilterSettings.slippiCode.filterText = slippiCodeText
         playerFilterSettings.slippiCode.matchCase = slippiCodeCase
         playerFilterSettings.slippiCode.matchPartial = slippiCodePartial
+        playerFilterSettings.slippiCode.splitText = slippiCodeSplit
+
         playerFilterSettings.slippiName.filterText = slippiNameText
         playerFilterSettings.slippiName.matchCase = slippiNameCase
         playerFilterSettings.slippiName.matchPartial = slippiNamePartial
+        playerFilterSettings.slippiName.splitText = slippiNameSplit
+
         playerFilterSettings.filterCodeAndName = filterCodeAndName
         playerFilterSettings.port = port
         playerFilterSettings.charIds = charIds.map(id => ~~id) // settings stores as list of string, convert to int
@@ -232,21 +238,10 @@ Item {
   }
 
   function getPlayerFilterParams() {
-    var codeValue = slippiCode.makeSqlWildcard()
-    var nameValue = slippiName.makeSqlWildcard()
+    var codeParams = slippiCode.getFilterParams()
+    var nameParams = slippiName.getFilterParams()
 
-    if(slippiCode.filterText && slippiName.filterText) {
-      return [codeValue, nameValue]
-    }
-    else if(slippiCode.filterText) {
-      return [codeValue]
-    }
-    else if(slippiName.filterText) {
-      return [nameValue]
-    }
-    else {
-      return []
-    }
+    return codeParams.concat(nameParams)
   }
 
   function getCharFilterParams() {

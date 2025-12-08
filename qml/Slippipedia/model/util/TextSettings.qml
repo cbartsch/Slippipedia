@@ -5,10 +5,14 @@ QtObject {
   property string filterText: ""
   property bool matchCase: false
   property bool matchPartial: true
+  property bool splitText: false
+  property string delimiter: ","
+
+  readonly property var textParts: (splitText ? filterText.split(delimiter) : [filterText]).filter(p => p)
 
   signal filterChanged
 
-  onFilterTextChanged:   filterChanged()
+  onTextPartsChanged:    filterChanged()
   onMatchCaseChanged:    filterChanged()
   onMatchPartialChanged: filterChanged()
 
@@ -18,14 +22,14 @@ QtObject {
     matchPartial = true
   }
 
-  function makeFilterCondition(colName) {
+  function _makeFilterCondition(colName, text) {
     if(matchPartial && matchCase) {
       // case sensitive wildcard (case sensitive like must be ON)
       return colName + " like ?"
     }
     else if(matchPartial) {
       // case insensitive wildcard -> compare upper
-      return qsTr("upper(%1) like upper(?)").arg(colName)
+      return "upper(%1) like upper(?)".arg(colName)
     }
     else if(matchCase) {
       // case sensitive comparison
@@ -37,8 +41,16 @@ QtObject {
     }
   }
 
+  function makeFilterCondition(colName) {
+    return textParts.map(p => _makeFilterCondition(colName, p)).join(" OR ")
+  }
+
   // make SQL wildcard if matchPartial is true
-  function makeSqlWildcard(filter) {
-    return matchPartial ? "%" + filterText + "%" : filterText
+  function _getFilterParams(text) {
+    return matchPartial ? "%" + text + "%" : text
+  }
+
+  function getFilterParams() {
+    return textParts.map(p => _getFilterParams(p))
   }
 }
