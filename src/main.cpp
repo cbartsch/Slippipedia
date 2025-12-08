@@ -155,10 +155,17 @@ int main(int argc, char *argv[])
 #ifdef FELGO_LIVE
   FelgoHotReload fhr(&engine);
 #else
-  felgo.setMainQmlFileName(QStringLiteral("qml/Slippipedia/Main.qml"));
+  felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
+
+  auto list = engine.importPathList();
+  // list.takeFirst();
+  engine.setImportPathList(list);
 
   // import app's QML module from resources:
-  engine.addImportPath("qrc:/Slippipedia/");
+  // engine.addImportPath("qrc:/qml/");
+
+  qDebug() << "Import path:" << engine.importPathList();
+  qDebug() << "Exists:" << QFile(":/qml/Slippipedia/qmldir").exists();
 
   engine.load(felgo.mainQmlFileName());
 #endif
