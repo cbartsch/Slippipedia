@@ -26,6 +26,7 @@ Item {
   property bool showOptions: true
   property alias matchCaseSensitive: toolBtnCase.checked
   property alias matchPartialText: toolBtnPartial.checked
+  property alias splitText: toolBtnSplit.checked
 
   property bool validationError: false
   property string validationText: "Check input"
@@ -45,12 +46,17 @@ Item {
     anchors.fill: parent
     anchors.leftMargin: label.width > 0 ? label.width + dp(Theme.contentPadding) : 0
 
-    onClicked: input.forceActiveFocus()
+    onClicked: function(mouse) {
+      input.forceActiveFocus()
+      const pos = mapToItem(input, Qt.point(mouse.x, mouse.y))
+      input.cursorPosition = input.positionAt(pos.x, pos.y)
+    }
 
     hoverEffectEnabled: true
     backgroundColor: Theme.listItem.selectedBackgroundColor
     fillColor: backgroundColor
     opacity: 0.5
+    cursorShape: Qt.PointingHandCursor
   }
 
   CustomToolTip {
@@ -74,17 +80,35 @@ Item {
       elide: Text.ElideRight
     }
 
-    AppTextInput {
-      id: input
-
+    Item {
       Layout.fillWidth: true
-      Layout.alignment: Qt.AlignVCenter
+      Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
       Layout.leftMargin: label.width > 0 ? dp(Theme.contentPadding) : 0
 
-      color: Theme.textColor
+      AppTextField {
+        id: input
+        color: Theme.textColor
 
-      onAccepted: textInputField.accepted()
-      onEditingFinished: textInputField.editingFinished()
+        anchors.left: parent.left
+        anchors.verticalCenter: parent.verticalCenter
+
+        background: null
+        leftPadding: 0
+        rightPadding: 0
+        font.pixelSize: label.font.pixelSize
+
+        onAccepted: textInputField.accepted()
+        onEditingFinished: textInputField.editingFinished()
+      }
+    }
+
+    AppToolButton {
+      id: toolBtnSplit
+      text: ","
+      toolTipText: "Split comma-separated"
+      Layout.alignment: Qt.AlignVCenter
+      visible: showOptions
+      checkable: true
     }
 
     AppToolButton {
