@@ -69,7 +69,7 @@ Grid {
       sourceModel: JsonListModel {
         id: jsonModel
         keyField: "id"
-        fields: ["id", "count", "name"]
+        fields: ["id", "count", "name", "gamesFinished", "gamesWon", "winRate"]
       }
     }
 
@@ -79,7 +79,7 @@ Grid {
       readonly property bool isSelected: highlightFilteredChar && charIds.indexOf(id) >= 0 // TODO probably use faster lookup
       readonly property bool hasChar: id >= 0 && id < 26 // ids 0-25 are the useable characters
 
-      cursorShape: Qt.PointingHandCursor
+      cursorShape: enabled ? Qt.PointingHandCursor : undefined
       width: parent.width / parent.columns
       height: showIcon ? charIcon.height : dp(72)
       enabled: hasChar && (enableEmpty || count > 0)
@@ -132,33 +132,52 @@ Grid {
         anchors.verticalCenterOffset: -height * 0.18
         visible: showData && hasChar && count > 0
 
-        AppText {
+        GridText {
           width: parent.width
           text: dataModel.formatPercentage(count / stats.totalReplaysFiltered, 1)
-          maximumLineCount: 1
-          elide: Text.ElideRight
-          horizontalAlignment: Text.AlignHCenter
-          style: Text.Outline
-          styleColor: Theme.backgroundColor
+
           font.pixelSize: Math.min(charItem.height * 0.3, width * 0.23)
           font.bold: true
-
-          color: Qt.rgba(1, 1, 1, charIcon.opacity * 0.8 + 0.2)
         }
 
-        AppText {
-          width: parent.width
-          text: qsTr("%1 game%2").arg(count).arg(count === 1 ? "" : "s")
-          maximumLineCount: 1
-          elide: Text.ElideRight
-          horizontalAlignment: Text.AlignHCenter
-          style: Text.Outline
-          styleColor: Theme.backgroundColor
-          font.pixelSize: Math.min(charItem.height * 0.2, width * 0.17)
+        Row {
+          id: winRateRow
 
-          color: Qt.rgba(1, 1, 1, charIcon.opacity * 0.8 + 0.2)
+          anchors.horizontalCenter: parent.horizontalCenter
+          visible: dataModel.playerFilter.hasPlayerFilter && gamesFinished > 0
+          spacing: dp(2)
+
+          GridText {
+            text: "WR:"
+            font.pixelSize: Math.min(charItem.height * 0.2, charItem.width * 0.17)
+          }
+
+          GridText {
+            text: dataModel.formatPercentage(winRate, 0)
+            color: dataModel.winRateColor(winRate)
+            font.bold: true
+
+            font.pixelSize: Math.min(charItem.height * 0.2, charItem.width * 0.17)
+          }
+        }
+
+        GridText {
+          visible: !winRateRow.visible
+          text: "%1 game%2".arg(count).arg(count === 1 ? "" : "s")
+
+          width: parent.width
+          font.pixelSize: Math.min(charItem.height * 0.2, width * 0.17)
         }
       }
     }
+  }
+
+  component GridText: AppText {
+    maximumLineCount: 1
+    elide: Text.ElideRight
+    horizontalAlignment: Text.AlignHCenter
+    style: Text.Outline
+    styleColor: Theme.backgroundColor
+    opacity: charIcon.opacity * 0.7 + 0.3
   }
 }

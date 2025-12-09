@@ -9,6 +9,12 @@ QtObject {
   property string delimiter: ","
 
   readonly property var textParts: (splitText ? filterText.split(delimiter) : [filterText]).filter(p => p)
+  readonly property string displayText: textParts.length > 0
+                                        ?
+                                          (matchPartial ? "~" : "") +
+                                          (matchCase ? "^" : "") +
+                                          textParts.map(p => "\"" + p + "\"").join(" / ")
+                                        : ""
 
   signal filterChanged
 
@@ -20,6 +26,7 @@ QtObject {
     filterText = ""
     matchCase = false
     matchPartial = true
+    splitText = false
   }
 
   function _makeFilterCondition(colName, text) {
@@ -42,7 +49,7 @@ QtObject {
   }
 
   function makeFilterCondition(colName) {
-    return textParts.map(p => _makeFilterCondition(colName, p)).join(" OR ")
+    return "(" + textParts.map(p => _makeFilterCondition(colName, p)).join(" OR ") + ")"
   }
 
   // make SQL wildcard if matchPartial is true

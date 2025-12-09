@@ -5,13 +5,6 @@ import Slippipedia 1.0
 
 Column {
 
-  AppListItem {
-    text: "Stats from all matched games"
-    detailText: "All numbers are averaged per game, unless specified otherwise."
-    enabled: false
-    backgroundColor: Theme.backgroundColor
-  }
-
   StatsGrid {
     width: parent.width
 

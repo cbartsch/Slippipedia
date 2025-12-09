@@ -88,14 +88,14 @@ Item {
   readonly property var stageDataSss: MeleeData.stageData
   .filter(s => s.id > 0)
   .map((s, index) => {
-    var sd = stageDataMap[s.id]
+    var sd = stageDataMap[s.id] || { count: 0 }
 
-    return {
-      id: s.id,
-      count: sd ? sd.count : 0,
-      name: s.name,
-      shortName: s.shortName
-    }
+    sd.id = s.id
+    sd.name = s.nam
+    sd.shortName = s.shortName
+    sd.winRate = sd.gamesWon / sd.gamesFinished
+
+    return sd
   })
 
   function refreshSummary() {

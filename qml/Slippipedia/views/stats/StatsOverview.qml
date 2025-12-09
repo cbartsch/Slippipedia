@@ -4,91 +4,104 @@ import Felgo 4.0
 import Slippipedia 1.0
 
 Column {
-  AppListItem {
-    text: "Data from all matched games"
-    detailText: "Data calculated only from games matched by the selected filter."
-    enabled: false
-    backgroundColor: Theme.backgroundColor
-  }
 
   SimpleSection {
-    title: "Game stats"
+    title: "Stats Overview"
   }
 
-  AppListItem {
-    text: qsTr("Average game time: %1 (%2 frames)")
-    .arg(dataModel.formatTime(stats.averageGameDuration))
-    .arg(stats.averageGameDuration.toFixed(0))
-
+  component StatListItem: AppListItem {
+    property int colSpan: 1
+    width: parent.width / (4 / colSpan)
     backgroundColor: Theme.backgroundColor
     enabled: false
+    textMaximumLineCount: 1
   }
 
-  AppListItem {
-    text: qsTr("Total game time: %1 (%2 frames)")
-    .arg(dataModel.formatTime(stats.totalGameDuration))
-    .arg(dataModel.formatNumber(stats.totalGameDuration))
+  Flow {
+    width: parent.width
 
-    backgroundColor: Theme.backgroundColor
-    enabled: false
-  }
+    AppListItem {
+      text: "Filter by player code, name or port to see win rate."
 
-  SimpleSection {
-    title: "Player stats"
-  }
+      width: parent.width / 2
+      visible: !dataModel.playerFilter.hasPlayerFilter
+      onSelected: showFilteringPage(0)
+    }
 
-  AppListItem {
-    backgroundColor: Theme.backgroundColor
-    enabled: false
-    visible: dataModel.playerFilter.hasPlayerFilter
+    StatListItem {
+      colSpan: 2
+      visible: dataModel.playerFilter.hasPlayerFilter
 
-    leftItem: GameCountRow {
-      anchors.verticalCenter: parent.verticalCenter
+      leftItem: GameCountRow {
+        anchors.verticalCenter: parent.verticalCenter
 
-      gamesWon: stats.totalReplaysFilteredWon
-      gamesFinished: stats.totalReplaysFilteredWithResult
+        gamesWon: stats.totalReplaysFilteredWon
+        gamesFinished: stats.totalReplaysFilteredWithResult
+      }
+    }
+
+    StatListItem {
+      text: qsTr("Total KOs: %1")
+      .arg(dataModel.formatNumber(stats.statsPlayer.stocksTaken.value))
+    }
+
+    StatListItem {
+      text: qsTr("OPK: %2")
+      .arg(dataModel.formatNumber(stats.statsPlayer.openingsPerKill))
+    }
+
+    StatListItem {
+      colSpan: 2
+      text: qsTr("Total game time: %1 (%2 frames)")
+      .arg(dataModel.formatTime(stats.totalGameDuration))
+      .arg(dataModel.formatNumber(stats.totalGameDuration))
+    }
+
+    StatListItem {
+      text: qsTr("L-Cancel: %2")
+      .arg(dataModel.formatPercentage(stats.statsPlayer.lCancelRate))
+    }
+
+    StatListItem {
+      text: qsTr("APM: %1")
+      .arg(dataModel.formatNumber(stats.statsPlayer.actionsPerMinute.avg))
+    }
+
+    StatListItem {
+      colSpan: 2
+      text: qsTr("Games finished: %1 (%2), tied: %3 (%4)")
+      .arg(dataModel.formatPercentage(stats.finishedRate))
+      .arg(dataModel.formatNumber(stats.totalReplaysFilteredFinished))
+      .arg(dataModel.formatPercentage(stats.tieRate))
+      .arg(dataModel.formatNumber(stats.totalReplaysFilteredWithTie))
+    }
+
+    StatListItem {
+      colSpan: 2
+      text: qsTr("LRAS - Me: %1 (%2) / Opponent: %3 (%4)")
+      .arg(dataModel.formatPercentage(stats.statsPlayer.lrasCount.avg))
+      .arg(dataModel.formatNumber(stats.statsPlayer.lrasCount.value))
+      .arg(dataModel.formatPercentage(stats.statsOpponent.lrasCount.avg))
+      .arg(dataModel.formatNumber(stats.statsOpponent.lrasCount.value))
     }
   }
 
-  AppListItem {
-    text: "No player filter configured."
-    detailText: "Filter by player code, name or port to see win rate."
-
-    visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage(0)
+  SimpleSection {
+    title: "Top Opponents"
   }
 
-  AppListItem {
-    text: qsTr("Games finished: %1 (%2)")
-    .arg(dataModel.formatPercentage(stats.finishedRate))
-    .arg(dataModel.formatNumber(stats.totalReplaysFilteredFinished))
+  NameGrid {
+    model: stats.statsOpponent.topSlippiCodes
+    columns: nameColumns
+    maxRows: 1
 
-    backgroundColor: Theme.backgroundColor
-    enabled: false
-  }
-
-  AppListItem {
-    text: qsTr("Games tied: %1 (%2)")
-    .arg(dataModel.formatPercentage(stats.tieRate))
-    .arg(dataModel.formatNumber(stats.totalReplaysFilteredWithTie))
-
-    backgroundColor: Theme.backgroundColor
-    enabled: false
-  }
-
-  AppListItem {
-    text: qsTr("LRAS - Me: %1 (%2) / Opponent: %3 (%4)")
-    .arg(dataModel.formatPercentage(stats.statsPlayer.lrasCount.avg))
-    .arg(dataModel.formatNumber(stats.statsPlayer.lrasCount.value))
-    .arg(dataModel.formatPercentage(stats.statsOpponent.lrasCount.avg))
-    .arg(dataModel.formatNumber(stats.statsOpponent.lrasCount.value))
-
-    backgroundColor: Theme.backgroundColor
-    enabled: false
+    namesClickable: true
+    onNameClicked: name => showList({ code1: name, name1: ciEqual(name, stats.dataBase.filterSettings.playerFilter.slippiCode.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
   SimpleSection {
-    title: "Top chars used"
+    title: "Top Chars"
   }
 
   CharacterGrid {
@@ -108,7 +121,7 @@ Column {
   }
 
   SimpleSection {
-    title: "Top chars used (opponent)"
+    title: "Top Chars (opponent)"
   }
 
   AppListItem {
@@ -136,7 +149,6 @@ Column {
 
     onCharSelected: (charId, isSelected) => showList({ opponentCharId: charId, exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
-
 
   SimpleSection {
     title: "Top stages"

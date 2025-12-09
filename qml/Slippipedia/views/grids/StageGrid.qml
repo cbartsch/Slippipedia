@@ -56,7 +56,7 @@ Column {
         sourceModel: JsonListModel {
           id: jsonModel
           keyField: "id"
-          fields: ["id", "count", "name", "shortName"]
+          fields: ["id", "count", "name", "shortName", "gamesFinished", "gamesWon", "winRate"]
         }
       }
 
@@ -78,7 +78,7 @@ Column {
           anchors.fill: parent
           onClicked: stageSelected(id, stageItem.isSelected)
 
-          cursorShape: Qt.PointingHandCursor
+          cursorShape: enabled ? Qt.PointingHandCursor : undefined
           enabled: enableEmpty || model.count > 0
           hoverEffectEnabled: true
           backgroundColor: Theme.listItem.selectedBackgroundColor
@@ -113,6 +113,7 @@ Column {
               text: shortName
               style: Text.Outline
               styleColor: Theme.backgroundColor
+              font.bold: true
             }
 
             AppText {
@@ -120,12 +121,44 @@ Column {
               enabled: false
               width: parent.width
               horizontalAlignment: Text.AlignHCenter
-              text: qsTr("%1 game%2\n(%3)")
-                .arg(count)
-                .arg(count === 1 ? "" : "s")
-                .arg(dataModel.formatPercentage(count / stats.totalReplaysFiltered))
+              text: dataModel.formatPercentage(count / stats.totalReplaysFiltered)
               style: Text.Outline
               styleColor: Theme.backgroundColor
+            }
+
+            AppText {
+              visible: showData && !winRateRow.visible
+              enabled: false
+              width: parent.width
+              horizontalAlignment: Text.AlignHCenter
+              text: qsTr("%1 game%2")
+                .arg(count)
+                .arg(count === 1 ? "" : "s")
+              style: Text.Outline
+              styleColor: Theme.backgroundColor
+            }
+
+            Row {
+              id: winRateRow
+
+              anchors.horizontalCenter: parent.horizontalCenter
+              visible: showData && dataModel.playerFilter.hasPlayerFilter && gamesFinished > 0
+              spacing: dp(2)
+
+              AppText {
+                text: "WR:"
+                style: Text.Outline
+                styleColor: Theme.backgroundColor
+              }
+
+              AppText {
+                text: dataModel.formatPercentage(winRate, 0)
+                color: dataModel.winRateColor(winRate)
+                font.bold: true
+
+                style: Text.Outline
+                styleColor: Theme.backgroundColor
+              }
             }
           }
         }
@@ -156,12 +189,10 @@ Column {
       // filtering for "other stages" is not currently supported
       enabled: false// enableEmpty || stats.otherStageAmount > 0
 
-      cursorShape: Qt.PointingHandCursor
       hoverEffectEnabled: true
 
       backgroundColor: Theme.listItem.selectedBackgroundColor
       fillColor: backgroundColor
-
 
       onClicked: stageSelected(0, otherItem.isSelected)
 

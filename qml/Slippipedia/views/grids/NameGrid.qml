@@ -15,16 +15,20 @@ Grid {
   anchors.left: parent.left
   anchors.right: parent.right
 
+  property int maxRows: -1
+
   property bool isOpponent: false
   readonly property string slotText: isOpponent ? "vs" : "as"
 
   Repeater {
     id: repeater
-    model: nameGrid.model.list
+    model: maxRows > 0
+           ? (nameGrid.model.list || []).slice(0, nameGrid.columns * nameGrid.maxRows)
+           : nameGrid.model.list
 
     Item {
       width: parent.width / parent.columns
-      height: dp(48) + dp(Theme.contentPadding) / 2
+      height: dp(64) + dp(Theme.contentPadding) / 2
 
       Rectangle {
         anchors.fill: parent
@@ -67,13 +71,22 @@ Grid {
 
         AppText {
           width: parent.width
-          text: qsTr("%1 (%2)")
+          text: qsTr("%1 games (%2)")
           .arg(modelData.count)
           .arg(dataModel.formatPercentage(modelData.count / stats.totalReplaysFiltered))
           maximumLineCount: 1
           elide: Text.ElideRight
 
-          opacity: (modelData.count / nameGrid.model.maxCount) * 0.5 + 0.5
+          // opacity: (modelData.count / nameGrid.model.maxCount) * 0.5 + 0.5
+        }
+
+        GameCountRow {
+          width: parent.width
+          visible: "gamesFinished" in modelData
+
+          gamesWon: modelData.gamesWon || 0
+          gamesFinished: modelData.gamesFinished || 0
+          showCount: false
         }
       }
     }

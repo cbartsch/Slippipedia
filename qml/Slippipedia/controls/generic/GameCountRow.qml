@@ -8,6 +8,7 @@ Flow {
 
   property int gamesWon
   property int gamesFinished
+  property bool showCount: true
 
   property color textColor: Theme.textColor
 
@@ -47,6 +48,6 @@ Flow {
   AppText {
     text:  qsTr("(%1 / %2)").arg(dataModel.formatNumber(gamesWon)).arg(dataModel.formatNumber(gamesFinished))
     color: gameCountRow.textColor
-    visible: dataModel.playerFilter.hasPlayerFilter
+    visible: dataModel.playerFilter.hasPlayerFilter && showCount
   }
 }

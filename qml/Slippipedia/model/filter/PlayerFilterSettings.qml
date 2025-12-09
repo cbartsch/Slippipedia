@@ -16,6 +16,7 @@ Item {
     onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiCodeText = filterText
     onMatchCaseChanged:    if(settingsLoader.item) settingsLoader.item.slippiCodeCase = matchCase
     onMatchPartialChanged: if(settingsLoader.item) settingsLoader.item.slippiCodePartial = matchPartial
+    onSplitTextChanged:    if(settingsLoader.item) settingsLoader.item.slippiCodeSplit = splitText
 
     onFilterChanged: playerFilterSettings.filterChanged()
   }
@@ -25,6 +26,7 @@ Item {
     onFilterTextChanged:   if(settingsLoader.item) settingsLoader.item.slippiNameText = filterText
     onMatchCaseChanged:    if(settingsLoader.item) settingsLoader.item.slippiNameCase = matchCase
     onMatchPartialChanged: if(settingsLoader.item) settingsLoader.item.slippiNamePartial = matchPartial
+    onSplitTextChanged:    if(settingsLoader.item) settingsLoader.item.slippiNameSplit = splitText
 
     onFilterChanged: playerFilterSettings.filterChanged()
   }
@@ -57,8 +59,8 @@ Item {
   onHasPlayerFilterChanged: filterChanged()
 
   readonly property string nameFilterText: {
-    var codeText = slippiCode.filterText
-    var nameText = slippiName.filterText
+    var codeText = slippiCode.displayText
+    var nameText = slippiName.displayText
     var pText
 
     var portText = port >= 0 ? "Port " + (port + 1) : ""
@@ -71,10 +73,6 @@ Item {
     }
     else {
       pText = codeText || nameText || ""
-    }
-
-    if(pText) {
-      pText = "\"" + pText + "\""
     }
 
     return [pText, portText].filter(s => s).join(", ")
@@ -154,10 +152,12 @@ Item {
     slippiCode.filterText = other.slippiCode.filterText
     slippiCode.matchCase = other.slippiCode.matchCase
     slippiCode.matchPartial = other.slippiCode.matchPartial
+    slippiCode.splitText = other.slippiCode.splitText
 
     slippiName.filterText = other.slippiName.filterText
     slippiName.matchCase = other.slippiName.matchCase
     slippiName.matchPartial = other.slippiName.matchPartial
+    slippiName.splitText = other.slippiName.splitText
 
     port = other.port
     filterCodeAndName = other.filterCodeAndName

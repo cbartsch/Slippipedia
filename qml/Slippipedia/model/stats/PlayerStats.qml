@@ -99,13 +99,10 @@ Item {
 
     // map DB results to css-viewable data
     return MeleeData.cssCharIds.map((id, index) => {
-                                      var cd = charData[id]
-
-                                      return {
-                                        id: id,
-                                        count: cd ? cd.count : 0,
-                                        name: cd ? cd.name : ""
-                                      }
+                                      var cd = charData[id] || { name: "", count: 0 }
+                                      cd.id = id
+                                      cd.winRate = cd.gamesWon / cd.gamesFinished
+                                      return cd
                                     })
   }
 

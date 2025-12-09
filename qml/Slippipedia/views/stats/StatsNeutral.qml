@@ -10,13 +10,6 @@ Column {
 
   readonly property var emptyModel: ({ openingMoves: [] })
 
-  AppListItem {
-    text: "Stats from all matched games"
-    detailText: "Neutral openings by first move per punish."
-    enabled: false
-    backgroundColor: Theme.backgroundColor
-  }
-
   Grid {
     anchors.left: parent.left
     anchors.right: parent.right

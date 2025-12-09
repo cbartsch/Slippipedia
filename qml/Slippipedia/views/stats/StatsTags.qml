@@ -4,25 +4,6 @@ import Felgo 4.0
 import Slippipedia 1.0
 
 Column {
-  AppListItem {
-    text: "Data from all matched games"
-    detailText: "Data calculated only from games matched by the selected filter. Click a tag/code to show all games with/vs that player."
-    enabled: false
-    backgroundColor: Theme.backgroundColor
-  }
-
-  SimpleSection {
-    title: "Top player tags"
-  }
-
-  NameGrid {
-    model: stats.statsPlayer.topPlayerTags
-    columns: nameColumns
-
-    namesClickable: true
-    onNameClicked: name => showList({ name1: name, code1: ciEqual(name, stats.dataBase.filterSettings.playerFilter.slippiName.filterText) ? "" : undefined,
-                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
-  }
 
   SimpleSection {
     title: "Top slippi codes"
@@ -38,25 +19,15 @@ Column {
   }
 
   SimpleSection {
-    title: "Top player tags (opponent)"
-  }
-
-  AppListItem {
-    text: "No player filter configured."
-    detailText: "Filter by player code, name or port to see opposing player tags."
-
-    visible: !dataModel.playerFilter.hasPlayerFilter
-    onSelected: showFilteringPage(0)
+    title: "Top player tags"
   }
 
   NameGrid {
-    visible: dataModel.playerFilter.hasPlayerFilter
-    model: stats.statsOpponent.topPlayerTags
+    model: stats.statsPlayer.topPlayerTags
     columns: nameColumns
-    isOpponent: true
 
     namesClickable: true
-    onNameClicked: name => showList({ name2: name, code2: ciEqual(name, stats.dataBase.filterSettings.opponentFilter.slippiName.filterText) ? "" : undefined,
+    onNameClicked: name => showList({ name1: name, code1: ciEqual(name, stats.dataBase.filterSettings.playerFilter.slippiName.filterText) ? "" : undefined,
                                       exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
@@ -80,6 +51,29 @@ Column {
 
     namesClickable: true
     onNameClicked: name => showList({ code2: name, name2: ciEqual(name, stats.dataBase.filterSettings.opponentFilter.slippiCode.filterText) ? "" : undefined,
+                                      exact: true, sourceFilter: stats.dataBase.filterSettings })
+  }
+
+  SimpleSection {
+    title: "Top player tags (opponent)"
+  }
+
+  AppListItem {
+    text: "No player filter configured."
+    detailText: "Filter by player code, name or port to see opposing player tags."
+
+    visible: !dataModel.playerFilter.hasPlayerFilter
+    onSelected: showFilteringPage(0)
+  }
+
+  NameGrid {
+    visible: dataModel.playerFilter.hasPlayerFilter
+    model: stats.statsOpponent.topPlayerTags
+    columns: nameColumns
+    isOpponent: true
+
+    namesClickable: true
+    onNameClicked: name => showList({ name2: name, code2: ciEqual(name, stats.dataBase.filterSettings.opponentFilter.slippiName.filterText) ? "" : undefined,
                                       exact: true, sourceFilter: stats.dataBase.filterSettings })
   }
 
