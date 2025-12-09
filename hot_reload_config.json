@@ -1,5 +1,5 @@
 {
   "project_name": "Slippipedia",
-  "main_qml_file": "qml/Slippipedia/Main.qml",
+  "main_qml_file": "qml/Main.qml",
   "qml_module_paths": [ "qml", "assets" ]
 }
