@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Felgo REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS WebView)
 
+qt_policy(SET QTP0004 NEW)
+
 set(PRODUCT_IDENTIFIER "at.cb.Slippipedia")
 set(PRODUCT_VERSION_NAME "2.2 ALPHA")
 set(PRODUCT_VERSION_CODE 8)
