@@ -12,6 +12,9 @@ Item {
 
   property int numPunishes: 25
 
+  property int currentPage: 0
+  property int numReplaysPerPage: 10
+
   property var sectionData: ({})
 
   property bool hasMore: true
@@ -162,6 +165,7 @@ Item {
     punishList = []
     sectionData = {}
     hasMore = true
+    currentPage = 0
     prevSessionSection = ""
   }
 
@@ -175,47 +179,52 @@ Item {
     id: loadTimer
     interval: 250
 
-    onTriggered: doLoadMore()
+    onTriggered: { for(var i = doLoadMore(); i < numPunishes && hasMore; i+= doLoadMore()); }
   }
 
   function doLoadMore() {
-    var loaded = stats.dataBase.getPunishList(numPunishes, punishList.length)
+    var loaded = stats.dataBase.getPunishList(numReplaysPerPage, currentPage * numReplaysPerPage)
+    currentPage++
 
     isLoading = false
 
     if(!loaded || loaded.length === 0) {
       hasMore = false
-      return
+      return -1
     }
 
     // adapt model with extra data for list view (sections, ...)
-    var adapted = loaded.map(item => {
-                               // use new match ID from Slippi 3.14 to group sessions, or a combination of the player data:
-                               var sessionSection = item.matchId || dataModel.playersText(item)
-                               var section = dataModel.formatDate(item.date) + " - " + sessionSection
+    var adapted = loaded
+    .filter(item => item.id)
+    .map(item => {
+           // use new match ID from Slippi 3.14 to group sessions, or a combination of the player data:
+           var sessionSection = item.matchId || dataModel.playersText(item)
+           var section = dataModel.formatDate(item.date) + " - " + sessionSection
 
-                               var isNewSession = sessionSection !== prevSessionSection
-                               prevSessionSection = sessionSection
+           var isNewSession = sessionSection !== prevSessionSection
+           prevSessionSection = sessionSection
 
-                               if(!(section in sectionData)) {
-                                 sectionData[section] = item
-                                 sectionData[section].chars1 = { [item.char1] : item.skin1 }
-                                 sectionData[section].chars2 = { [item.char2] : item.skin2 }
-                                 sectionData[section].punishes = [item]
-                                 sectionData[section].showNames = isNewSession
-                               }
-                               else {
-                                 sectionData[section].punishes.push(item)
-                               }
+           if(!(section in sectionData)) {
+             sectionData[section] = item
+             sectionData[section].chars1 = { [item.char1] : item.skin1 }
+             sectionData[section].chars2 = { [item.char2] : item.skin2 }
+             sectionData[section].punishes = [item]
+             sectionData[section].showNames = isNewSession
+           }
+           else {
+             sectionData[section].punishes.push(item)
+           }
 
-                               item.section = section
+           item.section = section
 
-                               return item
-                             })
+           return item
+         })
 
     punishList.push.apply(punishList, adapted)
 
     punishListChanged()
+
+    return adapted.length
   }
 
   function refresh() {

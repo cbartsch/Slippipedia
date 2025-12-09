@@ -156,9 +156,6 @@ foreign key(replayId) references replays(id)
       tx.executeSql("create index if not exists player_index on players(replayId, port, charId, slippiCode, slippiName,
                      slippiCode collate nocase, slippiName collate nocase)")
       tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill, openingDynamic, openingMoveId, numMoves, damage)")
-
-      // can only configure this globally, set like to be case sensitive:
-      tx.executeSql("pragma case_sensitive_like = true")
     })
   }
 
@@ -282,14 +279,14 @@ killDirection, didKill
 
     var tDiff = new Date().getTime() - time
 
-    if(tDiff > 20) {
+    if(tDiff > 0) {
       log("Read from DB took", tDiff, "ms")
     }
 
     return res
   }
 
-  function getFilterCondition(usePunishFilter = false) {
+  function getFilterCondition() {
     return "(" +
         // game
         gameFilter.getGameFilterCondition() +
@@ -297,18 +294,15 @@ killDirection, didKill
         " and " + playerFilter.getFilterCondition("p") +
         // opponent
         " and " + opponentFilter.getFilterCondition("p2") +
-        // punish
-        " and " + (usePunishFilter ? punishFilter.getPunishFilterCondition() : "true") +
         " and r.hasData = 1" + // only match replays that didn't fail parsing
         ")"
   }
 
-  function getFilterParams(usePunishFilter = false) {
+  function getFilterParams() {
     // game, then me, then opponent
     return gameFilter.getGameFilterParams()
     .concat(playerFilter.getFilterParams())
     .concat(opponentFilter.getFilterParams())
-    .concat(usePunishFilter ? punishFilter.getPunishFilterParams() : [])
   }
 
   function getNumReplays() {
@@ -477,52 +471,35 @@ where stageId not in (%1) and " + getFilterCondition())
   function getTopPlayerTags(isOpponent, max) {
     log("get top tags")
 
-    return readFromDb(function(tx) {
-      var playerCol = isOpponent ? "p2" : "p"
-
-      var sql = qsTr("select %1.slippiName slippiName, count(distinct r.id) c from replays r
-join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id and p.port != p2.port
-where %1.slippiName is not null and
-%1.slippiName is not \"\" and %2
-group by %1.slippiName
-order by c desc
-limit ?").arg(playerCol).arg(getFilterCondition())
-
-      var params = getFilterParams().concat([max])
-
-      var results = tx.executeSql(sql, params)
-
-      var maxCount = 0
-      var result = []
-      for (var i = 0; i < results.rows.length; i++) {
-        var count = results.rows.item(i).c
-        maxCount = Math.max(maxCount, count)
-
-        result.push({
-                      text: results.rows.item(i).slippiName,
-                      count: count
-                    })
-      }
-
-      return { list: result, maxCount: maxCount }
-    }, [])
+    return getNameStats("slippiName", isOpponent, max)
   }
 
   function getTopSlippiCodes(isOpponent, max) {
-    log("get top codes opponent")
+    log("get top codes")
 
+    return getNameStats("slippiCode", isOpponent, max)
+  }
+
+  function getNameStats(nameCol, isOpponent, max) {
     return readFromDb(function(tx) {
       var playerCol = isOpponent ? "p2" : "p"
 
-      var sql = qsTr("select %1.slippiCode slippiCode, count(distinct r.id) c from replays r
+      // gamesWon is the number of games P1 won, regardless of isOpponent parameter
+      var gameEndedCondition = gameFilter.getGameEndedCondition()
+      var winnerCondition = gameFilter.getWinnerCondition()
+
+      var sql = qsTr("select %1.%5 text,
+count(distinct r.id) count,
+sum(case when %3 then 1 else 0 end) gamesFinished,
+sum(case when %4 then 1 else 0 end) gamesWon
+from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-where %1.slippiCode is not null and
-%1.slippiCode is not \"\" and %2
-group by %1.slippiCode
-order by c desc
-limit ?").arg(playerCol).arg(getFilterCondition())
+where text is not null and
+text is not \"\" and %2
+group by text
+order by count desc
+limit ?").arg(playerCol).arg(getFilterCondition()).arg(gameEndedCondition).arg(winnerCondition).arg(nameCol)
 
       var params = getFilterParams().concat([max])
 
@@ -531,13 +508,9 @@ limit ?").arg(playerCol).arg(getFilterCondition())
       var maxCount = 0
       var result = []
       for (var i = 0; i < results.rows.length; i++) {
-        var count = results.rows.item(i).c
-        maxCount = Math.max(maxCount, count)
-
-        result.push({
-                      text: results.rows.item(i).slippiCode,
-                      count: count
-                    })
+        var row = results.rows.item(i)
+        maxCount = Math.max(maxCount, row.count)
+        result.push(row)
       }
 
       return { list: result, maxCount: maxCount }
@@ -753,6 +726,14 @@ limit ? offset ?"
   function getPunishList(max, start) {
     log("get punish list")
 
+    // select * from replays r
+    // join players p on p.replayId = r.id
+    // join players p2 on p2.replayId = r.id and p.port != p2.port
+    // join punishes pu on pu.replayId = r.id and pu.port = p.port
+    // where p.slippiCode LIKE '%daft#455%' and pu.didKill = 1 and pu.damage > 80
+    // and r.id in (select id from Replays r where r.hasData = 1 order by r.date desc limit 1000)
+    // order by r.date
+
     return readFromDb(function(tx) {
       var sql = "select
 pu.id id,
@@ -770,12 +751,12 @@ p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId ski
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-join punishes pu on pu.replayId = r.id and pu.port = p.port
-where " + getFilterCondition(true) + "
-order by r.date desc
-limit ? offset ?"
+left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishFilter.getPunishFilterCondition() +
+"where " + getFilterCondition() + "
+and r.id in (select id from Replays r where r.hasData = 1 order by r.date desc limit ? offset ?)
+order by r.date desc"
 
-      var params = getFilterParams(true).concat([max, start])
+      var params = punishFilter.getPunishFilterParams().concat(getFilterParams().concat([max, start]))
 
       var results = tx.executeSql(sql, params)
 
@@ -807,12 +788,12 @@ sum(damage) damage, sum(numMoves) numMoves, sum(didKill) kills
 from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
-join punishes pu on pu.replayId = r.id and pu.port = %1.port
-where %2
+join punishes pu on pu.replayId = r.id and pu.port = %1.port and " + punishFilter.getPunishFilterCondition() +
+"where %2
 group by pu.openingMoveId
-order by count desc").arg(playerCol).arg(getFilterCondition(true))
+order by count desc").arg(playerCol).arg(getFilterCondition())
 
-      var params = getFilterParams(true)
+      var params = punishFilter.getPunishFilterParams().concat(getFilterParams())
 
       var results = tx.executeSql(sql, params)
 

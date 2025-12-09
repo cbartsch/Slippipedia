@@ -66,6 +66,9 @@ QSqlDatabase setupDatabase(QQmlEngine& engine) {
     QSqlQuery query(db);
     query.exec("pragma journal_mode = wal");
     query.exec("pragma synchronous = off");
+
+    // can only configure this globally, set like to be case sensitive:
+    query.exec("pragma case_sensitive_like = true");
   }
 
   if(db.lastError().isValid()) {
