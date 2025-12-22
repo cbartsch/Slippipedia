@@ -15,10 +15,10 @@ BasePage {
 
   readonly property bool openingsVisible: contentSwipe.currentIndex === 3
 
-  onOpeningsVisibleChanged: if(openingsVisible && !stats.hasOpenings) stats.refresh(nameColumns * 5, openingsVisible)
+  onOpeningsVisibleChanged: if(openingsVisible && !stats.hasOpenings) refreshStats()
 
-  onAppeared: stats.refresh(nameColumns * 5, openingsVisible)
-  filterModal.onClosed: if(stats) stats.refresh(nameColumns * 5, openingsVisible)
+  onAppeared: refreshStats()
+  filterModal.onClosed: if(stats) refreshStats()
   filterModal.showPunishOptions: openingsVisible
 
   flickable.interactive: false
@@ -45,6 +45,8 @@ BasePage {
 
       showListButton: statisticsPage.navigationStack.depth > 1
       onShowList: app.showList({ sourceFilter: statisticsPage.stats.dataBase.filterSettings })
+
+      onQuickFilterChanged: refreshStats()
     }
 
     AppTabBar {
@@ -109,5 +111,9 @@ BasePage {
       style: Text.Outline
       styleColor: "black"
     }
+  }
+
+  function refreshStats() {
+    stats.refresh(nameColumns * 5, openingsVisible)
   }
 }

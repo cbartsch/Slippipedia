@@ -49,6 +49,8 @@ BasePage {
 
       showStatsButton: browserPage.navigationStack.depth > 1
       onShowStats: app.showStats({ sourceFilter: browserPage.stats.dataBase.filterSettings })
+
+      onQuickFilterChanged: browserPage.loadInitial()
     }
 
     AppTabBar {

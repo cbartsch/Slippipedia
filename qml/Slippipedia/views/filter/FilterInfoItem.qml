@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtQuick.Controls 2.0
 import Felgo 4.0
 
 import Slippipedia 1.0
@@ -28,56 +29,82 @@ Column {
 
   property alias titleSection: titleSection
 
+  signal quickFilterChanged
+
   SimpleSection {
     id: titleSection
     title: "Filtering"
   }
 
-  AppListItem {
-    text: qsTr("Matched replays: %1/%2 (%3)")
-    .arg(numReplaysFiltered).arg(numReplays)
-    .arg(dataModel.formatPercentage(amountFiltered))
+  Row {
+    width: parent.width
+    height: filterInfoItem.height
 
-    //detailText: qsTr("Matching:\n%1").arg(stats ? stats.dataBase.filterSettings.displayText : "")
+    AppListItem {
+      id: filterInfoItem
 
-    detailTextItem: FilterDescription {
-      id: description
-      filter: stats && stats.dataBase.filterSettings || null
+      text: qsTr("Matched replays: %1/%2 (%3)")
+      .arg(numReplaysFiltered).arg(numReplays)
+      .arg(dataModel.formatPercentage(amountFiltered))
+
+      width: parent.width - quickFilterItem.width
+
+      detailTextItem: FilterDescription {
+        id: description
+        filter: stats && stats.dataBase.filterSettings || null
+      }
+
+      onSelected: showFilteringPage()
+
+      mouseArea.enabled: filterItem.clickable
+      backgroundColor: filterItem.clickable ? Theme.controlBackgroundColor : Theme.backgroundColor
+
+      rightItem: Row {
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: dp(Theme.contentPadding)
+
+        AppToolButton {
+          visible: showListButton
+          iconType: IconType.list
+          toolTipText: "Show list of games"
+
+          onClicked: showList()
+        }
+
+        AppToolButton {
+          visible: showStatsButton
+          iconType: IconType.barchart
+          toolTipText: "Show statistics for games"
+
+          onClicked: showStats()
+        }
+
+        AppToolButton {
+          iconType: IconType.trash
+          toolTipText: "Reset all filters"
+          visible: showResetButton
+
+          onClicked: InputDialog.confirm(app, "Reset all filters?", accepted => {
+                                           if(accepted) stats.dataBase.filterSettings.reset()
+                                         })
+        }
+      }
     }
 
-    onSelected: showFilteringPage()
+    AppListItem {
+      id: quickFilterItem
+      text: qsTr("Quick filters")
+      width: visible ? dp(400) : 0
+      height: parent.height
+      mouseArea.hoverEffectEnabled: false
+      backgroundColor: Theme.backgroundColor
+      visible: parent.width > dp(1000)
 
-    mouseArea.enabled: filterItem.clickable
-    backgroundColor: filterItem.clickable ? Theme.controlBackgroundColor : Theme.backgroundColor
-
-    rightItem: Row {
-      anchors.verticalCenter: parent.verticalCenter
-      spacing: dp(Theme.contentPadding)
-
-      AppToolButton {
-        visible: showListButton
-        iconType: IconType.list
-        toolTipText: "Show list of games"
-
-        onClicked: showList()
-      }
-
-      AppToolButton {
-        visible: showStatsButton
-        iconType: IconType.barchart
-        toolTipText: "Show statistics for games"
-
-        onClicked: showStats()
-      }
-
-      AppToolButton {
-        iconType: IconType.trash
-        toolTipText: "Reset all filters"
-        visible: showResetButton
-
-        onClicked: InputDialog.confirm(app, "Reset all filters?", accepted => {
-                                         if(accepted) stats.dataBase.filterSettings.reset()
-                                       })
+      detailTextItem: QuickFilterOptions {
+        id: quickFilterOptions
+        height: description.height
+        width: quickFilterItem.textItemAvailableWidth
+        onQuickFilterChanged: filterItem.quickFilterChanged()
       }
     }
   }

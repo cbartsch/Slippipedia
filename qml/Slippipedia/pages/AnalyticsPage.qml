@@ -30,6 +30,7 @@ BasePage {
     FilterInfoItem {
       stats: analyticsPage.stats
       clickable: true
+      onQuickFilterChanged: stats.refresh()
     }
 
     AppTabBar {

@@ -88,7 +88,6 @@ Column {
     }
   }
 
-
   Item {
     width: parent.width
     height: dateOptionsRow.height

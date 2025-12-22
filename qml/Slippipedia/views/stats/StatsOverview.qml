@@ -10,11 +10,22 @@ Column {
   }
 
   component StatListItem: AppListItem {
+    id: statListItem
+
     property int colSpan: 1
+    property string toolTipText: ""
+
     width: parent.width / (4 / colSpan)
     backgroundColor: Theme.backgroundColor
-    enabled: false
+
     textMaximumLineCount: 1
+
+    mouseArea.hoverEffectEnabled: false
+
+    CustomToolTip {
+      shown: mouseArea.containsMouse && !!text
+      text: statListItem.toolTipText
+    }
   }
 
   Flow {
@@ -48,6 +59,7 @@ Column {
     StatListItem {
       text: qsTr("OPK: %2")
       .arg(dataModel.formatNumber(stats.statsPlayer.openingsPerKill))
+      toolTipText: qsTr("Openings per kill")
     }
 
     StatListItem {
@@ -65,6 +77,7 @@ Column {
     StatListItem {
       text: qsTr("APM: %1")
       .arg(dataModel.formatNumber(stats.statsPlayer.actionsPerMinute.avg))
+      toolTipText: qsTr("Actions per minute")
     }
 
     StatListItem {
