@@ -13,7 +13,7 @@ Item {
   property int numPunishes: 25
 
   property int currentPage: 0
-  property int numReplaysPerPage: 10
+  property int numReplaysPerPage: 25
 
   property var sectionData: ({})
 

@@ -172,7 +172,7 @@ Column {
     showOtherItem: false
 
     stageIds: filter ? filter.stageIds : []
-    onStageSelected: {
+    onStageSelected: function(stageId, isSelected) {
       if(isSelected) {
         // char is selected -> unselect
         filter.removeStage(stageId)
