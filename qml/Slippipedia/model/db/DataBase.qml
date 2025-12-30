@@ -752,11 +752,18 @@ from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishFilter.getPunishFilterCondition() +
-"where " + getFilterCondition() + "
-and r.id in (select id from Replays r where r.hasData = 1 order by r.date desc limit ? offset ?)
-order by r.date desc"
+"where " + getFilterCondition() +
+// note: to speed up the select, sub-select the first N replays, and then join those IDs to the other tables
+//       thus also add the game filter condition and params another time
+"and r.id in (
+  select id from Replays r where " + gameFilter.getGameFilterCondition() + " order by r.date desc limit ? offset ?
+)
+order by r.date desc, pu.stocks desc"
 
-      var params = punishFilter.getPunishFilterParams().concat(getFilterParams().concat([max, start]))
+      var params = punishFilter.getPunishFilterParams()
+      .concat(getFilterParams())
+      .concat(gameFilter.getGameFilterParams())
+      .concat([max, start])
 
       var results = tx.executeSql(sql, params)
 
