@@ -11,6 +11,15 @@ AppButton {
   property alias mouseArea: ripple
   property string toolTipText: ""
 
+  background: Rectangle {
+    anchors.fill: parent
+
+    color: "transparent"
+
+    border.color: Theme.tintColor
+    border.width: optionButton.checked ? dp(1) : 0
+  }
+
   CustomToolTip {
     shown: toolTipText && hovered
     text: toolTipText

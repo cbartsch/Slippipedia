@@ -363,6 +363,10 @@ Item {
     gameFilterSettings.gameModes = gameModes
   }
 
+  function hasGameModes(gameModes) {
+    return gameModes.every(existing => gameFilterSettings.gameModes.indexOf(existing) >= 0)
+  }
+
   function addGameMode(gameMode) {
     gameFilterSettings.gameModes = gameModes.concat(gameMode)
   }
@@ -383,9 +387,16 @@ Item {
 
     var current = new Date()
     date.to = current.getTime()
+    date.from = current.getTime() - ms
+  }
 
-    current.setTime(current.getTime() - ms)
-    date.from = current.getTime()
+  function isPastRange(numDays) {
+    const ms = numDays * 24 * 60 * 60 * 1000
+    const maxDiff = 60 * 60 * 1000
+
+    var current = new Date()
+    return Math.abs(date.to - current.getTime()) < maxDiff
+        && Math.abs(date.from - (current.getTime() - ms)) < maxDiff
   }
 
   // move date range by numDays forward
@@ -400,6 +411,11 @@ Item {
   function setYear(year) {
     date.from = new Date(year, 0).getTime()
     date.to = new Date(year + 1, 0).getTime()
+  }
+
+  function isYear(year) {
+    return date.from === new Date(year, 0).getTime()
+        && date.to === new Date(year + 1, 0).getTime()
   }
 
   // set date range for all days in a specific month of current year

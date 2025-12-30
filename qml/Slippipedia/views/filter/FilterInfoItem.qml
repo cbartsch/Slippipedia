@@ -13,6 +13,7 @@ Column {
   property bool showListButton: false
   property bool showStatsButton: false
   property bool showResetButton: false
+  property bool showQuickFilters: false
 
   signal showList
   signal showStats
@@ -52,6 +53,7 @@ Column {
       detailTextItem: FilterDescription {
         id: description
         filter: stats && stats.dataBase.filterSettings || null
+        height: Math.max(implicitHeight, dp(64))
       }
 
       onSelected: showFilteringPage()
@@ -98,12 +100,15 @@ Column {
       height: parent.height
       mouseArea.hoverEffectEnabled: false
       backgroundColor: Theme.backgroundColor
-      visible: parent.width > dp(1000)
+      visible: parent.width > dp(1000) &&  showQuickFilters
+
+      textVerticalSpacing: dp(Theme.contentPadding) / 2
 
       detailTextItem: QuickFilterOptions {
         id: quickFilterOptions
         height: description.height
         width: quickFilterItem.textItemAvailableWidth
+        showPunishOptions: filterItem.showPunishFilter
         onQuickFilterChanged: filterItem.quickFilterChanged()
       }
     }
