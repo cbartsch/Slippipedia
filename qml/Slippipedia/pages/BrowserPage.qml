@@ -29,11 +29,13 @@ BasePage {
     }
     IconButtonBarItem {
       iconType: IconType.filter
-      onClicked: showFilteringPage()
+      mouseArea.cursorShape: Qt.PointingHandCursor
       visible: filterChangeable
+      onClicked: showFilteringPage()
     }
     IconButtonBarItem {
       iconType: IconType.refresh
+      mouseArea.cursorShape: Qt.PointingHandCursor
       onClicked: refresh()
     }
   }
@@ -46,6 +48,7 @@ BasePage {
       stats: browserPage.stats
       clickable: filterChangeable
       showPunishFilter: filterModal.showPunishOptions
+      showQuickFilters: true
 
       showStatsButton: browserPage.navigationStack.depth > 1
       onShowStats: app.showStats({ sourceFilter: browserPage.stats.dataBase.filterSettings })

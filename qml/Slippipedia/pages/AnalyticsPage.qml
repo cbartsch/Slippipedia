@@ -19,6 +19,7 @@ BasePage {
 
     IconButtonBarItem {
       iconType: IconType.filter
+      mouseArea.cursorShape: Qt.PointingHandCursor
       onClicked: showFilteringPage()
     }
   }
@@ -30,6 +31,7 @@ BasePage {
     FilterInfoItem {
       stats: analyticsPage.stats
       clickable: true
+      showQuickFilters: true
       onQuickFilterChanged: stats.refresh()
     }
 
