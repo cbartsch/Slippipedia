@@ -33,30 +33,12 @@ Item {
       }
     }
 
-    OptionButton {
-      id: currentYearButton
+    YearFilterButton {
+      currentYear: new Date().getFullYear() - 1
+    }
 
-      property int currentYear: new Date().getFullYear()
-
-      text: String(currentYear)
-      toolTipText: checked
-                   ? "Reset year filter"
-                   : "Filter for games in %1".arg(currentYear)
-
-      checked: gameFilter && gameFilter.isYear(currentYear)
-
-      visible: !showPunishOptions
-
-      onClicked: {
-        if(checked) {
-          gameFilter.date.reset()
-        }
-        else {
-          gameFilter.setYear(currentYear)
-        }
-
-        quickFilterOptions.quickFilterChanged()
-      }
+    YearFilterButton {
+      currentYear: new Date().getFullYear()
     }
 
     OptionButton {
@@ -104,6 +86,29 @@ Item {
     }
 
     OptionButton {
+      text: "From <10%"
+      toolTipText: checked
+                   ? "Reset Percent filter"
+                   : "Filter for punishes that started at 10% or less"
+
+      visible: showPunishOptions
+
+      checked: punishFilter && punishFilter.startPercent.from === 0 && punishFilter.startPercent.to === 10
+
+      onClicked: {
+        if(checked) {
+          punishFilter.startPercent.from = -1
+          punishFilter.startPercent.to = -1
+        }
+        else {
+          punishFilter.startPercent.from = 0
+          punishFilter.startPercent.to = 10
+        }
+        quickFilterOptions.quickFilterChanged()
+      }
+    }
+
+    OptionButton {
       text: "Killed"
       toolTipText: checked
                    ? "Reset Killed filter"
@@ -117,6 +122,30 @@ Item {
         punishFilter.didKill = !checked
         quickFilterOptions.quickFilterChanged()
       }
+    }
+  }
+
+  component YearFilterButton : OptionButton {
+    property int currentYear
+
+    text: String(currentYear)
+    toolTipText: checked
+                 ? "Reset year filter"
+                 : "Filter for games in %1".arg(currentYear)
+
+    checked: gameFilter && gameFilter.isYear(currentYear)
+
+    visible: !showPunishOptions
+
+    onClicked: {
+      if(checked) {
+        gameFilter.date.reset()
+      }
+      else {
+        gameFilter.setYear(currentYear)
+      }
+
+      quickFilterOptions.quickFilterChanged()
     }
   }
 }
