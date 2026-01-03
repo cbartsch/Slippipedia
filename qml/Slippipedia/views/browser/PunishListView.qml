@@ -179,7 +179,11 @@ Item {
     id: loadTimer
     interval: 250
 
-    onTriggered: { for(var i = doLoadMore(); i < numPunishes && hasMore; i+= doLoadMore()); }
+    onTriggered: {
+      for(var i = doLoadMore(); i < numPunishes && hasMore; i+= doLoadMore()) {
+        console.log("Loading punishes", i, "/", numPunishes, "more?", hasMore)
+      }
+    }
   }
 
   function doLoadMore() {
@@ -190,12 +194,15 @@ Item {
 
     if(!loaded || loaded.length === 0) {
       hasMore = false
-      return -1
+      console.log("found 0 punishes")
+      return 0
     }
 
-    // adapt model with extra data for list view (sections, ...)
     var adapted = loaded
+    // note: punishes are left-joined to include replays where no punish is found
+    //       those are currently not displayed, so just filter them out.
     .filter(item => item.id)
+    // adapt model with extra data for list view (sections, ...)
     .map(item => {
            // use new match ID from Slippi 3.14 to group sessions, or a combination of the player data:
            var sessionSection = item.matchId || dataModel.playersText(item)
@@ -224,6 +231,7 @@ Item {
 
     punishListChanged()
 
+    console.log("Found", adapted.length, "punishes and", (loaded.length - adapted.length), "games with no punish")
     return adapted.length
   }
 

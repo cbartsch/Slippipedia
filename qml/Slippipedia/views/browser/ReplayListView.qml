@@ -16,7 +16,6 @@ Item {
 
   readonly property string currentSection: navigationStack.currentPage && navigationStack.currentPage.section || ""
 
-
   Connections {
     target: dataModel
 
