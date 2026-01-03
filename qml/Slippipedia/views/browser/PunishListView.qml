@@ -10,10 +10,11 @@ Item {
 
   property alias count: listView.count
 
-  property int numPunishes: 25
+  property int numPunishes: 10 // least number of punishes as long as there are more replays
+  property int maxQueries: 100 // max number of queries at a time if not enough punishes have been found
+  property int numReplaysPerPage: 25 // number of replays to query for punishes as once
 
   property int currentPage: 0
-  property int numReplaysPerPage: 25
 
   property var sectionData: ({})
 
@@ -120,8 +121,8 @@ Item {
 
         toolBtnOpen.toolTipText: "Replay all punishes"
 
-        onOpenReplayFolder: dataModel.openReplayFolder(filePath)
-        onOpenReplayFile: dataModel.replayPunishes(sectionData[section].punishes)
+        onOpenReplayFolder: filePath => dataModel.openReplayFolder(filePath)
+        onOpenReplayFile: filePath => dataModel.replayPunishes(sectionData[section].punishes)
       }
     }
 
@@ -180,8 +181,10 @@ Item {
     interval: 250
 
     onTriggered: {
-      for(var i = doLoadMore(); i < numPunishes && hasMore; i+= doLoadMore()) {
-        console.log("Loading punishes", i, "/", numPunishes, "more?", hasMore)
+      for(var loadedPunishes = doLoadMore(), i = 0;
+          loadedPunishes < numPunishes && hasMore && i < maxQueries;
+          loadedPunishes+= doLoadMore(), i++) {
+        console.log("Loading punishes", loadedPunishes, "/", numPunishes, "more?", hasMore)
       }
     }
   }
