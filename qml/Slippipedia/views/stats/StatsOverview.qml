@@ -9,13 +9,15 @@ Column {
     title: "Stats Overview"
   }
 
+  readonly property int numColumns: width > dp(600) ? 4 : 2
+
   component StatListItem: AppListItem {
     id: statListItem
 
     property int colSpan: 1
     property string toolTipText: ""
 
-    width: parent.width / (4 / colSpan)
+    width: parent.width / (numColumns / colSpan)
     backgroundColor: Theme.backgroundColor
 
     textMaximumLineCount: 1
@@ -54,6 +56,7 @@ Column {
     StatListItem {
       text: qsTr("Total KOs: %1")
       .arg(dataModel.formatNumber(stats.statsPlayer.stocksTaken.value))
+      toolTipText: qsTr("Number of stocks taken by you")
     }
 
     StatListItem {
@@ -72,6 +75,7 @@ Column {
     StatListItem {
       text: qsTr("L-Cancel: %2")
       .arg(dataModel.formatPercentage(stats.statsPlayer.lCancelRate))
+      toolTipText: qsTr("Percentage of L-cancelled aerials")
     }
 
     StatListItem {
@@ -90,12 +94,15 @@ Column {
     }
 
     StatListItem {
-      colSpan: 2
-      text: qsTr("LRAS - Me: %1 (%2) / Opponent: %3 (%4)")
-      .arg(dataModel.formatPercentage(stats.statsPlayer.lrasCount.avg))
+      text: qsTr("LRAS - Me: %1")
       .arg(dataModel.formatNumber(stats.statsPlayer.lrasCount.value))
-      .arg(dataModel.formatPercentage(stats.statsOpponent.lrasCount.avg))
+      toolTipText: qsTr("Number of games ended with LRAS quit out")
+    }
+
+    StatListItem {
+      text: qsTr("Opponent: %1")
       .arg(dataModel.formatNumber(stats.statsOpponent.lrasCount.value))
+      toolTipText: qsTr("Number of games ended with LRAS quit out")
     }
   }
 
