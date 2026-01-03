@@ -3,7 +3,7 @@ import Felgo 4.0
 
 IconButtonBarItem {
   iconType: IconType.spinner
-  visible: dataModel.isProcessing || dataModel.isEncoding
+  visible: dataModel.hasProgress
   enabled: false
   mouseArea.hoverEnabled: false
 
@@ -20,8 +20,7 @@ IconButtonBarItem {
   AppText {
     id: textItem
     anchors.centerIn: parent
-    text: qsTr("%1%").arg(Math.round(100 * dataModel.numFilesProcessed / dataModel.numFilesProcessing))
-    visible: dataModel.numFilesProcessing > 0
+    text: qsTr("%1%").arg(Math.round(100 * dataModel.totalProgress))
     rotation: -parent.rotation
     font.pixelSize: sp(12)
     style: Text.Outline

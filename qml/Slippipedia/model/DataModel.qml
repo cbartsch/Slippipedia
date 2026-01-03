@@ -68,6 +68,15 @@ Item {
   property int numVideosEncoding: 0
   readonly property bool isEncoding: numVideosEncoding > 0
 
+  readonly property bool hasProgress: isProcessing || isEncoding
+  readonly property real totalProgress: isProcessing
+                                        ? numFilesProcessed / numFilesProcessing
+                                        : isEncoding
+                                          ? createdVideos
+                                            .filter(cv => cv.progress < 1)
+                                            .reduce((acc, cv, i, arr) => acc + cv.progress / arr.length, 0)
+                                          : 0
+
   // filter settings
   property alias filterSettings: filterSettings
   property alias gameFilter: filterSettings.gameFilter
@@ -545,10 +554,12 @@ Item {
     }
 
     var doEncode = function() {
+
       // use padding to even size
       var padFilter = "pad=ceil(iw/2)*2:ceil(ih/2)*2"
 
       // read input video at original frame rate (59.94) by setting presentation timestamp
+      // https://ffmpeg.org/ffmpeg-filters.html#setpts_002c-asetpts
       var ptsFilter = "setpts=(PTS-STARTPTS)*60/59.94"
 
       // show watermark in bottom right
@@ -560,12 +571,17 @@ Item {
       // create input tags for concat filter e.g. [3:v][4:v]...
       var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
 
-      // overlay watermark onto video
-      var filter = qsTr("%1 %2 [vid]; [vid] %3, %4 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %5")
+      // concat all input videos and overlay watermark
+      var videoFilter = qsTr("%1 %2 [vid]; [vid] %3, %4 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %5")
         .arg(videoInputTags).arg(concatFilter).arg(padFilter).arg(ptsFilter).arg(overlayFilter)
 
       // no watermark
-      //var filter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
+      //var videoFilter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
+
+      // dolphin 5.0 actually outputs audio at 32029/48043Hz instead of 32k and 48k
+      // -> speed up audio with a filter (it seems to need to be a bit faster, factor for DSP determined through testing)
+      // https://tasvideos.org/EncodingGuide/VideoDumping/Dolphin#AudioSync
+      var audioFilter = "[0:a] atempo=1.001423401631289 [dspA]; [1:a] atempo=1.000895833333333 [dtkA]; [dspA][dtkA] amerge"
 
       var videoIndex = createdVideos.length
 
@@ -585,7 +601,8 @@ Item {
             "-i", audioDspPath,
             "-i", audioDtkPath,
             "-i", iconImgPath,
-            "-filter_complex", filter,
+            "-filter_complex", videoFilter,
+            "-filter_complex", audioFilter,
             "-c:v", videoCodec,
             "-b:v", videoBitrate + "k",
             outputPath
