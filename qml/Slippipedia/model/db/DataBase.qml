@@ -153,6 +153,7 @@ foreign key(replayId) references replays(id)
       )")
 
       tx.executeSql("create index if not exists replay_index on replays(stageId)")
+      tx.executeSql("create index if not exists replay_date_index on replays(date)")
       tx.executeSql("create index if not exists player_index on players(replayId, port, charId, slippiCode, slippiName,
                      slippiCode collate nocase, slippiName collate nocase)")
       tx.executeSql("create index if not exists punish_index on punishes(replayId, port, didKill, openingDynamic, openingMoveId, numMoves, damage)")
@@ -752,11 +753,11 @@ from replays r
 join players p on p.replayId = r.id
 join players p2 on p2.replayId = r.id and p.port != p2.port
 left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishFilter.getPunishFilterCondition() +
-"where " + getFilterCondition() +
-// note: to speed up the join on punishes, sub-select the first N replays, and then join those IDs to the punish table
-//       thus also add the filter condition and params another time
-"and r.id in (
-  select id
+"where " +
+// note: to speed up the join on punishes, sub-select the first N filtered replays,
+//       and then join those IDs to the punish table and add the punish filter
+"r.id in (
+  select r.id
   from Replays r
   join players p on p.replayId = r.id
   join players p2 on p2.replayId = r.id and p.port != p2.port
@@ -766,7 +767,6 @@ left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishF
 order by r.date desc, pu.stocks desc"
 
       var params = punishFilter.getPunishFilterParams()
-      .concat(getFilterParams())
       .concat(getFilterParams())
       .concat([max, start])
 
