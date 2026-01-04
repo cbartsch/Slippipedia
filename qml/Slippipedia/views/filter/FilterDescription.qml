@@ -18,21 +18,27 @@ Column {
   AppText {
     text: hasFilter ? "Matching:" : "No filter configured."
     color: Theme.secondaryTextColor
+    width: parent.width
+    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
   }
 
   PlayerFilterDescription {
     playerFilter: filter && filter.playerFilter || null
     headingText: "Me:"
+    width: parent.width
   }
 
   PlayerFilterDescription {
     playerFilter: filter && filter.opponentFilter || null
     headingText: "Opponent:"
+    width: parent.width
   }
 
   AppText {
     text: filter && filter.gameFilter.displayText || ""
     color: Theme.secondaryTextColor
+    width: parent.width
+    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
   }
 
   Row {

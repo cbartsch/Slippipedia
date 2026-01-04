@@ -3,7 +3,7 @@ import Felgo 4.0
 
 import Slippipedia 1.0
 
-Row {
+Flow {
   property PlayerFilterSettings playerFilter: null
 
   property alias headingText: heading.text
@@ -20,6 +20,8 @@ Row {
   AppText {
     text: playerFilter && playerFilter.nameFilterText || ""
     color: Theme.secondaryTextColor
+    width: Math.min(implicitWidth, parent.width)
+    wrapMode: Text.WrapAtWordBoundaryOrAnywhere
   }
 
   Item {

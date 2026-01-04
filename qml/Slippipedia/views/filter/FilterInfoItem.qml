@@ -54,6 +54,7 @@ Column {
         id: description
         filter: stats && stats.dataBase.filterSettings || null
         height: Math.max(implicitHeight, dp(64))
+        width: filterInfoItem.textItemAvailableWidth
       }
 
       onSelected: showFilteringPage()
@@ -100,7 +101,7 @@ Column {
       height: parent.height
       mouseArea.hoverEffectEnabled: false
       backgroundColor: Theme.backgroundColor
-      visible: parent.width > dp(1000) &&  showQuickFilters
+      visible: parent.width > dp(900) &&  showQuickFilters
 
       textVerticalSpacing: dp(Theme.contentPadding) / 2
 
