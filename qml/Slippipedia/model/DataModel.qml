@@ -25,10 +25,18 @@ Item {
   property int fileUpdater: 0
 
   // settings
+  property bool autoAnalyze: false
   property string replayFolder: ""
   readonly property string replayFolderDefault: fileUtils.storageLocation(FileUtils.DocumentsLocation, "Slippi")
   readonly property var allFiles: fileUpdater, Utils.listFiles(replayFolder, ["*.slp"], true)
   property var newFiles: globalDataBase.getNewReplays(allFiles, dbUpdater)
+
+  onNewFilesChanged: {
+    if(newFiles && newFiles.length > 0 && !isProcessing) {
+      console.log("Auto-analyzing", newFiles.length, "replays.")
+      Qt.callLater(parseNewReplays)
+    }
+  }
 
   property string desktopAppFolder: ""
   readonly property string desktopAppFolderDefault: fileUtils.storageLocation(FileUtils.AppDataLocation, "../Slippi Launcher")
@@ -182,6 +190,7 @@ Item {
     property alias meleeIsoPath: dataModel.meleeIsoPath
     property alias videoOutputPath: dataModel.meleeIsoPath
 
+    property alias autoAnalyze: dataModel.autoAnalyze
     property alias videoOutputEnabled: dataModel.videoOutputEnabled
     property alias autoDeleteFrameDumps: dataModel.autoDeleteFrameDumps
 
@@ -213,6 +222,10 @@ Item {
   }
 
   // replay / db management
+
+  function parseNewReplays() {
+    parseReplays(newFiles)
+  }
 
   function parseReplays(replayFiles) {
     numFilesSucceeded = 0

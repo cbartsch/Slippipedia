@@ -111,6 +111,14 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       onSelected: dataModel.parseReplays(dataModel.newFiles)
     }
 
+    CheckableListItem {
+      text: "Auto-analyze new replays"
+
+      visible: !dataModel.isProcessing
+      checked: dataModel.autoAnalyze
+      onCheckedChanged: dataModel.autoAnalyze = checked
+    }
+
     SimpleSection {
       title: "Progress"
       visible: dataModel.numFilesProcessing > 0
@@ -379,48 +387,24 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
       backgroundColor: Theme.backgroundColor
     }
 
-    AppListItem {
+    CheckableListItem {
       text: "Save dolphin frame dumps"
       detailText: dataModel.videoOutputEnabled
                   ? "Frame dumps from Dolphin will be saved to the below folder after playing a replay or punish."
                   : "Enable to save Dolphin frame dumps to the below folder after playing a replay or punish."
 
-      onSelected: dataModel.videoOutputEnabled = !dataModel.videoOutputEnabled
-
-      leftItem: Item {
-        height: dp(24)
-        width: height
-        anchors.verticalCenter: parent.verticalCenter
-
-        AppIcon {
-          anchors.centerIn: parent
-          size: dp(24)
-          color: dataModel.videoOutputEnabled ? Theme.tintColor : "red"
-          iconType: dataModel.videoOutputEnabled ? IconType.check : IconType.times
-        }
-      }
+      checked: dataModel.videoOutputEnabled
+      onCheckedChanged: dataModel.videoOutputEnabled = checked
     }
 
-    AppListItem {
+    CheckableListItem {
       text: "Auto-delete original frame dumps"
       detailText: dataModel.autoDeleteFrameDumps
                   ? "Original frame dumps from Dolphin will automatically be deleted after saving a replay."
                   : "Original frame dumps will remain in the Dolphin/User folder after saving a replay."
 
-      onSelected: dataModel.autoDeleteFrameDumps = !dataModel.autoDeleteFrameDumps
-
-      leftItem: Item {
-        height: dp(24)
-        width: height
-        anchors.verticalCenter: parent.verticalCenter
-
-        AppIcon {
-          anchors.centerIn: parent
-          size: dp(24)
-          color: dataModel.autoDeleteFrameDumps ? Theme.tintColor : "red"
-          iconType: dataModel.autoDeleteFrameDumps ? IconType.check : IconType.times
-        }
-      }
+      checked: dataModel.autoDeleteFrameDumps
+      onCheckedChanged: dataModel.autoDeleteFrameDumps = checked
     }
 
     AppListItem {
@@ -610,7 +594,25 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
         }
       }
     }
+  }
 
+  component CheckableListItem : AppListItem {
+    property bool checked
+
+    onSelected: checked = !checked
+
+    leftItem: Item {
+      height: dp(24)
+      width: height
+      anchors.verticalCenter: parent.verticalCenter
+
+      AppIcon {
+        anchors.centerIn: parent
+        size: dp(24)
+        color: Theme.tintColor
+        iconType: checked ? IconType.checksquareo : IconType.squareo
+      }
+    }
   }
 
   function clearDb() {
