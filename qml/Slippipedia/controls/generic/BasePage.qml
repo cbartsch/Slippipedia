@@ -1,8 +1,10 @@
-import Felgo 4.0
+import Felgo
 
-import QtQuick 2.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Slippipedia 1.0
+import Slippipedia
 
 FlickablePage {
   id: basePage
@@ -12,6 +14,15 @@ FlickablePage {
   property ReplayStats stats: null
 
   property alias filterModal: filterModal
+
+  // find attached StackLayout object where the page is contained in the Navigation to access tab index
+  readonly property QtObject stackLayout: {
+    for(var item = basePage; item.parent !== null; item = item.parent) {
+      if(item.StackLayout.index >= 0) {
+        return item.StackLayout
+      }
+    }
+  }
 
   rightBarItem: LoadingIcon { }
 
