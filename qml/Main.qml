@@ -129,7 +129,10 @@ App {
       iconComponent: CustomTabIcon {
         iconType: IconType.gear
         selected: navigation.currentIndex === 0
-        badgeValue: dataModel.newFiles.length || ""
+        badgeValue: (dataModel.isProcessing
+                     ? dataModel.numFilesProcessing - dataModel.numFilesProcessed
+                     : dataModel.newFiles.length
+                     ) || ""
       }
 
       BaseNavigationStack {
