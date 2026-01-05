@@ -56,6 +56,9 @@ file(GLOB Sources RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ${SrcPattern})
 # resource files that are always deployed because they are used by external tools
 file(GLOB_RECURSE ResFiles RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resfiles/*)
 
+# Set runtime path for shared libraries in installation
+list(APPEND CMAKE_INSTALL_RPATH "./${CMAKE_INSTALL_LIBDIR}")
+
 # Executable should have same name as project
 qt_add_executable(SlippipediaApp
     ${Sources}
@@ -103,3 +106,29 @@ target_compile_definitions(SlippipediaApp
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
 target_link_libraries(SlippipediaApp PRIVATE Felgo Slippi Slippipedia)
+
+# Install the executable
+install(TARGETS SlippipediaApp
+    BUNDLE  DESTINATION .
+    RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
+)
+
+if(UNIX)
+    # Generate the deployment script for MyApp.
+    qt_generate_deploy_qml_app_script(
+        TARGET SlippipediaApp
+        OUTPUT_SCRIPT deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+    )
+
+    # Run the deployment script during installation (on "cmake --install").
+    install(SCRIPT ${deploy_script})
+
+    set(CPACK_PACKAGE_NAME Slippipedia)
+    set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
+    set(CPACK_VERBATIM_VARIABLES ON)
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/Slippipedia")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Chrisu <chrisu.bartsch@gmail.com>")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS libc6 libstdc++6 libgcc-s1)
+    include(CPack)
+endif()

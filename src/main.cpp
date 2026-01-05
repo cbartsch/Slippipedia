@@ -108,6 +108,10 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 
 int main(int argc, char *argv[])
 {
+#ifdef Q_OS_UNIX
+  qputenv("QT_QPA_PLATFORM", "xcb");
+#endif
+
   QApplication app(argc, argv);
 
   FelgoApplication felgo;
