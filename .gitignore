@@ -1,5 +1,6 @@
 *.user**
 /builds
+/build
 .qtc_*/
 .qmake.stash
 Makefile*
