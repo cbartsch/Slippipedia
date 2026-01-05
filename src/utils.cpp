@@ -42,6 +42,19 @@ bool Utils::exploreToFile(const QString &filePath)
 }
 #endif
 
+#ifdef Q_OS_UNIX
+bool Utils::exploreToFile(const QString &filePath)
+{
+  // show the directory with xdg-open
+  // TODO how to also pre-select the specified file?
+
+  QFileInfo fileInfo(filePath);
+  startCommand("xdg-open", {fileInfo.dir().path()});
+
+  return true;
+}
+#endif
+
 void Utils::startCommand(const QString &command, const QStringList &arguments,
                          const QJSValue &finishCallback, const QJSValue &logCallback)
 {
@@ -100,8 +113,8 @@ void Utils::startCommand(const QString &command, const QStringList &arguments,
       qWarning() << "Process" << command << "error:" << p->errorString();
     }
 
-    // deleting the object crashes on mac with Qt 6.4.0 - TODO check with later version
-#ifndef Q_OS_MAC
+    // deleting the object crashes on mac and linux with Qt 6.4 and 6.8 - TODO check with later version
+#if !defined(Q_OS_MAC) && !defined(Q_OS_UNIX)
     p->disconnect();
 #endif
   });
