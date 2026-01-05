@@ -101,6 +101,7 @@ Item {
   property alias globalDataBase: globalDataBase
 
   signal initialized
+  signal refreshStatsRequested
 
   Component.onCompleted: {
     if(!replayFolder) replayFolder = replayFolderDefault
@@ -140,15 +141,16 @@ Item {
     if(numFilesSucceeded % 500 === 0) {
       dbUpdaterChanged()
 
-      //disable this if it causes the UI to lock up while analyzing
-      stats.refresh()
+      if(numFilesSucceeded > 0) {
+        refreshStatsRequested() // only actually refresh if the current page shows it
+      }
     }
   }
 
   onIsProcessingChanged: {
     if(!isProcessing) {
       dbUpdaterChanged() // refresh bindings
-      stats.refresh()
+      refreshStatsRequested()
     }
   }
 
@@ -202,7 +204,7 @@ Item {
   SlippiParser {
     id: parser
 
-    onReplayParsed: (filePath, replay) => {
+    onReplayParsed: function(filePath, replay) {
       if(numFilesSucceeded === 0) {
         globalDataBase.createTables(replay)
       }
@@ -212,7 +214,7 @@ Item {
       numFilesSucceeded++
     }
 
-    onReplayFailedToParse: {
+    onReplayFailedToParse: function(filePath, errorMessage) {
       // store "failed" replay to not show it as "new" file
       globalDataBase.analyzeReplay(filePath, null)
 
@@ -224,7 +226,9 @@ Item {
   // replay / db management
 
   function parseNewReplays() {
-    parseReplays(newFiles)
+    if(newFiles && newFiles.length > numFilesFailed) {
+      parseReplays(newFiles)
+    }
   }
 
   function parseReplays(replayFiles) {

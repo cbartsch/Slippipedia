@@ -1,10 +1,10 @@
-import Felgo 4.0
+import Felgo
 
-import QtQuick 2.13
-import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.12
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import Slippipedia 1.0
+import Slippipedia
 
 BasePage {
   id: statisticsPage
@@ -22,6 +22,15 @@ BasePage {
   filterModal.showPunishOptions: openingsVisible
 
   flickable.interactive: false
+
+  Connections {
+    target: dataModel
+    enabled: stackLayout.isCurrentItem
+
+    function onRefreshStatsRequested() {
+      refreshStats()
+    }
+  }
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {

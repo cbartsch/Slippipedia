@@ -1,9 +1,9 @@
-import Felgo 4.0
+import Felgo
 
-import QtQuick 2.0
-import QtQuick.Controls 2.0
+import QtQuick
+import QtQuick.Controls
 
-import Slippipedia 1.0
+import Slippipedia
 
 BasePage {
   id: browserPage
@@ -18,6 +18,15 @@ BasePage {
 
   filterModal.onClosed: if(stats) loadInitial()
   filterModal.showPunishOptions: listTabs.currentIndex === 1
+
+  Connections {
+    target: dataModel
+    enabled: stackLayout.isCurrentItem
+
+    function onRefreshStatsRequested() {
+      refresh()
+    }
+  }
 
   Connections {
     target: stats ? stats.dataBase.filterSettings : null

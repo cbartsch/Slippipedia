@@ -1,8 +1,8 @@
-import QtQuick 2.0
-import QtQuick.Controls 2.0
-import Felgo 4.0
+import QtQuick
+import QtQuick.Controls
+import Felgo
 
-import Slippipedia 1.0
+import Slippipedia
 
 BasePage {
   id: analyticsPage
@@ -12,6 +12,15 @@ BasePage {
 
   onAppeared: stats.refresh()
   filterModal.onClosed: if(stats) stats.refresh()
+
+  Connections {
+    target: dataModel
+    enabled: stackLayout.isCurrentItem
+
+    function onRefreshStatsRequested() {
+      stats.refresh()
+    }
+  }
 
   rightBarItem: NavigationBarRow {
     LoadingIcon {
