@@ -1,8 +1,9 @@
 import Felgo 4.0
 
-import QtQuick 2.0
-import QtQuick.Controls 2.12
+import QtQuick
+import QtQuick.Controls
 import QtQuick.Dialogs
+import QtQuick.Layouts
 import Qt5Compat.GraphicalEffects
 
 import Slippipedia 1.0
@@ -124,15 +125,14 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       visible: dataModel.numFilesProcessing > 0
     }
 
-    SimpleRow {
+    AppListItem {
       text: qsTr("Analyzed %1/%2 replays%3%4")
       .arg(dataModel.numFilesSucceeded)
       .arg(dataModel.numFilesProcessing)
       .arg(dataModel.numFilesFailed > 0 ? " (" + dataModel.numFilesFailed + " failed)" : "")
       .arg(dataModel.isProcessing? "..." : ".")
 
-      textItem.color: Theme.textColor
-
+      backgroundColor: Theme.backgroundColor
       enabled: false
       visible: dataModel.numFilesProcessing > 0
     }
