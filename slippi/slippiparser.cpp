@@ -74,7 +74,7 @@ void SlippiParserPrivate::doParseReplay(const QString &filePath)
     bool success = parser.load(filePath.toLocal8Bit().data());
 
     if(!success) {
-      emit m_item->replayFailedToParse(filePath, "Could not load file");
+      emit m_item->replayFailedToParse(filePath, "Could not load or parse file");
       return;
     }
 
