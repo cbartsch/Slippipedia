@@ -143,7 +143,6 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
       visible: dataModel.isProcessing
       onSelected: {
         dataModel.cancelAll()
-        dataModel.progressCancelled = true
       }
     }
 
