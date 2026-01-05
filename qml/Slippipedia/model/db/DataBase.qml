@@ -668,7 +668,7 @@ order by yearMonth desc").arg(getFilterCondition()).arg(gameEndedCondition).arg(
 
       var sql = qsTr(
             "select
-r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
+distinct r.id replayId, r.date date, r.filePath filePath, r.duration duration, r.stageId stageId,
 r.lrasPort lrasPort, r.userFlag userFlag, r.platform platform, r.slippiVersion slippiVersion,
 r.matchId matchId, r.gameNumber gameNumber, r.tiebreakerNumber tiebreakerNumber, r.gameMode gameMode,
  p.s_startStocks startStocks,
@@ -677,9 +677,8 @@ p2.slippiName name2, p2.cssTag tag2, p2.slippiCode code2, p2.charIdOriginal char
 (case when (%1) then p.port when (%2) then p2.port else -1 end) winnerPort
 from replays r
 join players p on p.replayId = r.id
-join players p2 on p2.replayId = r.id
+join players p2 on p2.replayId = r.id and p.port != p2.port
 where p.port != p2.port and %3
-group by r.id
 order by r.date desc
 limit ? offset ?"
             ).arg(winnerConditionP1).arg(winnerConditionP2).arg(getFilterCondition())
@@ -750,12 +749,13 @@ r.matchId matchId, r.gameNumber gameNumber, r.tiebreakerNumber tiebreakerNumber,
  p.slippiName name1,  p.slippiCode code1,  p.charIdOriginal char1,  p.skinId skin1,  p.port port1,  p.s_endStocks endStocks1,  p.s_endPercent endPercent1,
 p2.slippiName name2, p2.slippiCode code2, p2.charIdOriginal char2, p2.skinId skin2, p2.port port2, p2.s_endStocks endStocks2, p2.s_endPercent endPercent2
 from replays r
-join players p on p.replayId = r.id
+join players p on p.replayId = r.id and " + playerFilter.getFilterCondition("p") + "
 join players p2 on p2.replayId = r.id and p.port != p2.port
 left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishFilter.getPunishFilterCondition() +
-"where " +
+" where " +
 // note: to speed up the join on punishes, sub-select the first N filtered replays,
 //       and then join those IDs to the punish table and add the punish filter
+//       also add the player filter again for the main query to not select punishes from the opponent
 "r.id in (
   select r.id
   from Replays r
@@ -766,9 +766,10 @@ left join punishes pu on pu.replayId = r.id and pu.port = p.port and " + punishF
 )
 order by r.date desc, pu.stocks desc"
 
-      var params = punishFilter.getPunishFilterParams()
-      .concat(getFilterParams())
-      .concat([max, start])
+      var params = playerFilter.getFilterParams().concat(
+            punishFilter.getPunishFilterParams(),
+            getFilterParams(),
+            [max, start])
 
       var results = tx.executeSql(sql, params)
 
