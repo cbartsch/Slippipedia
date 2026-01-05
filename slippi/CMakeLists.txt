@@ -35,11 +35,18 @@ target_include_directories(Slippi PUBLIC
   ${Qt6Qml_INCLUDE_DIRS}
 )
 
+if(APPLE)
+  # Include QML module in .app package
+  set(MODULE_OUT_DIR "${CMAKE_BINARY_DIR}/Slippipedia.app/Contents/Resources")
+else()
+  set(MODULE_OUT_DIR "${CMAKE_BINARY_DIR}")
+endif()
+
 qt_add_qml_module(Slippi
   URI Slippi
   RESOURCE_PREFIX "qml"
   PLUGIN_TARGET Slippi
-  OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/qml/Slippi"
+  OUTPUT_DIRECTORY "${MODULE_OUT_DIR}/qml/Slippi"
   VERSION 1.0
 )
 
@@ -66,6 +73,6 @@ set_property(
   Qt6::Core Qt6::Qml
 )
 
-install(DIRECTORY ${CMAKE_BINARY_DIR}/qml/Slippi
+install(DIRECTORY "${MODULE_OUT_DIR}/qml/Slippi"
     DESTINATION ${CMAKE_INSTALL_PREFIX}/qml
 )

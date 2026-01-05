@@ -75,8 +75,6 @@ include_directories(src slippi)
 
 add_compile_definitions(QML_MODULE_NAME=\"Slippipedia\")
 
-deploy_resources("${ResFiles}")
-
 if(SLIPPIPEDIA_FELGO_LIVE)
   set(FelgoHotReload_DIR "D:/Programme/FelgoHotReload/client/6.8.3/mingw_64/lib/cmake/FelgoHotReload")
   add_compile_definitions(FELGO_LIVE=1)
@@ -105,7 +103,7 @@ set(QML_IMPORT_PATH "${QML_DIRS}" CACHE STRING "Qt Creator 4.1 extra qml import 
 target_compile_definitions(SlippipediaApp
     PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 
-target_link_libraries(SlippipediaApp PRIVATE Felgo Slippi Slippipedia)
+target_link_libraries(SlippipediaApp PRIVATE Felgo Slippipedia)
 
 # Install the executable
 install(TARGETS SlippipediaApp
@@ -113,22 +111,21 @@ install(TARGETS SlippipediaApp
     RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}
 )
 
-if(UNIX)
-    # Generate the deployment script for MyApp.
-    qt_generate_deploy_qml_app_script(
-        TARGET SlippipediaApp
-        OUTPUT_SCRIPT deploy_script
-        NO_UNSUPPORTED_PLATFORM_ERROR
-    )
+install(FILES ${ResFiles} DESTINATION "resfiles")
 
-    # Run the deployment script during installation (on "cmake --install").
-    install(SCRIPT ${deploy_script})
-
-    set(CPACK_PACKAGE_NAME Slippipedia)
-    set(CPACK_PACKAGE_INSTALL_DIRECTORY ${CPACK_PACKAGE_NAME})
-    set(CPACK_VERBATIM_VARIABLES ON)
-    set(CPACK_PACKAGING_INSTALL_PREFIX "/opt/Slippipedia")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Chrisu <chrisu.bartsch@gmail.com>")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS libc6 libstdc++6 libgcc-s1)
-    include(CPack)
+if(APPLE)
+    # Sign app bundle on mac
+    set(DEPLOY_TOOL_OPTIONS "-codesign=VB6Z5JQJTD")
 endif()
+
+# Generate the deployment script for MyApp.
+qt_generate_deploy_qml_app_script(
+    TARGET SlippipediaApp
+    OUTPUT_SCRIPT deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS}"
+)
+
+# Run the deployment script during installation (on "cmake --install").
+message("Run deploy script on install: ${deploy_script}")
+install(SCRIPT ${deploy_script})

@@ -42,7 +42,7 @@ bool Utils::exploreToFile(const QString &filePath)
 }
 #endif
 
-#ifdef Q_OS_UNIX
+#ifdef Q_OS_LINUX
 bool Utils::exploreToFile(const QString &filePath)
 {
   // show the directory with xdg-open

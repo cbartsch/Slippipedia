@@ -108,7 +108,7 @@ void logMessageHandler(QtMsgType type, const QMessageLogContext &context, const 
 
 int main(int argc, char *argv[])
 {
-#ifdef Q_OS_UNIX
+#ifdef Q_OS_LINUX
   qputenv("QT_QPA_PLATFORM", "xcb");
 #endif
 
@@ -164,9 +164,9 @@ int main(int argc, char *argv[])
 #else
   felgo.setMainQmlFileName(QStringLiteral("qrc:/qml/Main.qml"));
 
-  auto list = engine.importPathList();
+  // auto list = engine.importPathList();
   // list.takeFirst();
-  engine.setImportPathList(list);
+  // engine.setImportPathList(list);
 
   // import app's QML module from resources:
   // engine.addImportPath("qrc:/qml/");
