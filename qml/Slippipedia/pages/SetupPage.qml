@@ -114,10 +114,11 @@ Click to clear database.").arg(dataModel.globalDataBase.dbCurrentVersion).arg(da
 
     CheckableListItem {
       text: "Auto-analyze new replays"
+      detailText: "Enable to automatically start analyzing when new replay files are found."
 
       visible: !dataModel.isProcessing
       checked: dataModel.autoAnalyze
-      onCheckedChanged: dataModel.autoAnalyze = checked
+      onToggled: dataModel.autoAnalyze = checked
     }
 
     SimpleSection {
@@ -394,7 +395,7 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
                   : "Enable to save Dolphin frame dumps to the below folder after playing a replay or punish."
 
       checked: dataModel.videoOutputEnabled
-      onCheckedChanged: dataModel.videoOutputEnabled = checked
+      onToggled: dataModel.videoOutputEnabled = checked
     }
 
     CheckableListItem {
@@ -404,7 +405,7 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
                   : "Original frame dumps will remain in the Dolphin/User folder after saving a replay."
 
       checked: dataModel.autoDeleteFrameDumps
-      onCheckedChanged: dataModel.autoDeleteFrameDumps = checked
+      onToggled: dataModel.autoDeleteFrameDumps = checked
     }
 
     AppListItem {
@@ -597,20 +598,26 @@ Leave empty to start an ISO manually, which is useful if your replays are from d
   }
 
   component CheckableListItem : AppListItem {
-    property bool checked
+    id: checkableListItem
 
-    onSelected: checked = !checked
+    property alias checked: checkBox.checked
+
+    signal toggled
+
+    onSelected: {
+      checked = !checked
+      toggled()
+    }
 
     leftItem: Item {
       height: dp(24)
       width: height
       anchors.verticalCenter: parent.verticalCenter
 
-      AppIcon {
+      AppCheckBox {
+        id: checkBox
         anchors.centerIn: parent
-        size: dp(24)
-        color: Theme.tintColor
-        iconType: checked ? IconType.checksquareo : IconType.squareo
+        onToggled: checkableListItem.toggled()
       }
     }
   }
