@@ -45,7 +45,7 @@ Item {
   readonly property Stat walljumps: Stat { name: "walljumps" }
 
   readonly property Stat openings: Stat { name: "openings" }
-  readonly property real damagePerOpening: totalDamageDealt / openings.value
+  readonly property real damagePerOpening: openings.value === 0 ? 0 : totalDamageDealt / openings.value
   readonly property real openingsPerKill: stocksTaken.value == 0 ? 0 : openings.value / stocksTaken.value
 
   readonly property real techRate: techs.value / (techs.value + missedTechs.value)
