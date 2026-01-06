@@ -66,7 +66,11 @@ qt_add_executable(SlippipediaApp
     ${ResFiles}
 )
 
-set_target_properties(SlippipediaApp PROPERTIES OUTPUT_NAME Slippipedia)
+# Set output name for Windows (Slippipedia.exe) and macOS (Slippipedia.app)
+# and runtime output name for Unix (Slippipedia instead of SlippipediaApp.run)
+set_target_properties(SlippipediaApp PROPERTIES
+    OUTPUT_NAME Slippipedia
+    RUNTIME_OUTPUT_NAME Slippipedia)
 
 felgo_configure_executable(SlippipediaApp)
 
