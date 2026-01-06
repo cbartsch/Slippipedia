@@ -119,16 +119,17 @@ install(TARGETS SlippipediaApp
 install(FILES ${ResFiles} DESTINATION "resfiles")
 
 # Set parameters for deployqt tool
-set(DEPLOY_TOOL_OPTIONS "-qmldir ${CMAKE_CURRENT_LIST_DIR}/qml --no-translations")
-
 if(APPLE)
     # Sign app bundle on mac
-    set(DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS} -codesign=VB6Z5JQJTD")
+    set(DEPLOY_TOOL_OPTIONS "-qmldir=${CMAKE_CURRENT_LIST_DIR}/qml -codesign=VB6Z5JQJTD")
 elseif(WIN32)
     # Do not put binaries in "bin"
-    set(DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS} -libdir .")
+    set(DEPLOY_TOOL_OPTIONS "-qmldir ${CMAKE_CURRENT_LIST_DIR}/qml --no-translations -libdir .")
 else()
+    set(DEPLOY_TOOL_OPTIONS "-qmldir ${CMAKE_CURRENT_LIST_DIR}/qml --no-translations")
 endif()
+
+message("Deploytool options: ${DEPLOY_TOOL_OPTIONS}")
 
 # Generate the deployment script for MyApp.
 qt_generate_deploy_qml_app_script(
