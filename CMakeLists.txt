@@ -118,14 +118,16 @@ install(TARGETS SlippipediaApp
 
 install(FILES ${ResFiles} DESTINATION "resfiles")
 
+# Set parameters for deployqt tool
+set(DEPLOY_TOOL_OPTIONS "-qmldir ${CMAKE_CURRENT_LIST_DIR}/qml --no-translations")
+
 if(APPLE)
     # Sign app bundle on mac
-    set(DEPLOY_TOOL_OPTIONS "-codesign=VB6Z5JQJTD")
+    set(DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS} -codesign=VB6Z5JQJTD")
 elseif(WIN32)
     # Do not put binaries in "bin"
-    set(DEPLOY_TOOL_OPTIONS "-libdir .")
+    set(DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS} -libdir .")
 else()
-    set(DEPLOY_TOOL_OPTIONS "")
 endif()
 
 # Generate the deployment script for MyApp.
@@ -133,7 +135,7 @@ qt_generate_deploy_qml_app_script(
     TARGET SlippipediaApp
     OUTPUT_SCRIPT deploy_script
     NO_UNSUPPORTED_PLATFORM_ERROR
-    DEPLOY_TOOL_OPTIONS "-qmldir ${CMAKE_CURRENT_LIST_DIR}/qml ${DEPLOY_TOOL_OPTIONS}"
+    DEPLOY_TOOL_OPTIONS "${DEPLOY_TOOL_OPTIONS}"
 )
 
 # Run the deployment script during installation (on "cmake --install").
