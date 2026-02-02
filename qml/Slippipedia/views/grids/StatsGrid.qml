@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtQuick.Layouts 1.12
 import Felgo 4.0
+import Slippipedia
 
 Column {
   id: statsGrid
@@ -61,6 +62,18 @@ Column {
       AppText {
         Layout.preferredWidth: colWidthTitle
         text: rowModel.header
+
+        MouseArea {
+          id: rowMouse
+          anchors.fill: parent
+          enabled: !!rowModel.toolTipText
+          hoverEnabled: true
+        }
+
+        CustomToolTip {
+          shown: rowMouse.containsMouse
+          text: rowModel.toolTipText
+        }
       }
 
       Repeater {
