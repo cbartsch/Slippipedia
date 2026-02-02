@@ -22,6 +22,8 @@ FlickablePage {
         return item.StackLayout
       }
     }
+
+    return null
   }
 
   rightBarItem: LoadingIcon { }
