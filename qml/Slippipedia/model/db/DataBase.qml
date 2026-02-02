@@ -27,7 +27,8 @@ Item {
   // 2.1 - Slippipedia 1.1 - add Replays.userFlag
   // 3.0 - Slippipedia 2.0 - add Replays.platform, Replays.slippiVersion, drop unused indices
   // 3.1 - Slippipedia 2.1 - add Replays.matchId/gameNumber/tiebreakerNumber/gameMode
-  readonly property string dbLatestVersion: "3.1"
+  // 3.2 - Slippipedia 2.3 - add Player.s_triggerMoves
+  readonly property string dbLatestVersion: "3.2"
   readonly property string dbCurrentVersion: db.version
   readonly property bool dbNeedsUpdate: dbCurrentVersion !== dbLatestVersion
 
@@ -65,6 +66,11 @@ Item {
           tx.executeSql("alter table Replays add column gameNumber integer default 0")
           tx.executeSql("alter table Replays add column tiebreakerNumber integer default 0")
           tx.executeSql("alter table Replays add column gameMode integer default 0")
+        }
+        if(dbCurrentVersion < "3.2") {
+          console.log("Update DB to 3.2")
+          // 3.2 - add triggerMoves stat
+          tx.executeSql("alter table Players add column s_triggerMoves real default 0")
         }
       })
 

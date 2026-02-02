@@ -118,7 +118,7 @@ class SlippiReplay : public QObject
   Q_PROPERTY(qint64 uniqueId MEMBER m_uniqueId NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QDateTime date MEMBER m_date NOTIFY parsedFromAnalysis)
   Q_PROPERTY(int stageId MEMBER m_stageId NOTIFY parsedFromAnalysis)
-  Q_PROPERTY(int gameDuration MEMBER m_gameDuration NOTIFY parsedFromAnalysis)
+  Q_PROPERTY(int gameDuration MEMBER m_gameDurationPlayable NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QString filePath MEMBER m_filePath NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QString platform MEMBER m_platform NOTIFY parsedFromAnalysis)
   Q_PROPERTY(QString slippiVersion MEMBER m_slippiVersion NOTIFY parsedFromAnalysis)
@@ -159,7 +159,7 @@ signals:
 
 private:
   int m_stageId;
-  int m_gameDuration;
+  int m_gameDuration, m_gameDurationPlayable;
   QDateTime m_date;
   qint64 m_uniqueId;
   QString m_filePath;

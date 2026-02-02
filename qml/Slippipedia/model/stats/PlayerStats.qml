@@ -66,17 +66,21 @@ Item {
   readonly property real maxGalint: statsData && statsData.maxGalint || 0
   readonly property real avgGalint: numLedgedashes == 0 ? 0 : totalGalint / numLedgedashes
 
+  readonly property real inputEfficiency: stateChanges.value / actions.value
+
   readonly property Stat actionsPerMinute: Stat { name: "totalActions"; count: totalGameDurationMinutes }
   readonly property Stat stateChangesPerMinute: Stat { name: "stateChanges"; count: totalGameDurationMinutes }
   readonly property Stat buttonsPressedPerMinute: Stat { name: "buttonsPressed"; count: totalGameDurationMinutes }
   readonly property Stat analogStickMovesPerMinute: Stat { name: "analogStickMoves"; count: totalGameDurationMinutes }
   readonly property Stat cStickMovesPerMinute: Stat { name: "cStickMoves"; count: totalGameDurationMinutes }
+  readonly property Stat triggerMovesPerMinute: Stat { name: "triggerMoves"; count: totalGameDurationMinutes }
 
   readonly property Stat actions: Stat { name: "totalActions" }
   readonly property Stat stateChanges: Stat { name: "stateChanges" }
   readonly property Stat buttonsPressed: Stat { name: "buttonsPressed" }
   readonly property Stat analogStickMoves: Stat { name: "analogStickMoves" }
   readonly property Stat cStickMoves: Stat { name: "cStickMoves" }
+  readonly property Stat triggerMoves: Stat { name: "triggerMoves" }
 
   property var charData: ({})
   readonly property var charDataCss: toCssCharData(charData)
