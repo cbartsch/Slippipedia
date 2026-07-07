@@ -72,7 +72,7 @@ Column {
 
         CustomToolTip {
           shown: rowMouse.containsMouse
-          text: rowModel.toolTipText
+          text: rowModel.toolTipText || ""
         }
       }
 

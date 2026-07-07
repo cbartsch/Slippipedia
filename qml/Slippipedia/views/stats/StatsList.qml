@@ -77,12 +77,12 @@ Column {
     statsList: [ stats.statsPlayer, stats.statsOpponent ]
 
     rowData: [
-      { header: "Actions (APM)", property: "actionsPerMinute", type: "stat",
+      { header: "Inputs (IPM)", property: "actionsPerMinute", type: "stat",
         toolTipText: "Sum of all below input counts" },
-      { header: "Action states (ASPM)", property: "stateChangesPerMinute", type: "stat",
+      { header: "Actions (APM)", property: "stateChangesPerMinute", type: "stat",
         toolTipText: "Counts any time the character's action state changes" },
-      { header: "Input efficiency (ASPM / APM)", property: "inputEfficiency", type: "percentage",
-        toolTipText: "Inputs that had an effect on your character (ratio between APM and ASPM)" },
+      { header: "Input efficiency (APM / IPM)", property: "inputEfficiency", type: "percentage",
+        toolTipText: "Inputs that had an effect on your character (ratio between APM and IPM)" },
       { header: "Digital inputs", property: "buttonsPressedPerMinute", type: "stat",
         toolTipText: "Counts any press down of a digital button" },
       { header: "Control stick moves", property: "analogStickMovesPerMinute", type: "stat",
@@ -93,25 +93,6 @@ Column {
         toolTipText: "Counts any time an analog trigger value went above 0.3"  }
     ]
   }
-
-  // total inputs per game not really relevant (?)
-
-  // StatsGrid {
-  //   width: parent.width
-
-  //   title: "Inputs per game"
-
-  //   statsList: [ stats.statsPlayer, stats.statsOpponent ]
-
-  //   rowData: [
-  //     { header: "Actions", property: "actions", type: "stat" },
-  //     { header: "Action states", property: "stateChanges", type: "stat" },
-  //     { header: "Digital inputs", property: "buttonsPressed", type: "stat" },
-  //     { header: "Control stick moves", property: "analogStickMoves", type: "stat" },
-  //     { header: "C stick moves", property: "cStickMoves", type: "stat" },
-  //     { header: "Analog trigger moves", property: "triggerMoves", type: "stat" }
-  //   ]
-  // }
 
   StatsGrid {
     width: parent.width
