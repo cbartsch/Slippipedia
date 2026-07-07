@@ -592,11 +592,12 @@ Item {
       var videoInputTags = inputVideos.map((file, index) => qsTr("[%1:v]").arg(index + 3)).join("")
 
       // concat all input videos and overlay watermark
-      var videoFilter = qsTr("%1 %2 [vid]; [vid] %3, %4 [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %5")
-        .arg(videoInputTags).arg(concatFilter).arg(padFilter).arg(ptsFilter).arg(overlayFilter)
+      var videoFilter = qsTr("%1 %2 [vid]; [vid] %3, %4")
+        .arg(videoInputTags).arg(concatFilter).arg(padFilter).arg(ptsFilter)
 
-      // no watermark
-      //var videoFilter = qsTr("[0:v] %1").arg(padFilter).arg(overlayFilter)
+      if(!isPatronBuild) {
+        videoFilter += " [vidP]; [2:v] scale=48x48:flags=lanczos [img]; [vidP][img] %1".arg(overlayFilter)
+      }
 
       // dolphin 5.0 actually outputs audio at 32029/48043Hz instead of 32k and 48k
       // -> speed up audio with a filter (it seems to need to be a bit faster, factor for DSP determined through testing)

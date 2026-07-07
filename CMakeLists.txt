@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 project(Slippipedia VERSION 2.0 LANGUAGES CXX)
 
 option(SLIPPIPEDIA_FELGO_LIVE "Use live client module" OFF)
+option(SLIPPIPEDIA_PATRON_BUILD "Patron member special build" OFF)
 
 set(QT_NO_FIND_QMLSC ON)
 set(CMAKE_AUTOMOC ON)
@@ -15,8 +16,13 @@ find_package(Qt6 REQUIRED COMPONENTS WebView)
 qt_policy(SET QTP0004 NEW)
 
 set(PRODUCT_IDENTIFIER "at.cb.Slippipedia")
-set(PRODUCT_VERSION_NAME "2.2 ALPHA")
+set(PRODUCT_VERSION_NAME "2.3")
 set(PRODUCT_VERSION_CODE 8)
+
+if(SLIPPIPEDIA_PATRON_BUILD)
+    add_compile_definitions(PATRON_BUILD=1)
+    set(PRODUCT_VERSION_NAME "${PRODUCT_VERSION_NAME} (PATRON SPECIAL)")
+endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(PRODUCT_STAGE "publish")

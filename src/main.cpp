@@ -159,6 +159,12 @@ int main(int argc, char *argv[])
   // bring back Felgo 3 / Qt 5 default font (Ms Shell Dlg 2 which defaults to Tahoma)
   QGuiApplication::setFont(QFont("Tahoma"));
 
+#ifdef PATRON_BUILD
+  engine.rootContext()->setContextProperty("isPatronBuild", true);
+#else
+  engine.rootContext()->setContextProperty("isPatronBuild", false);
+#endif
+
 #ifdef FELGO_LIVE
   FelgoHotReload fhr(&engine);
 #else
