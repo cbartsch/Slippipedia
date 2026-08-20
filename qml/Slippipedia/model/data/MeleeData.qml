@@ -233,6 +233,7 @@ Item {
     "Neutral Special", "Side Special", "Up Special", "Down Special",
     "Getup Attack (Back)", "Getup Attack (Front)", "Pummel",
     "Forward Throw", "Back Throw", "Up Throw", "Down Throw",
+    "Cargo Forward Throw", "Cargo Back Throw", "Cargo Up Throw", "Cargo Down Throw",
     "Edge Getup", "Edge Getup (100%+)",
     "Open parasol",
   ]
@@ -291,6 +292,7 @@ Item {
     "Neutral B", "Side B", "Up B", "Down B",
     "GetupBack", "GetupFront", "Pummel",
     "FThrow", "BThrow", "UpThrow", "DThrow",
+    "CFThrow", "CBThrow", "CUThrow", "CDThrow",
     "SlowEdge", "FastEdge",
     "Parasol",
   ]
